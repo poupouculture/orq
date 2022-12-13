@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex;justify-content: center; align-items: center; align-self: center;margin-top: 275px;">
     <p>
-      DASHBOARD
+    CONTACTS PAGE
     </p>
    </div>
 
@@ -12,7 +12,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'DashBoard'
+  name: 'ContactsPage'
 })
 
 </script>
