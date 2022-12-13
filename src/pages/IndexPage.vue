@@ -1,17 +1,25 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
-  </q-page>
+<div>
+ {{$t('signup')}}
+</div>
+<q-btn
+label = "chineese"
+@click = "$i18n.locale = 'zh-CN'"
+/>
+
+<q-btn
+label = "english"
+@click = "$i18n.locale = 'en-US'"
+/>
+
 </template>
 
 <script>
+
 import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'IndexPage'
 })
+
 </script>
