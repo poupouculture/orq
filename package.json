@@ -10,7 +10,9 @@
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
     "lint": "eslint --ext .js,.vue ./",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "deploy": "vercel"
+
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
