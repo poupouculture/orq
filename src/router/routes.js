@@ -64,7 +64,7 @@ const routes = [
     ]
   }, {
     path: '/ServiceRecord',
-    component: () => import('src/pages/ServiceRecord.vue'),
+    component: () => import('pages/ServiceRecord.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
