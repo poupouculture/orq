@@ -5,7 +5,7 @@
 <script>
 // eslint-disable-next-line import/default
 import { defineComponent } from 'vue'
-import '../index.css'
+// import '../index.css'
 export default defineComponent({
   name: 'App'
 })

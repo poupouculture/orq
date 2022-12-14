@@ -32,3 +32,15 @@ quasar build
 ### Customize the configuration
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
 # waba-quasar
+
+# devops
+cicd with vercel
+package manager: use yarn, NOT npm
+
+## tailwindcss
+### References
+```
+https://tailwindcss.com/docs/installation/using-postcss
+https://stackoverflow.com/questions/70034269/how-to-use-tailwind-css-with-quasar-framework
+```
+
