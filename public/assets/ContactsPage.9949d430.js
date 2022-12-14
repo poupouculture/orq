@@ -1,1 +1,0 @@
-import{_ as e,j as t,k as n,l as s,m as o}from"./index.40b34ea1.js";const a=t({name:"ContactsPage"}),c={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=o("p",null," CONTACTS PAGE ",-1),i=[r];function _(l,p,d,f,m,u){return n(),s("div",c,i)}var x=e(a,[["render",_]]);export{x as default};

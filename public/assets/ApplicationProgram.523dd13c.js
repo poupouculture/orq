@@ -1,1 +1,0 @@
-import{_ as e,j as t,k as n,l as o,m as a}from"./index.40b34ea1.js";const s=t({name:"ApplicationProgram"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=a("p",null," Application Program ",-1),i=[c];function p(l,_,m,d,f,g){return n(),o("div",r,i)}var x=e(s,[["render",p]]);export{x as default};
