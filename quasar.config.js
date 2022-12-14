@@ -10,8 +10,8 @@
 
 const { configure } = require('quasar/wrappers')
 const path = require('path')
-const UnoCSS = require('@unocss/webpack').default
-const presetUno = require('@unocss/preset-uno').default
+// const UnoCSS = require('@unocss/webpack').default
+// const presetUno = require('@unocss/preset-uno').default
 module.exports = configure(function (ctx) {
   return {
     eslint: {
@@ -31,8 +31,7 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli/boot-files
     boot: [
       'i18n',
-      'axios',
-      'UnoCss'
+      'axios'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -61,13 +60,6 @@ module.exports = configure(function (ctx) {
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node16'
-      },
-      extendWebpack (cfg) {
-        cfg.plugins.push(UnoCSS({
-          presets: [
-            presetUno()
-          ]
-        }))
       },
 
       vueRouterMode: 'hash', // available values: 'hash', 'history'
