@@ -1,0 +1,1 @@
+import{_ as e,j as t,k as n,l as o,m as s}from"./index.40b34ea1.js";const c=t({name:"ServiceRecord"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},a=s("p",null," SERVICE RECORD ",-1),i=[a];function _(d,l,p,f,m,u){return n(),o("div",r,i)}var R=e(c,[["render",_]]);export{R as default};
