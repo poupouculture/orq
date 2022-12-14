@@ -34,4 +34,8 @@ See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-
 # waba-quasar
 
 ## tailwindcss
-yarn add tailwindcss
+### References
+```
+https://tailwindcss.com/docs/installation/using-postcss
+https://stackoverflow.com/questions/70034269/how-to-use-tailwind-css-with-quasar-framework
+```
