@@ -34,3 +34,4 @@ See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-
 # waba-quasar
 
 ## tailwindcss
+yarn add tailwindcss
