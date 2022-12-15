@@ -58,6 +58,7 @@
 import { ref, reactive, toRefs, onMounted } from 'vue'
 import { useQuasar } from 'Quasar'
 import '../ContactsTable/ContactsTable.scss'
+
 const defaultItem = {
   IncurredMonth: '',
   InvoiceDate: '',
