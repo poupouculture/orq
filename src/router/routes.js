@@ -40,7 +40,7 @@ const routes = [
   },
   {
     path: '/Dashboard',
-    component: () => import('pages/DashBoard.vue'),
+    component: () => import('pages/Dashboard.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
