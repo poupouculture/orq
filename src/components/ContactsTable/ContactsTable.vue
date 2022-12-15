@@ -56,7 +56,6 @@
 
 <script>
 import { ref, reactive, toRefs, onMounted } from 'vue'
-import { useQuasar } from 'Quasar'
 import '../ContactsTable/ContactsTable.scss'
 
 const defaultItem = {
@@ -377,7 +376,6 @@ export default {
   },
 
   setup () {
-    const q$ = useQuasar()
     const selected = ref([])
 
     const fd = reactive({
@@ -417,32 +415,18 @@ export default {
     //   })
     // }
 
-    function editRow (props) {
-      fd.noti()
-      // do something
-      fd.noti = q$.notify({
-        type: 'info',
-        textColor: 'grey-10',
-        multiLine: true,
-        message: `I'll edit row data => ${JSON.stringify(props.row)
-          .split(',')
-          .join(', ')}`,
-        timeout: 2000
-      })
-    }
-
-    function deleteRow (props) {
-      fd.noti()
-      // do something
-      fd.noti = q$.notify({
-        type: 'negative',
-        multiline: true,
-        message: `I'll delete row data => ${JSON.stringify(props.row)
-          .split(',')
-          .join(', ')}`,
-        timeout: 2000
-      })
-    }
+    // function deleteRow (props) {
+    //   fd.noti()
+    //   // do something
+    //   fd.noti = q$.notify({
+    //     type: 'negative',
+    //     multiline: true,
+    //     message: `I'll delete row data => ${JSON.stringify(props.row)
+    //       .split(',')
+    //       .join(', ')}`,
+    //     timeout: 2000
+    //   })
+    // }
 
     function addRow () {
       if (fd.editedIndex > -1) {
@@ -482,14 +466,14 @@ export default {
       fd.inFs = props.inFullscreen
     }
 
-    function updateRow () {
-      fd.currencyData.splice(fd.editedIndex, 1, fd.editedItem)
-      q$.notify({
-        type: 'positive',
-        message: `Item '${fd.editedItem.name}' updated.`,
-        timeout: 500
-      })
-    }
+    // function updateRow () {
+    //   fd.currencyData.splice(fd.editedIndex, 1, fd.editedItem)
+    //   q$.notify({
+    //     type: 'positive',
+    //     message: `Item '${fd.editedItem.name}' updated.`,
+    //     timeout: 500
+    //   })
+    // }
     onMounted(() => {
       // add indices
       fd.currencyData = fd.currencyData.map((v, i) => ({ ...v, __index: i }))
@@ -497,14 +481,11 @@ export default {
 
     return {
       ...toRefs(fd),
-      editRow,
-      deleteRow,
       addRow,
       deleteItem,
       editItem,
       close,
       setFs,
-      updateRow,
       editModal,
       selected,
       current: ref(3)
