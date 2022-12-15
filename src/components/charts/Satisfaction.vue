@@ -14,10 +14,16 @@ export default {
 <script setup>
 const rightContainer = ref(null)
 
-let chart = null
+let chart = null,
+  data = ['Pleased', 'Satisfied', 'Commonly', 'Dissatisfied']
 
 onMounted(() => {
   chart = echarts.init(rightContainer.value)
+
+  data = data.map(item => ({
+    name: item,
+    itemStyle: item === 'Pleased' ? { color: 'blue' } : {}
+  }))
 
   chart.setOption({
     title: {
@@ -31,8 +37,11 @@ onMounted(() => {
       icon: 'roundRect',
       itemWidth: 18,
       itemHeight: 10,
-      data: ['Pleased', 'Satisfied', 'Commonly', 'Dissatisfied'],
-      bottom: 0
+      bottom: 10,
+      textStyle: {
+        fontWeight: 300
+      },
+      data
     },
     tooltip: {
       trigger: 'axis',
@@ -44,19 +53,21 @@ onMounted(() => {
     },
     series: [
       {
-        name: 'Access From',
+        name: 'Pleased',
         type: 'pie',
         selectedMode: 'single',
         radius: [0, '45%'],
         label: {
           position: 'center',
           color: '#333',
-          lineHeight: 18,
-          formatter: '{c}%\n{a}'
+          lineHeight: 20,
+          formatter: '{c}%\n{a}',
+          fontSize: 15
         },
         itemStyle: {
           shadowColor: 'rgba(0, 0, 0, 0.5)',
-          shadowBlur: 1
+          shadowBlur: 2,
+          color: '#fff'
         },
         labelLine: {
           show: false

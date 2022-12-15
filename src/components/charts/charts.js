@@ -1,5 +1,5 @@
 import * as echarts from 'echarts/core'
-import { LineChart, BarChart, PieChart } from 'echarts/charts'
+import { LineChart, BarChart, PieChart, GraphChart } from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -21,6 +21,7 @@ echarts.use([
   LineChart,
   BarChart,
   PieChart,
+  GraphChart,
   LabelLayout,
   UniversalTransition,
   SVGRenderer

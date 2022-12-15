@@ -2,7 +2,7 @@
   <div ref="leftContainer">
     <div
       class="selectInterval flex absolute bg-grey-2"
-      style="top: 15px; right: 20px; border-radius: 5px; padding: 3px;"
+      style="top: 20px; right: 20px; border-radius: 5px; padding: 3px;"
     >
       <div
         v-for="(item, i) in selectInterval"
@@ -39,6 +39,8 @@ onMounted(() => {
     smooth: true,
     symbolSize: 10,
     showSymbol: false,
+    xAxisIndex: 0,
+    yAxisIndex: 0,
     label: {
       show: true,
       color: '#333',
@@ -52,42 +54,117 @@ onMounted(() => {
     },
     data: (i => {
       const arr = []
-      while (arr.length < 9) {
+      while (arr.length < i) {
         arr.push(Math.floor(Math.random() * (31)))
       }
       return arr
     })(9)
   }))
 
+  // const img = 'path://M 104,1 205,60 205,180 104,237 3,180 3,60 Z'
+  // const getData = function GetData () {
+  //   const arr = []
+  //   for (let i = 5; i > 0; i--) {
+  //     for (let j = 0; j < 55; j++) {
+  //       arr.push({
+  //         symbol: img,
+  //         symbolSize: 20,
+  //         itemStyle: {
+  //           color: 'blue',
+  //           opacity: 1
+  //         },
+  //         value: [j * 5 + (j % 2 ? 8 : 4), i * 5],
+  //         x: 0,
+  //         y: 0
+  //       })
+  //     }
+  //   }
+
+  //   return arr
+  // }
+
+  // series.push({
+  //   name: 'honeycomb',
+  //   type: 'graph',
+  //   draggable: false,
+  //   coordinateSystem: 'cartesian2d',
+  //   xAxisIndex: 1,
+  //   yAxisIndex: 1,
+  //   data: getData()
+  // })
+
   chart.setOption({
     title: {
+      left: 20,
       text: 'Statistics of services sources',
       textStyle: {
         fontWeight: '600'
       }
     },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00'],
-      axisLine: {
-        lineStyle: {
-          width: 1.5
+    // grid: [
+    //   {
+    //     left: 60,
+    //     right: 30,
+    //     height: 270
+    //   },
+    //   {
+    //     left: 30,
+    //     right: 30,
+    //     top: 380,
+    //     height: 100
+    //   }
+    // ],
+    xAxis: [
+      {
+        type: 'category',
+        gridIndex: 0,
+        boundaryGap: false,
+        data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00'],
+        axisLine: {
+          lineStyle: {
+            width: 1.5
+          }
+        },
+        axisTick: {
+          show: false
+        },
+        splitLine: {
+          show: false
         }
-      },
-      axisTick: {
-        show: false
-      },
-      splitLine: {
-        show: false
       }
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: {
-        formatter: '{value}%'
+      // {
+      //   type: 'value',
+      //   gridIndex: 1,
+      //   boundaryGap: false,
+      //   axisLine: {
+      //     show: false
+      //   },
+      //   axisTick: {
+      //     length: 8
+      //   },
+      //   axisLabel: {
+      //     margin: 12
+      //   },
+      //   minorTick: {
+      //     show: true,
+      //     length: 8,
+      //     color: '#ddd'
+      //   }
+      // }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        gridIndex: 0,
+        axisLabel: {
+          formatter: '{value}%'
+        }
       }
-    },
+      // {
+      //   show: false,
+      //   gridIndex: 1
+      // }
+    ],
     legend: {
       icon: 'roundRect',
       itemWidth: 18,

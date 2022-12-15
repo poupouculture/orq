@@ -27,11 +27,11 @@
       <q-tab-panel
         name="Basic"
         style="height: 600px;"
-        class="flex justify-between bg-grey-2"
+        class="flex no-wrap justify-between bg-grey-2"
       >
         <Statistics
-          class="left relative-position bg-white flex q-mr-md q-pt-md q-pl-md q-pr-md"
-          style="flex: 5; border-radius: 5px;"
+          class="left relative-position bg-white flex q-mr-md q-pt-md"
+          style="flex: 5; border-radius: 20px;"
         />
 
         <div
@@ -40,7 +40,7 @@
         >
           <div
             class="top q-mb-sm q-pa-md"
-            style="flex: 1; border-radius: 5px; background-color: #4a44ed;"
+            style="flex: 1; border-radius: 20px; background-color: #4a44ed;"
           >
             <h3 class="text-subtitle2 text-white">Service level</h3>
             <p class="text-grey-5">
@@ -66,7 +66,7 @@
             </div>
           </div>
 
-          <Satisfaction class="bottom bg-white q-pt-sm q-pl-sm q-pr-sm" style="flex: 1;"/>
+          <Satisfaction class="bottom bg-white q-pt-sm q-pl-sm q-pr-sm" style="flex: 1; border-radius: 20px;"/>
         </div>
       </q-tab-panel>
     </q-tab-panels>
