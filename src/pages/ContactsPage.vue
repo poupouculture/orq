@@ -1,18 +1,50 @@
 <template>
-  <div style="display: flex;justify-content: center; align-items: center; align-self: center;margin-top: 275px;">
-    <p>
-    CONTACTS PAGE
-    </p>
-   </div>
-
-  </template>
+  <DrawerVue />
+</template>
 
 <script>
 
-import { defineComponent } from 'vue'
-
+import { defineComponent, ref } from 'vue'
+import DrawerVue from 'src/components/SideDrawer/Drawer.vue'
 export default defineComponent({
-  name: 'ContactsPage'
+  setup () {
+    return {
+      drawer: ref(true),
+      menuList
+    }
+  },
+
+  name: 'DrawerBar',
+
+  components: { DrawerVue }
 })
+const menuList = [
+  {
+    icon: 'receipt',
+    label: 'receipt',
+    separator: false
+  },
+
+  {
+    icon: 'receipt',
+    label: 'receipt',
+    separator: false
+  },
+  {
+    icon: 'receipt',
+    label: 'receipt',
+    separator: false
+  },
+  {
+    icon: 'receipt',
+    label: 'receipt',
+    separator: false
+  },
+  {
+    icon: 'receipt',
+    label: 'receipt',
+    separator: false
+  }
+]
 
 </script>

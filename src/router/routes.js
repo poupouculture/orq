@@ -1,9 +1,30 @@
 const routes = [
+
   {
     path: '/',
     component: () => import('pages/MessageUi.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') }
+    ]
+  },
+  {
+    path: '/Contact-Settings',
+    component: () => import('pages/ContactSettings.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Home.vue')
+      }
+    ]
+  },
+  {
+    path: '/Stow',
+    component: () => import('pages/Stow.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Home.vue')
+      }
     ]
   },
   {
