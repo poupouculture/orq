@@ -7,6 +7,10 @@ const routes = [
     ]
   },
   {
+    path: '/login',
+    component: () => import('pages/Login.vue')
+  },
+  {
     path: '/Languagetranslator',
     component: () => import('pages/IndexPage.vue'),
     children: [
