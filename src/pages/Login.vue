@@ -49,6 +49,7 @@
           </p>
         </footer>
       </section>
+      <Message v-model="isShow" :message="message" />
     </div>
   </div>
 </template>
@@ -61,18 +62,25 @@ export default {
 
 <script setup>
 import { ref } from 'vue'
+import Message from 'src/components/Message.vue'
 import useUserInfoStore from 'stores/modules/userInfo'
 import logo from 'assets/logo.png'
 
 const isChecked = ref(false),
   login = ref({ email: '', password: '' }),
   loading = ref(false),
+  isShow = ref(false),
+  message = ref(''),
   userInfo = useUserInfoStore()
 
 const submit = e => {
   if (login.value.email && login.value.password) {
     loading.value = true
     userInfo.login(login.value)
+      .catch(err => {
+        isShow.value = true
+        message.value = String(err)
+      })
       .finally(() => {
         loading.value = false
       })

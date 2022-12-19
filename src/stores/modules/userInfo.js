@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import useRouter from 'src/router'
-
-const router = useRouter()
+import router from 'src/router'
 
 const useUserInfoStore = defineStore('userInfo', {
   state () {
@@ -15,16 +13,17 @@ const useUserInfoStore = defineStore('userInfo', {
     }
   },
   getters: {
-    token: (state) => state.access_token
+    token: (state) => state.userInfo.access_token
   },
   actions: {
     login (content) {
       return api.post('/auth/login', content)
-        .then(({ data: userInfo }) => {
-          this.userInfo = userInfo
-          router.push('/dashboard')
+        .then(({ data: { data: userinfo } }) => {
+          this.userInfo = userinfo
+          router.push('/home')
         }).catch(err => {
           console.log(err)
+          return Promise.reject(err)
         })
     }
   }
