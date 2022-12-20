@@ -8,6 +8,10 @@ const routes = [
     ]
   },
   {
+    path: '/login',
+    component: () => import('pages/Login.vue'),
+  },
+  {
     path: '/Contact-Settings',
     component: () => import('pages/ContactSettings.vue'),
     children: [
