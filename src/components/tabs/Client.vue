@@ -97,7 +97,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import logo from '../../assets/logo.png'
+import logo from '../../assets/images/logo.png'
 import InputSelect from '../InputSelect.vue'
 import ServiceForm from '../ServiceForm.vue'
 const tab = ref('general')

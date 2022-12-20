@@ -64,7 +64,7 @@ export default {
 import { ref } from 'vue'
 import Message from 'src/components/Message.vue'
 import useUserInfoStore from 'stores/modules/userInfo'
-import logo from 'assets/logo.png'
+import logo from 'assets/images/logo.png'
 
 const isChecked = ref(false),
   login = ref({ email: '', password: '' }),
