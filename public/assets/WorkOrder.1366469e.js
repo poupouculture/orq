@@ -1,0 +1,1 @@
+import{_ as e,X as t,j as n,m as o,v as s}from"./index.34e3010a.js";const r=t({name:"WorkOrder"}),a={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=s("p",null," WORK ORDER ",-1),i=[c];function _(d,p,l,f,m,u){return n(),o("div",a,i)}var h=e(r,[["render",_]]);export{h as default};

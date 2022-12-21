@@ -2,14 +2,11 @@ const routes = [
 
   {
     path: '/',
-    component: () => import('pages/MessageUi.vue'),
-    children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
+    redirect: '/login'
   },
   {
     path: '/login',
-    component: () => import('pages/Login.vue'),
+    component: () => import('pages/Login.vue')
   },
   {
     path: '/Contact-Settings',

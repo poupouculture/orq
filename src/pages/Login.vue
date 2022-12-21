@@ -1,7 +1,7 @@
 <template>
   <div class="login h-full flex no-warp select-none">
     <div class="background h-screen px-7 pt-11 w-1/3">
-      <p class="flex no-wrap text-2xl items-center leading-none"><img class="w-12 mr-3" :src="logo" alt="logo">WABA</p>
+      <p class="flex no-wrap text-2xl items-center leading-none"><img class="w-40 mr-3" :src="logo" alt="logo"></p>
     </div>
 
     <div class="flex-1 flex no-wrap bg-white">
@@ -64,7 +64,7 @@ export default {
 import { ref } from 'vue'
 import Message from 'src/components/Message.vue'
 import useUserInfoStore from 'stores/modules/userInfo'
-import logo from 'assets/logo.png'
+import logo from 'assets/images/logo.png'
 
 const isChecked = ref(false),
   login = ref({ email: '', password: '' }),

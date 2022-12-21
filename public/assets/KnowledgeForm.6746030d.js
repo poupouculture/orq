@@ -1,0 +1,1 @@
+import{_ as e,X as t,j as n,m as o,v as s}from"./index.34e3010a.js";const a=t({name:"KnowledgeForm"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=s("p",null," KNOWLEDGE FORM ",-1),i=[c];function _(l,d,p,m,f,u){return n(),o("div",r,i)}var x=e(a,[["render",_]]);export{x as default};

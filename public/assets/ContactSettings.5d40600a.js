@@ -1,0 +1,1 @@
+import{_ as e,X as t,j as n,m as s,v as o}from"./index.34e3010a.js";const a=t({name:"ContactSettings"}),c={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=o("p",null," CONTACT SETTINGS ",-1),i=[r];function _(p,l,d,f,m,u){return n(),s("div",c,i)}var x=e(a,[["render",_]]);export{x as default};

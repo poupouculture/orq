@@ -20,7 +20,7 @@ const useUserInfoStore = defineStore('userInfo', {
       return api.post('/auth/login', content)
         .then(({ data: { data: userinfo } }) => {
           this.userInfo = userinfo
-          router.push('/home')
+          router.push('/dashboard')
         }).catch(err => {
           console.log(err)
           return Promise.reject(err)
