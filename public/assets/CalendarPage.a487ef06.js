@@ -1,1 +1,0 @@
-import{_ as e,j as t,k as n,l as a,m as s}from"./index.1fafe2b3.js";const o=t({name:"CalendarPage"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=s("p",null," CALENDAR ",-1),i=[c];function l(_,d,p,f,m,u){return n(),a("div",r,i)}var x=e(o,[["render",l]]);export{x as default};

@@ -1,1 +1,0 @@
-import{_ as e,j as t,k as n,l as o,m as s}from"./index.1fafe2b3.js";const a=t({name:"KnowledgeForm"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=s("p",null," KNOWLEDGE FORM ",-1),i=[c];function l(_,d,p,m,f,u){return n(),o("div",r,i)}var x=e(a,[["render",l]]);export{x as default};
