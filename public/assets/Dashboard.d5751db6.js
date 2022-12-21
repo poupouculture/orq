@@ -1,1 +1,0 @@
-import{_ as e,j as t,k as s,l as n,m as o}from"./index.1ed8b440.js";const a=t({name:"DashBoard"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=o("p",null," DASHBOARD ",-1),i=[c];function _(d,l,p,f,m,h){return s(),n("div",r,i)}var x=e(a,[["render",_]]);export{x as default};
