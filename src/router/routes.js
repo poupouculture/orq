@@ -1,4 +1,5 @@
 const routes = [
+
   {
     path: '/',
     component: () => import('pages/MessageUi.vue'),
@@ -8,7 +9,27 @@ const routes = [
   },
   {
     path: '/login',
-    component: () => import('pages/Login.vue')
+    component: () => import('pages/Login.vue'),
+  },
+  {
+    path: '/Contact-Settings',
+    component: () => import('pages/ContactSettings.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Home.vue')
+      }
+    ]
+  },
+  {
+    path: '/Stow',
+    component: () => import('pages/Stow.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Home.vue')
+      }
+    ]
   },
   {
     path: '/Languagetranslator',
