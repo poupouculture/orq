@@ -1,0 +1,1 @@
+import{_ as e,j as t,k as n,l as o,m as s}from"./index.1fafe2b3.js";const a=t({name:"CompanyPage"}),c={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=s("p",null," COMPANY PAGE ",-1),i=[r];function p(_,l,d,m,f,u){return n(),o("div",c,i)}var x=e(a,[["render",p]]);export{x as default};
