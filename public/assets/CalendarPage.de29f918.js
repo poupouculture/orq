@@ -1,0 +1,1 @@
+import{_ as e,X as t,j as n,m as a,v as s}from"./index.34e3010a.js";const o=t({name:"CalendarPage"}),r={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=s("p",null," CALENDAR ",-1),i=[c];function _(l,d,p,f,m,u){return n(),a("div",r,i)}var x=e(o,[["render",_]]);export{x as default};

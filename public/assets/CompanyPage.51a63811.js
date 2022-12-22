@@ -1,0 +1,1 @@
+import{_ as e,X as t,j as n,m as o,v as s}from"./index.34e3010a.js";const a=t({name:"CompanyPage"}),c={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=s("p",null," COMPANY PAGE ",-1),i=[r];function p(_,l,d,m,f,u){return n(),o("div",c,i)}var x=e(a,[["render",p]]);export{x as default};

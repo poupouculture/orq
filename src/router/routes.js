@@ -2,9 +2,9 @@ const routes = [
 
   {
     path: '/',
-    component: () => import('../../src/layouts/DrawerLayout.vue'),
+    component: () => import('../../src/layouts/Login.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', component: () => import('pages/Login.vue') }
     ]
   },
   {

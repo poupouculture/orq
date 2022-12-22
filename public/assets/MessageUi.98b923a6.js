@@ -1,0 +1,1 @@
+import{_ as e,X as s,j as t,m as n,v as a}from"./index.34e3010a.js";const o=s({name:"MessageUi"}),c={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=a("p",null," Message UI ",-1),i=[r];function _(p,l,d,f,m,g){return t(),n("div",c,i)}var x=e(o,[["render",_]]);export{x as default};
