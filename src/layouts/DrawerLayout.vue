@@ -12,14 +12,14 @@
             <input type="text" v-model="input" placeholder="Search" class="input" />
           </div>
 
-          <router-link to="/Dashboard" style="text-decoration: none; color: inherit">
+          <router-link to="/dashboard" style="text-decoration: none; color: inherit">
             <div class="icon-text">
               <img src="../../src/assets/images/my.png" />
               <p class="drawer-text">My</p>
             </div>
           </router-link>
 
-          <router-link to="/Dashboard" style="text-decoration: none; color: inherit">
+          <router-link to="/dashboard" style="text-decoration: none; color: inherit">
             <div class="icon-text">
               <img src="../../src/assets/images/dashboard.png" />
               <p class="drawer-text">Dashboard</p>
@@ -112,7 +112,6 @@
       </q-scroll-area>
     </q-drawer>
     <q-page-container  class="main-container">
-      <router-view />
     </q-page-container>
   </q-layout>
 </template>

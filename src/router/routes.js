@@ -1,10 +1,20 @@
 const routes = [
 
   {
-    path: '/',
-    component: () => import('../../src/layouts/Login.vue'),
+    path: '/HomeDrawer',
+    component: () => import('../../src/layouts/DrawerLayout.vue'),
+    meta: {
+      requiresAuth: true
+    },
     children: [
-      { path: '', component: () => import('pages/Login.vue') }
+      { path: '', component: () => import('../../src/layouts/DrawerLayout.vue') }
+    ]
+  },
+  {
+    path: '/',
+    component: () => import('../../src/pages/Login.vue'),
+    children: [
+      { path: '', component: () => import('../../src/pages/login.vue') }
     ]
   },
   {
@@ -12,7 +22,7 @@ const routes = [
     component: () => import('pages/ContactSettings.vue'),
     children: [
       {
-        path: '',
+        path: '/kk',
         component: () => import('pages/Home.vue')
       }
     ]

@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard q-px-md"
   >
-    <h2 class="text-h5">Dashboard</h2>
+    <!-- <h2 class="text-h5">Dashboard</h2> -->
 
     <q-tabs
       v-model="active"
@@ -77,7 +77,8 @@
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  name: 'DashBoard'
+  name: 'DashBoard',
+  components: { }
 })
 </script>
 

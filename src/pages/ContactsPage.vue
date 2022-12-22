@@ -2,7 +2,7 @@
   <div class="main-container">
     <MenuBar />
     <p class="header-text">Contact</p>
-    <div class="filters-holder">
+    <!-- <div class="filters-holder">
       <div class="inputholders">
         <q-select outlined v-model="model" :options="options" :options-dense="denseOpts" class="select-input" dense>
           <template v-slot:prepend>
@@ -43,7 +43,7 @@
 
       <q-input v-model="ph" placeholder="Placeholder" hint="With placeholder" :dense="dense" outlined />
 
-    </div>
+    </div> -->
     <ContactsTable />
   </div>
 </template>
