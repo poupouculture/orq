@@ -2,7 +2,7 @@ const routes = [
 
   {
     path: '/',
-    component: () => import('pages/MessageUi.vue'),
+    component: () => import('../../src/layouts/DrawerLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
@@ -99,6 +99,16 @@ const routes = [
   {
     path: '/Message',
     component: () => import('pages/MessageUi.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Home.vue')
+      }
+    ]
+  },
+  {
+    path: '/Contactsgeneral',
+    component: () => import('pages/ContactsGeneral.vue'),
     children: [
       {
         path: '',

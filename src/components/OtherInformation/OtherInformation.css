@@ -1,0 +1,29 @@
+.main-hold {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.bottom-textmain {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 17px;
+  color: #2E2E3A;
+  margin-top: 40px;
+}
+
+.bottom-textsub {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 13px;
+  text-align: center;
+  color: #9A9AAF;
+  margin-top: 30px;
+  text-align: center;
+  width: 40%;
+}/*# sourceMappingURL=OtherInformation.css.map */

@@ -1,0 +1,41 @@
+.main-container {
+  margin-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.header-text {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  /* identical to box height, or 133% */
+  /* gray/900 */
+  color: #111827;
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
+.filtersholder {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.select {
+  width: 200px;
+}
+
+.select-input {
+  width: 100px;
+}
+
+.inputholders {
+  display: flex;
+  flex-direction: row;
+}
+
+.input {
+  width: 100px;
+}/*# sourceMappingURL=Contacts.css.map */

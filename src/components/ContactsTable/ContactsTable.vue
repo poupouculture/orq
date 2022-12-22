@@ -1,4 +1,5 @@
 <template>
+  <div class="main-container">
   <q-table :selected-rows-label="getSelectedString" selection="multiple" class="statement-table" :rows="currencyData"
     :hide-header="grid" :columns="currencyColumns" row-key="__index" :grid="grid" :filter="filter"
     v-model:pagination="pagination" :rows-per-page-options="[6]" @focusin="activateNavigation"
@@ -10,6 +11,16 @@
         {{ col.label }}
       </q-th>
     </q-tr>
+    <template #body-cell-Invoice="props">
+      <q-td :props="props">
+        <router-link  to="/Contactsgeneral" style="text-decoration: none; color: inherit" >
+        <p class="edit-button">
+          Edit
+
+        </p></router-link>
+</q-td>
+
+    </template>
 
     <template #body-cell-IncurredMonth="props">
       <q-td :props="props">
@@ -35,23 +46,7 @@
       </div>
     </template>
   </q-table>
-  <q-dialog v-model="show_dialog">
-    <q-card style="width: 400px; max-width: 75vw; border-radius: 15px">
-      <q-card-section>
-        <q-btn round flat dense icon="close" class="float-right" color="grey-8" v-close-popup></q-btn>
-        <div class="editholder">
-          <div class="Editheading">Edit</div>
-        </div>
-      </q-card-section>
-      <q-separator inset></q-separator>
-      <q-card-section class="q-mt-xs">
-        <q-form class="q-gutter-md">
-
-        </q-form>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
-
+</div>
 </template>
 
 <script>
@@ -400,33 +395,6 @@ export default {
       totalRecord: 0,
       pageCount: 1
     })
-
-    // function editRow (props) {
-    //   fd.noti()
-    //   // do something
-    //   fd.noti = q$.notify({
-    //     type: 'info',
-    //     textColor: 'grey-10',
-    //     multiLine: true,
-    //     message: `I'll edit row data => ${JSON.stringify(props.row)
-    //       .split(',')
-    //       .join(', ')}`,
-    //     timeout: 2000
-    //   })
-    // }
-
-    // function deleteRow (props) {
-    //   fd.noti()
-    //   // do something
-    //   fd.noti = q$.notify({
-    //     type: 'negative',
-    //     multiline: true,
-    //     message: `I'll delete row data => ${JSON.stringify(props.row)
-    //       .split(',')
-    //       .join(', ')}`,
-    //     timeout: 2000
-    //   })
-    // }
 
     function addRow () {
       if (fd.editedIndex > -1) {
