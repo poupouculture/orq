@@ -1,1 +1,0 @@
-import{_ as e,X as t,j as n,m as o,v as s}from"./index.34e3010a.js";const a=t({name:"StowPage"}),c={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=s("p",null," STOW ",-1),i=[r];function _(p,l,d,f,m,u){return n(),o("div",c,i)}var g=e(a,[["render",_]]);export{g as default};

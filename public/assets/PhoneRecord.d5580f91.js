@@ -1,1 +1,0 @@
-import{_ as e,X as t,j as n,m as o,v as s}from"./index.34e3010a.js";const c=t({name:"PhoneRecord"}),a={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},r=s("p",null," PHONE RECORD ",-1),i=[r];function _(d,p,l,f,m,h){return n(),o("div",a,i)}var x=e(c,[["render",_]]);export{x as default};

@@ -1,1 +1,0 @@
-import{_ as e,X as t,j as o,m as n,v as s}from"./index.34e3010a.js";const r=t({name:"ReportForm"}),a={style:{display:"flex","justify-content":"center","align-items":"center","align-self":"center","margin-top":"275px"}},c=s("p",null," REPORT FORM ",-1),i=[c];function p(_,l,d,m,f,u){return o(),n("div",a,i)}var R=e(r,[["render",p]]);export{R as default};
