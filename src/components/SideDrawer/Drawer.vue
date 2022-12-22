@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lff" class="shadow-2 rounded-borders">
+  <q-layout>
 
     <q-drawer v-model="drawer" show-if-above :width="288" :breakpoint="500" bordered class="drawerclass">
 
@@ -113,20 +113,21 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container>
+    <!-- <q-page-container>
       <q-page padding>
-        <ContactsTable />
+        <MenuBar />
 
       </q-page>
-    </q-page-container>
+    </q-page-container> -->
   </q-layout>
 </template>
 
 <script>
 
-import ContactsTable from 'src/components/ContactsTable/ContactsTable.vue'
+// import ContactsTable from 'src/components/ContactsTable/ContactsTable.vue'
 import { defineComponent, ref } from 'vue'
 import './drawer.scss'
+// import MenuBar from '../MenuBar/MenuBar.vue'
 export default defineComponent({
   setup () {
     return {
@@ -137,7 +138,7 @@ export default defineComponent({
 
   name: 'DrawerBar',
 
-  components: { ContactsTable }
+  components: { }
 })
 const menuList = [
   {

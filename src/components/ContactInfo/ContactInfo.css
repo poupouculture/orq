@@ -1,0 +1,202 @@
+.centerhold {
+  margin-top: 100px;
+  margin-left: 300px;
+}
+
+.side-bar {
+  background-color: white;
+  cursor: pointer;
+}
+
+.side-bar-active {
+  background-color: #4B44F6;
+  cursor: pointer;
+}
+
+.sidebar-row {
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+  margin-top: 20px;
+  display: inline-flex;
+  cursor: pointer;
+  float: left;
+  clear: left;
+  background-color: white;
+}
+
+.sidebar-row-active {
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+  margin-top: 20px;
+  display: inline-flex;
+  background-color: #4B44F6;
+  cursor: pointer;
+  padding: 10px 40px;
+  border: radius 10px;
+  float: left;
+  clear: left;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  margin-left: -20px;
+}
+
+.sidebar-subtext {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 15px;
+  color: #2E2E3A;
+  margin-left: 10px;
+}
+
+.img {
+  color: white;
+}
+
+.sidebar-subtext-active {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 15px;
+  color: #2E2E3A;
+  margin-left: 10px;
+  color: white;
+}
+
+.image-holder {
+  width: 50px;
+}
+
+.bottom-textmainn {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 17px;
+  color: #2E2E3A;
+  text-align: center;
+  display: flex;
+  margin-top: 20px;
+  align-self: center;
+}
+
+.bottom-textsubb {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 13px;
+  /* identical to box height */
+  text-align: center;
+  margin-top: 10px;
+  display: flex;
+  text-align: center;
+  color: #9A9AAF;
+}
+
+.center-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 100px;
+  margin-bottom: 20px;
+}
+
+.modal-btn {
+  margin-top: 20px;
+}
+
+.phone-txt {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+  color: #2E2E3A;
+}
+
+.category-txt {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 15px;
+  color: #2E2E3A;
+}
+
+.radio-1 {
+  margin-top: 15px;
+}
+
+.toolbar-holder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.radio-holders {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.radio-2 {
+  margin-right: 50px;
+}
+
+.radio-1 {
+  margin-right: 50px;
+}
+
+.dialogmain {
+  padding: 20px;
+}
+
+.radio-holder {
+  padding: 0px 15px;
+  margin-top: 5px;
+}
+
+.radio-class {
+  margin-top: 10px;
+}
+
+.field-holderr {
+  margin-top: 20px;
+}
+
+.input-individual {
+  margin-top: 10px;
+}
+
+.input-individuall {
+  margin-top: 10px;
+}
+
+.lowerdialog-btn {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.rowsubhold {
+  margin-left: 10px;
+}
+
+.rowdialog {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.cardwidth {
+  width: 80%;
+}/*# sourceMappingURL=ContactInfo.css.map */

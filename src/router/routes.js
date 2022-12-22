@@ -1,19 +1,28 @@
 const routes = [
 
   {
-    path: '/',
-    redirect: '/login'
+    path: '/HomeDrawer',
+    component: () => import('../../src/layouts/DrawerLayout.vue'),
+    meta: {
+      requiresAuth: true
+    },
+    children: [
+      { path: '', component: () => import('../../src/layouts/DrawerLayout.vue') }
+    ]
   },
   {
-    path: '/login',
-    component: () => import('pages/Login.vue')
+    path: '/',
+    component: () => import('../../src/pages/Login.vue'),
+    children: [
+      { path: '', component: () => import('../../src/pages/Login.vue') }
+    ]
   },
   {
     path: '/Contact-Settings',
     component: () => import('pages/ContactSettings.vue'),
     children: [
       {
-        path: '',
+        path: '/kk',
         component: () => import('pages/Home.vue')
       }
     ]
@@ -100,6 +109,16 @@ const routes = [
   {
     path: '/Message',
     component: () => import('pages/MessageUi.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Home.vue')
+      }
+    ]
+  },
+  {
+    path: '/Contactsgeneral',
+    component: () => import('pages/ContactsGeneral.vue'),
     children: [
       {
         path: '',
