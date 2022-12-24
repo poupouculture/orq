@@ -1,11 +1,11 @@
-import { route } from 'quasar/wrappers'
 import {
   createRouter,
   createMemoryHistory,
   createWebHistory,
-  createWebHashHistory
-} from 'vue-router'
-import routes from './routes'
+  createWebHashHistory,
+} from "vue-router";
+import routes from "./routes";
+import useUserInfoStore from "stores/modules/userInfo";
 
 /*
  * If not building with SSR mode, you can
@@ -16,18 +16,33 @@ import routes from './routes'
  * with the Router instance.
  */
 
-export default route(function () {
+export default function () {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : process.env.VUE_ROUTER_MODE === 'history'
-      ? createWebHistory
-      : createWebHashHistory
+    : process.env.VUE_ROUTER_MODE === "history"
+    ? createWebHistory
+    : createWebHashHistory;
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
-    history: createHistory(process.env.VUE_ROUTER_BASE)
-  })
+    history: createHistory(process.env.VUE_ROUTER_BASE),
+  });
 
-  return Router
-})()
+  Router.beforeEach(async (to, from, next) => {
+    const userStore = useUserInfoStore();
+    const userProfile = userStore.getUserProfile;
+
+    if (to.path === "/login" && userProfile) {
+      next("/");
+    }
+
+    if (to.matched.some((record) => record.meta.requiresAuth) && !userProfile) {
+      next("/login");
+    } else {
+      next();
+    }
+  });
+
+  return Router;
+}

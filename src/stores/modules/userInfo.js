@@ -1,32 +1,58 @@
-import { defineStore } from 'pinia'
-import { api } from 'boot/axios'
-import router from 'src/router'
+import { defineStore } from "pinia";
+import { api } from "boot/axios";
+import { LocalStorage } from "quasar";
 
-const useUserInfoStore = defineStore('userInfo', {
-  state () {
-    return {
-      userInfo: {
-        access_token: '',
-        expires: null,
-        refresh_token: ''
-      }
-    }
-  },
+const useUserInfoStore = defineStore("userInfo", {
+  state: () => ({
+    userInfo: {
+      access_token: "",
+      expires: null,
+      refresh_token: "",
+    },
+    userProfile: null,
+  }),
   getters: {
-    token: (state) => state.userInfo.access_token
+    token: (state) => state.userInfo.access_token,
+    getUserInfo: (state) => state.userInfo,
+    getUserProfile: (state) => state.userProfile,
   },
   actions: {
-    login (content) {
-      return api.post('/auth/login', content)
-        .then(({ data: { data: userinfo } }) => {
-          this.userInfo = userinfo
-          router.push('/HomeDrawer')
-        }).catch(err => {
-          console.log(err)
-          return Promise.reject(err)
-        })
-    }
-  }
-})
+    async login(params) {
+      try {
+        const {
+          data: { data },
+        } = await api.post("/auth/login", params);
 
-export default useUserInfoStore
+        this.userInfo = data;
+
+        LocalStorage.set("userinfo", JSON.stringify(data));
+
+        api.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
+        await this.getProfile();
+
+        this.router.push("/");
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getProfile() {
+      try {
+        const { data } = await api.get("/users/me");
+
+        this.userProfile = data;
+        return data;
+      } catch (err) {
+        console.log(err);
+        this.router.push("/login");
+      }
+    },
+    setUserInfo(params) {
+      this.userInfo = params;
+    },
+    setUserProfile(params) {
+      this.userProfile = params;
+    },
+  },
+});
+
+export default useUserInfoStore;
