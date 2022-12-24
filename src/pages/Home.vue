@@ -6,11 +6,3 @@
 
   <q-btn label="english" @click="$i18n.locale = 'en-US'" />
 </template>
-
-<script>
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "IndexPage",
-});
-</script>

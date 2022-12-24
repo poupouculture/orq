@@ -75,5 +75,7 @@ module.exports = {
     quotes: "off",
     semi: "off",
     indent: "off",
+    "space-before-function-paren": "off",
+    "vue/multi-word-component-names": "off",
   },
 };

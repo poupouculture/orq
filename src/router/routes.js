@@ -17,7 +17,7 @@ const routes = [
     children: [
       {
         path: "",
-        component: () => import("pages/Home.vue"),
+        component: () => import("pages/Dashboard.vue"),
       },
       {
         path: "contact-settings",
