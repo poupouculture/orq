@@ -40,8 +40,8 @@ const routes = [
         component: () => import("pages/Company.vue"),
       },
       {
-        path: "contacts",
-        component: () => import("pages/Contacts.vue"),
+        path: "customers",
+        component: () => import("pages/Customers/index.vue"),
       },
       {
         path: "dashboard",

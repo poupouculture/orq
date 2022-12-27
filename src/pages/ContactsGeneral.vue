@@ -8,25 +8,31 @@
       <p class="header-blacktext">Chester Buchanan</p>
     </div>
     <div class="header-row">
-      <q-btn outline style="color: #4B44F6;" label="Transaction Log" class="header-button" />
-      <q-btn style="background: #4B44F6; color: white" label="Merge" class="header-button" />
+      <q-btn
+        outline
+        style="color: #4b44f6"
+        label="Transaction Log"
+        class="header-button"
+      />
+      <q-btn
+        style="background: #4b44f6; color: white"
+        label="Merge"
+        class="header-button"
+      />
     </div>
     <div class="form-holder">
       <ContactsForm />
-
     </div>
   </div>
 </template>
 
 <script>
-
-import { defineComponent } from 'vue'
-import './ContactsGeneral.scss'
-import MenuBar from 'src/components/MenuBar/MenuBar.vue'
-import ContactsForm from 'src/components/ContactsForm/ContactsForm.vue'
+import { defineComponent } from "vue";
+import "./ContactsGeneral.scss";
+import MenuBar from "src/components/MenuBar/MenuBar.vue";
+import ContactsForm from "src/components/ContactsForm/ContactsForm.vue";
 export default defineComponent({
-  name: 'ContactsGeneral',
-  components: { MenuBar, ContactsForm }
-})
-
+  name: "ContactsGeneral",
+  components: { MenuBar, ContactsForm },
+});
 </script>

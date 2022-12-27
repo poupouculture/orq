@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <MenuBar />
-    <p class="header-text">Contact</p>
+    <p class="header-text">Customers</p>
     <!-- <div class="filters-holder">
       <div class="inputholders">
         <q-select outlined v-model="model" :options="options" :options-dense="denseOpts" class="select-input" dense>
@@ -49,59 +49,56 @@
 </template>
 
 <script>
+import { defineComponent, ref } from "vue";
+import ContactsTable from "src/components/ContactsTable/ContactsTable.vue";
+import MenuBar from "src/components/MenuBar/MenuBar.vue";
+import "./style.scss";
 
-import { defineComponent, ref } from 'vue'
-import ContactsTable from 'src/components/ContactsTable/ContactsTable.vue'
-import MenuBar from 'src/components/MenuBar/MenuBar.vue'
-import '../pages/Contacts.scss'
 export default defineComponent({
-  setup () {
+  setup() {
     return {
       drawer: ref(true),
       menuList,
       model: ref(null),
-      date: ref('2019/02/01'),
+      date: ref("2019/02/01"),
 
-      options: [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ],
+      options: ["Google", "Facebook", "Twitter", "Apple", "Oracle"],
 
       dense: ref(false),
-      denseOpts: ref(false)
-    }
+      denseOpts: ref(false),
+    };
   },
 
-  name: 'DrawerBar',
+  name: "DrawerBar",
 
-  components: { ContactsTable, MenuBar }
-})
+  components: { ContactsTable, MenuBar },
+});
 const menuList = [
   {
-    icon: 'receipt',
-    label: 'receipt',
-    separator: false
+    icon: "receipt",
+    label: "receipt",
+    separator: false,
   },
 
   {
-    icon: 'receipt',
-    label: 'receipt',
-    separator: false
+    icon: "receipt",
+    label: "receipt",
+    separator: false,
   },
   {
-    icon: 'receipt',
-    label: 'receipt',
-    separator: false
+    icon: "receipt",
+    label: "receipt",
+    separator: false,
   },
   {
-    icon: 'receipt',
-    label: 'receipt',
-    separator: false
+    icon: "receipt",
+    label: "receipt",
+    separator: false,
   },
   {
-    icon: 'receipt',
-    label: 'receipt',
-    separator: false
-  }
-]
-
+    icon: "receipt",
+    label: "receipt",
+    separator: false,
+  },
+];
 </script>
