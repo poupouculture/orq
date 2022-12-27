@@ -19,6 +19,7 @@ const useUserInfoStore = defineStore("userInfo", {
   actions: {
     async login(params) {
       try {
+        api.defaults.headers.common.Authorization = ``;
         const {
           data: { data },
         } = await api.post("/auth/login", params);
