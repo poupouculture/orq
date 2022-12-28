@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div style="max-width: 800px">
+    <div style="max-width: 1000px">
       <q-tabs
         v-model="tab"
         dense
@@ -49,26 +49,13 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script setup>
+import { ref } from "vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import GeneralInformation from "../GeneralInformation/GeneralInformation.vue";
 import OtherInformation from "../OtherInformation/OtherInformation.vue";
 import Remark from "../Remark/Remark.vue";
 import Attachement from "../Attachement/Attachement.vue";
-export default defineComponent({
-  setup() {
-    return {
-      tab: ref("General-information"),
-    };
-  },
 
-  components: {
-    ContactInfo,
-    GeneralInformation,
-    OtherInformation,
-    Remark,
-    Attachement,
-  },
-});
+const tab = ref("General-information");
 </script>

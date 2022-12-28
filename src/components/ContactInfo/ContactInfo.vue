@@ -13,28 +13,35 @@
               <q-radio
                 dense
                 v-model="type"
-                val="home"
+                val="Mobile"
+                label="Mobile"
+                class="radio-1"
+              />
+              <q-radio
+                dense
+                v-model="type"
+                val="Home"
                 label="Home"
                 class="radio-1"
               />
               <q-radio
                 dense
                 v-model="type"
-                val="company"
+                val="Company"
                 label="Company"
                 class="radio-2"
               />
               <q-radio
                 dense
                 v-model="type"
-                val="fax"
+                val="Fax"
                 label="Fax"
                 class="radio-2"
               />
               <q-radio
                 dense
                 v-model="type"
-                val="other"
+                val="Other"
                 label="Other"
                 class="radio-2"
               />
@@ -44,7 +51,7 @@
               <div class="col">
                 <q-input
                   outlined
-                  v-model="text"
+                  v-model="phoneNumber"
                   label="Outlined"
                   dense
                   class="input-individual"
@@ -56,7 +63,7 @@
               <div class="col">
                 <q-input
                   outlined
-                  v-model="text"
+                  v-model="extension"
                   label="Outlined"
                   dense
                   class="input-individual"
@@ -68,7 +75,7 @@
               <div class="col">
                 <q-input
                   outlined
-                  v-model="text"
+                  v-model="remarks"
                   label="Outlined"
                   dense
                   class="input-individual"
@@ -76,7 +83,12 @@
               </div>
             </div>
             <div class="lowerdialog-btn">
-              <q-btn color="primary" label="Save" v-close-popup />
+              <q-btn
+                color="primary"
+                label="Save"
+                v-close-popup
+                @click="addPhone"
+              />
             </div>
           </div>
         </div>
@@ -410,312 +422,138 @@
             </div>
           </div>
         </div>
-        <div class="col-1"></div>
-
-        <div class="col-8">
-          <div class="center-holder">
-            <div>
-              <img src="../../assets/images/otherinfomain.png" />
-
-              <p class="bottom-textmainn">No {{ selectedtab }}</p>
+        <div class="col-8" style="margin-left: 10px">
+          <div>
+            <div class="row justify-between">
+              <q-input outlined v-model="text" dense>
+                <template v-slot:prepend>
+                  <q-icon name="event" />
+                </template>
+              </q-input>
+              <q-btn
+                v-if="
+                  customerStore.customer.contacts && selectedtab === 'Phone'
+                "
+                style="background: #4b44f6; color: white"
+                label="+ Add"
+                @click="phonedialog = true"
+              />
             </div>
-            <p v-if="selectedtab === 'Phone'" class="bottom-textsubb">
-              {{ phonetxt }}
-            </p>
-            <p v-if="selectedtab === 'Email'" class="bottom-textsubb">
-              {{ emailtxt }}
-            </p>
-            <p v-if="selectedtab === 'Address'" class="bottom-textsubb">
-              {{ addresstxt }}
-            </p>
-            <p v-if="selectedtab === 'Media'" class="bottom-textsubb">
-              {{ mediatxt }}
-            </p>
+            <div
+              v-if="customerStore.customer.contacts && selectedtab === 'Phone'"
+              class="row q-col-gutter-md"
+            >
+              <div
+                v-for="(contact, index) in customerStore.customer.contacts"
+                :key="index"
+              >
+                <contact-phone-card
+                  :phone-number="contact.contacts_id.phone_number"
+                  :remarks="`This is ${contact.contacts_id.remarks} number`"
+                  @edit="phonedialog = true"
+                />
+              </div>
+            </div>
+            <div v-else class="row justify-center">
+              <div>
+                <div>
+                  <img src="../../assets/images/otherinfomain.png" />
 
-            <q-btn
-              v-if="selectedtab === 'Phone'"
-              color="primary"
-              label="+   New "
-              @click="phonedialog = true"
-              class="modal-btn"
-            />
-            <q-btn
-              v-if="selectedtab === 'Email'"
-              color="primary"
-              label="+   New "
-              @click="emaildialog = true"
-              class="modal-btn"
-            />
-            <q-btn
-              v-if="selectedtab === 'Address'"
-              color="primary"
-              label="+   New "
-              @click="addressdialog = true"
-              class="modal-btn"
-            />
-            <q-btn
-              v-if="selectedtab === 'Media'"
-              color="primary"
-              label="+   New "
-              @click="mediadialog = true"
-              class="modal-btn"
-            />
+                  <p class="bottom-textmainn">No {{ selectedtab }}</p>
+                </div>
+                <p v-if="selectedtab === 'Phone'" class="bottom-textsubb">
+                  {{ phonetxt }}
+                </p>
+                <p v-if="selectedtab === 'Email'" class="bottom-textsubb">
+                  {{ emailtxt }}
+                </p>
+                <p v-if="selectedtab === 'Address'" class="bottom-textsubb">
+                  {{ addresstxt }}
+                </p>
+                <p v-if="selectedtab === 'Media'" class="bottom-textsubb">
+                  {{ mediatxt }}
+                </p>
+
+                <q-btn
+                  v-if="selectedtab === 'Phone'"
+                  color="primary"
+                  label="+   New "
+                  @click="phonedialog = true"
+                  class="modal-btn"
+                />
+                <q-btn
+                  v-if="selectedtab === 'Email'"
+                  color="primary"
+                  label="+   New "
+                  @click="emaildialog = true"
+                  class="modal-btn"
+                />
+                <q-btn
+                  v-if="selectedtab === 'Address'"
+                  color="primary"
+                  label="+   New "
+                  @click="addressdialog = true"
+                  class="modal-btn"
+                />
+                <q-btn
+                  v-if="selectedtab === 'Media'"
+                  color="primary"
+                  label="+   New "
+                  @click="mediadialog = true"
+                  class="modal-btn"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <q-dialog v-model="phonedialog">
-      <q-card>
-        <q-toolbar class="toolbar-holder">
-          <p class="phone-txt">Phone</p>
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-toolbar>
-
-        <q-card-section>
-          <p class="category-txt">Category</p>
-          <div class="radio-holders">
-            <q-radio
-              dense
-              v-model="shape"
-              val="line"
-              label="Home"
-              class="radio-1"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="rectangle"
-              label="Company"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="ellipse"
-              label="Fax"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="polygon"
-              label="Other"
-              class="radio-2"
-            />
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p>Phone Number</p>
-            </div>
-            <div class="col-12"></div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="addressdialog">
-      <q-card>
-        <q-toolbar class="toolbar-holder">
-          <p class="phone-txt">Phone</p>
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-toolbar>
-
-        <q-card-section>
-          <p class="category-txt">Category</p>
-          <div class="radio-holders">
-            <q-radio
-              dense
-              v-model="shape"
-              val="line"
-              label="Home"
-              class="radio-1"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="rectangle"
-              label="Company"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="ellipse"
-              label="Fax"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="polygon"
-              label="Other"
-              class="radio-2"
-            />
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p>Phone Number</p>
-            </div>
-
-            <div class="col-12"></div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="emaildialog">
-      <q-card>
-        <q-toolbar class="toolbar-holder">
-          <p class="phone-txt">Phone</p>
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-toolbar>
-
-        <q-card-section>
-          <p class="category-txt">Category</p>
-          <div class="radio-holders">
-            <q-radio
-              dense
-              v-model="shape"
-              val="line"
-              label="Home"
-              class="radio-1"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="rectangle"
-              label="Company"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="ellipse"
-              label="Fax"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="polygon"
-              label="Other"
-              class="radio-2"
-            />
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p>Phone Number</p>
-            </div>
-            <div class="col-12"></div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="mediadialog">
-      <q-card>
-        <q-toolbar class="toolbar-holder">
-          <p class="phone-txt">Phone</p>
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-toolbar>
-
-        <q-card-section>
-          <p class="category-txt">Category</p>
-          <div class="radio-holders">
-            <q-radio
-              dense
-              v-model="shape"
-              val="line"
-              label="Home"
-              class="radio-1"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="rectangle"
-              label="Company"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="ellipse"
-              label="Fax"
-              class="radio-2"
-            />
-            <q-radio
-              dense
-              v-model="shape"
-              val="polygon"
-              label="Other"
-              class="radio-2"
-            />
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p>Phone Number</p>
-            </div>
-            <div class="col-12"></div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script setup>
+import { ref } from "vue";
 import "./ContactInfo.scss";
-
 import "vue3-tel-input/dist/vue3-tel-input.css";
-export default defineComponent({
-  setup() {
-    return {
-      drawer: ref(true),
-      firstname: ref(""),
-      lastname: ref(""),
-      ID: ref(""),
-      customercode: ref(""),
-      gender: ref(),
-      alert: ref("false"),
-      phonedialog: ref(false),
-      emaildialog: ref(false),
-      addressdialog: ref(false),
-      mediadialog: ref(false),
-      type: ref("home"),
-      toolbar: ref(false),
+import ContactPhoneCard from "../Customer/ContactPhoneCard.vue";
+import { useRoute } from "vue-router";
+import useCustomerStore from "src/stores/modules/customer.js";
 
-      options: ["Google", "Facebook", "Twitter", "Apple", "Oracle"],
-      genderdata: ["Male", "Female", "Others"],
+const route = useRoute();
+const customerStore = useCustomerStore();
 
-      tags: ref(""),
-    };
-  },
-  data() {
-    return {
-      text: "",
-      date: "",
-      selectedtab: "Phone",
-      phonetxt: "Click the button to add the first call",
-      emailtxt: "Click the button below to add Email information.",
-      addresstxt: "Click the button below to add address information.",
-      mediatxt:
-        "You can add up to 10 files, videos,photos and other attachments to each , record and the maximum size of eachattached file is 10 MB",
-    };
-  },
+const phonedialog = ref(false);
+const phoneNumber = ref("");
+const extension = ref("");
+const remarks = ref("");
 
-  name: "ContactInfo",
+const type = ref("");
+const text = ref("");
+const selectedtab = ref("Phone");
+const phonetxt = ref("Click the button to add the first call");
+const emailtxt = ref("Click the button below to add Email information.");
+const addresstxt = ref("Click the button below to add address information.");
+const mediatxt = ref(
+  "You can add up to 10 files, videos,photos and other attachments to each , record and the maximum size of eachattached file is 10 MB"
+);
 
-  methods: {
-    handleclick(data) {
-      this.selectedtab = data;
-    },
-    onSelect({ name, iso2, dialCode }) {
-      console.log(name, iso2, dialCode);
-    },
-  },
-  components: {},
-});
+const handleclick = (data) => {
+  selectedtab.value = data;
+};
+
+const addPhone = async () => {
+  const customerId = route.params.id;
+  const params = {
+    category: type.value,
+    phone_number: phoneNumber.value,
+    extension: extension.value,
+    remarks: remarks.value,
+  };
+  const result = await customerStore.addContact(customerId, params);
+  console.log(result);
+};
 </script>
+
 <style lang="sass" scoped>
 
 .row>div.col-3

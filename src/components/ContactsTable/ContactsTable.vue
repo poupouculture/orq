@@ -52,10 +52,15 @@
           {{ props.row.customer_code }}
         </q-td>
       </template>
+      <template #body-cell-company="props">
+        <q-td :props="props">
+          {{ groupedCompanies(props.row.companies) }}
+        </q-td>
+      </template>
       <template #body-cell-action="props">
         <q-td :props="props">
           <router-link
-            to="/Contactsgeneral"
+            :to="`/customers/${props.row.id}`"
             style="text-decoration: none; color: inherit"
           >
             <p class="edit-button">Edit</p></router-link
@@ -96,7 +101,7 @@ const currencyColumns = [
   },
   {
     name: "company",
-    align: "center",
+    align: "left",
     label: "Company",
     field: "company",
     sortable: true,
@@ -220,6 +225,11 @@ const data = reactive({
 //   props.toggleFullscreen();
 //   fd.inFs = props.inFullscreen;
 // }
+
+const groupedCompanies = (companies) => {
+  const grouped = companies.map((company) => company.companies_id.name_english);
+  return grouped.join(", ");
+};
 
 onMounted(async () => {
   const {

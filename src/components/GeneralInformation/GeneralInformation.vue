@@ -56,7 +56,7 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <div>
+  <div v-if="customerStore.customer">
     <div class="q-pa-md">
       <div class="row">
         <div class="col-2">
@@ -72,21 +72,41 @@
       <div class="row">
         <div class="col">
           <p class="label-style">First Name</p>
-          <q-input outlined v-model="firstname" class="indi" dense />
+          <q-input
+            outlined
+            v-model="customerStore.customer.first_name"
+            class="indi"
+            dense
+          />
         </div>
         <div class="col">
           <p class="label-style">Last Name</p>
-          <q-input outlined v-model="lastname" class="indi" dense />
+          <q-input
+            outlined
+            v-model="customerStore.customer.last_name"
+            class="indi"
+            dense
+          />
         </div>
       </div>
       <div class="row">
         <div class="col">
           <p class="label-style">ID Number</p>
-          <q-input outlined v-model="ID" class="indi" dense />
+          <q-input
+            outlined
+            v-model="customerStore.customer.id_number"
+            class="indi"
+            dense
+          />
         </div>
         <div class="col">
           <p class="label-style">Customer Code</p>
-          <q-input outlined v-model="customercode" class="indi" dense />
+          <q-input
+            outlined
+            v-model="customerStore.customer.customer_code"
+            class="indi"
+            dense
+          />
         </div>
       </div>
       <div class="row">
@@ -166,11 +186,10 @@
 <script setup>
 import { ref } from "vue";
 import "./GeneralInformation.scss";
+import useCustomerStore from "src/stores/modules/customer.js";
 
-const firstname = ref("");
-const lastname = ref("");
-const ID = ref("");
-const customercode = ref("");
+const customerStore = useCustomerStore();
+
 const gender = ref();
 const deletedialog = ref(false);
 const savedialog = ref(false);
