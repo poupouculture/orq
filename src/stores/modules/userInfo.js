@@ -19,6 +19,7 @@ const useUserInfoStore = defineStore("userInfo", {
   actions: {
     async login(params) {
       try {
+        api.defaults.headers.common.Authorization = ``;
         const {
           data: { data },
         } = await api.post("/auth/login", params);
@@ -27,7 +28,6 @@ const useUserInfoStore = defineStore("userInfo", {
 
         LocalStorage.set("userinfo", JSON.stringify(data));
 
-        api.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
         await this.getProfile();
 
         this.router.push("/");
@@ -37,6 +37,9 @@ const useUserInfoStore = defineStore("userInfo", {
     },
     async getProfile() {
       try {
+        const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
+        api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
+
         const { data } = await api.get("/users/me");
 
         this.userProfile = data;
