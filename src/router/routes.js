@@ -40,8 +40,12 @@ const routes = [
         component: () => import("pages/Company.vue"),
       },
       {
-        path: "contacts",
-        component: () => import("pages/Contacts.vue"),
+        path: "customers/:id",
+        component: () => import("pages/Customers/Detail/index.vue"),
+      },
+      {
+        path: "customers",
+        component: () => import("pages/Customers/index.vue"),
       },
       {
         path: "dashboard",
@@ -66,10 +70,6 @@ const routes = [
       {
         path: "message",
         component: () => import("pages/MessageUi.vue"),
-      },
-      {
-        path: "contacts-general",
-        component: () => import("pages/ContactsGeneral.vue"),
       },
     ],
   },
