@@ -4,6 +4,7 @@
   justify-content: flex-end;
   align-self: center;
   align-items: center;
+  width: 90%;
 }
 
 .plus-img {
@@ -38,4 +39,4 @@
   width: 10px;
   height: 6.5px;
   cursor: pointer;
-}/*# sourceMappingURL=MenuBar.css.map */
+} /*# sourceMappingURL=MenuBar.css.map */
