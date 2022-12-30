@@ -145,16 +145,6 @@
               <p class="drawer-text">Application Program</p>
             </div>
           </router-link>
-          <a
-            href="javascript:void(0)"
-            style="text-decoration: none; color: inherit"
-            @click="logout"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/workorder.png" />
-              <p class="drawer-text">Logout</p>
-            </div>
-          </a>
           <router-link to="/Stow" style="text-decoration: none; color: inherit">
             <div class="bottom-section">
               <div class="icon-text">
@@ -179,21 +169,4 @@
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
-import { useRouter } from "vue-router";
-import { LocalStorage } from "quasar";
-import useUserInfoStore from "stores/modules/userInfo";
-
-const router = useRouter();
-const userInfo = useUserInfoStore();
-
-const logout = () => {
-  LocalStorage.remove("userinfo");
-  userInfo.setUserProfile(null);
-  userInfo.setUserInfo({
-    access_token: "",
-    expires: null,
-    refresh_token: "",
-  });
-  router.push("/login");
-};
 </script>
