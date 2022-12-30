@@ -167,6 +167,21 @@
       </q-scroll-area>
     </q-drawer>
     <q-page-container class="main-container"><router-view /> </q-page-container>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-btn
+        icon="forum"
+        color="deep-purple-13"
+        style="border-radius: 10px; height: 45px"
+      >
+        <q-badge
+          rounded
+          color="orange"
+          floating
+          style="height: 20px; width: 20px"
+          >3</q-badge
+        >
+      </q-btn>
+    </q-page-sticky>
   </q-layout>
 </template>
 
