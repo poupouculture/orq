@@ -21,88 +21,39 @@
               class="input"
             />
           </div>
+        </div>
 
-          <router-link
-            to="/dashboard"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/my.png" />
-              <p class="drawer-text">My</p>
-            </div>
-          </router-link>
-
-          <router-link
-            to="/dashboard"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/dashboard.png" />
-              <p class="drawer-text">Dashboard</p>
-            </div>
-          </router-link>
-
-          <router-link
-            to="/Calendar"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/calendar.png" />
-              <p class="drawer-text">Calendar</p>
-            </div>
-          </router-link>
-          <div class="icon-text">
-            <p class="drawer-subheading">work</p>
-          </div>
-
-          <div class="q-pa-md" style="max-width: 350px">
-            <q-list padding>
-              <q-expansion-item
-                dense
-                dense-toggle
-                icon="perm_identity"
-                label="Account settings"
-                class="expanded-items"
-                label-lines="10"
+        <div v-for="(menu, index) in menus" :key="index">
+          <q-list bordered v-if="menu.hasSubMenu" class="q-pa-md">
+            <q-expansion-item
+              expand-separator
+              icon="perm_identity"
+              :label="menu.pages_id.name"
+              style="color: #fff"
+            >
+              <div v-for="(child, cIndex) in menu.children" :key="cIndex">
+                <router-link
+                  v-if="child.isMenu"
+                  :to="child.url"
+                  style="text-decoration: none; color: inherit"
+                >
+                  <div class="expanded-content">
+                    <img />
+                    <p class="drawer-text">{{ child.label }}</p>
+                  </div>
+                </router-link>
+              </div>
+            </q-expansion-item>
+          </q-list>
+          <q-list v-else>
+            <q-item>
+              <router-link
+                :to="menu.url"
+                style="text-decoration: none; color: inherit"
               >
-                <div>
-                  <router-link
-                    to="/Contact-Settings"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Contact</p>
-                    </div>
-                  </router-link>
-
-                  <router-link
-                    to="/Company"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Company</p>
-                    </div>
-                  </router-link>
-                  <router-link
-                    to="/ServiceRecord"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Service Record</p>
-                    </div>
-                  </router-link>
-                  <router-link
-                    to="/PhoneRecord"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Phone Record</p>
-                    </div>
-                  </router-link>
+                <div class="icon-text">
+                  <img :src="menu.icon" />
+                  <p class="drawer-text">{{ menu.pages_id.name }}</p>
                 </div>
               </q-expansion-item>
             </q-list>
