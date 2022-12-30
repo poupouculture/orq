@@ -23,144 +23,14 @@
           </div>
 
           <router-link
-            to="/dashboard"
+            v-for="(menu, index) in menus"
+            :key="index"
+            :to="menu.url"
             style="text-decoration: none; color: inherit"
           >
             <div class="icon-text">
-              <img src="../../src/assets/images/my.png" />
-              <p class="drawer-text">My</p>
-            </div>
-          </router-link>
-
-          <router-link
-            to="/dashboard"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/dashboard.png" />
-              <p class="drawer-text">Dashboard</p>
-            </div>
-          </router-link>
-
-          <router-link
-            to="/Calendar"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/calendar.png" />
-              <p class="drawer-text">Calendar</p>
-            </div>
-          </router-link>
-          <div class="icon-text">
-            <p class="drawer-subheading">work</p>
-          </div>
-
-          <div class="q-pa-md" style="max-width: 350px">
-            <q-list padding>
-              <q-expansion-item
-                dense
-                dense-toggle
-                icon="perm_identity"
-                label="Account settings"
-                class="expanded-items"
-                label-lines="10"
-              >
-                <div>
-                  <router-link
-                    to="/Contact-Settings"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Contact</p>
-                    </div>
-                  </router-link>
-
-                  <router-link
-                    to="/Company"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Company</p>
-                    </div>
-                  </router-link>
-                  <router-link
-                    to="/ServiceRecord"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Service Record</p>
-                    </div>
-                  </router-link>
-                  <router-link
-                    to="/PhoneRecord"
-                    style="text-decoration: none; color: inherit"
-                  >
-                    <div class="expanded-content">
-                      <img />
-                      <p class="drawer-text">Phone Record</p>
-                    </div>
-                  </router-link>
-                </div>
-              </q-expansion-item>
-            </q-list>
-          </div>
-          <router-link
-            to="/WorkOrder"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/workorder.png" />
-              <p class="drawer-text">Work Order</p>
-            </div>
-          </router-link>
-
-          <router-link
-            to="/KnowledgeForm"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/knowledgebase.png" />
-              <p class="drawer-text">Knowledge Base</p>
-            </div>
-          </router-link>
-          <router-link
-            to="/ReportForm"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/Repportform.png" />
-              <p class="drawer-text">Report Form</p>
-            </div>
-          </router-link>
-
-          <router-link
-            to="/ApplicationProgram"
-            style="text-decoration: none; color: inherit"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/Applicationform.png" />
-              <p class="drawer-text">Application Program</p>
-            </div>
-          </router-link>
-          <a
-            href="javascript:void(0)"
-            style="text-decoration: none; color: inherit"
-            @click="logout"
-          >
-            <div class="icon-text">
-              <img src="../../src/assets/images/workorder.png" />
-              <p class="drawer-text">Logout</p>
-            </div>
-          </a>
-          <router-link to="/Stow" style="text-decoration: none; color: inherit">
-            <div class="bottom-section">
-              <div class="icon-text">
-                <img src="../../src/assets/images/workorder.png" />
-                <p class="drawer-text">Stow</p>
-              </div>
+              <img :src="menu.icon" />
+              <p class="drawer-text">{{ menu.pages_id.name }}</p>
             </div>
           </router-link>
         </div>
@@ -173,21 +43,36 @@
 <script setup>
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
-import { useRouter } from "vue-router";
-import { LocalStorage } from "quasar";
+import { computed } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
+import pagesUrl from "../utils/pageUrl.js";
 
-const router = useRouter();
 const userInfo = useUserInfoStore();
 
-const logout = () => {
-  LocalStorage.remove("userinfo");
-  userInfo.setUserProfile(null);
-  userInfo.setUserInfo({
-    access_token: "",
-    expires: null,
-    refresh_token: "",
-  });
-  router.push("/login");
-};
+const menus = computed(() => {
+  const pages = userInfo.userProfile.role.pages;
+  const pageUrl = pages
+    .map((page) => {
+      const menu = pagesUrl.find((item) => item.id === page.pages_id?.id);
+      page.url = menu?.url;
+      page.isMenu = menu?.isMenu;
+      page.icon = menu?.icon;
+      return page;
+    })
+    .filter((page) => {
+      return page.isMenu;
+    });
+  return pageUrl;
+});
+
+// const logout = () => {
+//   LocalStorage.remove("userinfo");
+//   userInfo.setUserProfile(null);
+//   userInfo.setUserInfo({
+//     access_token: "",
+//     expires: null,
+//     refresh_token: "",
+//   });
+//   router.push("/login");
+// };
 </script>
