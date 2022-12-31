@@ -55,51 +55,69 @@
                   <img :src="menu.icon" />
                   <p class="drawer-text">{{ menu.pages_id.name }}</p>
                 </div>
-              </router-link>
-            </q-item>
-          </q-list>
+              </q-expansion-item>
+            </q-list>
+          </div>
+          <router-link
+            to="/WorkOrder"
+            style="text-decoration: none; color: inherit"
+          >
+            <div class="icon-text">
+              <img src="../../src/assets/images/workorder.png" />
+              <p class="drawer-text">Work Order</p>
+            </div>
+          </router-link>
+
+          <router-link
+            to="/KnowledgeForm"
+            style="text-decoration: none; color: inherit"
+          >
+            <div class="icon-text">
+              <img src="../../src/assets/images/knowledgebase.png" />
+              <p class="drawer-text">Knowledge Base</p>
+            </div>
+          </router-link>
+          <router-link
+            to="/ReportForm"
+            style="text-decoration: none; color: inherit"
+          >
+            <div class="icon-text">
+              <img src="../../src/assets/images/Repportform.png" />
+              <p class="drawer-text">Report Form</p>
+            </div>
+          </router-link>
+
+          <router-link
+            to="/ApplicationProgram"
+            style="text-decoration: none; color: inherit"
+          >
+            <div class="icon-text">
+              <img src="../../src/assets/images/Applicationform.png" />
+              <p class="drawer-text">Application Program</p>
+            </div>
+          </router-link>
+          <router-link to="/Stow" style="text-decoration: none; color: inherit">
+            <div class="bottom-section">
+              <div class="icon-text">
+                <img src="../../src/assets/images/workorder.png" />
+                <p class="drawer-text">Stow</p>
+              </div>
+            </div>
+          </router-link>
         </div>
       </q-scroll-area>
     </q-drawer>
-    <q-page-container class="main-container"><router-view /> </q-page-container>
+    <q-page-container class="main-container">
+      <q-page-sticky expand position="top">
+        <MenuBar />
+      </q-page-sticky>
+      <router-view />
+    </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
-import { computed } from "vue";
-import useUserInfoStore from "stores/modules/userInfo";
-import pagesUrl from "../utils/pageUrl.js";
-
-const userInfo = useUserInfoStore();
-
-const menus = computed(() => {
-  const pages = userInfo.userProfile.role.pages;
-  const pageUrl = pages
-    .map((page) => {
-      const menu = pagesUrl.find((item) => item.id === page.pages_id?.id);
-      page.url = menu?.url;
-      page.isMenu = menu?.isMenu;
-      page.icon = menu?.icon;
-      page.hasSubMenu = menu?.hasSubMenu;
-      page.children = menu?.children;
-      return page;
-    })
-    .filter((page) => {
-      return page.isMenu;
-    });
-  return pageUrl;
-});
-
-// const logout = () => {
-//   LocalStorage.remove("userinfo");
-//   userInfo.setUserProfile(null);
-//   userInfo.setUserInfo({
-//     access_token: "",
-//     expires: null,
-//     refresh_token: "",
-//   });
-//   router.push("/login");
-// };
+import MenuBar from "src/components/MenuBar/MenuBar.vue";
 </script>

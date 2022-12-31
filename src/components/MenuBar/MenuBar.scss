@@ -1,41 +1,41 @@
-.menu-holder{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-self: center;
-    align-items: center;
+.menu-holder {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-self: center;
+  align-items: center;
+  width: 95%;
+  margin-top: 10px;
 }
-.plus-img{
+.plus-img {
   width: 20px;
   height: 20px;
   margin-right: 22.5px;
   cursor: pointer;
 }
-.message-img{
+.message-img {
   width: 20px;
   height: 20px;
   margin-right: 22.5px;
   cursor: pointer;
-
 }
-.notification-img{
-width: 18px;
-height: 20px;
-margin-right: 22.5px;
-cursor: pointer;
-
+.notification-img {
+  width: 18px;
+  height: 20px;
+  margin-right: 22.5px;
+  cursor: pointer;
 }
-.profile-img{
+.profile-img {
   width: 36px;
   height: 36px;
-  margin-right: 22.5px;
+  margin-right: 10px;
   cursor: pointer;
-
-
 }
-.dropdown-img{
-width: 10px;
-height: 6.5px;
-cursor: pointer;
-
+.dropdown-img {
+  width: 10px;
+  height: 6.5px;
+  cursor: pointer;
+}
+.avatar-dropdown {
+  cursor: pointer;
 }

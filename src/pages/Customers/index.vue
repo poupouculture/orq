@@ -1,6 +1,5 @@
 <template>
   <div class="main-container">
-    <MenuBar />
     <p class="header-text">Customers</p>
     <!-- <div class="filters-holder">
       <div class="inputholders">
@@ -51,7 +50,6 @@
 <script>
 import { defineComponent, ref } from "vue";
 import ContactsTable from "src/components/ContactsTable/ContactsTable.vue";
-import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import "./style.scss";
 
 export default defineComponent({
@@ -71,7 +69,7 @@ export default defineComponent({
 
   name: "DrawerBar",
 
-  components: { ContactsTable, MenuBar },
+  components: { ContactsTable },
 });
 const menuList = [
   {
