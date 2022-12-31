@@ -166,13 +166,19 @@
         </div>
       </q-scroll-area>
     </q-drawer>
-    <q-page-container class="main-container"><router-view /> </q-page-container>
+    <q-page-container class="main-container">
+      <q-page-sticky expand position="top">
+        <MenuBar />
+      </q-page-sticky>
+      <router-view />
+    </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
+import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import { useRouter } from "vue-router";
 import { LocalStorage } from "quasar";
 import useUserInfoStore from "stores/modules/userInfo";
