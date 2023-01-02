@@ -45,7 +45,7 @@ const pagesUrl = [
         id: "F03",
         icon: "../../src/assets/images/customer.png",
         url: "/customers",
-        label: "Customer",
+        label: "Customer Info",
         isMenu: true,
         hasSubMenu: false,
       },
