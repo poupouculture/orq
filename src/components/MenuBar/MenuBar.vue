@@ -4,54 +4,42 @@
     <img src="../../assets/images/messages.png" class="message-img" /><img
       src="../../assets/images/notification.png"
       class="notification-img"
-    /><img
-      src="../../assets/images/profileavatar.png"
-      class="profile-img"
-    /><img src="../../assets/images/dropdownreal.png" class="dropdown-img" />
+    />
+    <q-btn unelevated class="avatar-dropdown row items-center">
+      <img src="../../assets/images/profileavatar.png" class="profile-img" />
+      <img src="../../assets/images/dropdownreal.png" class="dropdown-img" />
+      <q-menu>
+        <q-list style="min-width: 100px">
+          <q-item clickable v-close-popup>
+            <q-item-section>Personal Information</q-item-section>
+          </q-item>
+          <q-separator />
+          <q-item clickable v-close-popup @click="logout">
+            <q-item-section>Sign Out</q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
+    </q-btn>
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script setup>
 import "./MenuBar.scss";
-export default defineComponent({
-  setup() {
-    return {
-      drawer: ref(true),
-      menuList,
-    };
-  },
+import { useRouter } from "vue-router";
+import { LocalStorage } from "quasar";
+import useUserInfoStore from "stores/modules/userInfo";
 
-  name: "MenuBar",
+const router = useRouter();
+const userInfo = useUserInfoStore();
 
-  components: {},
-});
-const menuList = [
-  {
-    icon: "receipt",
-    label: "receipt",
-    separator: false,
-  },
-
-  {
-    icon: "receipt",
-    label: "receipt",
-    separator: false,
-  },
-  {
-    icon: "receipt",
-    label: "receipt",
-    separator: false,
-  },
-  {
-    icon: "receipt",
-    label: "receipt",
-    separator: false,
-  },
-  {
-    icon: "receipt",
-    label: "receipt",
-    separator: false,
-  },
-];
+const logout = () => {
+  LocalStorage.remove("userinfo");
+  userInfo.setUserProfile(null);
+  userInfo.setUserInfo({
+    access_token: "",
+    expires: null,
+    refresh_token: "",
+  });
+  router.push("/login");
+};
 </script>

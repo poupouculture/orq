@@ -40,8 +40,10 @@ const useUserInfoStore = defineStore("userInfo", {
         const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
         api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 
-        const { data } = await api.get(
-          "/users/me?fields=*,role.*, role.access_forms.access_forms_id.forms"
+        const {
+          data: { data },
+        } = await api.get(
+          "/users/me?fields=*,role.description, role.name, role.tags, role.pages.pages_id.*,role.pages.pages_id.children.*"
         );
 
         this.userProfile = data;
