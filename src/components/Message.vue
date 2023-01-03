@@ -14,7 +14,7 @@ export default {
 </script>
 
 <script setup>
-import { defineProps, defineEmits, onMounted } from 'vue'
+import { onMounted } from 'vue'
 
 const props = defineProps({
   modelValue: Boolean,

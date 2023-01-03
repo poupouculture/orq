@@ -19,8 +19,6 @@ export default {
 </script>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-
 defineProps({
   title: String,
   message: String,
