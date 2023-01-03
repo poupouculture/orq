@@ -2,36 +2,34 @@
   <Teleport to="body">
     <Transition name="message">
       <div
-        v-if="modelValue" class="message fixed select-none px-6 py-4 text-xs text-gray-500 rounded-md">{{ message }}</div>
+        v-if="modelValue"
+        class="message fixed select-none px-6 py-4 text-xs text-gray-500 rounded-md"
+      >
+        {{ message }}
+      </div>
     </Transition>
   </Teleport>
 </template>
 
-<script>
-export default {
-  name: 'MessageCom'
-}
-</script>
-
 <script setup>
-import { defineProps, defineEmits, onMounted } from 'vue'
+import { onMounted } from "vue";
 
 const props = defineProps({
   modelValue: Boolean,
   message: String,
   duration: {
     type: [String, Number],
-    default: 3000
-  }
-})
+    default: 3000,
+  },
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
 onMounted(() => {
   setTimeout(() => {
-    emit('update:modelValue', false)
-  }, Number(props.duration))
-})
+    emit("update:modelValue", false);
+  }, Number(props.duration));
+});
 </script>
 
 <style lang="scss" scoped>

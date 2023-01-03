@@ -3,7 +3,9 @@
     <p>Showing {{ current }} to {{ pageSize }} of {{ total }} results</p>
 
     <div class="h-8 leading-8 text-center flex no-warp">
-      <div class="left-arrow w-8 h-full"><q-icon name="fa-solid fa-angle-left" /></div>
+      <div class="left-arrow w-8 h-full">
+        <q-icon name="fa-solid fa-angle-left" />
+      </div>
 
       <div class="items active w-9 h-full">{{ 1 }}</div>
       <div class="items w-9 h-full">{{ 2 }}</div>
@@ -15,28 +17,23 @@
       <div class="items w-9 h-full">{{ 9 }}</div>
       <div class="items w-9 h-full">{{ 10 }}</div>
 
-      <div class="right-arrow w-8 h-full"><q-icon name="fa-solid fa-angle-right" /></div>
+      <div class="right-arrow w-8 h-full">
+        <q-icon name="fa-solid fa-angle-right" />
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'PaginationCom'
-}
-</script>
-
 <script setup>
-import { defineProps, computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   current /* current page */: Number,
   total /* total data */: Number,
-  size /* number per page */: Number
-})
+  size /* number per page */: Number,
+});
 
-const pageSize = computed(() => parseInt(props.total / props.size) + 1)
-
+const pageSize = computed(() => parseInt(props.total / props.size) + 1);
 </script>
 
 <style lang="scss" scoped>
@@ -63,9 +60,9 @@ const pageSize = computed(() => parseInt(props.total / props.size) + 1)
 
   &.active {
     position: relative;
-    border-color: #4B44F6;
-    color: #4B44F6;
-    background-color: #F1F1FD;
+    border-color: #4b44f6;
+    color: #4b44f6;
+    background-color: #f1f1fd;
   }
 }
 </style>
