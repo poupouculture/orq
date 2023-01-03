@@ -5,8 +5,10 @@
       src="../../assets/images/notification.png"
       class="notification-img"
     />
-    <q-btn unelevated class="avatar-dropdown row items-center">
-      <img src="../../assets/images/profileavatar.png" class="profile-img" />
+    <q-btn unelevated class="row items-center avatar-btn">
+      <q-avatar size="md">
+        <img src="../../assets/images/profileavatar.png" />
+      </q-avatar>
       <img src="../../assets/images/dropdownreal.png" class="dropdown-img" />
       <q-menu>
         <q-list style="min-width: 100px">
