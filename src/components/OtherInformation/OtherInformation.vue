@@ -10,18 +10,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import "./OtherInformation.scss";
-
-const drawer = ref(true);
-const firstname = ref("");
-const lastname = ref("");
-const ID = ref("");
-const customercode = ref("");
-const gender = ref();
-const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
-const genderdata = ["Male", "Female", "Others"];
-const tags = ref("");
 </script>
 
 <style lang="sass" scoped>
