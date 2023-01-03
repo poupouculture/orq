@@ -16,7 +16,7 @@
           <div class="input-holder">
             <input
               type="text"
-              v-model="input"
+              v-model="search"
               placeholder="Search"
               class="input"
             />
@@ -83,10 +83,14 @@
 <script setup>
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import pagesUrl from "../utils/pageUrl.js";
+
 const userInfo = useUserInfoStore();
+const drawer = ref(true);
+const search = ref("");
+
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;
   const pageUrl = pages
@@ -104,14 +108,4 @@ const menus = computed(() => {
     });
   return pageUrl;
 });
-// const logout = () => {
-//   LocalStorage.remove("userinfo");
-//   userInfo.setUserProfile(null);
-//   userInfo.setUserInfo({
-//     access_token: "",
-//     expires: null,
-//     refresh_token: "",
-//   });
-//   router.push("/login");
-// };
 </script>
