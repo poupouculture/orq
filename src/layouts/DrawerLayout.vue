@@ -61,7 +61,14 @@
         </div>
       </q-scroll-area>
     </q-drawer>
-    <q-page-container class="main-container"><router-view /> </q-page-container>
+    <q-page-container class="main-container" style="padding-top: 20px">
+      <router-view />
+    </q-page-container>
+    <q-page-sticky expand position="top">
+      <q-toolbar>
+        <MenuBar />
+      </q-toolbar>
+    </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
         icon="forum"
@@ -83,7 +90,8 @@
 <script setup>
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
-import { computed, ref } from "vue";
+import { computed } from "vue";
+import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import pagesUrl from "../utils/pageUrl.js";
 

@@ -4,7 +4,7 @@
   justify-content: flex-end;
   align-self: center;
   align-items: center;
-  width: 95%;
+  width: 100%;
   margin-top: 10px;
 }
 .plus-img {
@@ -32,10 +32,11 @@
   cursor: pointer;
 }
 .dropdown-img {
+  margin-left: 10px;
   width: 10px;
   height: 6.5px;
   cursor: pointer;
 }
-.avatar-dropdown {
-  cursor: pointer;
+.avatar-btn {
+  margin-left: -10px;
 }
