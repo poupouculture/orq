@@ -1,28 +1,7 @@
 <template>
-<div></div>
-  </template>
+  <div></div>
+</template>
 
-<script>
-
-import { defineComponent } from 'vue'
-import './Attachement.scss'
-export default defineComponent({
-  setup () {
-    return {
-
-    }
-  },
-  data () {
-    return {
-
-    }
-  },
-  name: 'AttachementTab',
-
-  components: {}
-})
-
+<script setup>
+import "./Attachement.scss";
 </script>
-  <style lang="sass" scoped>
-
-  </style>

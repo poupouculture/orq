@@ -1,22 +1,27 @@
-.Remark-main{
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
+.Remark-main {
   padding: 10px 100px;
 }
-.remark-heading{
-  font-family: 'Inter';
-font-style: normal;
-font-weight: 500;
-font-size: 16px;
-line-height: 20px;
-/* identical to box height, or 125% */
+.remark-heading {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  /* identical to box height, or 125% */
 
+  /* gray/700 */
 
-/* gray/700 */
-
-color: #374151;
-
+  color: #374151;
 }
-.inp-cls{ background-color: white; border-width: 2px; border-style: dotted; border-color: #4B44F6; margin-top: 5px; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -ms-border-radius: 5px; -o-border-radius: 5px;
+.inp-cls {
+  background-color: white;
+  border-width: 2px;
+  border-style: dotted;
+  border-color: #4b44f6;
+  margin-top: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
 }

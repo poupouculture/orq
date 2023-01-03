@@ -1,15 +1,17 @@
 const routes = [
   {
     path: "/login",
-    name: "auth",
     component: () => import("../../src/pages/Login.vue"),
     children: [
-      { path: "", component: () => import("../../src/pages/Login.vue") },
+      {
+        path: "",
+        name: "login",
+        component: () => import("../../src/pages/Login.vue"),
+      },
     ],
   },
   {
     path: "/",
-    name: "dashboard",
     component: () => import("layouts/DrawerLayout.vue"),
     meta: {
       requiresAuth: true,
@@ -17,6 +19,7 @@ const routes = [
     children: [
       {
         path: "",
+        name: "home",
         component: () => import("pages/Dashboard.vue"),
       },
       {

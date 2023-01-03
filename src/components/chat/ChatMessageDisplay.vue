@@ -11,7 +11,17 @@
           : `bg-negative justify-start items-start isMeNotMe`
       "
     >
-      <div class="text-body2" :class="isMe ? `text-white` : `text-secondary`"  style="font-family: 'Archivo', sans-serif; font-weight: 500; font-size: 14px;">{{ message }}</div>
+      <div
+        class="text-body2"
+        :class="isMe ? `text-white` : `text-secondary`"
+        style="
+          font-family: 'Archivo', sans-serif;
+          font-weight: 500;
+          font-size: 14px;
+        "
+      >
+        {{ message }}
+      </div>
     </div>
   </div>
 </template>
@@ -20,13 +30,13 @@
 defineProps({
   message: {
     type: String,
-    default: () => ''
+    default: () => "",
   },
   isMe: {
     type: Boolean,
-    default: () => true
-  }
-})
+    default: () => true,
+  },
+});
 </script>
 
 <style scoped>
