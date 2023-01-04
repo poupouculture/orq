@@ -7,35 +7,6 @@
   align-items: center;
   flex-direction: column;
 }
-input {
-  display: block;
-  width: 225px;
-  padding: 7.5px 45px;
-  background: #36309d url("../../assets/images/searchicon.png") no-repeat 15px
-    center;
-  background-size: 15px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-  color: white;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  -ms-border-radius: 6px;
-  -o-border-radius: 6px;
-}
-.input-holder {
-  width: 250px;
-  margin-top: 20px;
-}
-.icon-text {
-  display: flex;
-  flex-direction: row;
-  width: 250px;
-  margin-left: 20px;
-  margin-top: 32px;
-}
 .drawer-text {
   font-family: "Archivo";
   font-style: normal;
