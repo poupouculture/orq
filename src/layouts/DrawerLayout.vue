@@ -104,7 +104,6 @@ import pagesUrl from "../utils/pageUrl.js";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
-const search = ref("");
 
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;
