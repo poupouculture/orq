@@ -14,12 +14,17 @@
             <img src="../../src/assets/images/logo.png" />
           </div>
           <div class="input-holder">
-            <input
-              type="text"
-              v-model="search"
+            <q-input
               placeholder="Search"
-              class="input"
-            />
+              bg-color="dark"
+              outlined
+              dense
+              class="search-field"
+            >
+              <template v-slot:prepend>
+                <q-icon name="search" color="teal-1" />
+              </template>
+            </q-input>
           </div>
         </div>
 
@@ -61,11 +66,13 @@
         </div>
       </q-scroll-area>
     </q-drawer>
-    <q-page-container class="main-container" style="padding-top: 20px">
-      <router-view />
+    <q-page-container class="main-container">
+      <q-page padding>
+        <router-view />
+      </q-page>
     </q-page-container>
     <q-page-sticky expand position="top">
-      <q-toolbar>
+      <q-toolbar style="background: #f5f5f5">
         <MenuBar />
       </q-toolbar>
     </q-page-sticky>
@@ -117,3 +124,26 @@ const menus = computed(() => {
   return pageUrl;
 });
 </script>
+
+<style scoped>
+.input-holder {
+  width: 250px;
+  margin-top: 20px;
+}
+.icon-text {
+  display: flex;
+  flex-direction: row;
+  width: 250px;
+  margin-left: 20px;
+  margin-top: 32px;
+}
+::v-deep .q-field__native,
+.q-field__prefix,
+.q-field__suffix,
+.q-field__input {
+  color: #fff;
+}
+.search-field {
+  margin-right: 10px;
+}
+</style>
