@@ -14,17 +14,7 @@
             <img src="../../src/assets/images/logo.png" />
           </div>
           <div class="input-holder">
-            <q-input
-              placeholder="Search"
-              bg-color="dark"
-              outlined
-              dense
-              class="search-field"
-            >
-              <template v-slot:prepend>
-                <q-icon name="search" color="teal-1" />
-              </template>
-            </q-input>
+            <SearchInput />
           </div>
         </div>
 
@@ -99,6 +89,7 @@ import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
 import { computed } from "vue";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
+import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import pagesUrl from "../utils/pageUrl.js";
 
@@ -133,12 +124,6 @@ const menus = computed(() => {
   width: 250px;
   margin-left: 20px;
   margin-top: 32px;
-}
-::v-deep .q-field__native,
-.q-field__prefix,
-.q-field__suffix,
-.q-field__input {
-  color: #fff;
 }
 .search-field {
   margin-right: 10px;

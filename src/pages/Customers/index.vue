@@ -15,6 +15,7 @@
           color="primary"
           label="Add"
           class="q-mr-sm"
+          @click="router.push('/customers/create')"
         />
         <q-btn icon="delete" no-caps rounded label="Trash" />
       </div>
@@ -114,6 +115,9 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { getCustomers } from "../../api/customers.js";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const headerColumns = [
   {
