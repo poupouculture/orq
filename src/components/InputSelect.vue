@@ -3,17 +3,32 @@
 <!-- eslint-disable vue/require-v-for-key -->
 <!-- eslint-disable no-mixed-spaces-and-tabs -->
 <template>
-  <div :style="isBorder && { height: `10px`}" class="custom-select" :class="icon ? `custom-select-icon` : `custom-select`" :tabindex="tabindex" @blur="open = false">
+  <div
+    :style="isBorder && { height: `10px` }"
+    class="custom-select"
+    :class="icon ? `custom-select-icon` : `custom-select`"
+    :tabindex="tabindex"
+    @blur="open = false"
+  >
     <div
-    style="font-family: 'Archivo', sans-serif; font-weight: 500; font-size: 14px;"
-    class="selected"
-    :class="{ open: open }" @click="open = !open"
-    :style="isBorder ? {
-      border: 'none',
-      opacity: isBorder && isColorGray && 0.3
-    } : isColorGray && {
-      opacity:0.3
-    }"
+      style="
+        font-family: 'Archivo', sans-serif;
+        font-weight: 500;
+        font-size: 14px;
+      "
+      class="selected"
+      :class="{ open: open }"
+      @click="open = !open"
+      :style="
+        isBorder
+          ? {
+              border: 'none',
+              opacity: isBorder && isColorGray && 0.3,
+            }
+          : isColorGray && {
+              opacity: 0.3,
+            }
+      "
     >
       {{ selected }}
       <q-icon
@@ -21,7 +36,11 @@
         style="color: gray; margin-right: 10px"
       />
     </div>
-    <div class="items" :class="{ selectHide: !open}" :style="icon && { top: `40px`}">
+    <div
+      class="items"
+      :class="{ selectHide: !open }"
+      :style="icon && { top: `40px` }"
+    >
       <div
         v-for="(option, i) of options"
         :key="i"
@@ -31,54 +50,80 @@
           $emit('input', option);
           updateValue(option);
         "
-        style="font-family: 'Archivo', sans-serif; font-weight: 500; font-size: 14px;"
+        style="
+          font-family: 'Archivo', sans-serif;
+          font-weight: 500;
+          font-size: 14px;
+        "
       >
         {{ option }}
       </div>
     </div>
-    <div v-if="icon" style="width: 40px; height: 40px; background-color: #F2F3F7; border-top-right-radius: 10px; border-bottom-right-radius: 10px; margin-left: -4px; display: flex; align-items: center; justify-content: center;">
-      <img :src="icon" style="width: 15px; object-fit: contain;" />
+    <div
+      v-if="icon"
+      style="
+        width: 40px;
+        height: 40px;
+        background-color: #f2f3f7;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        margin-left: -4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <img :src="icon" style="width: 15px; object-fit: contain" />
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+const {ref, onMounted} from 'vue'
 
-export default {
-  props: {
-    options: [],
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    default: '',
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    tabindex: 0,
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    value: '',
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    icon: '',
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    isBorder: false,
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    isColorGray: false
+const props = defineProps({
+  options: {
+    type: Array,
+    default: () => []
   },
-  data () {
-    return {
-      selected: this.default
-        ? this.default
-        : this.options.length > 0
-          ? this.options[0]
-          : null,
-      open: false
-    }
+  default: {
+    type: String,
+    default: ""
   },
-  mounted () {
-    this.$emit('input', this.selected)
+  tabindex: {
+    type: Number,
+    default: 0
   },
-  methods: {
-    updateValue (value) {
-      this.$emit('update:value', value)
-      console.log(value)
-    }
+  value: {
+    type: String,
+    default: ""
+  },
+  icon: {
+    type: String,
+    default: ""
+  },
+  isBorder: {
+    type: Boolean,
+    default: false
+  },
+  isColorGray: {
+    type: Boolean,
+    default: false
   }
+})
+
+const emit = defineEmits(['update:value', 'input'])
+
+const _selected = props.default ? props.default : (props.options.length > 0 ? props.options[0] : null)
+const selected = ref(_selected)
+const open = ref(false)
+
+onMounted(() => {
+  emit("input", selected.value)
+})
+
+const updateValue = value => {
+  emit('update:value', value)
 }
 </script>
 
@@ -107,7 +152,7 @@ export default {
   border: 1px solid #e2e2e2;
   border-radius: 8px;
   width: 100%;
-  color: #2E2E3A;
+  color: #2e2e3a;
   padding-left: 1em;
   cursor: pointer;
   user-select: none;
@@ -119,7 +164,7 @@ export default {
 }
 
 .custom-select .selected.open {
-  border: 1px solid #4B44F6;
+  border: 1px solid #4b44f6;
   border-radius: 6px 6px 0px 0px;
 }
 
@@ -127,9 +172,9 @@ export default {
   color: black;
   border-radius: 0px 0px 6px 6px;
   overflow: hidden;
-  border-right: 1px solid #4B44F6;
-  border-left: 1px solid #4B44F6;
-  border-bottom: 1px solid #4B44F6;
+  border-right: 1px solid #4b44f6;
+  border-left: 1px solid #4b44f6;
+  border-bottom: 1px solid #4b44f6;
   position: absolute;
   background-color: white;
   left: 0;

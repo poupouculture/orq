@@ -1,44 +1,71 @@
 <template>
-<div class="input-form my-4 py-5 h-20 flex no-warp justify-between relative">
+  <div class="input-form my-4 py-5 h-20 flex no-warp justify-between relative">
     <div class="flex space-x-2">
-      <q-input label="Fuzzy search" class="w-52 rounded-sm" outlined v-model="text" type="search">
+      <q-input
+        label="Fuzzy search"
+        class="w-52 rounded-sm"
+        outlined
+        v-model="text"
+        type="search"
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
       </q-input>
 
-      <q-input label="Create Time" label-color="black" class="w-52 rounded-sm" outlined v-model="text" type="search">
+      <q-input
+        label="Create Time"
+        label-color="black"
+        class="w-52 rounded-sm"
+        outlined
+        v-model="text"
+        type="search"
+      >
         <template v-slot:append>
           <q-icon name="event" />
         </template>
       </q-input>
 
-      <q-select class="w-52 rounded-sm" outlined v-model="selected[0]" :options="options[0]">
+      <q-select
+        class="w-52 rounded-sm"
+        outlined
+        v-model="selected[0]"
+        :options="options[0]"
+      >
       </q-select>
 
-      <q-select class="w-52 rounded-sm" outlined v-model="selected[1]" :options="options[1]">
+      <q-select
+        class="w-52 rounded-sm"
+        outlined
+        v-model="selected[1]"
+        :options="options[1]"
+      >
       </q-select>
 
-      <q-select class="w-52 rounded-sm" outlined v-model="selected[2]" :options="options[2]">
+      <q-select
+        class="w-52 rounded-sm"
+        outlined
+        v-model="selected[2]"
+        :options="options[2]"
+      >
       </q-select>
     </div>
 
-    <q-btn color="primary" style="border-radius: 4px;" icon="fa-solid fa-plus" label="Add" />
+    <q-btn
+      color="primary"
+      style="border-radius: 4px"
+      icon="fa-solid fa-plus"
+      label="Add"
+    />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'InputFrom'
-}
-</script>
-
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const text = ref(''),
-  options = ref([['Status'], ['Staff'], ['Customer']]),
-  selected = ref([['Status'], ['Staff'], ['Customer']])
+const text = ref(""),
+  options = ref([["Status"], ["Staff"], ["Customer"]]),
+  selected = ref([["Status"], ["Staff"], ["Customer"]]);
 </script>
 
 <style lang="scss" scoped>
