@@ -1,61 +1,4 @@
 <template>
-  <q-dialog v-model="deletedialog" persistent class="dialog-class">
-    <q-card class="card-class">
-      <q-card-section class="row items-center">
-        <img src="assets/images/warning.png" />
-        <span class="q-ml-sm">
-          <p class="deletetxt">Delete</p>
-        </span>
-      </q-card-section>
-      <p class="lowertext">
-        This action is permanent and can not be undone. Are you sure you would
-        like to proceed?
-      </p>
-      <q-card-actions align="right" class="btn-hld">
-        <q-btn
-          color="primary"
-          label="Cancel"
-          v-close-popup
-          outline
-          class="dialogbtn-cls"
-        />
-
-        <q-btn
-          color="primary"
-          label="Delete"
-          v-close-popup
-          class="dialogbtn-cls"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-  <q-dialog v-model="savedialog" persistent class="dialog-class">
-    <q-card class="card-class">
-      <q-card-section class="row items-center">
-        <img src="assets/images/warning.png" />
-        <span class="q-ml-sm">
-          <p class="deletetxt">Unsave Changes</p>
-        </span>
-      </q-card-section>
-      <p class="lowertext">Are you sure you want to leave this page?</p>
-      <q-card-actions align="right" class="btn-hld">
-        <q-btn
-          color="primary"
-          label="Discard Changes"
-          v-close-popup
-          outline
-          class="dialogbtn-cls"
-        />
-
-        <q-btn
-          color="primary"
-          label="Keep Editing"
-          v-close-popup
-          class="dialogbtn-cls"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
   <div>
     <div class="q-pa-md">
       <div class="row q-mb-lg">
@@ -65,7 +8,7 @@
         <div class="col-10">
           <div class="field-holder">
             <p class="label-style">Label</p>
-            <q-select outlined v-model="tags" :options="options" dense />
+            <q-select outlined v-model="tags" dense />
           </div>
         </div>
       </div>
@@ -92,7 +35,7 @@
       <div class="row q-gutter-xl">
         <div class="col">
           <p class="label-style">Gender</p>
-          <q-select outlined v-model="gender" :options="genderdata" dense />
+          <q-select outlined v-model="gender" :options="genderOptions" dense />
         </div>
         <div class="col">
           <p class="label-style">Date Of Birth</p>
@@ -112,7 +55,7 @@
                   transition-hide="scale"
                 >
                   <q-date
-                    v-model="date"
+                    v-model="dateOfBirth"
                     @input="() => $refs.qDateProxy.hide()"
                   ></q-date>
                 </q-popup-proxy>
@@ -124,53 +67,64 @@
       <div class="row q-mb-lg q-gutter-xl">
         <div class="col">
           <p class="label-style">Position</p>
-          <q-select outlined v-model="position" :options="positiondata" dense />
+          <q-select outlined v-model="position" dense />
         </div>
         <div class="col">
           <p class="label-style">Company</p>
-          <q-select outlined v-model="company" :options="companydata" dense />
+          <q-select outlined v-model="company" dense />
         </div>
       </div>
       <div class="row q-mb-lg q-gutter-xl">
         <div class="col">
           <p class="label-style">Customer Group</p>
-          <q-select
-            outlined
-            v-model="customerGroup"
-            :options="positiondata"
-            dense
-          />
+          <q-select outlined v-model="customerGroup" dense />
         </div>
         <div class="col"></div>
       </div>
-      <div class="row q-mb-lg q-gutter-xl">
+      <q-checkbox v-model="isActive" label="is Active" />
+      <div class="row q-mb-lg q-gutter-xl q-mt-lg">
         <div class="col">
-          <!-- <q-btn to="/" label="Delayed navigation" @click="onDelayedClick"  color="purple" no-caps class="btn-cls" /> -->
-          <div class="btn-cls">
+          <div class="btn-cls" @click="returnDialog = true">
             <p>Return</p>
           </div>
         </div>
         <div class="col">
           <div class="btn-hold">
-            <div class="btn-cls" @click="deletedialog = true">
+            <div class="btn-cls" @click="deleteDialog = true">
               <p>Delete</p>
             </div>
             <q-btn
               color="primary"
               label="Save"
               class="dark-btn"
-              @click="savedialog = true"
+              @click="saveCustomer"
             />
           </div>
         </div>
       </div>
     </div>
+    <DeleteDialog
+      v-model="deleteDialog"
+      @cancel="deleteDialog = false"
+      @submitDelete="submitDelete"
+    />
+    <ReturnDialog
+      v-model="returnDialog"
+      @cancel="returnDialog = false"
+      @keepEditing="returnDialog = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
+import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
+import { useRouter } from "vue-router";
+import useCustomerStore from "src/stores/modules/customer.js";
 
+const router = useRouter();
+const customerStore = useCustomerStore();
 const props = defineProps({
   customer: {
     type: Object,
@@ -184,6 +138,7 @@ const props = defineProps({
       position: "",
       company: "",
       customerGroup: "",
+      isActive: true,
     }),
   },
 });
@@ -197,12 +152,37 @@ const dateOfBirth = ref(props.customer.dateOfBirth);
 const position = ref(props.customer.position);
 const company = ref(props.customer.company);
 const customerGroup = ref(props.customer.customerGroup);
+const isActive = ref(props.customer.isActive);
 
-const deletedialog = ref(false);
-const savedialog = ref(false);
+const deleteDialog = ref(false);
+const returnDialog = ref(false);
 const tags = ref("");
-const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
-const genderdata = ["Male", "Female", "Others"];
+const genderOptions = [
+  {
+    value: "m",
+    label: "Male",
+  },
+  { value: "f", label: "Female" },
+];
+// const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
+
+const submitDelete = () => {
+  deleteDialog.value = false;
+};
+
+const saveCustomer = async () => {
+  const payload = {
+    first_name: firstName.value,
+    last_name: lastName.value,
+    id_number: idNumber.value,
+    customer_code: customerCode.value,
+    gender: gender.value.value,
+    isActive: isActive.value,
+    dob: dateOfBirth.value,
+  };
+  await customerStore.addCustomer(payload);
+  router.push("/customers");
+};
 </script>
 
 <style scoped src="./style.scss"></style>

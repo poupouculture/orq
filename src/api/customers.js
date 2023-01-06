@@ -5,7 +5,7 @@ export const getCustomers = async () => {
   const companies = `companies.companies_id.name_english`;
 
   const customers = await api.get(
-    `/items/customers?fields=${fields},${companies}`
+    `/items/customers?fields=${fields},${companies}&sort=-date_created`
   );
   return customers;
 };
@@ -18,6 +18,11 @@ export const getCustomer = async (id) => {
   const customer = await api.get(
     `/items/customers/${id}?fields=${fields},${companies},${contacts}`
   );
+  return customer;
+};
+
+export const addCustomer = async (payload) => {
+  const customer = await api.post("/items/customers", payload);
   return customer;
 };
 
