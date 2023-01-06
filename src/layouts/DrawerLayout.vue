@@ -87,13 +87,15 @@
 <script setup>
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import pagesUrl from "../utils/pageUrl.js";
 
 const userInfo = useUserInfoStore();
+const drawer = ref(true);
+
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;
   const pageUrl = pages

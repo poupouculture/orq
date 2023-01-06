@@ -6,7 +6,7 @@
     <q-tabs
       v-model="active"
       dense
-      align="justify-start"
+      align="left"
       active-color="primary"
       narrow-indicator
     >
