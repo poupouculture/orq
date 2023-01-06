@@ -14,11 +14,11 @@
         label="Transaction Log"
         class="header-button"
       />
-      <q-btn
+      <!-- <q-btn
         style="background: #4b44f6; color: white"
         label="Merge"
         class="header-button"
-      />
+      /> -->
     </div>
     <div class="form-holder">
       <ContactsForm :customer="data" />
