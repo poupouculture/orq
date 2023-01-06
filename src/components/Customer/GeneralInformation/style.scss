@@ -1,0 +1,59 @@
+.row-holder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.inputs {
+  width: 400px;
+}
+
+.indi {
+  width: 100%;
+}
+.field-holder {
+  margin-left: -40px;
+}
+.label-style {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 15px;
+
+  color: #2e2e3a;
+  margin-bottom: 10px;
+}
+.btn-cls {
+  border-style: dotted;
+  border-color: #4b44f6;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25%;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-width: 2px;
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 17px;
+  cursor: pointer;
+  color: #4b44f6;
+}
+.btn-hold {
+  display: flex;
+  justify-content: flex-end;
+}
+.dark-btn {
+  margin-left: 10px;
+}
+.btn-hld {
+  margin-right: 20px;
+}

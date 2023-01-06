@@ -3,6 +3,7 @@ import {
   getCustomer,
   addContact,
   addCustomerContact,
+  addCustomer,
 } from "src/api/customers.js";
 
 const useCustomerStore = defineStore("customer", {
@@ -27,6 +28,12 @@ const useCustomerStore = defineStore("customer", {
 
       const result = await addCustomerContact(customerId, contactId);
       return result;
+    },
+    async addCustomer(payload) {
+      const {
+        data: { data },
+      } = await addCustomer(payload);
+      return data;
     },
   },
 });

@@ -51,6 +51,10 @@ const routes = [
         component: () => import("pages/Customers/index.vue"),
       },
       {
+        path: "customers/create",
+        component: () => import("pages/Customers/create.vue"),
+      },
+      {
         path: "dashboard",
         component: () => import("pages/Dashboard.vue"),
       },
