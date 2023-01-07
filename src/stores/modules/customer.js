@@ -4,6 +4,7 @@ import {
   addContact,
   addCustomerContact,
   addCustomer,
+  updateCustomer,
 } from "src/api/customers.js";
 
 const useCustomerStore = defineStore("customer", {
@@ -14,11 +15,20 @@ const useCustomerStore = defineStore("customer", {
     getCustomer: (state) => state.customer,
   },
   actions: {
+    resetCustomer() {
+      this.customer = {};
+    },
     async fetchCustomer(id) {
       const {
         data: { data: customer },
       } = await getCustomer(id);
       this.customer = customer;
+    },
+    async updateCustomer(id, payload) {
+      const {
+        data: { data },
+      } = await updateCustomer(id, payload);
+      return data;
     },
     async addContact(customerId, payload) {
       const {
