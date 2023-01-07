@@ -44,7 +44,7 @@ const routes = [
       },
       {
         path: "customers/:id",
-        component: () => import("pages/Customers/Detail/index.vue"),
+        component: () => import("pages/Customers/edit.vue"),
       },
       {
         path: "customers",

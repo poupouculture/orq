@@ -26,6 +26,11 @@ export const addCustomer = async (payload) => {
   return customer;
 };
 
+export const updateCustomer = async (id, payload) => {
+  const customer = await api.patch(`/items/customers/${id}`, payload);
+  return customer;
+};
+
 export const addContact = async (payload) => {
   const contact = await api.post(`/items/contacts`, payload);
   return contact;

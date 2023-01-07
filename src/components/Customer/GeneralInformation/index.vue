@@ -117,42 +117,24 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
-import { useRouter } from "vue-router";
 import useCustomerStore from "src/stores/modules/customer.js";
 
-const router = useRouter();
+const emit = defineEmits(["submit"]);
 const customerStore = useCustomerStore();
-const props = defineProps({
-  customer: {
-    type: Object,
-    default: () => ({
-      firstName: "",
-      lastName: "",
-      idNumber: "",
-      customerCode: "",
-      gender: "",
-      dateOfBirth: "",
-      position: "",
-      company: "",
-      customerGroup: "",
-      isActive: true,
-    }),
-  },
-});
 
-const firstName = ref(props.customer.firstName);
-const lastName = ref(props.customer.lastName);
-const idNumber = ref(props.customer.idNumber);
-const customerCode = ref(props.customer.customerCode);
-const gender = ref(props.customer.gender);
-const dateOfBirth = ref(props.customer.dateOfBirth);
-const position = ref(props.customer.position);
-const company = ref(props.customer.company);
-const customerGroup = ref(props.customer.customerGroup);
-const isActive = ref(props.customer.isActive);
+const firstName = ref("");
+const lastName = ref("");
+const idNumber = ref("");
+const customerCode = ref("");
+const gender = ref("");
+const dateOfBirth = ref("");
+const position = ref("");
+const company = ref("");
+const customerGroup = ref("");
+const isActive = ref("");
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -166,11 +148,25 @@ const genderOptions = [
 ];
 // const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 
+onMounted(() => {
+  const customer = customerStore.getCustomer;
+  if (customer) {
+    firstName.value = customer.first_name;
+    lastName.value = customer.last_name;
+    idNumber.value = customer.id_number;
+    customerCode.value = customer.customer_code;
+    dateOfBirth.value = customer.dob;
+    isActive.value = customer.isActive;
+
+    gender.value = genderOptions.find((item) => item.value === customer.gender);
+  }
+});
+
 const submitDelete = () => {
   deleteDialog.value = false;
 };
 
-const saveCustomer = async () => {
+const saveCustomer = () => {
   const payload = {
     first_name: firstName.value,
     last_name: lastName.value,
@@ -180,8 +176,7 @@ const saveCustomer = async () => {
     isActive: isActive.value,
     dob: dateOfBirth.value,
   };
-  await customerStore.addCustomer(payload);
-  router.push("/customers");
+  emit("submit", payload);
 };
 </script>
 
