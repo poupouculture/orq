@@ -58,6 +58,16 @@ const pagesUrl = [
       },
     ],
   },
+  {
+    id: "F04",
+    icon: "../../src/assets/images/customer.png",
+    url: "/profile",
+    isMenu: true,
+    hasSubMenu: false,
+    children: [
+
+    ],
+  },
 ];
 
 export default pagesUrl;

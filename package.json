@@ -16,6 +16,8 @@
   "dependencies": {
     "@directus/sdk": "^10.3.0",
     "@quasar/extras": "^1.0.0",
+    "@sentry/tracing": "^7.29.0",
+    "@sentry/vue": "^7.29.0",
     "axios": "^0.21.1",
     "echarts": "^5.4.1",
     "pinia": "^2.0.11",
