@@ -67,6 +67,7 @@ module.exports = configure(function (ctx) {
       // analyze: true,
       env: {
         BACKEND_URL: process.env.BACKEND_URL,
+        SENTRY_DSN: process.env.BACKEND_URL,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
