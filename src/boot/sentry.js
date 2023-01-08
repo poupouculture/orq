@@ -7,7 +7,7 @@ import { BrowserTracing } from "@sentry/tracing";
 export default boot(async ({ app, router }) => {
   Sentry.init({
     app,
-    dsn: "https://cc6b3dc603fa4b6f92be16cfef81891b@o4504232171536384.ingest.sentry.io/4504466750242816",
+    dsn: process.env.SENTRY_DSN,
     integrations: [
       new BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
