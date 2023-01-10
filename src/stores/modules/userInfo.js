@@ -56,7 +56,6 @@ const useUserInfoStore = defineStore("userInfo", {
       }
     },
     async refreshToken() {
-      console.log("refresh");
       try {
         const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
         if (userinfo) {
