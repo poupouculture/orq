@@ -15,21 +15,49 @@ if (userinfo) {
   axios.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 }
 
-// const api = axios.create({ baseURL: 'http://178.128.110.230/' })
 const api = axios.create({ baseURL: process.env.BACKEND_URL });
 
-export default boot(({ app, store }) => {
+// different axios instance to handle the refresh token. Because
+// refresh token need new instance of axios
+const axiosInstance = axios.create({ baseURL: process.env.BACKEND_URL });
+
+export default boot(({ app, store, router }) => {
   const userStore = useUserInfoStore(store);
   userStore.setUserInfo(userinfo);
-  // for use inside Vue files (Options API) through this.$axios and this.$api
+
+  api.interceptors.response.use(
+    async (response) => {
+      return response;
+    },
+    async (error) => {
+      const originalConfig = error.config;
+
+      if (error.response.status !== 401) {
+        return Promise.reject(error);
+      }
+
+      if (error.response) {
+        if (error.response.status === 401 && !originalConfig._retry) {
+          originalConfig._retry = true;
+
+          try {
+            const result = await userStore.refreshToken();
+
+            originalConfig.headers.Authorization = `Bearer ${result.access_token}`;
+            return api(originalConfig);
+          } catch (err) {
+            console.log(err);
+            router.push("/login");
+            return Promise.reject(err);
+          }
+        }
+      }
+    }
+  );
 
   app.config.globalProperties.$axios = axios;
-  // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
-  //       so you won't necessarily have to import axios in each vue file
 
   app.config.globalProperties.$api = api;
-  // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
-  //       so you can easily perform requests against your app's API
 });
 
-export { api };
+export { api, axiosInstance };

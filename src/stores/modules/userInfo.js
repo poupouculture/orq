@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { api } from "boot/axios";
+import { api, axiosInstance } from "boot/axios";
 import { LocalStorage } from "quasar";
 
 const useUserInfoStore = defineStore("userInfo", {
@@ -12,7 +12,7 @@ const useUserInfoStore = defineStore("userInfo", {
     userProfile: null,
   }),
   getters: {
-    token: (state) => state.userInfo.access_token,
+    token: (state) => state.userInfo?.access_token,
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
   },
@@ -38,16 +38,38 @@ const useUserInfoStore = defineStore("userInfo", {
     async getProfile() {
       try {
         const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
-        api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
+        if (userinfo) {
+          api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 
-        const {
-          data: { data },
-        } = await api.get(
-          "/users/me?fields=*,role.description, role.name, role.tags, role.pages.pages_id.*,role.pages.pages_id.children.*"
-        );
+          const {
+            data: { data },
+          } = await api.get(
+            "/users/me?fields=*,role.description, role.name, role.tags, role.pages.pages_id.*,role.pages.pages_id.children.*"
+          );
 
-        this.userProfile = data;
-        return data;
+          this.userProfile = data;
+          return data;
+        }
+      } catch (err) {
+        console.log(err);
+        this.router.push("/login");
+      }
+    },
+    async refreshToken() {
+      try {
+        const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
+        if (userinfo) {
+          axiosInstance.defaults.headers.common.Authorization = ``;
+          const {
+            data: { data },
+          } = await axiosInstance.post("/auth/refresh", {
+            refresh_token: userinfo.refresh_token,
+          });
+          this.userInfo = data;
+
+          LocalStorage.set("userinfo", JSON.stringify(data));
+          return data;
+        }
       } catch (err) {
         console.log(err);
         this.router.push("/login");

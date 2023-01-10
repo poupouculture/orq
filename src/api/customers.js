@@ -4,9 +4,12 @@ export const getCustomers = async () => {
   const fields = `id, first_name, last_name`;
   const companies = `companies.companies_id.name_english`;
 
-  const customers = await api.get(
-    `/items/customers?fields=${fields},${companies}&sort=-date_created`
-  );
+  const customers = await api.get(`/items/customers`, {
+    params: {
+      fields: `${fields},${companies}`,
+      sort: `-date_created`,
+    },
+  });
   return customers;
 };
 
