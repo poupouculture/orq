@@ -1,13 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-drawer
-      v-model="drawer"
-      show-if-above
-      :width="288"
-      :breakpoint="500"
-      bordered
-      class="drawerclass"
-    >
+    <q-drawer v-model="drawer" show-if-above :width="288" :breakpoint="500" bordered class="drawerclass">
       <q-scroll-area class="fit">
         <div class="drawer-content">
           <div class="logo-holder">
@@ -20,18 +13,9 @@
 
         <div v-for="(menu, index) in menus" :key="index">
           <q-list bordered v-if="menu.hasSubMenu" class="q-pa-md">
-            <q-expansion-item
-              expand-separator
-              icon="perm_identity"
-              :label="menu.pages_id.name"
-              style="color: #fff"
-            >
+            <q-expansion-item expand-separator icon="perm_identity" :label="menu.pages_id.name" style="color: #fff">
               <div v-for="(child, cIndex) in menu.children" :key="cIndex">
-                <router-link
-                  v-if="child.isMenu"
-                  :to="child.url"
-                  style="text-decoration: none; color: inherit"
-                >
+                <router-link v-if="child.isMenu" :to="child.url" style="text-decoration: none; color: inherit">
                   <div class="expanded-content">
                     <img />
                     <p class="drawer-text">{{ child.label }}</p>
@@ -42,10 +26,7 @@
           </q-list>
           <q-list v-else>
             <q-item>
-              <router-link
-                :to="menu.url"
-                style="text-decoration: none; color: inherit"
-              >
+              <router-link :to="menu.url" style="text-decoration: none; color: inherit">
                 <div class="icon-text">
                   <img :src="menu.icon" />
                   <p class="drawer-text">{{ menu.pages_id.name }}</p>
@@ -67,18 +48,8 @@
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        icon="forum"
-        color="deep-purple-13"
-        style="border-radius: 10px; height: 45px"
-      >
-        <q-badge
-          rounded
-          color="orange"
-          floating
-          style="height: 20px; width: 20px"
-          >3</q-badge
-        >
+      <q-btn icon="forum" color="deep-purple-13" style="border-radius: 10px; height: 45px">
+        <q-badge rounded color="orange" floating style="height: 20px; width: 20px">3</q-badge>
       </q-btn>
     </q-page-sticky>
   </q-layout>
@@ -111,6 +82,31 @@ const menus = computed(() => {
     .filter((page) => {
       return page.isMenu;
     });
+  pageUrl.push({
+    pages_id: {
+      date_created: "2022-12-29T07:58:43.000Z",
+      date_updated: "2022-12-29T07:59:54.000Z",
+      id: "F02",
+      name: "Application Program",
+      parent_id: null,
+      sort: null,
+      status: "published",
+      user_created: "d8e9ad52-a783-4f8f-9d38-3315991d29c3",
+      user_updated: "d8e9ad52-a783-4f8f-9d38-3315991d29c3",
+      roles: [
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      children: []
+    },
+    url: "/application-program",
+    isMenu: true,
+    icon: "../../src/assets/images/Applicationform.png",
+    hasSubMenu: false
+  });
   return pageUrl;
 });
 </script>
@@ -120,6 +116,7 @@ const menus = computed(() => {
   width: 250px;
   margin-top: 20px;
 }
+
 .icon-text {
   display: flex;
   flex-direction: row;
@@ -127,6 +124,7 @@ const menus = computed(() => {
   margin-left: 20px;
   margin-top: 32px;
 }
+
 .search-field {
   margin-right: 10px;
 }

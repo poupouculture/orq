@@ -32,7 +32,11 @@ const routes = [
       },
       {
         path: "application-program",
-        component: () => import("pages/ApplicationProgram.vue"),
+        component: () => import("pages/ApplicationProgram/index.vue"),
+      },
+      {
+        path: "application-program/create",
+        component: () => import("pages/ApplicationProgram/create.vue"),
       },
       {
         path: "calendar",
