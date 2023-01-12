@@ -36,15 +36,6 @@
           />
 
           <div class="control flex no-wrap items-center justify-between mb-4">
-            <label class="flex no-wrap items-center text-sm">
-              <input
-                class="mr-1 border-gray-300"
-                type="checkbox"
-                v-model="isChecked"
-              />
-              <span class="mt-px">Remember me</span>
-            </label>
-
             <a href="#">Forgot your password?</a>
           </div>
 
@@ -104,8 +95,7 @@ import Message from "src/components/Message.vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import logo from "assets/images/logo.png";
 
-const isChecked = ref(false),
-  login = ref({ email: "", password: "" }),
+const login = ref({ email: "", password: "" }),
   loading = ref(false),
   isShow = ref(false),
   message = ref(""),
