@@ -22,23 +22,11 @@
     </div>
     <div class="main-content">
       <q-table
-        :selected-rows-label="getSelectedString"
         selection="multiple"
-        class="statement-table"
         :rows="data.customers"
-        :hide-header="grid"
         :columns="headerColumns"
-        row-key="__index"
-        :grid="grid"
-        :filter="filter"
         v-model:pagination="pagination"
-        :rows-per-page-options="[6]"
-        @focusin="activateNavigation"
-        @focusout="deactivateNavigation"
-        @keydown="onKey"
-        tabindex="0"
         :loading="loading"
-        table-class="my-custom"
         v-model:selected="selected"
         flat
       >
@@ -94,17 +82,22 @@
             >
           </q-td>
         </template>
-        <template>
-          <div class="absolute-bottom-right">
-            <q-pagination
-              v-model="current"
-              max="5"
-              direction-links
-              push
-              color="teal"
-              active-design="push"
-              active-color="orange"
-            />
+        <template v-slot:bottom>
+          <div class="row justify-between q-pt-lg q-pb-lg" style="width: 100%">
+            <div class="col">
+              {{ getPaginationLabel() }}
+            </div>
+            <div class="col absolute-bottom-right q-ma-lg">
+              <q-pagination
+                v-model="page"
+                @update:model-value="changePage"
+                :max="totalPage()"
+                direction-links
+                flat
+                color="grey"
+                active-color="primary"
+              />
+            </div>
           </div>
         </template>
       </q-table>
@@ -113,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, toRefs } from "vue";
 import { getCustomers } from "../../api/customers.js";
 import { useRouter } from "vue-router";
 
@@ -161,22 +154,61 @@ const headerColumns = [
   },
 ];
 
+const loading = ref(true);
 const selected = ref([]);
 const data = reactive({
   customers: [],
 });
+const pagination = reactive({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  totalCount: 0,
+});
+const { page } = toRefs(pagination);
 
 const groupedCompanies = (companies) => {
   const grouped = companies.map((company) => company.companies_id.name_english);
   return grouped.join(", ");
 };
 
-onMounted(async () => {
+const getPaginationLabel = () => {
+  const max = pagination.page * pagination.rowsPerPage;
+  const maxIndex = pagination.totalCount < max ? pagination.totalCount : max;
+  const minIndex = pagination.rowsPerPage * (pagination.page - 1) + 1;
+
+  return `Showing ${minIndex} to ${maxIndex} of
+  ${pagination.totalCount} results`;
+};
+
+const totalPage = () => {
+  return Math.ceil(pagination.totalCount / pagination.rowsPerPage);
+};
+
+const changePage = (val) => {
+  pagination.page = val;
+  fetchCustomers({
+    limit: pagination.rowsPerPage,
+    page: pagination.page,
+  });
+};
+
+const fetchCustomers = async () => {
   const {
-    data: { data: customers },
-  } = await getCustomers();
+    data: { data: customers, meta },
+  } = await getCustomers({
+    limit: pagination.rowsPerPage,
+    page: pagination.page,
+  });
 
   data.customers = customers;
+  pagination.totalCount = meta?.total_count;
+  loading.value = false;
+};
+
+onMounted(() => {
+  fetchCustomers();
 });
 </script>
 
