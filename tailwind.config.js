@@ -2,7 +2,10 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{html,js,vue}'],
   theme: {
-    extend: {}
+    extend: {
+      primary: '#4b44f6',
+      secondary: '#2e2e3a',
+    }
   },
   plugins: []
 }

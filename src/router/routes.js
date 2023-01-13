@@ -78,6 +78,10 @@ const routes = [
         path: "message",
         component: () => import("pages/MessageUi.vue"),
       },
+      {
+        path: "user-group",
+        component: () => import("pages/UsersGroup/Index.vue"),
+      }
     ],
   },
   {
