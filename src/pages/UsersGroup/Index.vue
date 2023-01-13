@@ -73,14 +73,14 @@
         </div>
       </div>
     </div>
-    <div class="flex items-cnter justify-center mt-20">
-      <BasePagination />
+    <div class="flex items-center justify-center mt-20">
+      <BasePagination :max="10" :max-pages="7" />
     </div>
   </div>
 </template>
 
 <script setup>
-import ButtonAction from 'components/Group/ButtonAction.vue'
+import ButtonAction from 'components/UserGroup/ButtonAction.vue'
 import BasePagination from 'components/BasePagination.vue'
 const projects = [
   {
