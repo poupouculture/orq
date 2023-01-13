@@ -16,7 +16,6 @@ export const getCustomers = async ({ limit = 10, page = 1 }) => {
     },
   });
 
-  console.log('customers ', customers);
   return customers;
 };
 

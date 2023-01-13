@@ -25,11 +25,11 @@
         </div>
         <div class="col-span-3 flex flex-col">
         <span class="font-semibold">
-            {{ actionType === 'Call Phone Number' ? 'Country' : 'URL Type' }}
+            {{ actionType === ato.CALL_PHONE ? 'Country' : 'URL Type' }}
         </span>
         <InputSelect
-            :options="actionType === 'Call Phone Number' ? actionCountryOptions : actionWebtypeOptions"
-            :default="actionType === 'Call Phone Number' ? 'ID +62' : 'Static'"
+            :options="actionType === ato.CALL_PHONE ? actionCountryOptions : actionWebtypeOptions"
+            :default="actionType === ato.CALL_PHONE ? 'ID +62' : 'Static'"
             :value="actionCountryOrWebtype"
             @input="updateActionCountryOrWebtype"
             class="bg-white rounded-lg"
@@ -37,7 +37,7 @@
         </div>
         <div class="col-span-3 flex flex-col">
         <span class="font-semibold">
-            {{ actionType === 'Call Phone Number' ? 'Phone Number' : 'URL' }}
+            {{ actionType === ato.CALL_PHONE ? 'Phone Number' : 'URL' }}
         </span>
         <input
             type="text"
@@ -51,36 +51,36 @@
 
 <script setup>
 import { ref } from "vue";
+import { actionTypeOptions as ato } from "../../consttants/ApplicationProgram.js";
 import InputSelect from "../InputSelect.vue";
 
 const props = defineProps({
     index: {
         type: Number,
         default: () => 0
-    },
+    }
 });
 
 const emit = defineEmits(["updateAction"]);
 
-const actionTypeOptions = ["Call Phone Number", "View Website"];
-const actionType = ref("Call Phone Number");
+const actionTypeOptions = [ato.CALL_PHONE, ato.VIEW_WEB];
+const actionCountryOptions = ["HK +852", "ID +62"];
+const actionWebtypeOptions = ["Static", "Dynamic"];
+
+const actionType = ref(ato.CALL_PHONE);
+const actionValue = ref('');
+const actionText = ref('');
+const actionCountryOrWebtype = ref('');
+
 const updateActionType = (value) => {
   actionType.value = value;
   handleAllChange();
 }
 
-const actionText = ref('');
-
-const actionCountryOrWebtype = ref('');
-
-const actionCountryOptions = ["HK +852", "ID +62"];
-const actionWebtypeOptions = ["Static", "Dynamic"];
 const updateActionCountryOrWebtype = (value) => {
   actionCountryOrWebtype.value = value;
   handleAllChange();
 }
-
-const actionValue = ref('');
 
 const handleAllChange = () => {
     emit('updateAction', {

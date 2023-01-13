@@ -168,33 +168,8 @@ import ReplyAction from "../../components/ApplicationProgram/ReplyAction.vue";
 import Preview from "../../components/ApplicationProgram/Preview.vue";
 
 const languageOptions = ["English", "Chineese"];
-const language = ref('English');
-const updateLanguage = value => {
-  language.value = value;
-}
-
 const headerOptions = ["Text", "Media"];
-const header = ref(null);
-const updateHeader = value => {
-  header.value = value;
-}
-const headerMessage = ref('');
-
-const media = ref(null);
-const updateMedia = value => {
-  media.value = value;
-}
-
-const bodyMessage = ref('');
-
-const footerMessage = ref('');
-
 const actionCategoryOptions = ["None", "Call To Action", "Quick Reply"];
-const actionCategory = ref("None");
-const updateActionCategory = value => {
-  actionCategory.value = value;
-}
-
 const actions = ref([
   {
     type: '',
@@ -210,11 +185,34 @@ const actions = ref([
   }
 ]);
 
+const language = ref('English');
+const header = ref(null);
+const headerMessage = ref('');
+const media = ref(null);
+const bodyMessage = ref('');
+const footerMessage = ref('');
+const actionCategory = ref("None");
+const replies = ref(['', '']);
+
+const updateLanguage = value => {
+  language.value = value;
+}
+
+const updateHeader = value => {
+  header.value = value;
+}
+
+const updateMedia = value => {
+  media.value = value;
+}
+
+const updateActionCategory = value => {
+  actionCategory.value = value;
+}
+
 const updateAction = value => {
   actions.value[value.index] = value;
 }
-
-const replies = ref(['', '']);
 
 const addReply = () => {
   replies.value.push('');

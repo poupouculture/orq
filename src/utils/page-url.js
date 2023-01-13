@@ -68,6 +68,13 @@ const pagesUrl = [
 
     ],
   },
+  {
+    id: "F06",
+    icon: "../../src/assets/images/Applicationform.png",
+    url: "/application-program",
+    isMenu: true,
+    hasSubMenu: false
+  }
 ];
 
 export default pagesUrl;
