@@ -76,7 +76,10 @@
             :checked="media === 'document'"
             />
         <div class="w-full flex flex-col items-center my-4">
-            <img src="../../assets/images/document.svg" alt="">
+            <img src="../../assets/images/document-active.svg"
+                alt="" v-if="media === 'document'">
+            <img src="../../assets/images/document.svg"
+                alt="" v-else>
             <span
             class="text-lg font-bold mt-2"
             :class="{
