@@ -10,16 +10,60 @@
         <img src="../../assets/images/profileavatar.png" />
       </q-avatar>
       <img src="../../assets/images/dropdownreal.png" class="dropdown-img" />
-      <q-menu>
-        <q-list style="min-width: 100px">
-          <q-item clickable v-close-popup>
-            <q-item-section>Personal Information</q-item-section>
-          </q-item>
+      <q-menu class="q-ma-lg" style="width: 400px">
+        <div class="column">
+          <div class="row q-pa-md items-center">
+            <div class="q-mr-md">
+              <q-avatar size="md">
+                <img src="../../assets/images/profileavatar.png" />
+              </q-avatar>
+            </div>
+            <div>
+              <div class="text-h6">
+                {{ user?.first_name }} {{ user?.last_name }}
+              </div>
+              <div class="text-h7">
+                {{ user?.role.name }}
+              </div>
+            </div>
+          </div>
           <q-separator />
-          <q-item clickable v-close-popup @click="logout">
-            <q-item-section>Sign Out</q-item-section>
-          </q-item>
-        </q-list>
+          <div>
+            <q-list>
+              <q-item clickable v-close-popup>
+                <q-item-section
+                  ><span
+                    ><q-icon name="assignment" class="q-mr-sm" /> Personal
+                    Information</span
+                  ></q-item-section
+                >
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section
+                  ><span
+                    ><q-icon name="assignment" class="q-mr-sm" /> Privacy</span
+                  ></q-item-section
+                >
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section
+                  ><span
+                    ><q-icon name="business" class="q-mr-sm" /> About WABA</span
+                  ></q-item-section
+                >
+              </q-item>
+              <q-separator />
+              <q-item clickable v-close-popup @click="logout">
+                <q-item-section
+                  ><span
+                    ><q-icon name="logout" class="q-mr-sm" @click="logout" />
+                    Sign Out</span
+                  ></q-item-section
+                >
+              </q-item>
+            </q-list>
+          </div>
+        </div>
       </q-menu>
     </q-btn>
   </div>
@@ -28,11 +72,14 @@
 <script setup>
 import "./MenuBar.scss";
 import { useRouter } from "vue-router";
+import { computed } from "vue";
 import { LocalStorage } from "quasar";
 import useUserInfoStore from "stores/modules/userInfo";
 
 const router = useRouter();
 const userInfo = useUserInfoStore();
+
+const user = computed(() => userInfo.getUserProfile);
 
 const logout = () => {
   LocalStorage.remove("userinfo");
