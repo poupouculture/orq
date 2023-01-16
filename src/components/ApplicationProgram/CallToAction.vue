@@ -25,11 +25,11 @@
         </div>
         <div class="col-span-3 flex flex-col">
         <span class="font-semibold">
-            {{ actionType === ato.CALL_PHONE ? 'Country' : 'URL Type' }}
+            {{ actionType === at.CALL_PHONE ? 'Country' : 'URL Type' }}
         </span>
         <InputSelect
-            :options="actionType === ato.CALL_PHONE ? actionCountryOptions : actionWebtypeOptions"
-            :default="actionType === ato.CALL_PHONE ? 'ID +62' : 'Static'"
+            :options="actionType === at.CALL_PHONE ? actionCountryOptions : actionWebtypeOptions"
+            :default="actionType === at.CALL_PHONE ? 'ID +62' : 'Static'"
             :value="actionCountryOrWebtype"
             @input="updateActionCountryOrWebtype"
             class="bg-white rounded-lg"
@@ -37,7 +37,7 @@
         </div>
         <div class="col-span-3 flex flex-col">
         <span class="font-semibold">
-            {{ actionType === ato.CALL_PHONE ? 'Phone Number' : 'URL' }}
+            {{ actionType === at.CALL_PHONE ? 'Phone Number' : 'URL' }}
         </span>
         <input
             type="text"
@@ -51,7 +51,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { actionTypeOptions as ato } from "../../consttants/ApplicationProgram.js";
+import { actionType as at } from "../../consttants/ApplicationProgram.js";
 import InputSelect from "../InputSelect.vue";
 
 const props = defineProps({
@@ -63,11 +63,11 @@ const props = defineProps({
 
 const emit = defineEmits(["updateAction"]);
 
-const actionTypeOptions = [ato.CALL_PHONE, ato.VIEW_WEB];
+const actionTypeOptions = [at.CALL_PHONE, at.VIEW_WEB];
 const actionCountryOptions = ["HK +852", "ID +62"];
 const actionWebtypeOptions = ["Static", "Dynamic"];
 
-const actionType = ref(ato.CALL_PHONE);
+const actionType = ref(at.CALL_PHONE);
 const actionValue = ref('');
 const actionText = ref('');
 const actionCountryOrWebtype = ref('');
