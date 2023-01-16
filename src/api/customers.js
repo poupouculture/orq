@@ -15,6 +15,7 @@ export const getCustomers = async ({ limit = 10, page = 1 }) => {
       meta: "*",
     },
   });
+
   return customers;
 };
 

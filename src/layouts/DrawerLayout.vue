@@ -1,13 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-drawer
-      v-model="drawer"
-      show-if-above
-      :width="288"
-      :breakpoint="500"
-      bordered
-      class="drawerclass"
-    >
+    <q-drawer v-model="drawer" show-if-above :width="288" :breakpoint="500" bordered class="drawerclass">
       <q-scroll-area class="fit">
         <div class="drawer-content">
           <div class="logo-holder">
@@ -70,18 +63,8 @@
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        icon="forum"
-        color="deep-purple-13"
-        style="border-radius: 10px; height: 45px"
-      >
-        <q-badge
-          rounded
-          color="orange"
-          floating
-          style="height: 20px; width: 20px"
-          >3</q-badge
-        >
+      <q-btn icon="forum" color="deep-purple-13" style="border-radius: 10px; height: 45px">
+        <q-badge rounded color="orange" floating style="height: 20px; width: 20px">3</q-badge>
       </q-btn>
     </q-page-sticky>
   </q-layout>
@@ -124,6 +107,7 @@ const menus = computed(() => {
   width: 250px;
   margin-top: 20px;
 }
+
 .icon-text {
   display: flex;
   flex-direction: row;
@@ -131,6 +115,7 @@ const menus = computed(() => {
   margin-left: 20px;
   margin-top: 32px;
 }
+
 .search-field {
   margin-right: 10px;
 }
