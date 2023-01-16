@@ -1,41 +1,41 @@
 <template>
-<div class="w-full flex">
+  <div class="w-full flex">
     <div class="w-10/12">
-        <input
+      <input
         type="text"
         class="w-full h-10 block border rounded-lg pl-4"
         v-model="replyText"
         @change="changeValue"
-        />
+      />
     </div>
     <div class="w-2/12 flex items-center justify-center text-2xl text-gray-400">
-        <q-icon name="fa-solid fa-close" @click="deleteReply"/>
+      <q-icon name="fa-solid fa-close" @click="deleteReply" />
     </div>
-</div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
 const props = defineProps({
-    index: {
-        type: Number,
-        default: () => 0
-    }
+  index: {
+    type: Number,
+    default: () => 0,
+  },
 });
 
 const emit = defineEmits(["updateReply", "deleteReply"]);
 
-const replyText = ref('');
+const replyText = ref("");
 
 const changeValue = () => {
-    emit('updateReply', {
-        index: props.index,
-        value: replyText.value
-    })
-}
+  emit("updateReply", {
+    index: props.index,
+    value: replyText.value,
+  });
+};
 
 const deleteReply = () => {
-    emit('deleteReply', props.index);
-}
+  emit("deleteReply", props.index);
+};
 </script>

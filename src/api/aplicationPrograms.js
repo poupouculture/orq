@@ -19,7 +19,7 @@ export const getApplicationPrograms = async ({ limit = 10, page = 1 }) => {
     data: {
       meta: {
         total_count: 17,
-        filter_count: 17
+        filter_count: 17,
       },
       data: [
         {
@@ -31,9 +31,9 @@ export const getApplicationPrograms = async ({ limit = 10, page = 1 }) => {
           read: 5,
           replied: 1,
           created_by: "Salim Arizi",
-          created_on: "Thu, 12 Jan 2023"
+          created_on: "Thu, 12 Jan 2023",
         },
-      ]
-    }
+      ],
+    },
   };
 };

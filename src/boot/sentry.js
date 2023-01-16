@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { boot } from "quasar/wrappers";
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
 
@@ -19,4 +19,4 @@ export default boot(async ({ app, router }) => {
     // We recommend adjusting this value in production
     tracesSampleRate: 1.0,
   });
-})
+});

@@ -1,6 +1,13 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-drawer v-model="drawer" show-if-above :width="288" :breakpoint="500" bordered class="drawerclass">
+    <q-drawer
+      v-model="drawer"
+      show-if-above
+      :width="288"
+      :breakpoint="500"
+      bordered
+      class="drawerclass"
+    >
       <q-scroll-area class="fit">
         <div class="drawer-content">
           <div class="logo-holder">
@@ -43,7 +50,9 @@
                   style="text-decoration: none; color: inherit"
                 >
                   <div class="expanded-content">
-                    <p class="drawer-text">{{ child.name }}</p>
+                    <p class="drawer-text">
+                      {{ child.name }}
+                    </p>
                   </div>
                 </router-link>
               </div>
@@ -63,8 +72,18 @@
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn icon="forum" color="deep-purple-13" style="border-radius: 10px; height: 45px">
-        <q-badge rounded color="orange" floating style="height: 20px; width: 20px">3</q-badge>
+      <q-btn
+        icon="forum"
+        color="deep-purple-13"
+        style="border-radius: 10px; height: 45px"
+      >
+        <q-badge
+          rounded
+          color="orange"
+          floating
+          style="height: 20px; width: 20px"
+          >3</q-badge
+        >
       </q-btn>
     </q-page-sticky>
   </q-layout>

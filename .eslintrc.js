@@ -27,12 +27,14 @@ module.exports = {
     // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
     "standard",
+    "prettier",
   ],
 
   plugins: [
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-files
     // required to lint *.vue files
     "vue",
+    "prettier",
   ],
 
   globals: {
@@ -72,10 +74,11 @@ module.exports = {
     // allow debugger during development only
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     "comma-dangle": "off",
-    quotes: "off",
-    semi: "off",
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    semi: ["error", "always"],
     indent: "off",
     "space-before-function-paren": "off",
     "vue/multi-word-component-names": "off",
+    "prettier/prettier": ["error"],
   },
 };
