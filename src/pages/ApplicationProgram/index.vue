@@ -5,7 +5,7 @@
         <q-icon name="fa-solid fa-arrow-left" />
         Application program /
       </span>
-       Message Templates
+      Message Templates
     </p>
     <div class="row justify-between">
       <q-input placeholder="Search" outlined dense>
@@ -14,16 +14,35 @@
         </template>
       </q-input>
       <div>
-        <q-btn icon="add" no-caps rounded color="primary" label="Add" class="q-mr-sm"
-          @click="router.push('/application-program/create')" />
+        <q-btn
+          icon="add"
+          no-caps
+          rounded
+          color="primary"
+          label="Add"
+          class="q-mr-sm"
+          @click="router.push('/application-program/create')"
+        />
         <q-btn icon="delete" no-caps rounded label="Trash" />
       </div>
     </div>
     <div class="main-content">
-      <q-table selection="multiple" :rows="data.applicationPrograms" :columns="headerColumns"
-        v-model:pagination="pagination" :loading="loading" v-model:selected="selected" flat>
+      <q-table
+        selection="multiple"
+        :rows="data.applicationPrograms"
+        :columns="headerColumns"
+        v-model:pagination="pagination"
+        :loading="loading"
+        v-model:selected="selected"
+        flat
+      >
         <q-tr :props="props">
-          <q-th v-for="col in props.cols" :key="col.name" :props="props" auto-width>
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            auto-width
+          >
             {{ col.label }}
           </q-th>
         </q-tr>
@@ -35,7 +54,8 @@
         <template #body-cell-status="props">
           <q-td :props="props">
             <span
-              class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200">
+              class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200"
+            >
               {{ props.row.status }}
             </span>
           </q-td>
@@ -72,7 +92,10 @@
         </template>
         <template #body-cell-action="props">
           <q-td :props="props">
-            <router-link :to="`/application-program/${props.row.id}`" style="text-decoration: none; color: inherit">
+            <router-link
+              :to="`/application-program/${props.row.id}`"
+              style="text-decoration: none; color: inherit"
+            >
               <p class="edit-button">Edit</p>
             </router-link>
           </q-td>
@@ -83,8 +106,15 @@
               {{ getPaginationLabel() }}
             </div>
             <div class="col absolute-bottom-right q-ma-lg">
-              <q-pagination v-model="page" @update:model-value="changePage" :max="totalPage()" direction-links flat
-                color="grey" active-color="primary" />
+              <q-pagination
+                v-model="page"
+                @update:model-value="changePage"
+                :max="totalPage()"
+                direction-links
+                flat
+                color="grey"
+                active-color="primary"
+              />
             </div>
           </div>
         </template>
@@ -221,7 +251,6 @@ const changePage = (val) => {
 onMounted(() => {
   fetchApplicationPrograms();
 });
-
 </script>
 
 <style scoped src="./style.scss" />
