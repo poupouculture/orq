@@ -9,6 +9,7 @@ yarn
 npm install
 ```
 
+
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
@@ -22,11 +23,18 @@ yarn lint
 npm run lint
 ```
 
-
+## API
+- use axios
+- use GraphQL in later stage for better performance and cleaner code
+  - e.g. APOLLO
 
 ### Build the app for production
 ```bash
 quasar build
+```
+builds to:
+```
+distDir: ctx.mode.spa ? "public" : null,
 ```
 
 ### Customize the configuration

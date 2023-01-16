@@ -126,6 +126,7 @@ const menus = computed(() => {
   width: 250px;
   margin-top: 20px;
 }
+
 .icon-text {
   display: flex;
   flex-direction: row;
@@ -133,6 +134,7 @@ const menus = computed(() => {
   margin-left: 20px;
   margin-top: 32px;
 }
+
 .search-field {
   margin-right: 10px;
 }
