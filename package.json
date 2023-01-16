@@ -43,6 +43,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-vue": "^9.0.0",
     "husky": "^8.0.0",
+    "lint-staged": "^13.1.0",
     "postcss": "^8.4.20",
     "prettier": "^2.8.1",
     "prettier-eslint": "^15.0.1",
@@ -53,5 +54,8 @@
     "node": "^18 || ^16 || ^14.19",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --ext .js,.vue ./ --fix"
   }
 }
