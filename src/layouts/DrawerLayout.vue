@@ -50,7 +50,9 @@
                   style="text-decoration: none; color: inherit"
                 >
                   <div class="expanded-content">
-                    <p class="drawer-text">{{ child.name }}</p>
+                    <p class="drawer-text">
+                      {{ child.name }}
+                    </p>
                   </div>
                 </router-link>
               </div>
