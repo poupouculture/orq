@@ -82,6 +82,10 @@ const routes = [
         path: "message",
         component: () => import("pages/MessageUi.vue"),
       },
+      {
+        path: "customer-groups",
+        component: () => import("pages/UsersGroup/Index.vue"),
+      },
     ],
   },
   {

@@ -11,28 +11,43 @@
           </div>
         </div>
 
+        <q-list>
+          <q-item>
+            <router-link to="/" style="text-decoration: none; color: inherit">
+              <div class="icon-text">
+                <q-icon
+                  size="sm"
+                  color="white"
+                  name="dashboard"
+                  style="margin-right: 7px"
+                />
+                <p class="drawer-text">Dashboard</p>
+              </div>
+            </router-link>
+          </q-item>
+        </q-list>
         <div v-for="(menu, index) in menus" :key="index">
-          <q-list bordered v-if="menu.hasSubMenu" class="q-pa-md">
-            <q-expansion-item expand-separator icon="perm_identity" :label="menu.pages_id.name" style="color: #fff">
-              <div v-for="(child, cIndex) in menu.children" :key="cIndex">
-                <router-link v-if="child.isMenu" :to="child.url" style="text-decoration: none; color: inherit">
+          <q-list class="q-pt-md q-pl-md q-pr-md">
+            <q-expansion-item
+              expand-separator
+              :icon="menu.icon"
+              :label="menu.pages_id.name"
+              style="color: #fff"
+            >
+              <div
+                v-for="(child, cIndex) in menu.pages_id.children"
+                :key="cIndex"
+              >
+                <router-link
+                  :to="child.url"
+                  style="text-decoration: none; color: inherit"
+                >
                   <div class="expanded-content">
-                    <img />
-                    <p class="drawer-text">{{ child.label }}</p>
+                    <p class="drawer-text">{{ child.name }}</p>
                   </div>
                 </router-link>
               </div>
             </q-expansion-item>
-          </q-list>
-          <q-list v-else>
-            <q-item>
-              <router-link :to="menu.url" style="text-decoration: none; color: inherit">
-                <div class="icon-text">
-                  <img :src="menu.icon" />
-                  <p class="drawer-text">{{ menu.pages_id.name }}</p>
-                </div>
-              </router-link>
-            </q-item>
           </q-list>
         </div>
       </q-scroll-area>
@@ -62,52 +77,28 @@ import { computed, ref } from "vue";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import pagesUrl from "../utils/page-url.js";
+import { pageCodes } from "../utils/page-codes.js";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
 
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;
-  const pageUrl = pages
-    .map((page) => {
-      const menu = pagesUrl.find((item) => item.id === page.pages_id?.id);
-      page.url = menu?.url;
-      page.isMenu = menu?.isMenu;
-      page.icon = menu?.icon;
-      page.hasSubMenu = menu?.hasSubMenu;
-      page.children = menu?.children;
-      return page;
-    })
+
+  const menus = pages
     .filter((page) => {
-      return page.isMenu;
+      if (page.pages_id && !page.pages_id.parent_id) {
+        return pageCodes.some((f) => f.id === page.pages_id.id);
+      }
+      return false;
+    })
+    .map((page) => {
+      const code = pageCodes.find((code) => code.id === page.pages_id.id);
+      page.icon = code.icon;
+      return page;
     });
-  pageUrl.push({
-    pages_id: {
-      date_created: "2022-12-29T07:58:43.000Z",
-      date_updated: "2022-12-29T07:59:54.000Z",
-      id: "F02",
-      name: "Application Program",
-      parent_id: null,
-      sort: null,
-      status: "published",
-      user_created: "d8e9ad52-a783-4f8f-9d38-3315991d29c3",
-      user_updated: "d8e9ad52-a783-4f8f-9d38-3315991d29c3",
-      roles: [
-        11,
-        12,
-        13,
-        14,
-        15
-      ],
-      children: []
-    },
-    url: "/application-program",
-    isMenu: true,
-    icon: "../../src/assets/images/Applicationform.png",
-    hasSubMenu: false
-  });
-  return pageUrl;
+
+  return menus;
 });
 </script>
 
