@@ -79,10 +79,6 @@ const routes = [
         component: () => import("pages/WorkOrder.vue"),
       },
       {
-        path: "message",
-        component: () => import("pages/MessageUi.vue"),
-      },
-      {
         path: "customer-groups",
         component: () => import("pages/UsersGroup/Index.vue"),
       },
