@@ -54,7 +54,8 @@
               </div>
               <div class="subrow">
                 <p class="headingtext">
-                  {{ props.row.first_name }} {{ props.row.last_name }}
+                  {{ props.row.first_name }}
+                  {{ props.row.last_name }}
                 </p>
                 <p class="subheadingtext">2022-8-10</p>
               </div>

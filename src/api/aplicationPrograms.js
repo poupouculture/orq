@@ -28,11 +28,17 @@ export const getApplicationProgram = async (id) => {
 };
 
 export const addApplicationProgram = async (payload) => {
-  const applicationProgram = await api.post("/items/message_templates", payload);
+  const applicationProgram = await api.post(
+    "/items/message_templates",
+    payload
+  );
   return applicationProgram;
 };
 
 export const updateApplicationProgram = async (id, payload) => {
-  const applicationProgram = await api.patch(`/items/message_templates/${id}`, payload);
+  const applicationProgram = await api.patch(
+    `/items/message_templates/${id}`,
+    payload
+  );
   return applicationProgram;
 };

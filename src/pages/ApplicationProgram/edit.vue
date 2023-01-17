@@ -1,5 +1,8 @@
 <template>
-  <BaseLayout :applicationProgram="applicationProgram" @submitGeneralInformation="submit"/>
+  <BaseLayout
+    :applicationProgram="applicationProgram"
+    @submitGeneralInformation="submit"
+  />
 </template>
 
 <script setup>
@@ -8,7 +11,7 @@ import { useRouter, useRoute } from "vue-router";
 import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
 import {
   getApplicationProgram,
-  updateApplicationProgram
+  updateApplicationProgram,
 } from "../../api/aplicationPrograms.js";
 
 const router = useRouter();
@@ -16,7 +19,7 @@ const route = useRoute();
 const loading = ref(true);
 const applicationProgram = ref(null);
 
-onMounted(async() => {
+onMounted(async () => {
   const id = route.params.id;
   applicationProgram.value = await getApplicationProgram(id);
   loading.value = false;

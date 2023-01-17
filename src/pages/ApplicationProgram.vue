@@ -8,7 +8,7 @@
       margin-top: 275px;
     "
   >
-    <p>STOW</p>
+    <p>Application Program</p>
   </div>
 </template>
 
@@ -16,6 +16,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "StowPage",
+  name: "ApplicationProgram",
 });
 </script>

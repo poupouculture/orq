@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout @submitGeneralInformation="submit"/>
+  <BaseLayout @submitGeneralInformation="submit" />
 </template>
 
 <script setup>
