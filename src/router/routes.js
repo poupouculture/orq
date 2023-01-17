@@ -39,6 +39,10 @@ const routes = [
         component: () => import("pages/ApplicationProgram/create.vue"),
       },
       {
+        path: "application-program/:id",
+        component: () => import("pages/ApplicationProgram/edit.vue"),
+      },
+      {
         path: "calendar",
         component: () => import("pages/Calendar.vue"),
       },
