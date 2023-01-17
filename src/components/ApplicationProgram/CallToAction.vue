@@ -51,7 +51,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { actionType as at } from "../../consttants/ApplicationProgram.js";
+import { actionType as at } from "../../constants/ApplicationProgram.js";
 import InputSelect from "../InputSelect.vue";
 
 const props = defineProps({
