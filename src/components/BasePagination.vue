@@ -1,5 +1,5 @@
 <template>
-  <q-pagination v-model="pagination" :max="max" :max-pages="maxPages" direction-links active-design="outline" outline
+  <q-pagination v-model="pagination" @update:model-value="updateModel" :max="max" :max-pages="maxPages" direction-links active-design="outline" outline
     color="grey-7" active-color="primary" padding="6px 14px" />
 </template>
 <script setup>
@@ -8,7 +8,11 @@ defineProps({
   maxPages: { type: [String, Number], required: true },
   max: { type: [String, Number], required: true },
 });
+const emits = defineEmits(['updateModel']);
 const pagination = ref(1);
+const updateModel = (value) => {
+  emits('updateModel', value)
+}
 </script>
 <style lang="scss" scoped>
 .q-pagination::v-deep {
