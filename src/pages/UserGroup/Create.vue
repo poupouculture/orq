@@ -7,50 +7,52 @@
     <span>Add Customer Groups</span>
   </div>
   <!-- Form -->
-  <div class="q-pa-lg q-mt-lg bg-white rounded-lg">
-    <div class="lg:w-10/12 mx-auto">
-      <div class="row q-mb-lg q-gutter-xl">
-        <div class="col">
-          <p class="label-style">Name <span class="text-red-600">*</span></p>
-          <q-input v-model="form.name" class="indi" :rules="[(val) => required(val)]" outlined lazy-rules dense />
-        </div>
-        <div class="col">
-          <p class="label-style">Status</p>
-          <q-select v-model="form.status" :options="statusOptions" :rules="[(val) => required(val)]" outlined lazy-rules
-            dense />
-        </div>
-      </div>
-      <!-- Customer -->
-      <h6 class="border-b border-[#D9D9D9]">Customers</h6>
-      <div class="flex justify-end items mt-2.5 space-x-3">
-        <p class="text-[#9A9AAF]">{{ selectedCustomer.length }} Items</p>
-        <RouterLink :to="{ name: 'customergroups.create', query: { add_customer: true } }"
-          class="bg-primary rounded-md flex p-0.5 shadow drop-shadow-lg shadow-blue-700/40">
-          <q-icon name="add" class="text-white" size="1.2rem" />
-        </RouterLink>
-      </div>
-      <!-- User Groups -->
-      <h6 class="border-b border-[#D9D9D9]">User Group</h6>
-      <div class="flex justify-end items mt-2.5 space-x-3">
-        <p class="text-[#9A9AAF]">{{ selectedUserGroup.length }} Items</p>
-        <RouterLink :to="{ name: 'customergroups.create', query: { add_user_group: true } }"
-          class="bg-primary rounded-md flex p-0.5 shadow drop-shadow-lg shadow-blue-700/40">
-          <q-icon name="add" class="text-white" size="1.2rem" />
-        </RouterLink>
-      </div>
-      <!-- Button Action -->
-      <div class="row q-mb-lg q-gutter-xl q-mt-lg">
-        <div class="col flex">
-          <div class="btn-dotted" @click="returnDialog = true">
-            <p>Return</p>
+  <q-form ref="formCreate">
+    <div class="q-pa-lg q-mt-lg bg-white rounded-lg">
+      <div class="lg:w-10/12 mx-auto">
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Name <span class="text-red-600">*</span></p>
+            <q-input v-model="form.name" :rules="[(val) => required(val)]" outlined lazy-rules dense />
+          </div>
+          <div class="col">
+            <p class="label-style">Status</p>
+            <q-select v-model="form.status" :options="statusOptions" :rules="[(val) => required(val)]" outlined lazy-rules
+              dense />
           </div>
         </div>
-        <div class="col flex justify-end">
-          <q-btn :loading="form.loading" color="primary" label="Save" class="dark-btn" @click="submit()" />
+        <!-- Customer -->
+        <h6 class="border-b border-[#D9D9D9]">Customers</h6>
+        <div class="flex justify-end items mt-2.5 space-x-3">
+          <p class="text-[#9A9AAF]">{{ selectedCustomer.length }} Items</p>
+          <RouterLink :to="{ name: 'customergroups.create', query: { add_customer: true } }"
+            class="bg-primary rounded-md flex p-0.5 shadow drop-shadow-lg shadow-blue-700/40">
+            <q-icon name="add" class="text-white" size="1.2rem" />
+          </RouterLink>
+        </div>
+        <!-- User Groups -->
+        <h6 class="border-b border-[#D9D9D9]">User Group</h6>
+        <div class="flex justify-end items mt-2.5 space-x-3">
+          <p class="text-[#9A9AAF]">{{ selectedUserGroup.length }} Items</p>
+          <RouterLink :to="{ name: 'customergroups.create', query: { add_user_group: true } }"
+            class="bg-primary rounded-md flex p-0.5 shadow drop-shadow-lg shadow-blue-700/40">
+            <q-icon name="add" class="text-white" size="1.2rem" />
+          </RouterLink>
+        </div>
+        <!-- Button Action -->
+        <div class="row q-mb-lg q-gutter-xl q-mt-lg">
+          <div class="col flex">
+            <div class="btn-dotted" @click="returnDialog = true">
+              <p>Return</p>
+            </div>
+          </div>
+          <div class="col flex justify-end">
+            <q-btn :loading="form.loading" color="primary" label="Save" class="dark-btn" @click="submit()" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </q-form>
   <!-- Overlay Add Customer -->
   <AddCustomerOverlay v-if="$route.query.add_customer" v-model="selectedCustomer" />
   <AddUserGroupOverlay v-if="$route.query.add_user_group" v-model="selectedUserGroup" />
@@ -77,8 +79,10 @@ const form = reactive({
   status: "",
   loading: false
 })
-
+const formCreate = ref()
 const submit = async () => {
+  const validate = await formCreate.value.validate();
+  if (!validate) return
   form.loading = true
   try {
     await addCustomerGroup({
