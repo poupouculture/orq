@@ -4,23 +4,23 @@
     :class="{ active: active, inactive: !active }"
   >
     <div class="row items-center justify-between">
-      <div>
+      <div class="col-8">
         <div class="row items-center">
           <q-avatar class="rounded-avatar">
             <img src="https://cdn.quasar.dev/img/avatar.png" />
           </q-avatar>
-          <div class="q-ml-md">
+          <div class="col-7 q-ml-md">
             <div
               class="text-h6"
               :class="{ 'text-white': active, 'text-dark': !active }"
             >
               {{ name }}
             </div>
-            <div class="text-grey-5">{{ message }}</div>
+            <div class="text-grey-5">{{ shortenedString(message) }}</div>
           </div>
         </div>
       </div>
-      <div>
+      <div class="col-4 self-start q-py-xs">
         <div class="column items-end">
           <div class="text-grey-5">{{ time }}</div>
           <q-avatar
@@ -60,6 +60,14 @@ defineProps({
     default: 0,
   },
 });
+
+const maxLength = 20;
+
+const shortenedString = (text) => {
+  if (text.length < maxLength) return text;
+
+  return text.substring(0, maxLength) + "...";
+};
 </script>
 
 <style scoped lang="scss">
