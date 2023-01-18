@@ -29,35 +29,19 @@
       <q-tab-panels v-model="tab" animated class="q-mt-md transparent">
         <q-tab-panel name="ongoing"> test </q-tab-panel>
         <q-tab-panel name="waiting" class="q-gutter-y-sm">
-          <ContactCard
-            active
-            name="Visitor"
-            message="Hi"
-            time="11:21
-          AM"
-            :totalUnread="3"
-          />
-          <ContactCard
-            name="Chester "
-            message="May I help you"
-            time="11:21
-          AM"
-            :totalUnread="3"
-          />
-          <ContactCard
-            name="Leslie"
-            message="test"
-            time="11:21
-          AM"
-          />
-          <ContactCard
-            name="Jimmy"
-            message="hola"
-            time="11:21
-          AM"
-          />
+          <div v-for="(chat, index) in chatList" :key="index">
+            <ContactCard
+              :active="index === activeChat"
+              :name="chat?.customer_name ? chat.customer_name : 'Visitor'"
+              :message="chat.last_message_text"
+              :time="dateFormat(chat.last_message_date)"
+              :totalUnread="0"
+              class="contact-card"
+              @click="selectChat(index)"
+            />
+          </div>
         </q-tab-panel>
-        <q-tab-panel name="closed"> test </q-tab-panel>
+        <q-tab-panel name="closed"> test</q-tab-panel>
       </q-tab-panels>
     </q-list>
   </q-drawer>
@@ -65,7 +49,30 @@
 
 <script setup>
 import { ref } from "vue";
+import { format } from "date-fns";
 import ContactCard from "./ContactCard.vue";
 
+defineProps({
+  chatList: {
+    type: Object,
+    default: () => {},
+  },
+});
+
+const activeChat = ref(0);
 const tab = ref("waiting");
+
+const dateFormat = (date) => {
+  return format(new Date(date), "hh:mm aa");
+};
+
+const selectChat = (index) => {
+  activeChat.value = index;
+};
 </script>
+
+<style scoped>
+.contact-card:hover {
+  cursor: pointer;
+}
+</style>
