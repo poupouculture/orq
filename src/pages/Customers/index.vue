@@ -54,7 +54,8 @@
               </div>
               <div class="subrow">
                 <p class="headingtext">
-                  {{ props.row.first_name }} {{ props.row.last_name }}
+                  {{ props.row.first_name }}
+                  {{ props.row.last_name }}
                 </p>
                 <p class="subheadingtext">2022-8-10</p>
               </div>
@@ -107,7 +108,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, toRefs } from "vue";
-import { getCustomers } from "../../api/customers.js";
+import { getCustomers } from "../../api/customers";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

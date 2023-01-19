@@ -9,9 +9,10 @@
     "dev": "quasar dev",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
-    "lint": "eslint --ext .js,.vue ./",
+    "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
-    "deploy": "vercel"
+    "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@directus/sdk": "^10.3.0",
@@ -19,6 +20,7 @@
     "@sentry/tracing": "^7.29.0",
     "@sentry/vue": "^7.29.0",
     "axios": "^0.21.1",
+    "date-fns": "^2.29.3",
     "echarts": "^5.4.1",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
@@ -31,21 +33,34 @@
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@quasar/app-vite": "^1.0.0",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
     "autoprefixer": "^10.4.13",
     "dotenv": "^16.0.3",
     "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-vue": "^9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.1.0",
     "postcss": "^8.4.20",
     "prettier": "^2.8.1",
-    "tailwindcss": "^3.2.4"
+    "prettier-eslint": "^15.0.1",
+    "prettier-eslint-cli": "^7.1.0",
+    "tailwindcss": "^3.2.4",
+    "typescript": "^4.9.4"
   },
   "engines": {
     "node": "^18 || ^16 || ^14.19",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --ext .js,.vue,.ts ./ --fix"
   }
 }

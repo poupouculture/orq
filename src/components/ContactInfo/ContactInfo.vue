@@ -517,7 +517,7 @@ import "./ContactInfo.scss";
 import "vue3-tel-input/dist/vue3-tel-input.css";
 import ContactPhoneCard from "../Customer/ContactPhoneCard.vue";
 import { useRoute } from "vue-router";
-import useCustomerStore from "src/stores/modules/customer.js";
+import useCustomerStore from "src/stores/modules/customer";
 
 const route = useRoute();
 const customerStore = useCustomerStore();

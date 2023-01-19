@@ -5,7 +5,7 @@ import {
   addCustomerContact,
   addCustomer,
   updateCustomer,
-} from "src/api/customers.js";
+} from "src/api/customers";
 
 const useCustomerStore = defineStore("customer", {
   state: () => ({

@@ -32,7 +32,11 @@ const routes = [
       },
       {
         path: "application-program",
-        component: () => import("pages/ApplicationProgram.vue"),
+        component: () => import("pages/ApplicationProgram/index.vue"),
+      },
+      {
+        path: "application-program/create",
+        component: () => import("pages/ApplicationProgram/create.vue"),
       },
       {
         path: "calendar",
@@ -75,12 +79,22 @@ const routes = [
         component: () => import("pages/WorkOrder.vue"),
       },
       {
-        path: "message",
-        component: () => import("pages/MessageUi.vue"),
-      },
-      {
         path: "customer-groups",
         component: () => import("pages/UsersGroup/Index.vue"),
+      },
+    ],
+  },
+  {
+    path: "/messaging",
+    component: () => import("layouts/MessagingLayout.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: "",
+        name: "messaging",
+        component: () => import("pages/Messaging/Index.vue"),
       },
     ],
   },

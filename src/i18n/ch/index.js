@@ -2,5 +2,5 @@
 // so you can safely delete all default props below
 
 export default {
-  signup: '报名'
-}
+  signup: "报名",
+};
