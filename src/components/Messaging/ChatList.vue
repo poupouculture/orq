@@ -29,7 +29,7 @@
       <q-tab-panels v-model="tab" animated class="q-mt-md transparent">
         <q-tab-panel name="ongoing"> test </q-tab-panel>
         <q-tab-panel name="waiting" class="q-gutter-y-sm">
-          <div v-for="(chat, index) in chatList" :key="index">
+          <div v-for="(chat, index) in props.chatList" :key="index">
             <ContactCard
               :active="index === activeChat"
               :name="chat?.customer_name ? chat.customer_name : 'Visitor'"
@@ -47,27 +47,38 @@
   </q-drawer>
 </template>
 
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import type { Ref } from "vue";
 import { format } from "date-fns";
 import ContactCard from "./ContactCard.vue";
+import useMessagingStore from "src/stores/modules/messaging";
 
-defineProps({
+const messagingStore = useMessagingStore();
+
+const props = defineProps({
   chatList: {
     type: Object,
     default: () => null,
   },
 });
 
-const activeChat = ref(0);
-const tab = ref("waiting");
+const activeChat: Ref<number> = ref(0);
+const tab: Ref<string> = ref("waiting");
 
-const dateFormat = (date) => {
+onMounted(() => {
+  selectChat(0);
+});
+
+const dateFormat = (date: string) => {
   return format(new Date(date), "hh:mm aa");
 };
 
-const selectChat = (index) => {
+const selectChat = async (index: number) => {
   activeChat.value = index;
+  const { chat_id: chatId } = props.chatList[index];
+
+  messagingStore.fetchChatMessagesByChatId(chatId);
 };
 </script>
 

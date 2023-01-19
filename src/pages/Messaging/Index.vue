@@ -65,25 +65,28 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
+import type { Ref } from "vue";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 
-const Tabs = Object.freeze({
-  CUSTOMER: "customer",
-  SERVICE_DETAIL: "serviceDetail",
-  SERVICE_RECORD: "serviceRecord",
-});
+const enum Tabs {
+  CUSTOMER = "customer",
+  SERVICE_DETAIL = "serviceDetail",
+  SERVICE_RECORD = "serviceRecord",
+}
 
-const CustomerInformationTabs = Object.freeze({
-  GENERAL: "general",
-  OTHER: "other",
-});
+const enum CustomerInformationTabs {
+  GENERAL = "general",
+  OTHER = "other",
+}
 
-const tab = ref(Tabs.CUSTOMER);
-const customerInformationTab = ref(CustomerInformationTabs.GENERAL);
-const inputGroup = ref("");
-const toggle = ref(false);
+const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
+const customerInformationTab: Ref<CustomerInformationTabs> = ref(
+  CustomerInformationTabs.GENERAL
+);
+const inputGroup: Ref<string> = ref("");
+const toggle: Ref<boolean> = ref(false);
 </script>
 
 <style scoped>

@@ -92,5 +92,7 @@ module.exports = {
 
     // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
     "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-unused-vars": "off",
   },
 };
