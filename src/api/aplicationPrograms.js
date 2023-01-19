@@ -1,6 +1,7 @@
 // import { api } from "boot/axios";
 
 export const getApplicationPrograms = async ({ limit = 10, page = 1 }) => {
+  console.log(limit, page);
   // const fields = `id, first_name, last_name`;
   // const companies = `companies.companies_id.name_english`;
 
