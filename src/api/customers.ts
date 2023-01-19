@@ -1,6 +1,12 @@
 import { api } from "boot/axios";
 
-export const getCustomers = async ({ limit = 10, page = 1 }) => {
+interface CustomerPayload {
+  limit: number;
+  page: number;
+}
+
+export const getCustomers = async (payload: CustomerPayload) => {
+  const { limit, page } = payload;
   const fields = "id, first_name, last_name";
   const companies = "companies.companies_id.name_english";
 
@@ -19,7 +25,7 @@ export const getCustomers = async ({ limit = 10, page = 1 }) => {
   return customers;
 };
 
-export const getCustomer = async (id) => {
+export const getCustomer = async (id: number) => {
   const fields = "*";
   const companies = "companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
