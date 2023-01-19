@@ -98,7 +98,7 @@ import { computed, ref } from "vue";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import { pageCodes } from "../utils/page-codes.js";
+import { pageCodes } from "../utils/page-codes";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);

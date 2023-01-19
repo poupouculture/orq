@@ -6,7 +6,7 @@
 import { onMounted, ref } from "vue";
 import BaseLayout from "src/components/Customer/BaseLayout.vue";
 import { useRouter } from "vue-router";
-import useCustomerStore from "src/stores/modules/customer.js";
+import useCustomerStore from "src/stores/modules/customer";
 
 const router = useRouter();
 const customerStore = useCustomerStore();

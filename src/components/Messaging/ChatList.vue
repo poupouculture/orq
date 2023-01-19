@@ -55,7 +55,7 @@ import ContactCard from "./ContactCard.vue";
 defineProps({
   chatList: {
     type: Object,
-    default: () => {},
+    default: () => null,
   },
 });
 

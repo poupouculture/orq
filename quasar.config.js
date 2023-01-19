@@ -13,7 +13,7 @@ const { configure } = require("quasar/wrappers");
 const path = require("path");
 // const UnoCSS = require('@unocss/webpack').default
 // const presetUno = require('@unocss/preset-uno').default
-module.exports = configure(function (ctx) {
+module.exports = configure(function () {
   return {
     eslint: {
       // fix: true,
