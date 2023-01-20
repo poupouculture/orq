@@ -15,7 +15,11 @@
         </q-list>
       </q-menu>
     </q-btn>
-    <DeleteDialog v-model="deleteDialog" @cancel="deleteDialog = false" @submit-delete="submitDelete" />
+    <DeleteDialog
+      v-model="deleteDialog"
+      @cancel="deleteDialog = false"
+      @submit-delete="submitDelete"
+    />
   </div>
 </template>
 <script setup>
@@ -24,12 +28,12 @@ import { ref } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
 
 const props = defineProps({
-  id: [String, Number]
-})
+  id: [String, Number],
+});
 const deleteDialog = ref(false);
-const customerGroupStore = useCustomerGroupStore()
+const customerGroupStore = useCustomerGroupStore();
 
 const submitDelete = async () => {
-  await customerGroupStore.delete(props.id)
-}
+  await customerGroupStore.delete(props.id);
+};
 </script>
