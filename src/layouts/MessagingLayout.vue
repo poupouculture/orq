@@ -1,7 +1,7 @@
 <template>
   <div style="background: white">
     <q-layout view="lHh Lpr lFf">
-      <Drawer v-if="!loading" :chat-list="chats" />
+      <Drawer v-if="!loading" :chat-list="chats" @change-tab="changeTab" />
       <q-page-container>
         <q-page padding>
           <router-view />
@@ -25,9 +25,17 @@ const messagingStore = useMessagingStore();
 const loading: Ref<boolean> = ref(true);
 
 onMounted(async () => {
-  await messagingStore.fetchChats(ChatTypes.PENDING);
+  await fetchChats(ChatTypes.PENDING);
   loading.value = false;
 });
 
 const chats = computed(() => messagingStore.getChats);
+
+const fetchChats = async (type: ChatTypes) => {
+  messagingStore.fetchChats(type);
+};
+
+const changeTab = (val: ChatTypes) => {
+  fetchChats(val);
+};
 </script>
