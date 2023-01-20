@@ -3,8 +3,10 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{html,js,vue}"],
   theme: {
     extend: {
-      primary: "#4b44f6",
-      secondary: "#2e2e3a",
+      colors: {
+        primary: "#4b44f6",
+        secondary: "#2e2e3a",
+      },
     },
   },
   plugins: [],
