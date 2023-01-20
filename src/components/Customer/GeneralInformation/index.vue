@@ -167,8 +167,8 @@
 import { onMounted, ref } from "vue";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
-import useCustomerStore from "src/stores/modules/customer.js";
-import { required } from "src/utils/validation-rules.js";
+import useCustomerStore from "src/stores/modules/customer";
+import { required } from "src/utils/validation-rules";
 
 const emit = defineEmits(["submit"]);
 const customerStore = useCustomerStore();

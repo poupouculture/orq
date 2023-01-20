@@ -186,7 +186,7 @@
 <script setup>
 import { ref } from "vue";
 import "./GeneralInformation.scss";
-import useCustomerStore from "src/stores/modules/customer.js";
+import useCustomerStore from "src/stores/modules/customer";
 
 const customerStore = useCustomerStore();
 

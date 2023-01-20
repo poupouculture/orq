@@ -4,13 +4,18 @@ module.exports = {
   // Remove this if you have an higher level ESLint config file (it usually happens into a monorepos)
   root: true,
 
+  // https://eslint.vuejs.org/user-guide/#how-to-use-a-custom-parser
+  // Must use parserOptions instead of "parser" to allow vue-eslint-parser to keep working
+  // `parser: 'vue-eslint-parser'` is already included with any 'plugin:vue/**' config and should be omitted
   parserOptions: {
-    ecmaVersion: "2021", // Allows for the parsing of modern ECMAScript features
+    parser: require.resolve("@typescript-eslint/parser"),
+    extraFileExtensions: [".vue"],
   },
 
   env: {
-    node: true,
     browser: true,
+    es2021: true,
+    node: true,
     "vue/setup-compiler-macros": true,
   },
 
@@ -18,6 +23,7 @@ module.exports = {
   extends: [
     // Base ESLint recommended rules
     // 'eslint:recommended',
+    "plugin:@typescript-eslint/recommended",
 
     // Uncomment any of the lines below to choose desired strictness,
     // but leave only one uncommented!
@@ -27,12 +33,15 @@ module.exports = {
     // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
     "standard",
+    "prettier",
   ],
 
   plugins: [
+    "@typescript-eslint",
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-files
     // required to lint *.vue files
     "vue",
+    "prettier",
   ],
 
   globals: {
@@ -50,6 +59,12 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    'prettier/prettier': [
+      'error',
+      {
+        'endOfLine': 'auto',
+      }
+    ],
     // allow async-await
     "generator-star-spacing": "off",
     // allow paren-less arrow functions
@@ -72,10 +87,18 @@ module.exports = {
     // allow debugger during development only
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     "comma-dangle": "off",
-    quotes: "off",
-    semi: "off",
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    semi: ["error", "always"],
     indent: "off",
     "space-before-function-paren": "off",
     "vue/multi-word-component-names": "off",
+    "prettier/prettier": ["error"],
+    // this rule, if on, would require explicit return type on the `render` function
+    "@typescript-eslint/explicit-function-return-type": "off",
+
+    // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-unused-vars": "off",
   },
 };

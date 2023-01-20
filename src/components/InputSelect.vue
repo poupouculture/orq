@@ -79,52 +79,56 @@
 </template>
 
 <script setup>
-const {ref, onMounted} from 'vue'
+import { ref, onMounted } from "vue";
 
 const props = defineProps({
   options: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   default: {
     type: String,
-    default: ""
+    default: "",
   },
   tabindex: {
     type: Number,
-    default: 0
+    default: 0,
   },
   value: {
     type: String,
-    default: ""
+    default: "",
   },
   icon: {
     type: String,
-    default: ""
+    default: "",
   },
   isBorder: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isColorGray: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
-const emit = defineEmits(['update:value', 'input'])
+const emit = defineEmits(["update:value", "input"]);
 
-const _selected = props.default ? props.default : (props.options.length > 0 ? props.options[0] : null)
-const selected = ref(_selected)
-const open = ref(false)
+const _selected = props.default
+  ? props.default
+  : props.options.length > 0
+  ? props.options[0]
+  : null;
+const selected = ref(_selected);
+const open = ref(false);
 
 onMounted(() => {
-  emit("input", selected.value)
-})
+  emit("input", selected.value);
+});
 
-const updateValue = value => {
-  emit('update:value', value)
-}
+const updateValue = (value) => {
+  emit("update:value", value);
+};
 </script>
 
 <style scoped>
@@ -136,6 +140,7 @@ const updateValue = value => {
   height: 40px;
   line-height: 40px;
 }
+
 .custom-select-icon {
   position: relative;
   width: 100%;

@@ -19,7 +19,7 @@ const useUserInfoStore = defineStore("userInfo", {
   actions: {
     async login(params) {
       try {
-        api.defaults.headers.common.Authorization = ``;
+        api.defaults.headers.common.Authorization = "";
         const {
           data: { data },
         } = await api.post("/auth/login", params);
@@ -59,7 +59,7 @@ const useUserInfoStore = defineStore("userInfo", {
       try {
         const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
         if (userinfo) {
-          axiosInstance.defaults.headers.common.Authorization = ``;
+          axiosInstance.defaults.headers.common.Authorization = "";
           const {
             data: { data },
           } = await axiosInstance.post("/auth/refresh", {

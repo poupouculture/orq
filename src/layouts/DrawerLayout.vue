@@ -50,7 +50,9 @@
                   style="text-decoration: none; color: inherit"
                 >
                   <div class="expanded-content">
-                    <p class="drawer-text">{{ child.name }}</p>
+                    <p class="drawer-text">
+                      {{ child.name }}
+                    </p>
                   </div>
                 </router-link>
               </div>
@@ -70,19 +72,21 @@
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        icon="forum"
-        color="deep-purple-13"
-        style="border-radius: 10px; height: 45px"
-      >
-        <q-badge
-          rounded
-          color="orange"
-          floating
-          style="height: 20px; width: 20px"
-          >3</q-badge
+      <router-link to="/messaging">
+        <q-btn
+          icon="forum"
+          color="deep-purple-13"
+          style="border-radius: 10px; height: 45px"
         >
-      </q-btn>
+          <q-badge
+            rounded
+            color="orange"
+            floating
+            style="height: 20px; width: 20px"
+            >3</q-badge
+          >
+        </q-btn>
+      </router-link>
     </q-page-sticky>
   </q-layout>
 </template>
@@ -94,7 +98,7 @@ import { computed, ref } from "vue";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import { pageCodes } from "../utils/page-codes.js";
+import { pageCodes } from "../utils/page-codes";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
@@ -124,6 +128,7 @@ const menus = computed(() => {
   width: 250px;
   margin-top: 20px;
 }
+
 .icon-text {
   display: flex;
   flex-direction: row;
@@ -131,6 +136,7 @@ const menus = computed(() => {
   margin-left: 20px;
   margin-top: 32px;
 }
+
 .search-field {
   margin-right: 10px;
 }

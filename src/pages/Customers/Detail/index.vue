@@ -32,7 +32,7 @@ import "./style.scss";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import ContactsForm from "src/components/ContactsForm/ContactsForm.vue";
 import { useRoute } from "vue-router";
-import useCustomerStore from "src/stores/modules/customer.js";
+import useCustomerStore from "src/stores/modules/customer";
 
 const route = useRoute();
 const customerStore = useCustomerStore();
