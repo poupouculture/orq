@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
     @click="$router.replace({ name: 'customergroups.create' })"
@@ -13,6 +14,14 @@
             dense
             class="border-gray-400"
           >
+=======
+  <div class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
+    @click="$router.replace({ name: 'customergroups.create' })">
+    <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
+      <div class="flex items-center justify-between">
+        <div class="w-52 ml-3">
+          <q-input placeholder="Search Items..." bg-color="transparent" outlined dense class="border-gray-400">
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
             <template v-slot:prepend>
               <q-icon name="search" class="text-gray-400" />
             </template>
@@ -30,6 +39,7 @@
         <table class="w-full">
           <thead>
             <tr class="text-left text-sm text-[#9A9AAF]">
+<<<<<<< HEAD
               <th class="whitespace-nowrap px-5 py-4 w-10">
                 <q-checkbox
                   size="xs"
@@ -37,6 +47,10 @@
                   val="xs"
                   class="text-[#9A9AAF]"
                 />
+=======
+              <th class="whitespace-nowrap px-5 py-4 w-10 ">
+                <q-checkbox size="xs" v-model="selectAllUser" val="xs" class="text-[#9A9AAF]" />
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
               </th>
               <th class="whitespace-nowrap px-5 py-4">
                 <div>Name</div>
@@ -47,6 +61,7 @@
             </tr>
           </thead>
           <tbody>
+<<<<<<< HEAD
             <tr
               class="hover:bg-primary/5 text-sm"
               v-for="(group, i) in data.userGroups"
@@ -59,13 +74,22 @@
                   :val="group"
                   class="text-[#9A9AAF]"
                 />
+=======
+            <tr class="hover:bg-primary/5 text-sm" v-for="(group, i) in data.userGroups" :key="i">
+              <td class="whitespace-nowrap px-5 py-4 w-10">
+                <q-checkbox size="xs" v-model="selectedUser" :val="group" class="text-[#9A9AAF]" />
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
               </td>
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 <p>{{ group.name }}</p>
               </td>
+<<<<<<< HEAD
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 {{ group.status }}
               </td>
+=======
+              <td class="whitespace-nowrap px-5 py-4 w-10">{{ group.status }}</td>
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
             </tr>
           </tbody>
         </table>
@@ -73,16 +97,21 @@
       <!-- Pagination -->
       <div class="flex items-center justify-between pt-6 border-t">
         <div>{{ getPaginationLabel() }}</div>
+<<<<<<< HEAD
         <BasePagination
           @update-model="changePage"
           :max="totalPage()"
           :max-pages="10"
         />
+=======
+        <BasePagination @update-model="changePage" :max="totalPage()" :max-pages="10" />
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
       </div>
     </div>
   </div>
 </template>
 <script setup>
+<<<<<<< HEAD
 import { getUserGroups } from "src/api/userGroup";
 import { ref, onMounted, reactive, computed, watch } from "vue";
 import BasePagination from "../BasePagination.vue";
@@ -102,6 +131,24 @@ const selectAllUser = computed({
     data.userGroups.length
       ? selectedUser.value.length === data.userGroups.length
       : false,
+=======
+import { getUserGroups } from 'src/api/userGroup';
+import { ref, onMounted, reactive, computed, watch } from 'vue';
+import BasePagination from '../BasePagination.vue';
+
+const props = defineProps({
+  modelValue: { type: Array }
+})
+const modelValue = computed(() => props.modelValue)
+const emits = defineEmits(['update:modelValue'])
+const selectedUser = ref([])
+// when user selected, update model value
+watch(selectedUser, (val) => {
+  emits('update:modelValue', val)
+})
+const selectAllUser = computed({
+  get: () => data.userGroups.length ? selectedUser.value.length === data.userGroups.length : false,
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
   set: (value) => {
     const selected = [];
     if (value) {
@@ -110,12 +157,21 @@ const selectAllUser = computed({
       });
     }
     selectedUser.value = selected;
+<<<<<<< HEAD
   },
 });
 const data = reactive({
   userGroups: [],
 });
 const loading = ref(false);
+=======
+  }
+})
+const data = reactive({
+  userGroups: []
+})
+const loading = ref(false)
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -132,11 +188,19 @@ const getPaginationLabel = () => {
   ${pagination.totalCount} results`;
 };
 onMounted(() => {
+<<<<<<< HEAD
   fetchUsers();
   if (modelValue.value) {
     selectedUser.value = modelValue.value;
   }
 });
+=======
+  fetchUsers()
+  if (modelValue.value) {
+    selectedUser.value = modelValue.value
+  }
+})
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
 
 const fetchUsers = async () => {
   const {
@@ -148,7 +212,11 @@ const fetchUsers = async () => {
   data.userGroups = userGroups;
   pagination.totalCount = meta?.total_count;
   loading.value = false;
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> 992d3e5a4e2f95c396ee84753ed48cba54749a21
 const changePage = (val) => {
   pagination.page = val;
   fetchUsers({

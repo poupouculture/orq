@@ -84,23 +84,14 @@ const routes = [
         component: () => import("pages/UserGroup/Index.vue"),
       },
       {
+        path: "customer-groups",
+        name: "customergroups",
+        component: () => import("pages/UserGroup/Index.vue"),
+      },
+      {
         path: "customer-groups/create",
         name: "customergroups.create",
         component: () => import("pages/UserGroup/Create.vue"),
-      },
-    ],
-  },
-  {
-    path: "/messaging",
-    component: () => import("layouts/MessagingLayout.vue"),
-    meta: {
-      requiresAuth: true,
-    },
-    children: [
-      {
-        path: "",
-        name: "messaging",
-        component: () => import("pages/Messaging/Index.vue"),
       },
     ],
   },
