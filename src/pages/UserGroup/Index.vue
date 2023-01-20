@@ -37,7 +37,7 @@
       <!-- Projects -->
       <div
         class="flex flex-col gap-y-2"
-        v-for="group in data.customerGroups"
+        v-for="group in customerGroups"
         :key="group.name"
       >
         <div
@@ -55,7 +55,7 @@
               <p class="text-gray-400">{{ group.customers.length }} Members</p>
             </div>
           </div>
-          <ButtonGroupMenu />
+          <ButtonGroupMenu :id="group.id" />
         </div>
         <!-- customers -->
         <div
@@ -92,7 +92,11 @@
       </div>
     </div>
     <div class="flex items-center justify-center mt-20">
-      <BasePagination :max="10" :max-pages="7" />
+      <BasePagination
+        :max="totalPage()"
+        :max-pages="10"
+        @update-model="changePage"
+      />
     </div>
   </div>
 </template>
@@ -100,33 +104,27 @@
 <script setup>
 import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
 import BasePagination from "components/BasePagination.vue";
-import { onMounted, reactive } from "vue";
-import { getCutomerGroups } from "src/api/customerGroup";
+import { onMounted, reactive, computed } from "vue";
+import useCustomerGroupStore from "src/stores/modules/customerGroup";
 import ButtonCustomerMenu from "src/components/UserGroup/ButtonCustomerMenu.vue";
 
-const data = reactive({
-  customerGroups: [],
-});
+const customerGroupStore = useCustomerGroupStore();
+const customerGroups = computed(() => customerGroupStore.items);
+const meta = computed(() => customerGroupStore.meta);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
   page: 1,
-  rowsPerPage: 10,
-  totalCount: 0,
+  rowsPerPage: 4,
 });
-
-const fetchCustomerGroups = async () => {
-  const {
-    data: { data: customerGroups, meta },
-  } = await getCutomerGroups({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
-  data.customerGroups = customerGroups;
-  pagination.totalCount = meta?.totalCount;
+const totalPage = () => {
+  return Math.ceil(meta.value.total_count / pagination.rowsPerPage);
 };
-
+const changePage = (val) => {
+  pagination.page = val;
+  customerGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+};
 onMounted(() => {
-  fetchCustomerGroups();
+  customerGroupStore.getAll(pagination.rowsPerPage, pagination.page);
 });
 </script>

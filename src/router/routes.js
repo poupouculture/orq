@@ -80,7 +80,13 @@ const routes = [
       },
       {
         path: "customer-groups",
-        component: () => import("pages/UsersGroup/Index.vue"),
+        name: "customergroups",
+        component: () => import("pages/UserGroup/Index.vue"),
+      },
+      {
+        path: "customer-groups/create",
+        name: "customergroups.create",
+        component: () => import("pages/UserGroup/Create.vue"),
       },
     ],
   },
