@@ -8,7 +8,13 @@
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
       <div class="w-52 ml-3">
-        <q-input placeholder="Search Items..." bg-color="transparent" outlined dense class="border-gray-400">
+        <q-input
+          placeholder="Search Items..."
+          bg-color="transparent"
+          outlined
+          dense
+          class="border-gray-400"
+        >
           <template v-slot:prepend>
             <q-icon name="search" class="text-gray-400" />
           </template>
@@ -17,7 +23,10 @@
           </template>
         </q-input>
       </div>
-      <q-btn :to="{name: 'customergroups.create'}" class="bg-primary text-white">
+      <q-btn
+        :to="{ name: 'customergroups.create' }"
+        class="bg-primary text-white"
+      >
         <q-icon name="add" class="text-white mr-2" />
         <span>Add</span>
       </q-btn>
@@ -26,12 +35,19 @@
     <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
     <div class="grid lg:grid-cols-4 gap-4">
       <!-- Projects -->
-      <div class="flex flex-col gap-y-2" v-for="group in data.customerGroups" :key="group.name">
+      <div
+        class="flex flex-col gap-y-2"
+        v-for="group in customerGroups"
+        :key="group.name"
+      >
         <div
-          class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap">
+          class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
+        >
           <div class="shrink-0 flex items-center">
-            <div class="w-16 h-16 items-center justify-center flex text-white mr-3"
-              :style="{ backgroundColor: '#eaeaea' }">
+            <div
+              class="w-16 h-16 items-center justify-center flex text-white mr-3"
+              :style="{ backgroundColor: '#eaeaea' }"
+            >
               {{ group.name }}
             </div>
             <div>
@@ -39,20 +55,30 @@
               <p class="text-gray-400">{{ group.customers.length }} Members</p>
             </div>
           </div>
-          <ButtonGroupMenu />
+          <ButtonGroupMenu :id="group.id" />
         </div>
         <!-- customers -->
         <div
           class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
-          v-for="({ customers_id }, i) in group.customers" :key="i">
+          v-for="({ customers_id }, i) in group.customers"
+          :key="i"
+        >
           <div class="shrink-0 flex items-center">
             <!-- for while set image default -->
-            <img :src="customers_id.image || 'http://localhost:9000/src/assets/images/profileavatar.png'"
-              class="w-10 h-10 rounded-full mx-3" />
+            <img
+              :src="
+                customers_id.image ||
+                'http://localhost:9000/src/assets/images/profileavatar.png'
+              "
+              class="w-10 h-10 rounded-full mx-3"
+            />
             <div>
               <div class="relative">
                 {{ customers_id.first_name }} {{ customers_id.last_name }}
-                <span class="absolute top-0 -right-10 bg-primary rounded-xl text-white px-2 py-0.5 text-xs">VIP</span>
+                <span
+                  class="absolute top-0 -right-10 bg-primary rounded-xl text-white px-2 py-0.5 text-xs"
+                  >VIP</span
+                >
               </div>
               <div class="text-gray-400 cursor-pointer">
                 {{ customers_id.position }}
@@ -66,39 +92,39 @@
       </div>
     </div>
     <div class="flex items-center justify-center mt-20">
-      <BasePagination :max="10" :max-pages="7" />
+      <BasePagination
+        :max="totalPage()"
+        :max-pages="10"
+        @update-model="changePage"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import ButtonGroupMenu from 'components/UserGroup/ButtonGroupMenu.vue'
-import BasePagination from 'components/BasePagination.vue'
-import { onMounted, reactive } from 'vue';
-import { getCutomerGroups } from 'src/api/customerGroup';
-import ButtonCustomerMenu from 'src/components/UserGroup/ButtonCustomerMenu.vue';
+import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
+import BasePagination from "components/BasePagination.vue";
+import { onMounted, reactive, computed } from "vue";
+import useCustomerGroupStore from "src/stores/modules/customerGroup";
+import ButtonCustomerMenu from "src/components/UserGroup/ButtonCustomerMenu.vue";
 
-const data = reactive({
-  customerGroups: [],
-});
+const customerGroupStore = useCustomerGroupStore();
+const customerGroups = computed(() => customerGroupStore.items);
+const meta = computed(() => customerGroupStore.meta);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
   page: 1,
-  rowsPerPage: 10,
-  totalCount: 0,
+  rowsPerPage: 4,
 });
-
-const fetchCustomerGroups = async () => {
-  const { data: { data: customerGroups, meta } } = await getCutomerGroups({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
-  data.customerGroups = customerGroups;
-  pagination.totalCount = meta?.totalCount
-}
-
+const totalPage = () => {
+  return Math.ceil(meta.value.total_count / pagination.rowsPerPage);
+};
+const changePage = (val) => {
+  pagination.page = val;
+  customerGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+};
 onMounted(() => {
-  fetchCustomerGroups()
-})
+  customerGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+});
 </script>
