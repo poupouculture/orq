@@ -105,7 +105,7 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { required } from "src/utils/validation-rules.js";
+import { required } from "src/utils/validation-rules.ts";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import AddUserGroupOverlay from "src/components/UserGroup/AddUserGroupOverlay.vue";
 import AddCustomerOverlay from "src/components/UserGroup/AddCustomerOverlay.vue";
