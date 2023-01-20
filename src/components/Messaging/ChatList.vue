@@ -2,6 +2,7 @@
   <q-drawer :modelValue="true" class="bg-grey-2" show-if-above bordered>
     <q-list>
       <q-item-label header>
+        <img class="q-mb-lg" src="../../assets/images/logo-invert.png" />
         <q-input placeholder="Search Items..." outlined dense>
           <template v-slot:prepend>
             <q-icon name="search" />
