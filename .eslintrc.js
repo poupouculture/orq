@@ -59,6 +59,12 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    'prettier/prettier': [
+      'error',
+      {
+        'endOfLine': 'auto',
+      }
+    ],
     // allow async-await
     "generator-star-spacing": "off",
     // allow paren-less arrow functions
@@ -92,5 +98,7 @@ module.exports = {
 
     // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
     "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-unused-vars": "off",
   },
 };
