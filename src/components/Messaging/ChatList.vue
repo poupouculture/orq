@@ -5,7 +5,7 @@
         <img class="q-mb-lg" src="../../assets/images/logo-invert.png" />
         <q-input
           v-model="searchText"
-          placeholder="Search Items..."
+          placeholder="Search Chats..."
           outlined
           dense
         >

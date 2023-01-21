@@ -1,7 +1,7 @@
 import { api } from "boot/axios";
 
 export const getApplicationPrograms = async ({ limit = 10, page = 1 }) => {
-  const fields = `id, name, status, language, delivered, read, replied, created_by, created_on`;
+  const fields = `id, name, status, language, delivered, read, replied, created_by, date_created`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
 

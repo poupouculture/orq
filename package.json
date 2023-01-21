@@ -1,7 +1,7 @@
 {
   "name": "waba-quasar",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "WhatsApp API Communication Dashboard",
   "productName": "com.synque.waba",
   "author": "mac <mac@synque.io>",
   "private": true,

@@ -23,7 +23,7 @@
           class="q-mr-sm"
           @click="router.push('/application-program/create')"
         />
-        <q-btn icon="delete" no-caps rounded label="Trash" />
+        <q-btn icon="delete" no-caps rounded label="Archive" />
       </div>
     </div>
     <div class="main-content">
