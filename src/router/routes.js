@@ -83,12 +83,28 @@ const routes = [
         component: () => import("pages/WorkOrder.vue"),
       },
       {
-        path: "message",
-        component: () => import("pages/MessageUi.vue"),
+        path: "customer-groups",
+        name: "customergroups",
+        component: () => import("pages/UserGroup/Index.vue"),
       },
       {
-        path: "customer-groups",
-        component: () => import("pages/UsersGroup/Index.vue"),
+        path: "customer-groups/create",
+        name: "customergroups.create",
+        component: () => import("pages/UserGroup/Create.vue"),
+      },
+    ],
+  },
+  {
+    path: "/messaging",
+    component: () => import("layouts/MessagingLayout.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: "",
+        name: "messaging",
+        component: () => import("pages/Messaging/Index.vue"),
       },
     ],
   },

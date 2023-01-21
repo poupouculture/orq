@@ -72,19 +72,21 @@
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        icon="forum"
-        color="deep-purple-13"
-        style="border-radius: 10px; height: 45px"
-      >
-        <q-badge
-          rounded
-          color="orange"
-          floating
-          style="height: 20px; width: 20px"
-          >3</q-badge
+      <router-link to="/messaging">
+        <q-btn
+          icon="forum"
+          color="deep-purple-13"
+          style="border-radius: 10px; height: 45px"
         >
-      </q-btn>
+          <q-badge
+            rounded
+            color="orange"
+            floating
+            style="height: 20px; width: 20px"
+            >3</q-badge
+          >
+        </q-btn>
+      </router-link>
     </q-page-sticky>
   </q-layout>
 </template>
@@ -96,7 +98,7 @@ import { computed, ref } from "vue";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import { pageCodes } from "../utils/page-codes.js";
+import { pageCodes } from "../utils/page-codes";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);

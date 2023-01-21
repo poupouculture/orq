@@ -22,7 +22,7 @@
             </div>
           </div>
         </div>
-        <div class="row q-mb-lg q-gutter-xl">
+        <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
             <p class="label-style">First Name</p>
             <q-input
@@ -46,7 +46,7 @@
             />
           </div>
         </div>
-        <div class="row q-mb-lg q-gutter-xl">
+        <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
             <p class="label-style">ID Number</p>
             <q-input
@@ -127,8 +127,12 @@
           </div>
           <div class="col"></div>
         </div>
-        <q-checkbox v-model="isActive" label="is Active" />
-        <div class="row q-mb-lg q-gutter-xl q-mt-lg">
+        <q-checkbox
+          v-if="props.showActive"
+          v-model="isActive"
+          label="is Active"
+        />
+        <div class="row q-gutter-xl">
           <div class="col">
             <div class="btn-cls" @click="returnDialog = true">
               <p>Return</p>
@@ -167,10 +171,16 @@
 import { onMounted, ref } from "vue";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
-import useCustomerStore from "src/stores/modules/customer.js";
-import { required } from "src/utils/validation-rules.js";
+import useCustomerStore from "src/stores/modules/customer";
+import { required } from "src/utils/validation-rules";
 
 const emit = defineEmits(["submit"]);
+const props = defineProps({
+  showActive: {
+    type: Boolean,
+    default: true,
+  },
+});
 const customerStore = useCustomerStore();
 
 const firstName = ref("");

@@ -43,6 +43,9 @@
           <q-tab-panel name="Attachement">
             <!-- <Attachement /> -->
           </q-tab-panel>
+          <q-tab-panel name="record">
+            <ServiceRecord />
+          </q-tab-panel>
         </q-tab-panels>
       </div>
     </div>
@@ -53,6 +56,7 @@
 import { ref } from "vue";
 // import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
+import ServiceRecord from "./ServiceRecord.vue";
 // import OtherInformation from "../OtherInformation/OtherInformation.vue";
 // import Remark from "../Remark/Remark.vue";
 // import Attachement from "../Attachement/Attachement.vue";
