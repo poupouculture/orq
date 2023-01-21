@@ -6,7 +6,8 @@ export const getCutomerGroups = async ({ limit = 10, page = 1 }) => {
     params: {
       limit,
       offset,
-      fields: "name, status, customers.customers_id.*, user_groups.*",
+      fields: "id, name, status, customers.customers_id.*, user_groups.*",
+      meta: "*",
     },
   });
   return customerGroups;
@@ -14,5 +15,10 @@ export const getCutomerGroups = async ({ limit = 10, page = 1 }) => {
 
 export const addCustomerGroup = async (payload) => {
   const customer = await api.post("/items/customer_groups", payload);
+  return customer;
+};
+
+export const deleteCustomerGroup = async (id) => {
+  const customer = await api.delete("/items/customer_groups/" + id);
   return customer;
 };

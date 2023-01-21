@@ -17,37 +17,35 @@
           <div class="text-grey-5">livechat 01</div>
         </div>
       </div>
-      <div class="q-mt-lg">
-        <q-chat-message
-          v-for="(message, index) in messages"
-          :key="index"
-          :text="message.items"
-          :text-color="
-            message.direction === Direction.OUTGOING ? 'white' : 'black'
-          "
-          :sent="message.direction === Direction.OUTGOING ? true : false"
-          :bg-color="
-            message.direction === Direction.OUTGOING ? 'primary' : 'grey-3'
-          "
-        />
+      <div class="flex flex-col h-screen justify-between q-mt-lg">
+        <div class="h-10">
+          <q-chat-message
+            v-for="(message, index) in messages"
+            :key="index"
+            :text="message.items"
+            :text-color="
+              message.direction === Direction.OUTGOING ? 'white' : 'black'
+            "
+            :sent="message.direction === Direction.OUTGOING ? true : false"
+            :bg-color="
+              message.direction === Direction.OUTGOING ? 'primary' : 'grey-3'
+            "
+          />
+        </div>
+        <footer class="fixed bottom-0" style="width: 100%">
+          <q-input
+            v-model="message"
+            dense
+            borderless
+            bg-color="grey-2"
+            type="textarea"
+          />
+          <div class="row justify-end q-mt-md">
+            <q-btn color="primary" label="Save" class="dark-btn" />
+          </div>
+        </footer>
       </div>
     </q-scroll-area>
-    <q-layout>
-      <q-page-container>
-        <q-page padding>
-          <q-page-sticky position="bottom">
-            <q-input
-              v-model="message"
-              dense
-              borderless
-              bg-color="grey-2"
-              type="textarea"
-              width="100%"
-            />
-          </q-page-sticky>
-        </q-page>
-      </q-page-container>
-    </q-layout>
   </q-drawer>
 </template>
 
