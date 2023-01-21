@@ -187,7 +187,7 @@ import useUserInfoStore from "stores/modules/userInfo";
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
 
-defineProps({
+const props = defineProps({
   applicationProgram: {
     type: Object,
     required: false,
@@ -228,7 +228,7 @@ const replied = ref(0);
 
 onMounted(() => {
   console.log("application program");
-  if (this.applicationProgram) {
+  if (props.applicationProgram) {
     const tempApplicationProgram = this.applicationProgram;
     name.value = tempApplicationProgram.name;
     language.value = tempApplicationProgram.language;
