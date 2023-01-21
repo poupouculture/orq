@@ -41,12 +41,7 @@
               <th class="whitespace-nowrap px-5 py-4">
                 <div>Name</div>
               </th>
-              <th class="whitespace-nowrap px-5 py-4">
-                <div>Company</div>
-              </th>
-              <th class="whitespace-nowrap px-5 py-4">
-                <div>Customer Code</div>
-              </th>
+              <th class="whitespace-nowrap px-5 py-4"></th>
               <th class="whitespace-nowrap px-5 py-4">
                 <div>Label</div>
               </th>

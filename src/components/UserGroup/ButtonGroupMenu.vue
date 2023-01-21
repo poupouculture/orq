@@ -21,6 +21,11 @@
       @submit-delete="submitDelete"
     />
   </div>
+  <DeleteDialog
+    v-model="deleteDialog"
+    @cancel="deleteDialog = false"
+    @submitDelete="submitDelete"
+  />
 </template>
 <script setup>
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
