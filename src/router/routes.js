@@ -88,14 +88,24 @@ const routes = [
         component: () => import("pages/UserGroup/Index.vue"),
       },
       {
-        path: "customer-groups",
-        name: "customergroups",
-        component: () => import("pages/UserGroup/Index.vue"),
-      },
-      {
         path: "customer-groups/create",
         name: "customergroups.create",
         component: () => import("pages/UserGroup/Create.vue"),
+      },
+      {
+        path: "customer-groups/internal-group",
+        name: "customergroups-internal-group",
+        component: () => import("pages/UserGroup/InternalGroup/Index.vue"),
+      },
+      {
+        path: "customer-groups/internal-group/create",
+        name: "customergroups-internal-group.create",
+        component: () => import("pages/UserGroup/InternalGroup/Create.vue"),
+      },
+      {
+        path: "customer-groups/internal-group/:id/edit",
+        name: "customergroups-internal-group.edit",
+        component: () => import("pages/UserGroup/InternalGroup/Edit.vue"),
       },
     ],
   },

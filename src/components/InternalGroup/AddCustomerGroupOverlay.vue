@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
-    @click="$router.replace({ query: add_user_group })"
+    @click="close()"
   >
     <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
       <div class="flex items-center justify-between">
@@ -21,9 +21,7 @@
             </template>
           </q-input>
         </div>
-        <RouterLink :to="{ name: 'customergroups.create' }" replace>
-          <q-icon name="close" size="1.5rem" />
-        </RouterLink>
+        <q-btn @click="close()" round color="primary" icon="check" />
       </div>
       <!-- Table data -->
       <div class="overflow-x-auto my-8">
@@ -33,7 +31,7 @@
               <th class="whitespace-nowrap px-5 py-4 w-10">
                 <q-checkbox
                   size="xs"
-                  v-model="selectAllUser"
+                  v-model="selectAllCustomerGroups"
                   val="xs"
                   class="text-[#9A9AAF]"
                 />
@@ -49,14 +47,14 @@
           <tbody>
             <tr
               class="hover:bg-primary/5 text-sm"
-              v-for="(group, i) in data.userGroups"
+              v-for="(group, i) in data.customerGroups"
               :key="i"
             >
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 <q-checkbox
                   size="xs"
-                  v-model="selectedUser"
-                  :val="group"
+                  v-model="selectedCustomerGroup"
+                  :val="group.id"
                   class="text-[#9A9AAF]"
                 />
               </td>
@@ -83,7 +81,7 @@
   </div>
 </template>
 <script setup>
-import { getUserGroups } from "src/api/userGroup";
+import { getCustomerGroups } from "src/api/customerGroup";
 import { ref, onMounted, reactive, computed, watch } from "vue";
 import BasePagination from "../BasePagination.vue";
 
@@ -91,29 +89,32 @@ const props = defineProps({
   modelValue: { type: Array },
 });
 const modelValue = computed(() => props.modelValue);
-const emits = defineEmits(["update:modelValue"]);
-const selectedUser = ref([]);
-// when user selected, update model value
-watch(selectedUser, (val) => {
+const emits = defineEmits(["update:modelValue", ".lengthclose"]);
+const selectedCustomerGroup = ref([]);
+// when user selected, update model.length.id ? model.length.id value : model.length.includes(group.id)
+watch(selectedCustomerGroup, (val) => {
   emits("update:modelValue", val);
 });
-const selectAllUser = computed({
+const selectAllCustomerGroups = computed({
   get: () =>
-    data.userGroups.length
-      ? selectedUser.value.length === data.userGroups.length
+    data.customerGroups.length
+      ? selectedCustomerGroup.value.length === data.customerGroups.length
       : false,
   set: (value) => {
     const selected = [];
     if (value) {
-      data.userGroups.forEach(function (user) {
-        selected.push(user);
+      data.customerGroups.forEach(function (customerGroup) {
+        selected.push(customerGroup);
       });
     }
-    selectedUser.value = selected;
+    selectedCustomerGroup.value = selected;
   },
 });
+const close = () => {
+  emits("close");
+};
 const data = reactive({
-  userGroups: [],
+  customerGroups: [],
 });
 const loading = ref(false);
 const pagination = reactive({
@@ -131,27 +132,29 @@ const getPaginationLabel = () => {
   return `Showing ${minIndex} to ${maxIndex} of
   ${pagination.totalCount} results`;
 };
-onMounted(() => {
-  fetchUsers();
-  if (modelValue.value) {
-    selectedUser.value = modelValue.value;
+onMounted(async () => {
+  await fetchCustomerGroup();
+  if (modelValue.value.length) {
+    selectedCustomerGroup.value = data.customerGroups
+      .filter((group) => modelValue.value.includes(group.id))
+      .map((item) => item.id);
   }
 });
 
-const fetchUsers = async () => {
+const fetchCustomerGroup = async () => {
   const {
-    data: { data: userGroups, meta },
-  } = await getUserGroups({
+    data: { data: customerGroups, meta },
+  } = await getCustomerGroups({
     limit: pagination.rowsPerPage,
     page: pagination.page,
   });
-  data.userGroups = userGroups;
+  data.customerGroups = customerGroups;
   pagination.totalCount = meta?.total_count;
   loading.value = false;
 };
 const changePage = (val) => {
   pagination.page = val;
-  fetchUsers({
+  fetchCustomerGroup({
     limit: pagination.rowsPerPage,
     page: pagination.page,
   });
