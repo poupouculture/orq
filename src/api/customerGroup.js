@@ -1,6 +1,6 @@
 import { api } from "src/boot/axios";
 
-export const getCutomerGroups = async ({ limit = 10, page = 1 }) => {
+export const getCustomerGroups = async ({ limit = 10, page = 1 }) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const customerGroups = await api.get("/items/customer_groups", {
     params: {
