@@ -28,12 +28,17 @@
         no-caps
         @update:model-value="onChangeTab"
       >
-        <q-tab name="ongoing" label="Ongoing 6" />
-        <q-tab name="pending" label="Waiting 1" />
-        <q-tab name="closed" label="Closed 0" />
+        <q-tab :name="ChatTypes.ONGOING" label="Ongoing 6" />
+        <q-tab :name="ChatTypes.PENDING" label="Waiting 1" />
+        <q-tab :name="ChatTypes.CLOSED" label="Closed 0" />
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" inset />
-      <q-tab-panels v-model="tab" animated class="q-mt-md transparent">
+      <q-tab-panels
+        v-if="props.chatList"
+        v-model="tab"
+        animated
+        class="q-mt-md transparent"
+      >
         <q-tab-panel
           v-for="(tab_, tabIndex) in tabs"
           :key="tabIndex"
@@ -44,7 +49,7 @@
               :active="parseInt(index) === activeChat"
               :name="chat?.customer_name ? chat.customer_name : 'Visitor'"
               :message="chat.last_message_text"
-              :time="dateFormat(chat.last_message_date)"
+              :time="dateFormat(getDateFromLastMessage(chat.last_message))"
               :totalUnread="0"
               class="contact-card"
               @click="selectChat(parseInt(index))"
@@ -75,7 +80,7 @@ const props = defineProps({
 const emit = defineEmits(["changeTab"]);
 
 const activeChat: Ref<number> = ref(0);
-const tab: Ref<string> = ref("pending");
+const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
 const tabs: Ref<ChatTypes[]> = ref([
   ChatTypes.PENDING,
@@ -84,7 +89,9 @@ const tabs: Ref<ChatTypes[]> = ref([
 ]);
 
 onMounted(() => {
+  console.log("a");
   selectChat(0);
+  console.log("b");
 });
 
 const onChangeTab = (val: ChatTypes) => {
@@ -95,9 +102,14 @@ const dateFormat = (date: string) => {
   return format(new Date(date), "hh:mm aa");
 };
 
+const getDateFromLastMessage = (lastMessage) => {
+  return JSON.parse(lastMessage)?.date_created;
+};
+
 const selectChat = (index: number) => {
   activeChat.value = index;
-  const { chat_id: chatId } = props.chatList[index];
+  console.log(activeChat.value);
+  const { id: chatId } = props.chatList[index];
 
   messagingStore.fetchChatMessagesByChatId(chatId);
 };
