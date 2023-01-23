@@ -6,7 +6,7 @@
           <q-item clickable>
             <q-item-section>Edit</q-item-section>
           </q-item>
-          <q-item clickable>
+          <q-item clickable @click="toggleAddCustomer()">
             <q-item-section>Add Customers</q-item-section>
           </q-item>
           <q-item clickable @click="deleteDialog = true">
@@ -21,17 +21,69 @@
     @cancel="deleteDialog = false"
     @submit-delete="submitDelete"
   />
+  <AddCustomerOverlay
+    v-if="openAddCustomer"
+    @submit="(val) => submitAddCustomer(val)"
+    :data="customersData"
+    @changePage="changePage"
+    :pagination="pagination"
+  />
 </template>
 <script setup>
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
+import AddCustomerOverlay from "./AddCustomerOverlay.vue";
+import { getCustomerGroupFilter } from "src/api/customerGroup";
 
 const props = defineProps({
   id: [String, Number],
 });
-const deleteDialog = ref(false);
 const customerGroupStore = useCustomerGroupStore();
+const customersData = ref([]);
+const deleteDialog = ref(false);
+const openAddCustomer = ref(false);
+
+const toggleAddCustomer = async () => {
+  if (!openAddCustomer.value) {
+    await fetchCustomers();
+  }
+  openAddCustomer.value = !openAddCustomer.value;
+};
+const pagination = reactive({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  totalCount: 0,
+});
+const changePage = (val) => {
+  console.log("changepage", val);
+  pagination.page = val;
+  fetchCustomers();
+};
+
+const fetchCustomers = async () => {
+  const {
+    data: { data: customers, meta },
+  } = await getCustomerGroupFilter(
+    {
+      limit: pagination.rowsPerPage,
+      page: pagination.page,
+    },
+    props.id
+  );
+  customersData.value = customers;
+  pagination.totalCount = meta?.total_count;
+};
+
+const submitAddCustomer = async (val) => {
+  toggleAddCustomer();
+  customerGroupStore.addCustomer({
+    id: props.id,
+    customers: val,
+  });
+};
 
 const submitDelete = async () => {
   await customerGroupStore.delete(props.id);

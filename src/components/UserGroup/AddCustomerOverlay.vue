@@ -1,7 +1,8 @@
 <template>
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
-    @click="$router.replace({ name: 'customergroups.create' })"
+    @click="submit()"
+    v-if="data && data.length"
   >
     <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
       <div class="flex items-center justify-between">
@@ -21,9 +22,7 @@
             </template>
           </q-input>
         </div>
-        <RouterLink :to="{ name: 'customergroups.create' }" replace>
-          <q-icon name="close" size="1.5rem" />
-        </RouterLink>
+        <q-btn @click="submit()" round color="primary" icon="check" />
       </div>
       <!-- Table data -->
       <div class="overflow-x-auto my-8">
@@ -34,30 +33,30 @@
                 <q-checkbox
                   size="xs"
                   v-model="selectAllCustomer"
-                  :val="data.customers"
+                  :val="data"
                   class="text-[#9A9AAF]"
                 />
               </th>
               <th class="whitespace-nowrap px-5 py-4">
                 <div>Name</div>
               </th>
-              <th class="whitespace-nowrap px-5 py-4"></th>
+              <th class="whitespace-nowrap px-5 py-4">Companies</th>
               <th class="whitespace-nowrap px-5 py-4">
-                <div>Label</div>
+                <div>Customer Code</div>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr
               class="hover:bg-primary/5 text-sm"
-              v-for="(customer, i) in data.customers"
+              v-for="(customer, i) in data"
               :key="i"
             >
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 <q-checkbox
                   size="xs"
                   v-model="selectedCustomer"
-                  :val="customer"
+                  :val="customer.id"
                   class="text-[#9A9AAF]"
                 />
               </td>
@@ -65,7 +64,7 @@
                 <div class="flex items-center flex-nowrap">
                   <img
                     :src="
-                      customer.image ||
+                      customer.avatar ||
                       'http://localhost:9000/src/assets/images/profileavatar.png'
                     "
                     class="w-10 h-10 rounded-full mr-3"
@@ -88,9 +87,6 @@
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 {{ customer.customer_code }}
               </td>
-              <td class="whitespace-nowrap px-5 py-4 w-10">
-                {{ customer.label }}
-              </td>
             </tr>
           </tbody>
         </table>
@@ -108,60 +104,47 @@
   </div>
 </template>
 <script setup>
-import { getCustomers } from "src/api/customers";
-import { ref, onMounted, reactive, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import BasePagination from "../BasePagination.vue";
 
 const props = defineProps({
-  modelValue: { type: Array },
+  data: Array,
+  pagination: Object,
 });
-const modelValue = computed(() => props.modelValue);
-const emits = defineEmits(["update:modelValue"]);
+const data = computed(() => props.data);
+console.log(data.value);
+const pagination = computed(() => props.pagination);
+const emits = defineEmits(["submit", "changePage"]);
 const selectedCustomer = ref([]);
-// when customer selected, update model value
-watch(selectedCustomer, (val) => {
-  emits("update:modelValue", val);
-});
 const selectAllCustomer = computed({
   get: () =>
-    data.customers.length
-      ? selectedCustomer.value.length === data.customers.length
+    data.value.length
+      ? selectedCustomer.value.length === data.value.length
       : false,
   set: (value) => {
     const selected = [];
     if (value) {
-      data.customers.forEach(function (customer) {
+      data.value.forEach(function (customer) {
         selected.push(customer);
       });
     }
     selectedCustomer.value = selected;
   },
 });
-const data = reactive({
-  customers: [],
-});
-const loading = ref(false);
-const pagination = reactive({
-  sortBy: "desc",
-  descending: false,
-  page: 1,
-  rowsPerPage: 10,
-  totalCount: 0,
-});
+
+const submit = () => {
+  emits("submit", selectedCustomer.value);
+};
 const getPaginationLabel = () => {
-  const max = pagination.page * pagination.rowsPerPage;
-  const maxIndex = pagination.totalCount < max ? pagination.totalCount : max;
-  const minIndex = pagination.rowsPerPage * (pagination.page - 1) + 1;
+  const max = pagination.value.page * pagination.value.rowsPerPage;
+  const maxIndex =
+    pagination.value.totalCount < max ? pagination.value.totalCount : max;
+  const minIndex =
+    pagination.value.rowsPerPage * (pagination.value.page - 1) + 1;
 
   return `Showing ${minIndex} to ${maxIndex} of
-  ${pagination.totalCount} results`;
+  ${pagination.value.totalCount} results`;
 };
-onMounted(() => {
-  fetchCustomers();
-  if (modelValue.value) {
-    selectedCustomer.value = modelValue.value;
-  }
-});
 
 const groupedCompanies = (companies) => {
   const grouped = companies.map((company) => company.companies_id.name_english);
@@ -173,25 +156,11 @@ const gender = (gender) => {
   else if (gender === "m") result = "Male";
   return result;
 };
-const fetchCustomers = async () => {
-  const {
-    data: { data: customers, meta },
-  } = await getCustomers({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
-  data.customers = customers;
-  pagination.totalCount = meta?.total_count;
-  loading.value = false;
-};
+
 const changePage = (val) => {
-  pagination.page = val;
-  fetchCustomers({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
+  emits("changePage", val);
 };
 const totalPage = () => {
-  return Math.ceil(pagination.totalCount / pagination.rowsPerPage);
+  return Math.ceil(pagination.value.totalCount / pagination.value.rowsPerPage);
 };
 </script>

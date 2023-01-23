@@ -60,14 +60,16 @@
         <!-- customers -->
         <div
           class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
-          v-for="({ customers_id }, i) in group.customers"
+          v-for="({ customers_id }, i) in group.customers.filter(
+            (item) => item.customers_id !== null
+          )"
           :key="i"
         >
           <div class="shrink-0 flex items-center">
             <!-- for while set image default -->
             <img
               :src="
-                customers_id.image ||
+                customers_id.avatar ||
                 'http://localhost:9000/src/assets/images/profileavatar.png'
               "
               class="w-10 h-10 rounded-full mx-3"
@@ -76,6 +78,7 @@
               <div class="relative">
                 {{ customers_id.first_name }} {{ customers_id.last_name }}
                 <span
+                  v-if="group.name == 'VIP'"
                   class="absolute top-0 -right-10 bg-primary rounded-xl text-white px-2 py-0.5 text-xs"
                   >VIP</span
                 >
@@ -86,7 +89,7 @@
             </div>
           </div>
           <div class="flex items-center">
-            <ButtonCustomerMenu />
+            <ButtonCustomerMenu :id="group.id" :customer-id="customers_id.id" />
           </div>
         </div>
       </div>
