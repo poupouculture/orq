@@ -47,9 +47,18 @@
           <div v-for="(chat, index) in props.chatList" :key="index">
             <ContactCard
               :active="parseInt(index) === activeChat"
-              :name="chat?.customer_name ? chat.customer_name : 'Visitor'"
-              :message="chat.last_message_text"
-              :time="dateFormat(getDateFromLastMessage(chat.last_message))"
+              :name="
+                chat?.customers_id
+                  ? `${chat.first_name}
+              ${chat.last_name}`
+                  : 'Visitor'
+              "
+              :message="getLastMessage(JSON.parse(chat.last_message))"
+              :time="
+                dateFormat(
+                  getDateFromLastMessage(JSON.parse(chat.last_message))
+                )
+              "
               :totalUnread="0"
               class="contact-card"
               @click="selectChat(parseInt(index))"
@@ -68,6 +77,7 @@ import { format } from "date-fns";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
+import { Direction } from "src/types/MessagingTypes";
 
 const messagingStore = useMessagingStore();
 
@@ -102,8 +112,18 @@ const dateFormat = (date: string) => {
   return format(new Date(date), "hh:mm aa");
 };
 
-const getDateFromLastMessage = (lastMessage) => {
-  return JSON.parse(lastMessage)?.date_created;
+interface LastMessage {
+  content: string;
+  direction: Direction;
+  date_created: string;
+}
+
+const getDateFromLastMessage = (lastMessage: LastMessage) => {
+  return lastMessage?.date_created;
+};
+
+const getLastMessage = (lastMessage: LastMessage) => {
+  return lastMessage?.content;
 };
 
 const selectChat = (index: number) => {
