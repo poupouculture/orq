@@ -6,7 +6,7 @@ export const enum ChatKeywords {
 }
 
 export const enum ChatTypes {
-  PENDING = "pending",
+  PENDING = "waiting",
   ONGOING = "ongoing",
   CLOSED = "closed",
 }

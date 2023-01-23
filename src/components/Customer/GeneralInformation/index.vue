@@ -133,14 +133,18 @@
           label="is Active"
         />
         <div class="row q-gutter-xl">
-          <div class="col">
+          <div v-if="showReturnButton" class="col">
             <div class="btn-cls" @click="returnDialog = true">
               <p>Return</p>
             </div>
           </div>
           <div class="col">
             <div class="btn-hold">
-              <div class="btn-cls" @click="deleteDialog = true">
+              <div
+                v-if="showDeleteButton"
+                class="btn-cls"
+                @click="deleteDialog = true"
+              >
                 <p>Delete</p>
               </div>
               <q-btn
@@ -180,6 +184,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  showReturnButton: {
+    type: Boolean,
+    default: true,
+  },
+  showDeleteButton: {
+    type: Boolean,
+    default: true,
+  },
 });
 const customerStore = useCustomerStore();
 
@@ -192,7 +204,7 @@ const dateOfBirth = ref("");
 const position = ref("");
 const company = ref("");
 const customerGroup = ref("");
-const isActive = ref("");
+const isActive = ref(true);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -205,7 +217,6 @@ const genderOptions = [
   { value: "f", label: "Female" },
 ];
 const customerForm = ref(null);
-// const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 
 onMounted(() => {
   const customer = customerStore.getCustomer;
