@@ -67,27 +67,27 @@
         </template>
         <template #body-cell-delivered="props">
           <q-td :props="props">
-            {{ props.row.delivered }}
+            {{ props.row.delivered ? props.row.delivered : 0 }}
           </q-td>
         </template>
         <template #body-cell-read="props">
           <q-td :props="props">
-            {{ props.row.read }}
+            {{ props.row.read ? props.row.read : 0 }}
           </q-td>
         </template>
         <template #body-cell-replied="props">
           <q-td :props="props">
-            {{ props.row.replied }}
+            {{ props.row.replied ? props.row.replied : 0 }}
           </q-td>
         </template>
         <template #body-cell-created_by="props">
           <q-td :props="props">
-            {{ props.row.created_by }}
+            {{ props.row.user_created }}
           </q-td>
         </template>
         <template #body-cell-created_on="props">
           <q-td :props="props">
-            {{ props.row.created_on }}
+            {{ props.row.date_created }}
           </q-td>
         </template>
         <template #body-cell-action="props">
@@ -177,17 +177,17 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "created_by",
+    name: "user_created",
     align: "center",
     label: "Created By",
-    field: "created_by",
+    field: "user_created",
     classes: "text-black",
   },
   {
-    name: "created_on",
+    name: "date_created",
     align: "center",
     label: "Created On",
-    field: "created_on",
+    field: "date_created",
     classes: "text-black",
   },
   {
