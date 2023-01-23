@@ -79,10 +79,12 @@ const fetchCustomers = async () => {
 
 const submitAddCustomer = async (val) => {
   toggleAddCustomer();
-  customerGroupStore.addCustomer({
-    id: props.id,
-    customers: val,
-  });
+  if (val && val.length) {
+    customerGroupStore.addCustomer({
+      id: props.id,
+      customers: val,
+    });
+  }
 };
 
 const submitDelete = async () => {
