@@ -45,6 +45,10 @@ const useCustomerStore = defineStore("customer", {
       } = await addCustomer(payload);
       return data;
     },
+    async addCustomerContact(customerId, contactId) {
+      const result = await addCustomerContact(customerId, contactId);
+      return result;
+    },
   },
 });
 

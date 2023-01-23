@@ -62,7 +62,12 @@
       <q-tab name="other" label="Other Information" />
     </q-tabs>
     <q-separator size="2px" style="margin-top: -2px" />
-    <GeneralInformation :show-active="false" />
+    <GeneralInformation
+      :show-active="false"
+      :show-return-button="false"
+      :show-delete-button="false"
+      @submit="saveCustomer"
+    />
   </div>
 </template>
 
@@ -70,6 +75,7 @@
 import { ref } from "vue";
 import type { Ref } from "vue";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
+import { FormPayload } from "src/types/CustomerTypes";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -89,6 +95,10 @@ const customerInformationTab: Ref<CustomerInformationTabs> = ref(
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
+
+const saveCustomer = (val: FormPayload) => {
+  console.log(val);
+};
 </script>
 
 <style scoped>
