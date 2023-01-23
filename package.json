@@ -1,7 +1,7 @@
 {
   "name": "waba-quasar",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "WhatsApp API Communication Dashboard",
   "productName": "com.synque.waba",
   "author": "mac <mac@synque.io>",
   "private": true,
@@ -12,7 +12,8 @@
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint-staged": "npx lint-staged"
   },
   "dependencies": {
     "@directus/sdk": "^10.3.0",

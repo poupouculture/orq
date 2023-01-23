@@ -10,25 +10,22 @@
         </q-item>
       </q-list>
     </q-menu>
+    <DeleteDialog
+      v-model="deleteDialog"
+      @cancel="deleteDialog = false"
+      @submitDelete="submitDelete"
+    />
   </q-btn>
-  <DeleteDialog
-    v-model="deleteDialog"
-    @cancel="deleteDialog = false"
-    @submit-delete="deleteCustomer"
-  />
 </template>
 <script setup>
-import useCustomerGroupStore from "src/stores/modules/customerGroup";
+import useInternalGroup from "src/stores/modules/internalGroup";
 import { ref } from "vue";
 import DeleteDialog from "../Dialogs/DeleteDialog.vue";
-
-const customerGroupStore = useCustomerGroupStore();
 const props = defineProps({
   id: [String, Number],
-  customerId: [String, Number],
 });
 const deleteDialog = ref(false);
-const deleteCustomer = () => {
-  customerGroupStore.deleteCustomer(props.id, props.customerId);
+const submitDelete = () => {
+  useInternalGroup().deleteUser(props.id);
 };
 </script>

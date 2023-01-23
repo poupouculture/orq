@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
-    @click="$router.replace({ query: add_user_group })"
+    @click="close()"
   >
     <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
       <div class="flex items-center justify-between">
@@ -21,9 +21,7 @@
             </template>
           </q-input>
         </div>
-        <RouterLink :to="{ name: 'customergroups.create' }" replace>
-          <q-icon name="close" size="1.5rem" />
-        </RouterLink>
+        <q-btn @click="close()" round color="primary" icon="check" />
       </div>
       <!-- Table data -->
       <div class="overflow-x-auto my-8">
@@ -34,37 +32,46 @@
                 <q-checkbox
                   size="xs"
                   v-model="selectAllUser"
-                  val="xs"
+                  :val="data.users"
                   class="text-[#9A9AAF]"
                 />
               </th>
               <th class="whitespace-nowrap px-5 py-4">
                 <div>Name</div>
               </th>
-              <th class="whitespace-nowrap px-5 py-4">
-                <div>Status</div>
-              </th>
+              <th class="whitespace-nowrap px-5 py-4">Role</th>
             </tr>
           </thead>
           <tbody>
             <tr
               class="hover:bg-primary/5 text-sm"
-              v-for="(group, i) in data.userGroups"
+              v-for="(user, i) in data.users"
               :key="i"
             >
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 <q-checkbox
                   size="xs"
                   v-model="selectedUser"
-                  :val="group"
+                  :val="user.id"
                   class="text-[#9A9AAF]"
                 />
               </td>
               <td class="whitespace-nowrap px-5 py-4 w-10">
-                <p>{{ group.name }}</p>
+                <div class="flex items-center flex-nowrap">
+                  <img
+                    :src="
+                      user.avatar ||
+                      'http://localhost:9000/src/assets/images/profileavatar.png'
+                    "
+                    class="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div class="flex flex-col">
+                    <p>{{ user.first_name }} {{ user.last_name }}</p>
+                  </div>
+                </div>
               </td>
               <td class="whitespace-nowrap px-5 py-4 w-10">
-                {{ group.status }}
+                {{ user.role?.name }}
               </td>
             </tr>
           </tbody>
@@ -83,7 +90,7 @@
   </div>
 </template>
 <script setup>
-import { getUserGroups } from "src/api/userGroup";
+import { getUsers } from "src/api/user";
 import { ref, onMounted, reactive, computed, watch } from "vue";
 import BasePagination from "../BasePagination.vue";
 
@@ -91,29 +98,30 @@ const props = defineProps({
   modelValue: { type: Array },
 });
 const modelValue = computed(() => props.modelValue);
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue", "close"]);
 const selectedUser = ref([]);
-// when user selected, update model value
+const data = reactive({
+  users: [],
+});
+// when customer selected, update model value
 watch(selectedUser, (val) => {
   emits("update:modelValue", val);
 });
+const close = () => {
+  emits("close");
+};
 const selectAllUser = computed({
   get: () =>
-    data.userGroups.length
-      ? selectedUser.value.length === data.userGroups.length
-      : false,
+    data.users.length ? selectedUser.value.length === data.users.length : false,
   set: (value) => {
     const selected = [];
     if (value) {
-      data.userGroups.forEach(function (user) {
+      data.users.forEach(function (user) {
         selected.push(user);
       });
     }
     selectedUser.value = selected;
   },
-});
-const data = reactive({
-  userGroups: [],
 });
 const loading = ref(false);
 const pagination = reactive({
@@ -123,6 +131,7 @@ const pagination = reactive({
   rowsPerPage: 10,
   totalCount: 0,
 });
+
 const getPaginationLabel = () => {
   const max = pagination.page * pagination.rowsPerPage;
   const maxIndex = pagination.totalCount < max ? pagination.totalCount : max;
@@ -131,21 +140,23 @@ const getPaginationLabel = () => {
   return `Showing ${minIndex} to ${maxIndex} of
   ${pagination.totalCount} results`;
 };
-onMounted(() => {
-  fetchUsers();
-  if (modelValue.value) {
-    selectedUser.value = modelValue.value;
+
+onMounted(async () => {
+  await fetchUsers();
+  if (modelValue.value.length) {
+    selectedUser.value = data.users
+      .filter((group) => modelValue.value.includes(group.id))
+      .map((item) => item.id);
   }
 });
-
 const fetchUsers = async () => {
   const {
-    data: { data: userGroups, meta },
-  } = await getUserGroups({
+    data: { data: users, meta },
+  } = await getUsers({
     limit: pagination.rowsPerPage,
     page: pagination.page,
   });
-  data.userGroups = userGroups;
+  data.users = users;
   pagination.totalCount = meta?.total_count;
   loading.value = false;
 };

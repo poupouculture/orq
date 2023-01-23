@@ -11,4 +11,8 @@ export const pageCodes = [
     id: "F05",
     icon: "rocket_launch",
   },
+  {
+    id: "F07",
+    icon: "rocket_launch",
+  },
 ];

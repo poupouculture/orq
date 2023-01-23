@@ -3,7 +3,7 @@
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
       <q-icon name="keyboard_backspace" />
-      <span>Customer Groups</span>
+      <span>Internal Groups</span>
     </div>
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
@@ -24,7 +24,7 @@
         </q-input>
       </div>
       <q-btn
-        :to="{ name: 'customergroups.create' }"
+        :to="{ name: 'customergroups-internal-group.create' }"
         class="bg-primary text-white"
       >
         <q-icon name="add" class="text-white mr-2" />
@@ -37,8 +37,8 @@
       <!-- Projects -->
       <div
         class="flex flex-col gap-y-2"
-        v-for="group in customerGroups"
-        :key="group.name"
+        v-for="group in internalGroup"
+        :key="group.id"
       >
         <div
           class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
@@ -52,7 +52,7 @@
             </div>
             <div>
               <div>{{ group.name }}</div>
-              <p class="text-gray-400">{{ group.customers.length }} Members</p>
+              <p class="text-gray-400">{{ group.users.length }} Members</p>
             </div>
           </div>
           <ButtonGroupMenu :id="group.id" />
@@ -60,37 +60,33 @@
         <!-- customers -->
         <div
           class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
-          v-for="({ customers_id }, i) in group.customers.filter(
-            (item) => item.customers_id !== null
-          )"
+          v-for="({ directus_users_id }, i) in group.users"
           :key="i"
         >
-          <div class="shrink-0 flex items-center">
-            <!-- for while set image default -->
-            <img
-              :src="
-                customers_id.avatar ||
-                'http://localhost:9000/src/assets/images/profileavatar.png'
-              "
-              class="w-10 h-10 rounded-full mx-3"
-            />
-            <div>
-              <div class="relative">
-                {{ customers_id.first_name }} {{ customers_id.last_name }}
-                <span
-                  v-if="group.name == 'VIP'"
-                  class="absolute top-0 -right-10 bg-primary rounded-xl text-white px-2 py-0.5 text-xs"
-                  >VIP</span
-                >
-              </div>
-              <div class="text-gray-400 cursor-pointer">
-                {{ customers_id.position }}
+          <template v-if="directus_users_id">
+            <div class="shrink-0 flex items-center">
+              <!-- for while set image default -->
+              <img
+                :src="
+                  directus_users_id.avatar ||
+                  'http://localhost:9000/src/assets/images/profileavatar.png'
+                "
+                class="w-10 h-10 rounded-full mx-3"
+              />
+              <div>
+                <div class="relative">
+                  {{ directus_users_id.first_name }}
+                  {{ directus_users_id.last_name }}
+                </div>
+                <div class="text-gray-400 cursor-pointer">
+                  {{ directus_users_id.role?.name }}
+                </div>
               </div>
             </div>
-          </div>
-          <div class="flex items-center">
-            <ButtonCustomerMenu :id="group.id" :customer-id="customers_id.id" />
-          </div>
+            <div class="flex items-center">
+              <ButtonUserMenu :id="directus_users_id.id" />
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -105,15 +101,15 @@
 </template>
 
 <script setup>
-import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
+import ButtonUserMenu from "components/InternalGroup/ButtonUserMenu.vue";
 import BasePagination from "components/BasePagination.vue";
 import { onMounted, reactive, computed } from "vue";
-import useCustomerGroupStore from "src/stores/modules/customerGroup";
-import ButtonCustomerMenu from "src/components/UserGroup/ButtonCustomerMenu.vue";
+import useInternalGroupStore from "src/stores/modules/internalGroup";
+import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
 
-const customerGroupStore = useCustomerGroupStore();
-const customerGroups = computed(() => customerGroupStore.items);
-const meta = computed(() => customerGroupStore.meta);
+const internalGroupStore = useInternalGroupStore();
+const internalGroup = computed(() => internalGroupStore.items);
+const meta = computed(() => internalGroupStore.meta);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -125,9 +121,10 @@ const totalPage = () => {
 };
 const changePage = (val) => {
   pagination.page = val;
-  customerGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+  internalGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+  internalGroupStore.setMeta({ ...pagination });
 };
 onMounted(() => {
-  customerGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+  internalGroupStore.getAll(pagination.rowsPerPage, pagination.page);
 });
 </script>

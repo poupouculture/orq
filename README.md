@@ -9,6 +9,24 @@ yarn
 npm install
 ```
 
+## Application Design
+### Content Management System
+- login: https://waba.synque.ca/admin/login
+this is where all data-models are created, designed, stored, and managed.
+### Store
+
+
+### Users
+
+### Permissions
+#### UI-access
+- We use the "pages" collection located in our CMS: https://waba.synque.ca/admin/content/pages
+- assign role to the page, e.g. as a manager, I can access UI: F07
+- when logged in, the /users/me is called and the pages OBJECT is stored in userStore
+- finally, the DrawerLayout.vue is built.
+#### API-access
+-
+
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
