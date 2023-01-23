@@ -100,6 +100,20 @@ const routes = [
     ],
   },
   {
+    path: "/messaging",
+    component: () => import("layouts/MessagingLayout.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: "",
+        name: "messaging",
+        component: () => import("pages/Messaging/Index.vue"),
+      },
+    ],
+  },
+  {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
   },
