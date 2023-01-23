@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
-import { Notify } from "quasar";
-import { deleteCustomerGroup, getCustomerGroups } from "src/api/customerGroup";
+import { Loading, Notify } from "quasar";
+import {
+  deleteCustomerGroup,
+  deleteCustomer,
+  getCustomerGroups,
+  addCustomerToCustomerGroup,
+} from "src/api/customerGroup";
 
 const useCustomerGroupStore = defineStore("customerGroup", {
   state: () => ({
@@ -21,12 +26,24 @@ const useCustomerGroupStore = defineStore("customerGroup", {
         limit: rowsPerPage,
         page,
       });
-      this.items = customerGroups;
+      this.items = customerGroups.filter((item) => item !== null);
       this.meta = {
         ...this.meta,
         total_count: meta?.total_count,
         filter_count: meta?.filter_count,
       };
+    },
+    async addCustomer(payload) {
+      Loading.show();
+      try {
+        await addCustomerToCustomerGroup(payload);
+        Loading.hide();
+        Notify.create({
+          message: "Customer successfully added!",
+        });
+        this.getAll();
+      } catch (error) {}
+      Loading.hide();
     },
     async delete(id) {
       try {
@@ -37,6 +54,18 @@ const useCustomerGroupStore = defineStore("customerGroup", {
         });
         this.getAll();
       } catch (error) {}
+    },
+    async deleteCustomer(id, customerId) {
+      Loading.show();
+      try {
+        await deleteCustomer(id, customerId);
+        Loading.hide();
+        Notify.create({
+          message: "Customer successfully deleted!",
+        });
+        this.getAll();
+      } catch (error) {}
+      Loading.hide();
     },
   },
 });

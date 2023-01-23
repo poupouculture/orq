@@ -14,15 +14,21 @@
   <DeleteDialog
     v-model="deleteDialog"
     @cancel="deleteDialog = false"
-    @submitDelete="submitDelete"
+    @submit-delete="deleteCustomer"
   />
 </template>
 <script setup>
+import useCustomerGroupStore from "src/stores/modules/customerGroup";
 import { ref } from "vue";
 import DeleteDialog from "../Dialogs/DeleteDialog.vue";
 
+const customerGroupStore = useCustomerGroupStore();
+const props = defineProps({
+  id: [String, Number],
+  customerId: [String, Number],
+});
 const deleteDialog = ref(false);
-const submitDelete = () => {
-  console.log("asdf");
+const deleteCustomer = () => {
+  customerGroupStore.deleteCustomer(props.id, props.customerId);
 };
 </script>
