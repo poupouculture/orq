@@ -5,32 +5,34 @@ import {
   addCustomerContact,
   addCustomer,
   updateCustomer,
-} from "src/api/customers";
+} from "../../api/customers";
+import { IState, FormPayload } from "src/types/CustomerTypes";
 
 const useCustomerStore = defineStore("customer", {
-  state: () => ({
-    customer: null,
-  }),
+  state: () =>
+    ({
+      customer: null,
+    } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
   },
   actions: {
     resetCustomer() {
-      this.customer = {};
+      this.customer = null;
     },
-    async fetchCustomer(id) {
+    async fetchCustomer(id: string) {
       const {
         data: { data: customer },
       } = await getCustomer(id);
       this.customer = customer;
     },
-    async updateCustomer(id, payload) {
+    async updateCustomer(id: string, payload: FormPayload) {
       const {
         data: { data },
       } = await updateCustomer(id, payload);
       return data;
     },
-    async addContact(customerId, payload) {
+    async addContact(customerId: string, payload: unknown) {
       const {
         data: { data: contact },
       } = await addContact(payload);
@@ -39,13 +41,13 @@ const useCustomerStore = defineStore("customer", {
       const result = await addCustomerContact(customerId, contactId);
       return result;
     },
-    async addCustomer(payload) {
+    async addCustomer(payload: FormPayload) {
       const {
         data: { data },
       } = await addCustomer(payload);
       return data;
     },
-    async addCustomerContact(customerId, contactId) {
+    async addCustomerContact(customerId: string, contactId: string) {
       const result = await addCustomerContact(customerId, contactId);
       return result;
     },
