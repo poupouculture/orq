@@ -1,6 +1,6 @@
 <template>
   <!-- Timeline -->
-  <q-timeline color="grey-4" class="mt-5">
+  <q-timeline color="grey-4">
     <q-timeline-entry
       icon="arrow_back"
       color="cyan-1"

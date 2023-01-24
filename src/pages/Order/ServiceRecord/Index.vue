@@ -40,7 +40,16 @@
       </template>
 
       <template v-slot:body-cell-Operation>
-        <q-td><a href="#" class="details text-blue-800">Details</a></q-td>
+        <q-td
+          ><RouterLink
+            :to="{
+              name: 'order.service-record.detail',
+              params: { id: '285449a5-e532-42d2-b72d-4d250a30cf16' },
+            }"
+            class="details text-blue-800"
+            >Details</RouterLink
+          ></q-td
+        >
       </template>
 
       <template v-slot:bottom-row>
