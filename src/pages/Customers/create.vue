@@ -13,7 +13,7 @@ const customerStore = useCustomerStore();
 const loading = ref(true);
 
 onMounted(() => {
-  customerStore.resetCustomer();
+  customerStore.$reset();
   loading.value = false;
 });
 

@@ -11,15 +11,28 @@ import { IState, FormPayload } from "src/types/CustomerTypes";
 const useCustomerStore = defineStore("customer", {
   state: () =>
     ({
-      customer: null,
+      customer: {
+        customer_code: "",
+        date_created: "",
+        date_updated: "",
+        dob: "",
+        email: "",
+        first_name: "",
+        gender: "",
+        id: "",
+        id_number: "",
+        isActive: true,
+        last_name: "",
+        position: "",
+        status: "",
+        user_created: "",
+        user_updated: "",
+      },
     } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
   },
   actions: {
-    resetCustomer() {
-      this.customer = null;
-    },
     async fetchCustomer(id: string) {
       const {
         data: { data: customer },
