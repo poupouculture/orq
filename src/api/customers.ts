@@ -25,7 +25,7 @@ export const getCustomers = async (payload: CustomerPayload) => {
   return customers;
 };
 
-export const getCustomer = async (id: number) => {
+export const getCustomer = async (id: string) => {
   const fields = "*";
   const companies = "companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
