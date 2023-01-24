@@ -227,7 +227,6 @@ const read = ref(0);
 const replied = ref(0);
 
 onMounted(() => {
-  console.log("application program");
   if (props.applicationProgram) {
     const tempApplicationProgram = this.applicationProgram;
     name.value = tempApplicationProgram.name;

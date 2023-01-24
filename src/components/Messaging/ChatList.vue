@@ -76,10 +76,12 @@ import type { Ref } from "vue";
 import { format } from "date-fns";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
+import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction } from "src/types/MessagingTypes";
 
 const messagingStore = useMessagingStore();
+const customerStore = useCustomerStore();
 
 const props = defineProps({
   chatList: {
@@ -99,9 +101,7 @@ const tabs: Ref<ChatTypes[]> = ref([
 ]);
 
 onMounted(() => {
-  console.log("a");
   selectChat(0);
-  console.log("b");
 });
 
 const onChangeTab = (val: ChatTypes) => {
@@ -128,10 +128,16 @@ const getLastMessage = (lastMessage: LastMessage) => {
 
 const selectChat = (index: number) => {
   activeChat.value = index;
-  console.log(activeChat.value);
   const { id: chatId } = props.chatList[index];
 
   messagingStore.fetchChatMessagesByChatId(chatId);
+
+  customerStore.resetCustomer();
+
+  if (props.chatList[index].customers_id) {
+    const customerId = props.chatList[index].customers_id;
+    customerStore.fetchCustomer(customerId);
+  }
 };
 </script>
 
@@ -140,3 +146,4 @@ const selectChat = (index: number) => {
   cursor: pointer;
 }
 </style>
+:sp
