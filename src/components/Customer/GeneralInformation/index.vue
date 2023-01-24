@@ -172,7 +172,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
@@ -217,6 +218,7 @@ const genderOptions = [
   { value: "f", label: "Female" },
 ];
 const customerForm = ref(null);
+const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(() => {
   const customer = customerStore.getCustomer;
@@ -230,6 +232,19 @@ onMounted(() => {
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
   }
+});
+
+watch(getCustomer, () => {
+  firstName.value = getCustomer.value.first_name;
+  lastName.value = getCustomer.value.last_name;
+  idNumber.value = getCustomer.value.id_number;
+  customerCode.value = getCustomer.value.customer_code;
+  dateOfBirth.value = getCustomer.value.dob;
+  isActive.value = getCustomer.value.isActive;
+
+  gender.value = genderOptions.find(
+    (item) => item.value === getCustomer.value.gender
+  );
 });
 
 const submitDelete = () => {

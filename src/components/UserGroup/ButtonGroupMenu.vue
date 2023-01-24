@@ -58,7 +58,6 @@ const pagination = reactive({
   totalCount: 0,
 });
 const changePage = (val) => {
-  console.log("changepage", val);
   pagination.page = val;
   fetchCustomers();
 };
