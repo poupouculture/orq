@@ -112,7 +112,6 @@ const props = defineProps({
   pagination: Object,
 });
 const data = computed(() => props.data);
-console.log(data.value);
 const pagination = computed(() => props.pagination);
 const emits = defineEmits(["submit", "changePage"]);
 const selectedCustomer = ref([]);

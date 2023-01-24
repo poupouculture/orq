@@ -75,8 +75,14 @@ const routes = [
         component: () => import("pages/ReportForm.vue"),
       },
       {
-        path: "service-record",
-        component: () => import("pages/ServiceRecord.vue"),
+        path: "/order/service-records",
+        name: "order.service-record",
+        component: () => import("src/pages/Order/ServiceRecord/Index.vue"),
+      },
+      {
+        path: "/order/service-records/:id",
+        name: "order.service-record.detail",
+        component: () => import("src/pages/Order/ServiceRecord/Detail.vue"),
       },
       {
         path: "work-order",
