@@ -74,6 +74,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { Ref } from "vue";
+import useCustomerStore from "src/stores/modules/customer";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
 
@@ -88,6 +89,8 @@ const enum CustomerInformationTabs {
   OTHER = "other",
 }
 
+const customerStore = useCustomerStore();
+
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
@@ -97,7 +100,9 @@ const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 
 const saveCustomer = (val: FormPayload) => {
-  console.log(val);
+  if (customerStore.getCustomer) {
+    customerStore.updateCustomer(customerStore.getCustomer.id, val);
+  }
 };
 </script>
 
