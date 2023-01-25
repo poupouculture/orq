@@ -10,6 +10,7 @@ import {
 const useCustomerGroupStore = defineStore("customerGroup", {
   state: () => ({
     items: [],
+    item: null,
     meta: {
       total_count: 0,
       filter_count: 0,
@@ -32,6 +33,12 @@ const useCustomerGroupStore = defineStore("customerGroup", {
         total_count: meta?.total_count,
         filter_count: meta?.filter_count,
       };
+    },
+    async get(id) {
+      const {
+        data: { data: customerGroups },
+      } = await getCustomerGroups({}, id);
+      this.item = customerGroups;
     },
     async addCustomer(payload) {
       Loading.show();

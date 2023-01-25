@@ -110,12 +110,12 @@ import BasePagination from "../BasePagination.vue";
 const props = defineProps({
   data: Array,
   pagination: Object,
+  selectedData: Array,
 });
 const data = computed(() => props.data);
-console.log(data.value);
 const pagination = computed(() => props.pagination);
 const emits = defineEmits(["submit", "changePage"]);
-const selectedCustomer = ref([]);
+const selectedCustomer = ref(props.selectedData || []);
 const selectAllCustomer = computed({
   get: () =>
     data.value.length
@@ -125,7 +125,7 @@ const selectAllCustomer = computed({
     const selected = [];
     if (value) {
       data.value.forEach(function (customer) {
-        selected.push(customer);
+        selected.push(customer.id);
       });
     }
     selectedCustomer.value = selected;

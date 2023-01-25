@@ -7,20 +7,37 @@ const customerCreate = ({ id = "+", customers }) => {
     };
   });
 };
-export const getCustomerGroups = async ({ limit = 10, page = 1 }) => {
+export const getCustomerGroups = async (
+  { limit = 10, page = 1 },
+  id = null
+) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const customerGroups = await api.get("/items/customer_groups", {
+  const url =
+    id !== null ? "/items/customer_groups/" + id : "/items/customer_groups";
+  const customerGroups = await api.get(url, {
     params: {
       limit,
       offset,
-      fields: "id, name, status, customers.customers_id.*, user_groups.*",
+      fields:
+        "id, name, status, customer.id, customers.customers_id.*, user_groups.*",
       meta: "*",
     },
   });
   return customerGroups;
 };
 
-export const getCustomerGroupFilter = async ({ limit = 10, page = 1 }, id) => {
+export const getAllCustomerById = async (id, customers) => {
+  const customer = await api.get("/items/customer_groups_customers", {
+    params: {
+      "filter[customer_groups_id][_eq]": id,
+      "fields[]": "customers_id.*, id",
+      "filter[customers_id][_in]": customers,
+    },
+  });
+  return customer;
+};
+
+export const getCustomersFilter = async ({ limit = 10, page = 1 }, id) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const customer = await api.get("/items/customers", {
     params: {
@@ -37,6 +54,10 @@ export const getCustomerGroupFilter = async ({ limit = 10, page = 1 }, id) => {
 
 export const addCustomerGroup = async (payload) => {
   const customer = await api.post("/items/customer_groups", payload);
+  return customer;
+};
+export const updateCustomerGroup = async (id, payload) => {
+  const customer = await api.patch("/items/customer_groups/" + id, payload);
   return customer;
 };
 

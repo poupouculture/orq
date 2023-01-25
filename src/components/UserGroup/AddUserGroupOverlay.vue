@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
-    @click="$router.replace({ query: add_user_group })"
+    @click="submit()"
   >
     <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
       <div class="flex items-center justify-between">
@@ -21,9 +21,7 @@
             </template>
           </q-input>
         </div>
-        <RouterLink :to="{ name: 'customergroups.create' }" replace>
-          <q-icon name="close" size="1.5rem" />
-        </RouterLink>
+        <q-btn @click="submit()" round color="primary" icon="check" />
       </div>
       <!-- Table data -->
       <div class="overflow-x-auto my-8">
@@ -49,14 +47,14 @@
           <tbody>
             <tr
               class="hover:bg-primary/5 text-sm"
-              v-for="(group, i) in data.userGroups"
+              v-for="(group, i) in data"
               :key="i"
             >
               <td class="whitespace-nowrap px-5 py-4 w-10">
                 <q-checkbox
                   size="xs"
                   v-model="selectedUser"
-                  :val="group"
+                  :val="group.id"
                   class="text-[#9A9AAF]"
                 />
               </td>
@@ -83,80 +81,49 @@
   </div>
 </template>
 <script setup>
-import { getUserGroups } from "src/api/userGroup";
-import { ref, onMounted, reactive, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import BasePagination from "../BasePagination.vue";
 
 const props = defineProps({
-  modelValue: { type: Array },
+  data: Array,
+  pagination: Object,
+  selectedData: Array,
 });
-const modelValue = computed(() => props.modelValue);
-const emits = defineEmits(["update:modelValue"]);
-const selectedUser = ref([]);
-// when user selected, update model value
-watch(selectedUser, (val) => {
-  emits("update:modelValue", val);
-});
+const data = computed(() => props.data);
+const pagination = computed(() => props.pagination);
+const emits = defineEmits(["submit", "changePage"]);
+const selectedUser = ref(props.selectedData || []);
 const selectAllUser = computed({
   get: () =>
-    data.userGroups.length
-      ? selectedUser.value.length === data.userGroups.length
-      : false,
+    data.value.length ? selectedUser.value.length === data.value.length : false,
   set: (value) => {
     const selected = [];
     if (value) {
-      data.userGroups.forEach(function (user) {
-        selected.push(user);
+      data.value.forEach(function (user) {
+        selected.push(user.id);
       });
     }
     selectedUser.value = selected;
   },
 });
-const data = reactive({
-  userGroups: [],
-});
-const loading = ref(false);
-const pagination = reactive({
-  sortBy: "desc",
-  descending: false,
-  page: 1,
-  rowsPerPage: 10,
-  totalCount: 0,
-});
+const submit = () => {
+  emits("submit", selectedUser.value);
+};
 const getPaginationLabel = () => {
-  const max = pagination.page * pagination.rowsPerPage;
-  const maxIndex = pagination.totalCount < max ? pagination.totalCount : max;
-  const minIndex = pagination.rowsPerPage * (pagination.page - 1) + 1;
+  const max = pagination.value.page * pagination.value.rowsPerPage;
+  const maxIndex =
+    pagination.value.totalCount < max ? pagination.value.totalCount : max;
+  const minIndex =
+    pagination.value.rowsPerPage * (pagination.value.page - 1) + 1;
 
   return `Showing ${minIndex} to ${maxIndex} of
-  ${pagination.totalCount} results`;
+  ${pagination.value.totalCount} results`;
 };
-onMounted(() => {
-  fetchUsers();
-  if (modelValue.value) {
-    selectedUser.value = modelValue.value;
-  }
-});
 
-const fetchUsers = async () => {
-  const {
-    data: { data: userGroups, meta },
-  } = await getUserGroups({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
-  data.userGroups = userGroups;
-  pagination.totalCount = meta?.total_count;
-  loading.value = false;
-};
 const changePage = (val) => {
-  pagination.page = val;
-  fetchUsers({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
+  emits("changePage", val);
 };
 const totalPage = () => {
-  return Math.ceil(pagination.totalCount / pagination.rowsPerPage);
+  return Math.ceil(pagination.value.totalCount / pagination.value.rowsPerPage);
 };
 </script>
