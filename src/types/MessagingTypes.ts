@@ -3,6 +3,14 @@ export const enum Direction {
   INCOMING = "incoming",
 }
 
+export const enum Product {
+  WHATSAPP = "whatsapp",
+}
+
+export const enum MessageType {
+  TEXT = "text",
+}
+
 export interface IMessage {
   id: number;
   status: string;
@@ -28,4 +36,13 @@ export interface IState {
   chatMessages: Array<IMessage>;
   selectedChatIndex: number;
   chats: Array<IChat>;
+  contactNumber: null | string;
+}
+
+export interface SendTextMessage {
+  chatId: string;
+  messageProduct: Product;
+  to: string;
+  type: MessageType;
+  messageBody: string;
 }

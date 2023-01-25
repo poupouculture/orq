@@ -73,6 +73,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
+import { storeToRefs } from "pinia";
 import { format } from "date-fns";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -99,6 +100,7 @@ const tabs: Ref<ChatTypes[]> = ref([
   ChatTypes.ONGOING,
   ChatTypes.CLOSED,
 ]);
+const { getChats } = storeToRefs(messagingStore);
 
 onMounted(() => {
   selectChat(0);
@@ -132,6 +134,7 @@ const selectChat = (index: number) => {
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
+  messagingStore.fetchContactNumber(getChats.value[index].contacts_id);
 
   customerStore.$reset();
 

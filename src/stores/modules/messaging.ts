@@ -1,7 +1,12 @@
 import { defineStore } from "pinia";
-import { getChats, getChatMessagesByChatId } from "../../api/messaging";
+import {
+  getChats,
+  getChatMessagesByChatId,
+  sendChatTextMessage,
+  getContact,
+} from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
-import { IState } from "../../types/MessagingTypes";
+import { IState, SendTextMessage } from "../../types/MessagingTypes";
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -9,11 +14,13 @@ const useMessagingStore = defineStore("messaging", {
       chats: [],
       selectedChatIndex: 0,
       chatMessages: [],
+      contactNumber: null,
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
     getChatMessages: (state) => state.chatMessages,
     getSelectedChatIndex: (state) => state.selectedChatIndex,
+    getContactNumber: (state) => state.contactNumber,
   },
   actions: {
     setSelectedChatIndex(index: number) {
@@ -26,6 +33,14 @@ const useMessagingStore = defineStore("messaging", {
     async fetchChatMessagesByChatId(chatId: string) {
       const data = await getChatMessagesByChatId(chatId);
       this.chatMessages = data;
+    },
+    async sendChatTextMessage(payload: SendTextMessage) {
+      const data = await sendChatTextMessage(payload);
+      return data;
+    },
+    async fetchContactNumber(contactId: string) {
+      const { data } = await getContact(contactId);
+      this.contactNumber = data.number;
     },
   },
 });
