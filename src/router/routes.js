@@ -43,6 +43,10 @@ const routes = [
         component: () => import("pages/ApplicationProgram/edit.vue"),
       },
       {
+        path: "document-builder",
+        component: () => import("pages/DocumentBuilder/index.vue"),
+      },
+      {
         path: "calendar",
         component: () => import("pages/Calendar.vue"),
       },
@@ -99,6 +103,11 @@ const routes = [
         component: () => import("pages/UserGroup/Create.vue"),
       },
       {
+        path: "customer-groups/:id/edit",
+        name: "customergroups.edit",
+        component: () => import("pages/UserGroup/Edit.vue"),
+      },
+      {
         path: "customer-groups/internal-group",
         name: "customergroups-internal-group",
         component: () => import("pages/UserGroup/InternalGroup/Index.vue"),
@@ -112,6 +121,20 @@ const routes = [
         path: "customer-groups/internal-group/:id/edit",
         name: "customergroups-internal-group.edit",
         component: () => import("pages/UserGroup/InternalGroup/Edit.vue"),
+      },
+    ],
+  },
+  {
+    path: "/messaging",
+    component: () => import("layouts/MessagingLayout.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: "",
+        name: "messaging",
+        component: () => import("pages/Messaging/Index.vue"),
       },
     ],
   },

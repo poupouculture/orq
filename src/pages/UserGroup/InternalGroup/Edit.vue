@@ -122,8 +122,9 @@ import { required } from "src/utils/validation-rules.ts";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import AddCustomerGroupOverlay from "src/components/InternalGroup/AddCustomerGroupOverlay.vue";
 import AddUserOverlay from "src/components/InternalGroup/AddUserOverlay.vue";
-import { updateInternalGroup, getInternalGroup } from "src/api/InternalGroup";
-import { Notify } from "quasar";
+// import { updateInternalGroup, getInternalGroup } from "src/api/InternalGroup";
+import { getInternalGroup } from "src/api/InternalGroup";
+// import { Notify } from "quasar";
 
 const router = useRouter();
 const returnDialog = ref(false);
@@ -149,49 +150,42 @@ const submit = async () => {
   if (!validate) return;
   form.loading = true;
   try {
-    console.log(oldSelectedCustomerGroup.value, oldSelectedUser.value);
-    console.log(
-      oldSelectedCustomerGroup.value.filter(
-        (item) => !selectedCustomerGroup.value.includes(item)
-      ),
-      selectedUser.value.filter((item) => oldSelectedUser.value.includes(item))
-    );
-    return;
+    // return;
     // eslint-disable-next-line no-unreachable
-    await updateInternalGroup({
-      ...form,
-      users: {
-        create: userCreate().filter(
-          (user) => !oldSelectedUser.value.includes(user.id)
-        ),
-      },
-      customer_groups: {
-        create: customerGroupCreate().filter(
-          (group) => !oldSelectedCustomerGroup.value.includes(group.id)
-        ),
-      },
-    });
-    Notify.create("Internal Group successfully edited!");
-    router.replace({ name: "customergroups-internal-group" });
+    // await updateInternalGroup({
+    //   ...form,
+    //   users: {
+    //     create: userCreate().filter(
+    //       (user) => !oldSelectedUser.value.includes(user.id)
+    //     ),
+    //   },
+    //   customer_groups: {
+    //     create: customerGroupCreate().filter(
+    //       (group) => !oldSelectedCustomerGroup.value.includes(group.id)
+    //     ),
+    //   },
+    // });
+    // Notify.create("Internal Group successfully edited!");
+    // router.replace({ name: "customergroups-internal-group" });
   } catch (error) {}
   form.loading = false;
 };
-const userCreate = () => {
-  return selectedUser.value.map((user) => {
-    return {
-      user_groups_id: form.id,
-      directus_users_id: user.id,
-    };
-  });
-};
-const customerGroupCreate = () => {
-  return selectedCustomerGroup.value.map((customerGroup) => {
-    return {
-      user_groups_id: form.id,
-      customer_groups_id: customerGroup.id,
-    };
-  });
-};
+// const userCreate = () => {
+//   return selectedUser.value.map((user) => {
+//     return {
+//       user_groups_id: form.id,
+//       directus_users_id: user.id,
+//     };
+//   });
+// };
+// const customerGroupCreate = () => {
+//   return selectedCustomerGroup.value.map((customerGroup) => {
+//     return {
+//       user_groups_id: form.id,
+//       customer_groups_id: customerGroup.id,
+//     };
+//   });
+// };
 const oldSelectedUser = ref();
 const oldSelectedCustomerGroup = ref();
 onMounted(async () => {

@@ -53,7 +53,6 @@ const emit = defineEmits(["edit", "view"]);
 const props = defineProps(["phoneNumber", "remarks"]);
 
 const edit = () => {
-  console.log("edit");
   emit("edit");
 };
 

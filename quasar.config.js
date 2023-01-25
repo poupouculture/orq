@@ -30,7 +30,7 @@ module.exports = configure(function () {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
-    boot: ["i18n", "axios", "getProfile", "sentry"],
+    boot: ["i18n", "axios", "getProfile", "sentry", "global-component"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ["app.scss", "tailwind.css"],

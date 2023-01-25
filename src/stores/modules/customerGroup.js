@@ -10,6 +10,7 @@ import {
 const useCustomerGroupStore = defineStore("customerGroup", {
   state: () => ({
     items: [],
+    item: null,
     meta: {
       total_count: 0,
       filter_count: 0,
@@ -33,6 +34,12 @@ const useCustomerGroupStore = defineStore("customerGroup", {
         filter_count: meta?.filter_count,
       };
     },
+    async get(id) {
+      const {
+        data: { data: customerGroups },
+      } = await getCustomerGroups({}, id);
+      this.item = customerGroups;
+    },
     async addCustomer(payload) {
       Loading.show();
       try {
@@ -53,7 +60,11 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           message: "Customer Group successfully deleted!",
         });
         this.getAll();
-      } catch (error) {}
+      } catch (error) {
+        Notify.create({
+          message: error,
+        });
+      }
     },
     async deleteCustomer(id, customerId) {
       Loading.show();
@@ -64,7 +75,11 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           message: "Customer successfully deleted!",
         });
         this.getAll();
-      } catch (error) {}
+      } catch (error) {
+        Notify.create({
+          message: error,
+        });
+      }
       Loading.hide();
     },
   },

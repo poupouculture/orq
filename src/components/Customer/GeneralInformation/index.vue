@@ -133,14 +133,18 @@
           label="is Active"
         />
         <div class="row q-gutter-xl">
-          <div class="col">
+          <div v-if="showReturnButton" class="col">
             <div class="btn-cls" @click="returnDialog = true">
               <p>Return</p>
             </div>
           </div>
           <div class="col">
             <div class="btn-hold">
-              <div class="btn-cls" @click="deleteDialog = true">
+              <div
+                v-if="showDeleteButton"
+                class="btn-cls"
+                @click="deleteDialog = true"
+              >
                 <p>Delete</p>
               </div>
               <q-btn
@@ -168,7 +172,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
@@ -177,6 +182,14 @@ import { required } from "src/utils/validation-rules";
 const emit = defineEmits(["submit"]);
 const props = defineProps({
   showActive: {
+    type: Boolean,
+    default: true,
+  },
+  showReturnButton: {
+    type: Boolean,
+    default: true,
+  },
+  showDeleteButton: {
     type: Boolean,
     default: true,
   },
@@ -192,7 +205,7 @@ const dateOfBirth = ref("");
 const position = ref("");
 const company = ref("");
 const customerGroup = ref("");
-const isActive = ref("");
+const isActive = ref(true);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -205,7 +218,7 @@ const genderOptions = [
   { value: "f", label: "Female" },
 ];
 const customerForm = ref(null);
-// const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
+const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(() => {
   const customer = customerStore.getCustomer;
@@ -219,6 +232,19 @@ onMounted(() => {
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
   }
+});
+
+watch(getCustomer, () => {
+  firstName.value = getCustomer.value.first_name;
+  lastName.value = getCustomer.value.last_name;
+  idNumber.value = getCustomer.value.id_number;
+  customerCode.value = getCustomer.value.customer_code;
+  dateOfBirth.value = getCustomer.value.dob;
+  isActive.value = getCustomer.value.isActive;
+
+  gender.value = genderOptions.find(
+    (item) => item.value === getCustomer.value.gender
+  );
 });
 
 const submitDelete = () => {

@@ -61,7 +61,6 @@ const message: Ref<string> = ref("");
 
 const messages = computed(() => {
   const arr: Array<IMessage> = messagingStore.getChatMessages;
-  console.log(arr[arr.length - 1]);
 
   type GroupedMessages = {
     items: Array<IMessage["content"]>;
