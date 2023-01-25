@@ -1,9 +1,8 @@
 import { defineStore } from "pinia";
-// import { Loading, Notify } from "quasar";
 import { getServiceRecords } from "src/api/serviceRecord";
-import { IState } from "src/types/ServiceRecordTypes";
+import { IServiceRecord, IState } from "src/types/ServiceRecordTypes";
 
-const useServiceRecordStore = defineStore("customerGroup", {
+const useServiceRecordStore = defineStore("serviceRecord", {
   state: () =>
     ({
       items: [],
@@ -23,19 +22,23 @@ const useServiceRecordStore = defineStore("customerGroup", {
     getItems: (state) => state.items,
   },
   actions: {
-    async getAll({ rowsPerPage = 10, page = 1 }) {
-      const {
-        data: { data: serviceRecords, meta },
-      } = await getServiceRecords({
-        limit: rowsPerPage,
-        page,
-      });
-      this.items = serviceRecords.filter((item: any) => item !== null);
-      this.meta = {
-        ...this.meta,
-        total_count: meta?.total_count,
-        filter_count: meta?.filter_count,
-      };
+    async getAll(rowsPerPage = 10, page = 1) {
+      try {
+        const {
+          data: { data: serviceRecords, meta },
+        } = await getServiceRecords({
+          limit: rowsPerPage,
+          page,
+        });
+        this.items = serviceRecords.filter(
+          (item: IServiceRecord) => item !== null
+        );
+        this.meta = {
+          ...this.meta,
+          total_count: meta?.total_count,
+          filter_count: meta?.filter_count,
+        };
+      } catch (error) {}
     },
   },
 });
