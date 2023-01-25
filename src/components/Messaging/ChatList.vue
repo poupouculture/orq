@@ -130,6 +130,7 @@ const selectChat = (index: number) => {
   activeChat.value = index;
   const { id: chatId } = props.chatList[index];
 
+  messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
 
   customerStore.$reset();
