@@ -74,23 +74,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { Ref } from "vue";
+import { storeToRefs } from "pinia";
 import useCustomerStore from "src/stores/modules/customer";
+import useMessagingStore from "src/stores/modules/messaging";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
-
 const enum Tabs {
   CUSTOMER = "customer",
   SERVICE_DETAIL = "serviceDetail",
   SERVICE_RECORD = "serviceRecord",
 }
-
 const enum CustomerInformationTabs {
   GENERAL = "general",
   OTHER = "other",
 }
-
 const customerStore = useCustomerStore();
-
+const messagingStore = useMessagingStore();
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
@@ -98,10 +97,17 @@ const customerInformationTab: Ref<CustomerInformationTabs> = ref(
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
-
-const saveCustomer = (val: FormPayload) => {
-  if (customerStore.getCustomer) {
+const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
+const saveCustomer = async (val: FormPayload) => {
+  if (customerStore.getCustomer.id) {
+    // update
     customerStore.updateCustomer(customerStore.getCustomer.id, val);
+  } else {
+    // insert
+    const selectedChat = getChats.value[getSelectedChatIndex.value];
+    const contactId = selectedChat.contacts_id;
+    const customer = await customerStore.addCustomer(val);
+    customerStore.addCustomerContact(customer.id, contactId);
   }
 };
 </script>
