@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
-    @click="submit()"
+    @click="close()"
   >
     <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
       <div class="flex items-center justify-between">
@@ -91,7 +91,7 @@ const props = defineProps({
 });
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
-const emits = defineEmits(["submit", "changePage"]);
+const emits = defineEmits(["submit", "changePage", "close"]);
 const selectedUser = ref(props.selectedData || []);
 const selectAllUser = computed({
   get: () =>
@@ -108,6 +108,9 @@ const selectAllUser = computed({
 });
 const submit = () => {
   emits("submit", selectedUser.value);
+};
+const close = () => {
+  emits("close");
 };
 const getPaginationLabel = () => {
   const max = pagination.value.page * pagination.value.rowsPerPage;

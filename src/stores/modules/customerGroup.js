@@ -60,7 +60,11 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           message: "Customer Group successfully deleted!",
         });
         this.getAll();
-      } catch (error) {}
+      } catch (error) {
+        Notify.create({
+          message: error,
+        });
+      }
     },
     async deleteCustomer(id, customerId) {
       Loading.show();
@@ -71,7 +75,11 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           message: "Customer successfully deleted!",
         });
         this.getAll();
-      } catch (error) {}
+      } catch (error) {
+        Notify.create({
+          message: error,
+        });
+      }
       Loading.hide();
     },
   },

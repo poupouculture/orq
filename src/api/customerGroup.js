@@ -7,6 +7,7 @@ const customerCreate = ({ id = "+", customers }) => {
     };
   });
 };
+
 export const getCustomerGroups = async (
   { limit = 10, page = 1 },
   id = null
@@ -26,12 +27,20 @@ export const getCustomerGroups = async (
   return customerGroups;
 };
 
-export const getAllCustomerById = async (id, customers) => {
-  const customer = await api.get("/items/customer_groups_customers", {
+export const getAllCustomerEdit = async (payload) => {
+  const { limit, page, customers } = payload;
+  const fields = "id, first_name, last_name, gender, date_created, position";
+  const companies = "companies.companies_id.name_english";
+
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const customer = await api.get("/items/customers", {
     params: {
-      "filter[customer_groups_id][_eq]": id,
-      "fields[]": "customers_id.*, id",
-      "filter[customers_id][_in]": customers,
+      "filter[id][_nin]": customers.join(),
+      fields: `${fields},${companies}`,
+      sort: "-date_created",
+      limit,
+      offset,
+      meta: "*",
     },
   });
   return customer;
