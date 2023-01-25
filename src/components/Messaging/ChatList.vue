@@ -132,7 +132,7 @@ const selectChat = (index: number) => {
 
   messagingStore.fetchChatMessagesByChatId(chatId);
 
-  customerStore.resetCustomer();
+  customerStore.$reset();
 
   if (props.chatList[index].customers_id) {
     const customerId = props.chatList[index].customers_id;
