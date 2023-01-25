@@ -1,8 +1,7 @@
 <template>
   <div
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
-    @click="submit()"
-    v-if="data && data.length"
+    @click="close()"
   >
     <div class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll" @click.stop>
       <div class="flex items-center justify-between">
@@ -110,11 +109,12 @@ import BasePagination from "../BasePagination.vue";
 const props = defineProps({
   data: Array,
   pagination: Object,
+  selectedData: Array,
 });
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
-const emits = defineEmits(["submit", "changePage"]);
-const selectedCustomer = ref([]);
+const emits = defineEmits(["submit", "changePage", "close"]);
+const selectedCustomer = ref(props.selectedData || []);
 const selectAllCustomer = computed({
   get: () =>
     data.value.length
@@ -124,7 +124,7 @@ const selectAllCustomer = computed({
     const selected = [];
     if (value) {
       data.value.forEach(function (customer) {
-        selected.push(customer);
+        selected.push(customer.id);
       });
     }
     selectedCustomer.value = selected;
@@ -133,6 +133,9 @@ const selectAllCustomer = computed({
 
 const submit = () => {
   emits("submit", selectedCustomer.value);
+};
+const close = () => {
+  emits("close");
 };
 const getPaginationLabel = () => {
   const max = pagination.value.page * pagination.value.rowsPerPage;

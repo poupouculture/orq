@@ -3,7 +3,10 @@
     <q-btn color="grey-7" round flat icon="more_vert">
       <q-menu fit anchor="bottom middle" self="top right" auto-close>
         <q-list>
-          <q-item clickable>
+          <q-item
+            clickable
+            :to="{ name: 'customergroups.edit', params: { id } }"
+          >
             <q-item-section>Edit</q-item-section>
           </q-item>
           <q-item clickable @click="toggleAddCustomer()">
@@ -15,26 +18,26 @@
         </q-list>
       </q-menu>
     </q-btn>
+    <DeleteDialog
+      v-model="deleteDialog"
+      @cancel="deleteDialog = false"
+      @submit-delete="submitDelete"
+    />
+    <AddCustomerOverlay
+      v-if="openAddCustomer"
+      @submit="(val) => submitAddCustomer(val)"
+      :data="customersData"
+      @changePage="changePage"
+      :pagination="pagination"
+    />
   </div>
-  <DeleteDialog
-    v-model="deleteDialog"
-    @cancel="deleteDialog = false"
-    @submit-delete="submitDelete"
-  />
-  <AddCustomerOverlay
-    v-if="openAddCustomer"
-    @submit="(val) => submitAddCustomer(val)"
-    :data="customersData"
-    @changePage="changePage"
-    :pagination="pagination"
-  />
 </template>
 <script setup>
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { ref, reactive } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
 import AddCustomerOverlay from "./AddCustomerOverlay.vue";
-import { getCustomerGroupFilter } from "src/api/customerGroup";
+import { getCustomersFilter } from "src/api/customerGroup";
 
 const props = defineProps({
   id: [String, Number],
@@ -65,7 +68,7 @@ const changePage = (val) => {
 const fetchCustomers = async () => {
   const {
     data: { data: customers, meta },
-  } = await getCustomerGroupFilter(
+  } = await getCustomersFilter(
     {
       limit: pagination.rowsPerPage,
       page: pagination.page,
