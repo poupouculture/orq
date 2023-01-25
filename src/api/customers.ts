@@ -52,7 +52,7 @@ export const addContact = async (payload) => {
 };
 
 export const addCustomerContact = async (customerId, contactId) => {
-  const customerContact = await api.post("/items/customers_contacts", {
+  const customerContact = await api.post("/items/contacts_customers", {
     customers_id: customerId,
     contacts_id: contactId,
   });

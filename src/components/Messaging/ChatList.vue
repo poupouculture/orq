@@ -105,6 +105,7 @@ onMounted(() => {
 });
 
 const onChangeTab = (val: ChatTypes) => {
+  messagingStore.setSelectedTab(val);
   emit("changeTab", val);
 };
 

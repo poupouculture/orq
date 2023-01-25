@@ -8,16 +8,21 @@ const useMessagingStore = defineStore("messaging", {
     ({
       chats: [],
       selectedChatIndex: 0,
+      selectedTab: ChatTypes.PENDING,
       chatMessages: [],
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
     getChatMessages: (state) => state.chatMessages,
     getSelectedChatIndex: (state) => state.selectedChatIndex,
+    getSelectedTab: (state) => state.selectedTab,
   },
   actions: {
     setSelectedChatIndex(index: number) {
       this.selectedChatIndex = index;
+    },
+    setSelectedTab(type: ChatTypes) {
+      this.selectedTab = type;
     },
     async fetchChats(type: ChatTypes) {
       const data = await getChats(type);
