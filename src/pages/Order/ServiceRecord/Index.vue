@@ -18,7 +18,7 @@
       class="opacity-80"
       row-key="index"
     >
-      <template v-slot:body-cell-Abstract="props">
+      <template v-slot:body-cell-Customer="props">
         <q-td :props="props">
           <q-icon name="fa-solid fa-headphones" />
           <span class="ml-2">{{ props.value }}</span>
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 
 const message = `Every time you talk with a customer, a "service record" will be automatically generated, and each record contains at least - more conversation records to form a complete service information for you to query Close it.`;
 
@@ -81,8 +81,10 @@ export default defineComponent({
 import MessageBox from "src/components/MessageBox.vue";
 import InputForm from "src/components/InputForm.vue";
 import Pagination from "src/components/Pagination.vue";
+import useServiceRecordStore from "src/stores/modules/serviceRecord";
 import img from "assets/wechat.png";
 
+const serviceRecordStore = useServiceRecordStore();
 const show = ref(true),
   columns = [
     {
@@ -94,9 +96,9 @@ const show = ref(true),
       headerClasses: "header",
     },
     {
-      name: "Abstract",
-      label: "Abstract",
-      field: "Abstract",
+      name: "Customer",
+      label: "Customer",
+      field: "Customer",
       align: "left",
       headerStyle: "width: 300px",
       headerClasses: "header",
@@ -151,13 +153,16 @@ const show = ref(true),
 for (let i = 1; i <= 20; i++) {
   rows.push({
     index: i,
-    Abstract: "Chester Buchanan",
+    Customer: "Chester Buchanan",
     auth: "Liveagen",
     ServiceResults: "Service results",
     StartTime: "2022-12-09 12:00:00",
   });
 }
 
+onMounted(async () => {
+  await serviceRecordStore.getAll();
+});
 function close(state) {
   show.value = state;
 }
