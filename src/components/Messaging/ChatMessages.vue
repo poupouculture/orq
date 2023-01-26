@@ -7,7 +7,7 @@
     :breakpoint="500"
     class="bg-white q-pa-md"
   >
-    <q-scroll-area style="height: 100%">
+    <q-scroll-area style="height: 70%">
       <div class="row items-center">
         <q-avatar class="rounded-avatar">
           <img src="https://cdn.quasar.dev/img/avatar.png" />
@@ -32,20 +32,25 @@
             "
           />
         </div>
-        <footer class="fixed bottom-0" style="width: 100%">
-          <q-input
-            v-model="message"
-            dense
-            borderless
-            bg-color="grey-2"
-            type="textarea"
-          />
-          <div class="row justify-end q-mt-md">
-            <q-btn color="primary" label="Save" class="dark-btn" />
-          </div>
-        </footer>
       </div>
     </q-scroll-area>
+    <footer class="fixed bottom-0 q-pa-xs q-pb-md" style="width: 90%">
+      <q-input
+        v-model="message"
+        dense
+        borderless
+        bg-color="grey-2"
+        type="textarea"
+      />
+      <div class="row justify-end q-mt-md">
+        <q-btn
+          color="primary"
+          label="Send"
+          class="dark-btn"
+          @click="sendMessage"
+        />
+      </div>
+    </footer>
   </q-drawer>
 </template>
 
@@ -53,7 +58,12 @@
 import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import useMessagingStore from "src/stores/modules/messaging";
-import { IMessage, Direction } from "../../types/MessagingTypes";
+import {
+  IMessage,
+  Direction,
+  Product,
+  MessageType,
+} from "../../types/MessagingTypes";
 
 const messagingStore = useMessagingStore();
 
@@ -85,6 +95,24 @@ const messages = computed(() => {
 
   return groupedMessages;
 });
+
+const sendMessage = async () => {
+  const chat = messagingStore.getChats[messagingStore.getSelectedChatIndex];
+  const chatId = chat.id;
+  const contactNumber = messagingStore.getContactNumber;
+
+  await messagingStore.sendChatTextMessage({
+    chatId,
+    messageProduct: Product.WHATSAPP,
+    to: contactNumber as string,
+    type: MessageType.TEXT,
+    messageBody: message.value,
+  });
+
+  message.value = "";
+
+  messagingStore.fetchChatMessagesByChatId(chatId);
+};
 </script>
 
 <style scoped lang="scss">
