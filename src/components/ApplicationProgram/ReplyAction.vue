@@ -15,12 +15,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = defineProps({
   index: {
     type: Number,
     default: () => 0,
+  },
+  replyText: {
+    type: String,
+    default: () => "",
   },
 });
 
@@ -38,4 +42,8 @@ const changeValue = () => {
 const deleteReply = () => {
   emit("deleteReply", props.index);
 };
+
+onMounted(() => {
+  replyText.value = props.replyText;
+});
 </script>

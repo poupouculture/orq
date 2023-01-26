@@ -28,9 +28,10 @@
         <div class="w-2/12 mt-2 mb-4">
           <InputSelect
             :options="languageOptions"
-            default="English"
+            :default="language"
             :value="language"
             @input="updateLanguage"
+            v-if="!loading"
           />
         </div>
 
@@ -46,9 +47,10 @@
           <div class="w-2/12">
             <InputSelect
               :options="headerOptions"
-              :default="null"
+              :default="header"
               :value="header"
               @input="updateHeader"
+              v-if="!loading"
             />
           </div>
           <input
@@ -106,26 +108,39 @@
         <div class="w-3/12 mt-2 mb-4">
           <InputSelect
             :options="actionCategoryOptions"
-            default="None"
+            :default="actionCategory"
             :value="actionCategory"
             @input="updateActionCategory"
+            v-if="!loading"
           />
         </div>
 
         <div v-if="actionCategory === ac.CALL_TO_ACTION">
-          <CallToAction @updateAction="updateAction" :index="0" />
+          <CallToAction
+            @updateAction="updateAction"
+            :index="0"
+            :action="actions[0]"
+            v-if="!loading"
+          />
 
-          <CallToAction @updateAction="updateAction" :index="1" class="mt-4" />
+          <CallToAction
+            @updateAction="updateAction"
+            :index="1"
+            :action="actions[1]"
+            class="mt-4"
+            v-if="!loading"
+          />
         </div>
 
         <div
           class="w-6/12 flex flex-col gap-2"
-          v-if="actionCategory === ac.QUICK_REPLY"
+          v-if="actionCategory === ac.QUICK_REPLY && !loading"
         >
           <ReplyAction
             :index="index"
             v-for="(replyText, index) of replies"
             :key="index"
+            :replyText="replyText"
             @updateReply="updateReply"
             @deleteReply="deleteReply"
           />
@@ -169,6 +184,7 @@
           :actionCategory="actionCategory"
           :actions="actions"
           :replies="replies"
+          v-if="!loading"
         />
       </div>
     </div>
@@ -213,22 +229,21 @@ const status = ref("Draft");
 const delivered = ref(0);
 const read = ref(0);
 const replied = ref(0);
+const loading = ref(true);
 
 onMounted(() => {
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
-    const headerComponent = tempData.components.filter(
+    const headerComponent = tempData.components.find(
       (c) => c.type === "HEADER"
-    )[0];
-    const bodyComponent = tempData.components.filter(
-      (c) => c.type === "BODY"
-    )[0];
-    const footerComponent = tempData.components.filter(
+    );
+    const bodyComponent = tempData.components.find((c) => c.type === "BODY");
+    const footerComponent = tempData.components.find(
       (c) => c.type === "FOOTER"
-    )[0];
-    const buttonsComponent = tempData.components.filter(
+    );
+    const buttonsComponent = tempData.components.find(
       (c) => c.type === "BUTTONS"
-    )[0];
+    );
 
     name.value = tempData.name;
     language.value = tempData.language;
@@ -245,10 +260,15 @@ onMounted(() => {
 
     updateActionCategory(buttonsComponent.value.category);
 
-    if (actionCategory.value === ac.CALL_TO_ACTION) {
-      actions.value = buttonsComponent.value.buttons;
-    } else {
-      replies.value = buttonsComponent.value.buttons;
+    if (actionCategory.value !== ac.NONE) {
+      const buttons = buttonsComponent.value.buttons;
+
+      if (actionCategory.value === ac.CALL_TO_ACTION) {
+        actions.value =
+          buttons === "" || buttons === null ? Array(2).fill(null) : buttons;
+      } else {
+        replies.value = buttons === "" || buttons === null ? [] : buttons;
+      }
     }
 
     status.value = tempData.status;
@@ -256,6 +276,8 @@ onMounted(() => {
     read.value = tempData.messages_opened;
     replied.value = tempData.top_block_reason;
   }
+
+  loading.value = false;
 });
 
 const updateLanguage = (value) => {
