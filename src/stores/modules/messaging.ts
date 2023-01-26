@@ -12,7 +12,7 @@ const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
       chats: [],
-      selectedChatIndex: 0,
+      selectedChatIndex: null,
       selectedTab: ChatTypes.PENDING,
       chatMessages: [],
       contactNumber: null,
