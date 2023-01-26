@@ -1,3 +1,5 @@
+import { ChatTypes } from "src/constants/ChatKeyword";
+
 export const enum Direction {
   OUTGOING = "outgoing",
   INCOMING = "incoming",
@@ -35,6 +37,7 @@ export interface IChat {
 export interface IState {
   chatMessages: Array<IMessage>;
   selectedChatIndex: number;
+  selectedTab: ChatTypes;
   chats: Array<IChat>;
   contactNumber: null | string;
 }
