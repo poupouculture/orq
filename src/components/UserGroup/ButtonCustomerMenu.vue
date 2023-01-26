@@ -16,7 +16,7 @@
     @cancel="deleteDialog = false"
     @submit-delete="deleteCustomer"
   />
-  <!-- Modal / Dialog Conversation Log -->
+  <!-- Modal / Dialog Customer detail -->
   <q-dialog v-model="showCustomerDetail">
     <div
       class="h-full bg-white w-auto !rounded-2xl px-7 py-4 overflow-y-auto relative"

@@ -32,7 +32,7 @@
                 <q-checkbox
                   size="xs"
                   v-model="selectAllUser"
-                  val="xs"
+                  :val="data.map((d) => d.id)"
                   class="text-[#9A9AAF]"
                 />
               </th>

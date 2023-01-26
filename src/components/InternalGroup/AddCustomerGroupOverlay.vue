@@ -21,7 +21,7 @@
             </template>
           </q-input>
         </div>
-        <q-btn @click="close()" round color="primary" icon="check" />
+        <q-btn @click="submit()" round color="primary" icon="check" />
       </div>
       <!-- Table data -->
       <div class="overflow-x-auto my-8">
@@ -32,7 +32,7 @@
                 <q-checkbox
                   size="xs"
                   v-model="selectAllCustomerGroups"
-                  val="xs"
+                  :val="data.map((d) => d.id)"
                   class="text-[#9A9AAF]"
                 />
               </th>
@@ -47,7 +47,7 @@
           <tbody>
             <tr
               class="hover:bg-primary/5 text-sm"
-              v-for="(group, i) in data.customerGroups"
+              v-for="(group, i) in data"
               :key="i"
             >
               <td class="whitespace-nowrap px-5 py-4 w-10">
@@ -81,85 +81,56 @@
   </div>
 </template>
 <script setup>
-import { getCustomerGroups } from "src/api/customerGroup";
-import { ref, onMounted, reactive, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import BasePagination from "../BasePagination.vue";
 
 const props = defineProps({
-  modelValue: { type: Array },
+  data: Array,
+  pagination: Object,
+  selectedData: Array,
 });
-const modelValue = computed(() => props.modelValue);
-const emits = defineEmits(["update:modelValue", ".lengthclose"]);
-const selectedCustomerGroup = ref([]);
-// when user selected, update model.length.id ? model.length.id value : model.length.includes(group.id)
-watch(selectedCustomerGroup, (val) => {
-  emits("update:modelValue", val);
-});
+const data = computed(() => props.data);
+const pagination = computed(() => props.pagination);
+const emits = defineEmits(["submit", "changePage", "close"]);
+const selectedCustomerGroup = ref(props.selectedData || []);
+
 const selectAllCustomerGroups = computed({
   get: () =>
-    data.customerGroups.length
-      ? selectedCustomerGroup.value.length === data.customerGroups.length
+    data.value.length
+      ? selectedCustomerGroup.value.length === data.value.length
       : false,
   set: (value) => {
     const selected = [];
     if (value) {
-      data.customerGroups.forEach(function (customerGroup) {
-        selected.push(customerGroup);
+      data.value.forEach(function (customerGroup) {
+        selected.push(customerGroup.id);
       });
     }
     selectedCustomerGroup.value = selected;
   },
 });
+
+const getPaginationLabel = () => {
+  const max = pagination.value.page * pagination.value.rowsPerPage;
+  const maxIndex =
+    pagination.value.totalCount < max ? pagination.value.totalCount : max;
+  const minIndex =
+    pagination.value.rowsPerPage * (pagination.value.page - 1) + 1;
+
+  return `Showing ${minIndex} to ${maxIndex} of
+  ${pagination.value.totalCount} results`;
+};
+
+const submit = () => {
+  emits("submit", selectedCustomerGroup.value);
+};
 const close = () => {
   emits("close");
 };
-const data = reactive({
-  customerGroups: [],
-});
-const loading = ref(false);
-const pagination = reactive({
-  sortBy: "desc",
-  descending: false,
-  page: 1,
-  rowsPerPage: 10,
-  totalCount: 0,
-});
-const getPaginationLabel = () => {
-  const max = pagination.page * pagination.rowsPerPage;
-  const maxIndex = pagination.totalCount < max ? pagination.totalCount : max;
-  const minIndex = pagination.rowsPerPage * (pagination.page - 1) + 1;
-
-  return `Showing ${minIndex} to ${maxIndex} of
-  ${pagination.totalCount} results`;
-};
-onMounted(async () => {
-  await fetchCustomerGroup();
-  if (modelValue.value.length) {
-    selectedCustomerGroup.value = data.customerGroups
-      .filter((group) => modelValue.value.includes(group.id))
-      .map((item) => item.id);
-  }
-});
-
-const fetchCustomerGroup = async () => {
-  const {
-    data: { data: customerGroups, meta },
-  } = await getCustomerGroups({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
-  data.customerGroups = customerGroups;
-  pagination.totalCount = meta?.total_count;
-  loading.value = false;
-};
 const changePage = (val) => {
-  pagination.page = val;
-  fetchCustomerGroup({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
+  emits("changePage", val);
 };
 const totalPage = () => {
-  return Math.ceil(pagination.totalCount / pagination.rowsPerPage);
+  return Math.ceil(pagination.value.totalCount / pagination.value.rowsPerPage);
 };
 </script>

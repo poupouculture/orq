@@ -23,6 +23,17 @@ export const getUsers = async ({ limit = 10, page = 1 }) => {
   } catch (error) {}
 };
 
+export const getUser = async (id) => {
+  const fields = "*";
+  const companies = "companies.companies_id.*";
+  const contacts = "contacts.contacts_id.*";
+
+  const customer = await api.get(
+    `/users/${id}?fields=${fields},${companies},${contacts}`
+  );
+  return customer;
+};
+
 export const addUser = async (payload) => {
   const customer = await api.post("/users", payload);
   return customer;

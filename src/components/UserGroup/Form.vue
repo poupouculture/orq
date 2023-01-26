@@ -117,12 +117,8 @@ const customerGroupStore = useCustomerGroupStore();
 const data = computed(() => customerGroupStore.item);
 const router = useRouter();
 const returnDialog = ref(false);
-const selectedCustomer = ref(
-  data.value.customers.map((c) => c.customers_id) || []
-);
-const selectedUserGroup = ref(
-  data.value.user_groups.map((ug) => ug.user_groups_id) || []
-);
+const selectedCustomer = ref([]);
+const selectedUserGroup = ref([]);
 const openAddCustomer = ref(false);
 const openAddUserGroup = ref(false);
 const customersData = ref([]);
@@ -134,9 +130,13 @@ const form = reactive({
   loading: false,
 });
 onMounted(() => {
-  if (data.value) {
+  if (data.value && props.id) {
     form.name = data.value.name;
     form.status = data.value.status;
+    selectedCustomer.value = data.value?.customers.map((c) => c.customers_id);
+    selectedUserGroup.value = data.value?.user_groups.map(
+      (ug) => ug.user_groups_id
+    );
   }
 });
 const toggleCustomerOverlay = async () => {

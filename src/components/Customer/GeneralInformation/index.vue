@@ -101,6 +101,7 @@
               lazy-rules
               dense
               outlined
+              :disable="mode == 'show'"
               bg-color="white"
             >
               <template v-slot:append>
