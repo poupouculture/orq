@@ -117,8 +117,12 @@ const customerGroupStore = useCustomerGroupStore();
 const data = computed(() => customerGroupStore.item);
 const router = useRouter();
 const returnDialog = ref(false);
-const selectedCustomer = ref([]);
-const selectedUserGroup = ref([]);
+const selectedCustomer = ref(
+  data.value.customers.map((c) => c.customers_id) || []
+);
+const selectedUserGroup = ref(
+  data.value.user_groups.map((ug) => ug.user_groups_id) || []
+);
 const openAddCustomer = ref(false);
 const openAddUserGroup = ref(false);
 const customersData = ref([]);
@@ -161,10 +165,20 @@ const submit = async () => {
   try {
     let msg;
     if (props.id) {
+      const filterCustomer = selectedCustomer.value.filter(
+        (customer) =>
+          !data.value.customers.map((c) => c.customers_id).includes(customer)
+      );
+      const filterUserGroup = selectedUserGroup.value.filter(
+        (userGroup) =>
+          !data.value.user_groups
+            .map((us) => us.user_groups_id)
+            .includes(userGroup)
+      );
       await updateCustomerGroup(props.id, {
         ...form,
         user_groups: {
-          create: selectedUserGroup.value.map((usergroup) => ({
+          create: filterUserGroup.map((usergroup) => ({
             customer_groups_id: props.id,
             user_groups_id: {
               id: usergroup,
@@ -172,7 +186,7 @@ const submit = async () => {
           })),
         },
         customers: {
-          create: selectedCustomer.value.map((customer) => ({
+          create: filterCustomer.map((customer) => ({
             customer_groups_id: props.id,
             customers_id: {
               id: customer,
