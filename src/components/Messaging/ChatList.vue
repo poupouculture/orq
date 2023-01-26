@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { format } from "date-fns";
@@ -92,7 +92,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["changeTab"]);
 
-const activeChat: Ref<number> = ref(0);
+const activeChat: Ref<number | null> = ref(null);
 const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
 const tabs: Ref<ChatTypes[]> = ref([
@@ -101,10 +101,6 @@ const tabs: Ref<ChatTypes[]> = ref([
   ChatTypes.CLOSED,
 ]);
 const { getChats } = storeToRefs(messagingStore);
-
-onMounted(() => {
-  selectChat(0);
-});
 
 const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
@@ -130,14 +126,14 @@ const getLastMessage = (lastMessage: LastMessage) => {
 };
 
 const selectChat = (index: number) => {
+  customerStore.$reset();
+
   activeChat.value = index;
   const { id: chatId } = props.chatList[index];
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
   messagingStore.fetchContactNumber(getChats.value[index].contacts_id);
-
-  customerStore.$reset();
 
   if (props.chatList[index].customers_id) {
     const customerId = props.chatList[index].customers_id;
