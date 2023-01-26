@@ -109,6 +109,8 @@ const saveCustomer = async (val: FormPayload) => {
     const customer = await customerStore.addCustomer(val);
     customerStore.addCustomerContact(customer.id, contactId);
   }
+
+  messagingStore.fetchChats(messagingStore.getSelectedTab);
 };
 </script>
 
