@@ -45,6 +45,22 @@ export const getAllCustomerEdit = async (payload) => {
   });
   return customer;
 };
+export const getAllCustomerGroupEdit = async (payload) => {
+  const { limit, page, customerGroups } = payload;
+  const fields = "id, name, status, customer.id";
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const customerGroup = await api.get("/items/customer_groups", {
+    params: {
+      "filter[id][_nin]": customerGroups.join(),
+      fields: `${fields}`,
+      sort: "-date_created",
+      limit,
+      offset,
+      meta: "*",
+    },
+  });
+  return customerGroup;
+};
 
 export const getCustomersFilter = async ({ limit = 10, page = 1 }, id) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;

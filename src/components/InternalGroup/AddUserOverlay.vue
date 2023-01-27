@@ -21,7 +21,7 @@
             </template>
           </q-input>
         </div>
-        <q-btn @click="close()" round color="primary" icon="check" />
+        <q-btn @click="submit()" round color="primary" icon="check" />
       </div>
       <!-- Table data -->
       <div class="overflow-x-auto my-8">
@@ -32,7 +32,7 @@
                 <q-checkbox
                   size="xs"
                   v-model="selectAllUser"
-                  :val="data.users"
+                  :val="data.map((d) => d.id)"
                   class="text-[#9A9AAF]"
                 />
               </th>
@@ -45,7 +45,7 @@
           <tbody>
             <tr
               class="hover:bg-primary/5 text-sm"
-              v-for="(user, i) in data.users"
+              v-for="(user, i) in data"
               :key="i"
             >
               <td class="whitespace-nowrap px-5 py-4 w-10">
@@ -90,84 +90,54 @@
   </div>
 </template>
 <script setup>
-import { getUsers } from "src/api/user";
-import { ref, onMounted, reactive, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import BasePagination from "../BasePagination.vue";
 
 const props = defineProps({
-  modelValue: { type: Array },
+  data: Array,
+  pagination: Object,
+  selectedData: Array,
 });
-const modelValue = computed(() => props.modelValue);
-const emits = defineEmits(["update:modelValue", "close"]);
-const selectedUser = ref([]);
-const data = reactive({
-  users: [],
-});
-// when customer selected, update model value
-watch(selectedUser, (val) => {
-  emits("update:modelValue", val);
-});
-const close = () => {
-  emits("close");
-};
+const data = computed(() => props.data);
+const pagination = computed(() => props.pagination);
+const emits = defineEmits(["submit", "changePage", "close"]);
+const selectedUser = ref(props.selectedData || []);
+
 const selectAllUser = computed({
   get: () =>
-    data.users.length ? selectedUser.value.length === data.users.length : false,
+    data.value.length ? selectedUser.value.length === data.value.length : false,
   set: (value) => {
     const selected = [];
     if (value) {
-      data.users.forEach(function (user) {
-        selected.push(user);
+      data.value.forEach(function (user) {
+        selected.push(user.id);
       });
     }
     selectedUser.value = selected;
   },
 });
-const loading = ref(false);
-const pagination = reactive({
-  sortBy: "desc",
-  descending: false,
-  page: 1,
-  rowsPerPage: 10,
-  totalCount: 0,
-});
 
 const getPaginationLabel = () => {
-  const max = pagination.page * pagination.rowsPerPage;
-  const maxIndex = pagination.totalCount < max ? pagination.totalCount : max;
-  const minIndex = pagination.rowsPerPage * (pagination.page - 1) + 1;
+  const max = pagination.value.page * pagination.value.rowsPerPage;
+  const maxIndex =
+    pagination.value.totalCount < max ? pagination.value.totalCount : max;
+  const minIndex =
+    pagination.value.rowsPerPage * (pagination.value.page - 1) + 1;
 
   return `Showing ${minIndex} to ${maxIndex} of
-  ${pagination.totalCount} results`;
+  ${pagination.value.totalCount} results`;
 };
 
-onMounted(async () => {
-  await fetchUsers();
-  if (modelValue.value.length) {
-    selectedUser.value = data.users
-      .filter((group) => modelValue.value.includes(group.id))
-      .map((item) => item.id);
-  }
-});
-const fetchUsers = async () => {
-  const {
-    data: { data: users, meta },
-  } = await getUsers({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
-  data.users = users;
-  pagination.totalCount = meta?.total_count;
-  loading.value = false;
+const submit = () => {
+  emits("submit", selectedUser.value);
+};
+const close = () => {
+  emits("close");
 };
 const changePage = (val) => {
-  pagination.page = val;
-  fetchUsers({
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
-  });
+  emits("changePage", val);
 };
 const totalPage = () => {
-  return Math.ceil(pagination.totalCount / pagination.rowsPerPage);
+  return Math.ceil(pagination.value.totalCount / pagination.value.rowsPerPage);
 };
 </script>

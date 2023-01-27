@@ -26,6 +26,7 @@
     <AddCustomerOverlay
       v-if="openAddCustomer"
       @submit="(val) => submitAddCustomer(val)"
+      @close="openAddCustomer = false"
       :data="customersData"
       @changePage="changePage"
       :pagination="pagination"
@@ -38,6 +39,7 @@ import { ref, reactive } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
 import AddCustomerOverlay from "./AddCustomerOverlay.vue";
 import { getCustomersFilter } from "src/api/customerGroup";
+import { Loading } from "quasar";
 
 const props = defineProps({
   id: [String, Number],
@@ -66,6 +68,7 @@ const changePage = (val) => {
 };
 
 const fetchCustomers = async () => {
+  Loading.show();
   const {
     data: { data: customers, meta },
   } = await getCustomersFilter(
@@ -75,6 +78,7 @@ const fetchCustomers = async () => {
     },
     props.id
   );
+  Loading.hide();
   customersData.value = customers;
   pagination.totalCount = meta?.total_count;
 };

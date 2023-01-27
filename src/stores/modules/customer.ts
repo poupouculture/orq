@@ -7,6 +7,7 @@ import {
   updateCustomer,
 } from "../../api/customers";
 import { IState, FormPayload } from "src/types/CustomerTypes";
+import { getUser } from "src/api/user";
 
 const useCustomerStore = defineStore("customer", {
   state: () =>
@@ -38,6 +39,12 @@ const useCustomerStore = defineStore("customer", {
         data: { data: customer },
       } = await getCustomer(id);
       this.customer = customer;
+    },
+    async fetchUser(id: string) {
+      const {
+        data: { data: user },
+      } = await getUser(id);
+      this.customer = user;
     },
     async updateCustomer(id: string, payload: FormPayload) {
       const {

@@ -11,22 +11,24 @@
     <span>Edit Customer Groups</span>
   </div>
   <!-- Form -->
-  <Form v-if="customerGroup" :id="route.params.id" />
+  <Form v-if="!loading" :id="route.params.id" />
 </template>
 <script setup>
+import { Loading } from "quasar";
 import Form from "src/components/UserGroup/Form.vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
-import { onMounted, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
 const customerGroupStore = useCustomerGroupStore();
-const customerGroup = computed(() => customerGroupStore.item);
+const loading = ref(false);
 const route = useRoute();
-// watch(route, (val) => {
-//   console.log(val);
-//   customerGroupStore.get(val.params.value.id);
-// });
+
 onMounted(async () => {
+  Loading.show();
+  loading.value = true;
   await customerGroupStore.get(route.params.id);
+  loading.value = false;
+  Loading.hide();
 });
 </script>

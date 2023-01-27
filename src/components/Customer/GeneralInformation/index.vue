@@ -18,7 +18,12 @@
           <div class="col-10">
             <div class="field-holder">
               <p class="label-style">Label</p>
-              <q-select outlined v-model="tags" dense />
+              <q-select
+                outlined
+                v-model="tags"
+                :disable="mode == 'show'"
+                dense
+              />
             </div>
           </div>
         </div>
@@ -31,6 +36,7 @@
               :rules="[(val) => required(val)]"
               outlined
               lazy-rules
+              :disable="mode == 'show'"
               dense
             />
           </div>
@@ -42,6 +48,7 @@
               :rules="[(val) => required(val)]"
               outlined
               lazy-rules
+              :disable="mode == 'show'"
               dense
             />
           </div>
@@ -55,6 +62,7 @@
               :rules="[(val) => required(val)]"
               outlined
               lazy-rules
+              :disable="mode == 'show'"
               dense
             />
           </div>
@@ -66,6 +74,7 @@
               :rules="[(val) => required(val)]"
               outlined
               lazy-rules
+              :disable="mode == 'show'"
               dense
             />
           </div>
@@ -79,6 +88,7 @@
               :rules="[(val) => required(val)]"
               outlined
               lazy-rules
+              :disable="mode == 'show'"
               dense
             />
           </div>
@@ -91,6 +101,7 @@
               lazy-rules
               dense
               outlined
+              :disable="mode == 'show'"
               bg-color="white"
             >
               <template v-slot:append>
@@ -113,26 +124,41 @@
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style">Position</p>
-            <q-select outlined v-model="position" dense />
+            <q-select
+              outlined
+              v-model="position"
+              dense
+              :disable="mode == 'show'"
+            />
           </div>
           <div class="col">
             <p class="label-style">Company</p>
-            <q-select outlined v-model="company" dense />
+            <q-select
+              outlined
+              v-model="company"
+              dense
+              :disable="mode == 'show'"
+            />
           </div>
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style">Customer Group</p>
-            <q-select outlined v-model="customerGroup" dense />
+            <q-select
+              outlined
+              v-model="customerGroup"
+              dense
+              :disable="mode == 'show'"
+            />
           </div>
           <div class="col"></div>
         </div>
         <q-checkbox
-          v-if="props.showActive"
+          v-if="props.showActive && mode !== 'show'"
           v-model="isActive"
           label="is Active"
         />
-        <div class="row q-gutter-xl">
+        <div class="row q-gutter-xl" v-if="mode !== 'show'">
           <div v-if="showReturnButton" class="col">
             <div class="btn-cls" @click="returnDialog = true">
               <p>Return</p>
@@ -181,6 +207,7 @@ import { required } from "src/utils/validation-rules";
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
+  mode: String,
   showActive: {
     type: Boolean,
     default: true,
