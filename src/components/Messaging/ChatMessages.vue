@@ -42,16 +42,33 @@
         bg-color="grey-2"
         type="textarea"
       />
-      <div class="row justify-end q-mt-md">
+      <div class="row justify-end">
         <q-btn
-          color="primary"
-          label="Send"
-          class="dark-btn"
-          @click="sendMessage"
+          flat
+          round
+          color="grey"
+          icon="insert_comment"
+          size="md"
+          class="q-mt-md"
+          @click="showMessageTemplate = true"
         />
+        <q-btn flat round color="grey" icon="mic" size="md" class="q-mt-md" />
+        <q-btn flat round color="grey" icon="image" size="md" class="q-mt-md" />
+        <div class="row justify-end q-mt-md">
+          <q-btn
+            color="primary"
+            label="Send"
+            class="dark-btn"
+            @click="sendMessage"
+          />
+        </div>
       </div>
     </footer>
   </q-drawer>
+  <MessageTemplateDialog
+    v-model="showMessageTemplate"
+    @hide="showMessageTemplate = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -64,10 +81,12 @@ import {
   Product,
   MessageType,
 } from "../../types/MessagingTypes";
+import MessageTemplateDialog from "./MessageTemplateDialog.vue";
 
 const messagingStore = useMessagingStore();
 
 const message: Ref<string> = ref("");
+const showMessageTemplate: Ref<boolean> = ref(false);
 
 const messages = computed(() => {
   const arr: Array<IMessage> = messagingStore.getChatMessages;
