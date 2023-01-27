@@ -28,9 +28,10 @@
         <div class="w-2/12 mt-2 mb-4">
           <InputSelect
             :options="languageOptions"
-            default="English"
+            :default="language"
             :value="language"
             @input="updateLanguage"
+            v-if="!loading"
           />
         </div>
 
@@ -46,9 +47,10 @@
           <div class="w-2/12">
             <InputSelect
               :options="headerOptions"
-              :default="null"
+              :default="header"
               :value="header"
               @input="updateHeader"
+              v-if="!loading"
             />
           </div>
           <input
@@ -106,26 +108,39 @@
         <div class="w-3/12 mt-2 mb-4">
           <InputSelect
             :options="actionCategoryOptions"
-            default="None"
+            :default="actionCategory"
             :value="actionCategory"
             @input="updateActionCategory"
+            v-if="!loading"
           />
         </div>
 
-        <div v-if="actionCategory === 'Call To Action'">
-          <CallToAction @updateAction="updateAction" :index="0" />
+        <div v-if="actionCategory === ac.CALL_TO_ACTION">
+          <CallToAction
+            @updateAction="updateAction"
+            :index="0"
+            :action="actions[0]"
+            v-if="!loading"
+          />
 
-          <CallToAction @updateAction="updateAction" :index="1" class="mt-4" />
+          <CallToAction
+            @updateAction="updateAction"
+            :index="1"
+            :action="actions[1]"
+            class="mt-4"
+            v-if="!loading"
+          />
         </div>
 
         <div
           class="w-6/12 flex flex-col gap-2"
-          v-if="actionCategory === 'Quick Reply'"
+          v-if="actionCategory === ac.QUICK_REPLY && !loading"
         >
           <ReplyAction
             :index="index"
             v-for="(replyText, index) of replies"
             :key="index"
+            :replyText="replyText"
             @updateReply="updateReply"
             @deleteReply="deleteReply"
           />
@@ -169,6 +184,7 @@
           :actionCategory="actionCategory"
           :actions="actions"
           :replies="replies"
+          v-if="!loading"
         />
       </div>
     </div>
@@ -183,6 +199,7 @@ import CallToAction from "../../components/ApplicationProgram/CallToAction.vue";
 import ReplyAction from "../../components/ApplicationProgram/ReplyAction.vue";
 import Preview from "../../components/ApplicationProgram/Preview.vue";
 import useUserInfoStore from "stores/modules/userInfo";
+import { actionCategory as ac } from "../../constants/ApplicationProgram.js";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
@@ -197,21 +214,8 @@ const props = defineProps({
 const name = ref(null);
 const languageOptions = ["English", "Chineese"];
 const headerOptions = ["Text", "Media"];
-const actionCategoryOptions = ["None", "Call To Action", "Quick Reply"];
-const actions = ref([
-  {
-    type: "",
-    label: "",
-    countryOrWebtype: "",
-    value: "",
-  },
-  {
-    type: "",
-    label: "",
-    countryOrWebtype: "",
-    value: "",
-  },
-]);
+const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
+const actions = ref(Array(2).fill(null));
 
 const language = ref("English");
 const header = ref(null);
@@ -225,25 +229,55 @@ const status = ref("Draft");
 const delivered = ref(0);
 const read = ref(0);
 const replied = ref(0);
+const loading = ref(true);
 
 onMounted(() => {
-  if (props.applicationProgram) {
-    const tempApplicationProgram = this.applicationProgram;
-    name.value = tempApplicationProgram.name;
-    language.value = tempApplicationProgram.language;
-    header.value = tempApplicationProgram.header;
-    headerMessage.value = tempApplicationProgram.headerMessage;
-    media.value = tempApplicationProgram.media;
-    bodyMessage.value = tempApplicationProgram.bodyMessage;
-    footerMessage.value = tempApplicationProgram.footerMessage;
-    actionCategory.value = tempApplicationProgram.actionCategory;
-    actions.value = tempApplicationProgram.actions;
-    replies.value = tempApplicationProgram.replies;
-    status.value = tempApplicationProgram.status;
-    delivered.value = tempApplicationProgram.delivered;
-    read.value = tempApplicationProgram.read;
-    replied.value = tempApplicationProgram.replied;
+  if (props?.applicationProgram) {
+    const tempData = props.applicationProgram.data.data;
+    const headerComponent = tempData.components.find(
+      (c) => c.type === "HEADER"
+    );
+    const bodyComponent = tempData.components.find((c) => c.type === "BODY");
+    const footerComponent = tempData.components.find(
+      (c) => c.type === "FOOTER"
+    );
+    const buttonsComponent = tempData.components.find(
+      (c) => c.type === "BUTTONS"
+    );
+
+    name.value = tempData.name;
+    language.value = tempData.language;
+
+    header.value = headerComponent.value.format;
+    if (header.value === "Text") {
+      headerMessage.value = headerComponent.value.value;
+    } else {
+      media.value = headerComponent.value.value;
+    }
+
+    bodyMessage.value = bodyComponent.value;
+    footerMessage.value = footerComponent.value;
+
+    updateActionCategory(buttonsComponent.value.category);
+
+    if (actionCategory.value !== ac.NONE) {
+      const buttons = buttonsComponent.value.buttons;
+
+      if (actionCategory.value === ac.CALL_TO_ACTION) {
+        actions.value =
+          buttons === "" || buttons === null ? Array(2).fill(null) : buttons;
+      } else {
+        replies.value = buttons === "" || buttons === null ? [] : buttons;
+      }
+    }
+
+    status.value = tempData.status;
+    delivered.value = tempData.messages_sent;
+    read.value = tempData.messages_opened;
+    replied.value = tempData.top_block_reason;
   }
+
+  loading.value = false;
 });
 
 const updateLanguage = (value) => {
@@ -279,21 +313,45 @@ const updateReply = (value) => {
 };
 
 const submitGeneralInformation = () => {
+  let buttonValues = "";
+  if (actionCategory.value !== ac.NONE) {
+    buttonValues =
+      actionCategory.value === ac.CALL_TO_ACTION
+        ? actions.value
+        : replies.value;
+  }
+
   emit("submitGeneralInformation", {
     name: name.value,
     language: language.value,
-    header: header.value,
-    headerMessage: headerMessage.value,
-    media: media.value,
-    bodyMessage: bodyMessage.value,
-    footerMessage: footerMessage.value,
-    actionCategory: actionCategory.value,
-    actions: actions.value,
-    replies: replies.value,
     status: status.value,
-    delivered: delivered.value,
-    read: read.value,
-    replied: replied.value,
+    components: [
+      {
+        type: "HEADER",
+        value: {
+          format: header.value,
+          value: header.value === "Text" ? headerMessage.value : media.value,
+        },
+      },
+      {
+        type: "BODY",
+        value: bodyMessage.value,
+      },
+      {
+        type: "FOOTER",
+        value: footerMessage.value,
+      },
+      {
+        type: "BUTTONS",
+        value: {
+          category: actionCategory.value,
+          buttons: buttonValues,
+        },
+      },
+    ],
+    messages_sent: delivered.value,
+    messages_opened: read.value,
+    top_block_reason: replied.value,
     created_by: userInfo.userProfile.id,
   });
 };
