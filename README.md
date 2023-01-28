@@ -5,25 +5,28 @@ A Quasar Project
 ## Install the dependencies
 ```bash
 yarn
-# or
-npm install
 ```
 
 ## Application Design
-### Content Management System
+### Content Management System **ERP**
 - login: https://waba.synque.ca/admin/login
 this is where all data-models are created, designed, stored, and managed.
 ### Store
-
+- uses PINIA
 
 ### Users
+- synchronizes with DERP's users
+- this is considered as a light-weight ERP, with specific business-domain functions
 
 ### Permissions
 #### UI-access
 - We use the "pages" collection located in our CMS: https://waba.synque.ca/admin/content/pages
-- assign role to the page, e.g. as a manager, I can access UI: F07
 - when logged in, the /users/me is called and the pages OBJECT is stored in userStore
 - finally, the DrawerLayout.vue is built.
+- Rules:
+  - filter all page objects with no parent_id, then attach icon from page-codes.ts
+  - first-level menu has to exist in exist in page-codes.ts
+  - role needs to be assigned to the page code: assign role to the page, e.g. as a manager, I can access UI: F07
 #### Pagination
 - the flow like UI-access in the `DrawerLayout.vue` there are some menus integrated, the menus data called in `@/utils/page-codes.ts`
 - in the `page-codes.ts` there are `id` and `icon`.
@@ -37,7 +40,6 @@ this is where all data-models are created, designed, stored, and managed.
 ```bash
 quasar dev
 ```
-
 
 ### Lint the files
 ```bash
@@ -62,12 +64,12 @@ distDir: ctx.mode.spa ? "public" : null,
 
 ### Customize the configuration
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
-# waba-quasar
 
 # devops
 cicd with vercel
 package manager: use yarn, NOT npm
 
+# Code Library
 ## tailwindcss
 ### References
 ```

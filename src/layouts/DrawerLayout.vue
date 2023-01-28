@@ -109,6 +109,7 @@ const menus = computed(() => {
   const menus = pages
     .filter((page) => {
       if (page.pages_id && !page.pages_id.parent_id) {
+        // no parent_id
         return pageCodes.some((f) => f.id === page.pages_id.id);
       }
       return false;

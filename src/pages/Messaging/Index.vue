@@ -6,6 +6,7 @@
       label="Reassign"
       icon-right="expand_more"
       no-caps
+      v-if="Role.CS_MANAGER"
     >
       <q-menu
         class="q-ma-lg"
@@ -21,7 +22,7 @@
             :key="index"
             clickable
             v-close-popup
-            @click="assignManager(manager)"
+            @click="assignUser(manager)"
           >
             <q-item-section>
               <div class="row items-center">
@@ -121,10 +122,7 @@ import useCustomerStore from "src/stores/modules/customer";
 import useMessagingStore from "src/stores/modules/messaging";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
-import {
-  getManagerUsers,
-  assignManager as assignUserManager,
-} from "src/api/user";
+import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -159,11 +157,12 @@ const managers: Ref<Array<Manager>> = ref([]);
 const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 
 onMounted(async () => {
-  const { data } = await getManagerUsers();
-  const csManager = data.filter(
-    (item: Manager) => item.role_name === Role.CS_MANAGER
-  );
-  managers.value = csManager;
+  const { data } = await getChatUsers();
+
+  // const csManager = data.filter(
+  //   // (item: Manager) => item.role_name === Role.CS_MANAGER
+  // );
+  managers.value = data;
 });
 
 const saveCustomer = async (val: FormPayload) => {
@@ -181,11 +180,11 @@ const saveCustomer = async (val: FormPayload) => {
   messagingStore.fetchChats(messagingStore.getSelectedTab);
 };
 
-const assignManager = (manager: Manager) => {
+const assignUser = (manager: Manager) => {
   const chatId = getChats.value[getSelectedChatIndex.value].id;
   const userId = manager.user_id;
 
-  assignUserManager(chatId, userId);
+  assignUserHelper(chatId, userId);
 };
 </script>
 
