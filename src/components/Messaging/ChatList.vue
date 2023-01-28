@@ -49,8 +49,7 @@
               :active="parseInt(index) === activeChat"
               :name="
                 chat?.customers_id
-                  ? `${chat.first_name}
-              ${chat.last_name}`
+                  ? TrimWord(`${chat.first_name} ${chat.last_name}`)
                   : 'Visitor'
               "
               :message="getLastMessage(JSON.parse(chat.last_message))"
@@ -80,6 +79,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction } from "src/types/MessagingTypes";
+import TrimWord from "src/utils/trim-word";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
