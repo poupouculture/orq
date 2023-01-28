@@ -24,6 +24,11 @@ this is where all data-models are created, designed, stored, and managed.
 - assign role to the page, e.g. as a manager, I can access UI: F07
 - when logged in, the /users/me is called and the pages OBJECT is stored in userStore
 - finally, the DrawerLayout.vue is built.
+#### Pagination
+- the flow like UI-access in the `DrawerLayout.vue` there are some menus integrated, the menus data called in `@/utils/page-codes.ts`
+- in the `page-codes.ts` there are `id` and `icon`.
+- `id` for user role e.g. as a manager, I can access UI: F07
+- `icon` for icon of the menu
 #### API-access
 -
 
