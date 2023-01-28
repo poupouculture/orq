@@ -1,13 +1,15 @@
 <template>
   <div class="login h-full flex no-warp select-none">
-    <div class="background h-screen px-7 pt-11 w-1/3">
+    <div class="hidden md:!inline-block bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3">
       <p class="flex no-wrap text-2xl items-center leading-none">
         <img class="w-40 mr-3" :src="logo" alt="logo" />
       </p>
     </div>
 
     <div class="flex-1 flex no-wrap bg-white">
-      <section class="login-from mt-16 w-96 mx-auto">
+      <section
+        class="login-from mt-16 w-full sm:w-96 max-w-sm mx-auto px-4 sm:px-0"
+      >
         <h1 class="title text-center text-2xl font-semibold mb-10">
           Welcome To WABA
         </h1>
@@ -49,9 +51,9 @@
 
         <footer class="mt-5">
           <div class="flex no-wrap justify-between items-center">
-            <div class="border-b w-32 border-gray-300"></div>
+            <div class="border-b w-28 sm:w-32 border-gray-300"></div>
             <span class="text-gray-500">Or continue with</span>
-            <div class="border-b w-32 border-gray-300"></div>
+            <div class="border-b w-28 sm:w-32 border-gray-300"></div>
           </div>
 
           <div class="mt-5 other-login flex no-wrap justify-between">
@@ -78,7 +80,6 @@
           </p>
         </footer>
       </section>
-      <Message v-model="isShow" :message="message" />
     </div>
   </div>
 </template>
@@ -91,36 +92,24 @@ export default {
 
 <script setup>
 import { ref } from "vue";
-import Message from "src/components/Message.vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import logo from "assets/images/logo.png";
 
 const login = ref({ email: "", password: "" }),
   loading = ref(false),
-  isShow = ref(false),
-  message = ref(""),
   userInfo = useUserInfoStore();
 
 const submit = (e) => {
   if (login.value.email && login.value.password) {
     loading.value = true;
-    userInfo
-      .login(login.value)
-      .catch((err) => {
-        isShow.value = true;
-        message.value = String(err);
-      })
-      .finally(() => {
-        loading.value = false;
-      });
+    userInfo.login(login.value).finally(() => {
+      loading.value = false;
+    });
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.background {
-  background-color: #d5e2ff;
-}
 .login-from {
   :deep {
     .q-btn {
