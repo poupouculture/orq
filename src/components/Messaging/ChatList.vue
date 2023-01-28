@@ -43,7 +43,13 @@
                   </q-avatar>
                   {{ TrimWord(`${item.first_name} ${item.last_name}`) }}
                 </div>
-                <q-btn round color="primary" size="sm" icon="add" />
+                <q-btn
+                  round
+                  color="primary"
+                  size="sm"
+                  icon="add"
+                  @click="startNewChat(item)"
+                />
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -112,8 +118,9 @@ import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
-import { allCustomers } from "src/api/customers";
+import { getCustomersWithContacts } from "src/api/customers";
 import { ICustomer } from "src/types/CustomerTypes";
+import { startNewChat as startChat } from "src/api/messaging";
 
 // Interfaces
 interface LastMessage {
@@ -169,6 +176,7 @@ const data: CustomerData = reactive({
   customers: [],
 });
 const { getChats } = storeToRefs(messagingStore);
+const { getCustomer } = storeToRefs(customerStore);
 
 // Methods
 const onChangeTab = (val: ChatTypes) => {
@@ -180,7 +188,7 @@ const fetchCustomers = async () => {
   if (chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon) {
     const {
       data: { data: customers },
-    } = await allCustomers();
+    } = await getCustomersWithContacts();
 
     data.customers = customers;
     chatToggleLabel.state = ChatToggleLabel.HIDE;
@@ -215,6 +223,23 @@ const selectChat = (index: number) => {
     const customerId = props.chatList[index].customers_id;
     customerStore.fetchCustomer(customerId);
   }
+};
+
+const startNewChat = async (user: ICustomer) => {
+  const customerId = user.id;
+  await customerStore.fetchCustomer(customerId);
+
+  const contactId = getCustomer.value.contacts[0].contacts_id.id;
+  const contactNumber = getCustomer.value.contacts[0].contacts_id.number;
+  await startChat(
+    {
+      name: `${contactNumber} chat`,
+      status: ChatTypes.ONGOING,
+    },
+    contactId
+  );
+
+  chatToggleLabel.state = ChatToggleLabel.SHOW;
 };
 </script>
 

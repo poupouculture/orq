@@ -49,3 +49,10 @@ export interface SendTextMessage {
   type: MessageType;
   messageBody: string;
 }
+
+export interface StartNewChat {
+  name: string;
+  status: ChatTypes;
+  sort?: string | null;
+  user_created?: string | null;
+}
