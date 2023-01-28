@@ -234,40 +234,47 @@ const loading = ref(true);
 onMounted(() => {
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
-    const headerComponent = tempData.components.find(
+    const headerComponent = tempData?.components?.find(
       (c) => c.type === "HEADER"
     );
-    const bodyComponent = tempData.components.find((c) => c.type === "BODY");
-    const footerComponent = tempData.components.find(
+    const bodyComponent = tempData?.components?.find((c) => c.type === "BODY");
+    const footerComponent = tempData?.components?.find(
       (c) => c.type === "FOOTER"
     );
-    const buttonsComponent = tempData.components.find(
+    const buttonsComponent = tempData?.components?.find(
       (c) => c.type === "BUTTONS"
     );
 
     name.value = tempData.name;
-    language.value = tempData.language;
+    language.value =
+      tempData.language === "en_US" ? "English" : tempData.language;
 
-    header.value = headerComponent.value.format;
+    header.value = headerComponent?.value?.format;
     if (header.value === "Text") {
-      headerMessage.value = headerComponent.value.value;
+      headerMessage.value = headerComponent?.value?.value;
     } else {
-      media.value = headerComponent.value.value;
+      media.value = headerComponent?.value?.value;
     }
 
-    bodyMessage.value = bodyComponent.value;
-    footerMessage.value = footerComponent.value;
+    bodyMessage.value =
+      bodyComponent?.value === undefined ? "" : bodyComponent?.value;
+    footerMessage.value = footerComponent?.value;
 
-    updateActionCategory(buttonsComponent.value.category);
+    updateActionCategory(buttonsComponent?.value?.category);
 
-    if (actionCategory.value !== ac.NONE) {
-      const buttons = buttonsComponent.value.buttons;
+    if (
+      actionCategory.value !== ac.NONE &&
+      actionCategory.value !== undefined
+    ) {
+      const buttons = buttonsComponent?.value?.buttons;
 
-      if (actionCategory.value === ac.CALL_TO_ACTION) {
-        actions.value =
-          buttons === "" || buttons === null ? Array(2).fill(null) : buttons;
-      } else {
-        replies.value = buttons === "" || buttons === null ? [] : buttons;
+      if (buttons !== undefined) {
+        if (actionCategory.value === ac.CALL_TO_ACTION) {
+          actions.value =
+            buttons === "" || buttons === null ? Array(2).fill(null) : buttons;
+        } else {
+          replies.value = buttons === "" || buttons === null ? [] : buttons;
+        }
       }
     }
 
