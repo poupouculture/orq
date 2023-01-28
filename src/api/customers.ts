@@ -25,6 +25,19 @@ export const getCustomers = async (payload: CustomerPayload) => {
   return customers;
 };
 
+export const allCustomers = async () => {
+  const fields = "id, first_name, last_name, gender, date_created, position";
+
+  const customers = await api.get("/items/customers", {
+    params: {
+      fields: `${fields}`,
+      sort: "-date_created",
+    },
+  });
+
+  return customers;
+};
+
 export const getCustomer = async (id: string) => {
   const fields = "*";
   const companies = "companies.companies_id.*";
