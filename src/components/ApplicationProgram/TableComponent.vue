@@ -6,6 +6,7 @@
     :rows-per-page="propsTable.rowsPerPage"
     :columns="headerColumns"
     :loading="false"
+    v-model:selected="selected"
     @changePage="changePage"
   >
     <q-tr :props="props">
@@ -71,6 +72,7 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import BaseTable from "src/components/BaseTable.vue";
 
 const propsTable = defineProps({
@@ -162,6 +164,8 @@ const headerColumns = [
     classes: "text-blue",
   },
 ];
+
+const selected = ref([]);
 
 const changePage = (val) => {
   emit("changePage", val);

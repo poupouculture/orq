@@ -23,7 +23,13 @@
           class="q-mr-sm"
           @click="router.push('/application-programs/create')"
         />
-        <q-btn icon="delete" no-caps rounded label="Archive" />
+        <q-btn
+          icon="archive"
+          no-caps
+          rounded
+          label="Archive"
+          @click="archiveSelected"
+        />
       </div>
     </div>
     <div class="main-content flex">
@@ -36,6 +42,7 @@
           :totalCount="data.totalCount"
           :page="data.page"
           :rowsPerPage="data.rowsPerPage"
+          v-model:selected="selected"
           @changePage="changePage"
           v-if="!loading"
         />
@@ -45,7 +52,10 @@
 </template>
 
 <script setup>
-import { getMessageTemplates } from "src/api/messageTemplate";
+import {
+  getMessageTemplates,
+  updateMessageTemplate,
+} from "src/api/messageTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import useUserInfoStore from "../../stores/modules/userInfo";
@@ -57,6 +67,7 @@ const router = useRouter();
 const userInfo = useUserInfoStore();
 
 const loading = ref(true);
+const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
   totalCount: 0,
@@ -86,6 +97,12 @@ const fetchApplicationPrograms = async () => {
 const changePage = (val) => {
   data.page = val;
   fetchApplicationPrograms();
+};
+const archiveSelected = () => {
+  selected.value.forEach(async (data) => {
+    data.status = "archive";
+    await updateMessageTemplate(data.id, data);
+  });
 };
 </script>
 <style scoped src="./style.scss" />
