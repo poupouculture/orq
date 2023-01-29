@@ -156,7 +156,7 @@
 
         <div class="row justify-between mt-4">
           <router-link
-            :to="`/application-programs`"
+            :to="`/application-programs/message-templates`"
             style="text-decoration: none; color: inherit"
           >
             <p

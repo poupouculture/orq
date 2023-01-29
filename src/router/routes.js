@@ -39,8 +39,19 @@ const routes = [
         component: () => import("pages/ApplicationProgram/create.vue"),
       },
       {
-        path: "application-programs/:id",
-        component: () => import("pages/ApplicationProgram/edit.vue"),
+        path: "application-programs/message-templates",
+        component: () =>
+          import("pages/ApplicationProgram/MessageTemplate/index.vue"),
+      },
+      {
+        path: "application-programs/message-templates/create",
+        component: () =>
+          import("pages/ApplicationProgram/MessageTemplate/create.vue"),
+      },
+      {
+        path: "application-programs/message-templates/:id",
+        component: () =>
+          import("pages/ApplicationProgram/MessageTemplate/edit.vue"),
       },
       {
         path: "document-builder",

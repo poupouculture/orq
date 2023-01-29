@@ -61,7 +61,7 @@
     <template #body-cell-action="props">
       <q-td :props="props">
         <router-link
-          :to="`/application-programs/${props.row.id}`"
+          :to="`/application-programs/message-templates/${props.row.id}`"
           style="text-decoration: none; color: inherit"
         >
           <p class="edit-button">Edit</p>
