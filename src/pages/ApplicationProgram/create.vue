@@ -6,7 +6,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
-import { addApplicationProgram } from "../../api/aplicationPrograms.js";
+import { addMessageTemplate } from "../../api/messageTemplate.js";
 
 const router = useRouter();
 const loading = ref(true);
@@ -16,7 +16,7 @@ onMounted(() => {
 });
 
 const submit = async (payload) => {
-  await addApplicationProgram(payload);
+  await addMessageTemplate(payload);
   router.push("/application-program");
 };
 </script>

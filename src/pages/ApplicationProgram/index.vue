@@ -21,164 +21,41 @@
           color="primary"
           label="Add"
           class="q-mr-sm"
-          @click="router.push('/application-program/create')"
+          @click="router.push('/application-programs/create')"
         />
         <q-btn icon="delete" no-caps rounded label="Archive" />
       </div>
     </div>
-    <div class="main-content">
-      <BaseTable
-        :rows="data.applicationPrograms"
-        :total-count="data.totalCount"
-        :page="data.page"
-        :rows-per-page="data.rowsPerPage"
-        :columns="headerColumns"
-        :loading="loading"
-        @changePage="changePage"
-      >
-        <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            auto-width
-          >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-        <template #body-cell-name="props">
-          <q-td :props="props">
-            {{ props.row.name }}
-          </q-td>
-        </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <span
-              class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200"
-            >
-              {{ props.row.status }}
-            </span>
-          </q-td>
-        </template>
-        <template #body-cell-language="props">
-          <q-td :props="props">
-            {{ props.row.language }}
-          </q-td>
-        </template>
-        <template #body-cell-delivered="props">
-          <q-td :props="props">
-            {{ props.row.delivered ? props.row.delivered : 0 }}
-          </q-td>
-        </template>
-        <template #body-cell-read="props">
-          <q-td :props="props">
-            {{ props.row.read ? props.row.read : 0 }}
-          </q-td>
-        </template>
-        <template #body-cell-replied="props">
-          <q-td :props="props">
-            {{ props.row.replied ? props.row.replied : 0 }}
-          </q-td>
-        </template>
-        <template #body-cell-created_by="props">
-          <q-td :props="props">
-            {{ props.row.user_created }}
-          </q-td>
-        </template>
-        <template #body-cell-created_on="props">
-          <q-td :props="props">
-            {{ props.row.date_created }}
-          </q-td>
-        </template>
-        <template #body-cell-action="props">
-          <q-td :props="props">
-            <router-link
-              :to="`/application-program/${props.row.id}`"
-              style="text-decoration: none; color: inherit"
-            >
-              <p class="edit-button">Edit</p>
-            </router-link>
-          </q-td>
-        </template>
-      </BaseTable>
+    <div class="main-content flex">
+      <div class="w-3/12 pr-4">
+        <SubmenuFilter :menus="subfilters" v-if="!loading" />
+      </div>
+      <div class="w-9/12">
+        <TableComponent
+          :applicationPrograms="data.applicationPrograms"
+          :totalCount="data.totalCount"
+          :page="data.page"
+          :rowsPerPage="data.rowsPerPage"
+          @changePage="changePage"
+          v-if="!loading"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { getApplicationPrograms } from "src/api/aplicationPrograms";
+import { getMessageTemplates } from "src/api/messageTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import BaseTable from "src/components/BaseTable.vue";
+import useUserInfoStore from "../../stores/modules/userInfo";
+// import { pageCodes } from "../../utils/page-codes";
+import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
+import SubmenuFilter from "src/components/ApplicationProgram/SubmenuFilter.vue";
+
 const router = useRouter();
-const headerColumns = [
-  {
-    name: "name",
-    align: "left",
-    label: "Template Name",
-    field: "name",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "status",
-    align: "center",
-    label: "Status",
-    field: "status",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "language",
-    align: "center",
-    label: "Language",
-    field: "language",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "delivered",
-    align: "center",
-    label: "Delivered",
-    field: "delivered",
-    classes: "text-black",
-  },
-  {
-    name: "read",
-    align: "center",
-    label: "Read",
-    field: "read",
-    classes: "text-black",
-  },
-  {
-    name: "replied",
-    align: "center",
-    label: "Replied",
-    field: "replied",
-    classes: "text-black",
-  },
-  {
-    name: "user_created",
-    align: "center",
-    label: "Created By",
-    field: "user_created",
-    classes: "text-black",
-  },
-  {
-    name: "date_created",
-    align: "center",
-    label: "Created On",
-    field: "date_created",
-    classes: "text-black",
-  },
-  {
-    name: "action",
-    align: "center",
-    label: "",
-    field: "action",
-    classes: "text-blue",
-  },
-];
+const userInfo = useUserInfoStore();
+
 const loading = ref(true);
 const data = reactive({
   applicationPrograms: [],
@@ -186,13 +63,19 @@ const data = reactive({
   page: 1,
   rowsPerPage: 10,
 });
+const subfilters = ref([]);
+
 onMounted(() => {
   fetchApplicationPrograms();
+  const menu = userInfo.userProfile.role.pages.find(
+    (m) => m?.pages_id?.id === "F07"
+  );
+  subfilters.value = menu.pages_id.children;
 });
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
-  } = await getApplicationPrograms({
+  } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
   });

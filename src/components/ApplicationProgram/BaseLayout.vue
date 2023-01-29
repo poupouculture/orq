@@ -156,7 +156,7 @@
 
         <div class="row justify-between mt-4">
           <router-link
-            :to="`/application-program`"
+            :to="`/application-programs`"
             style="text-decoration: none; color: inherit"
           >
             <p
@@ -199,7 +199,7 @@ import CallToAction from "../../components/ApplicationProgram/CallToAction.vue";
 import ReplyAction from "../../components/ApplicationProgram/ReplyAction.vue";
 import Preview from "../../components/ApplicationProgram/Preview.vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import { actionCategory as ac } from "../../constants/ApplicationProgram.js";
+import { actionCategory as ac } from "../../constants/messageTemplate.js";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);

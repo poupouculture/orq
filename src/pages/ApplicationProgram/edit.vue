@@ -11,9 +11,9 @@ import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
 import {
-  getApplicationProgram,
-  updateApplicationProgram,
-} from "../../api/aplicationPrograms.js";
+  getMessageTemplate,
+  updateMessageTemplate,
+} from "../../api/messageTemplate";
 
 const router = useRouter();
 const route = useRoute();
@@ -22,12 +22,12 @@ const applicationProgram = ref(null);
 
 onMounted(async () => {
   const id = route.params.id;
-  applicationProgram.value = await getApplicationProgram(id);
+  applicationProgram.value = await getMessageTemplate(id);
   loading.value = false;
 });
 
 const submit = async (payload) => {
-  await updateApplicationProgram(route.params.id, payload);
+  await updateMessageTemplate(route.params.id, payload);
   router.push("/application-program");
 };
 </script>

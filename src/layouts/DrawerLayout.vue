@@ -40,6 +40,7 @@
               :icon="menu.icon"
               :label="menu.pages_id.name"
               style="color: #fff"
+              v-if="menu.pages_id.name !== 'Application Programs'"
             >
               <div
                 v-for="(child, cIndex) in menu.pages_id.children"
@@ -56,6 +57,14 @@
                   </div>
                 </router-link>
               </div>
+            </q-expansion-item>
+            <q-expansion-item
+              :icon="menu.icon"
+              :label="menu.pages_id.name"
+              style="color: #fff"
+              @click="router.push(menu.pages_id.url)"
+              v-else
+            >
             </q-expansion-item>
           </q-list>
         </div>
@@ -95,6 +104,7 @@
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
@@ -102,6 +112,7 @@ import { pageCodes } from "../utils/page-codes";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
+const router = useRouter();
 
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;

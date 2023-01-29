@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { actionType as at } from "../../constants/ApplicationProgram.js";
+import { actionType as at } from "../../constants/messageTemplate.js";
 
 const props = defineProps({
   header: {

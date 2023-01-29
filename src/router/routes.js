@@ -31,15 +31,15 @@ const routes = [
         component: () => import("pages/Stow.vue"),
       },
       {
-        path: "application-program",
+        path: "application-programs",
         component: () => import("pages/ApplicationProgram/index.vue"),
       },
       {
-        path: "application-program/create",
+        path: "application-programs/create",
         component: () => import("pages/ApplicationProgram/create.vue"),
       },
       {
-        path: "application-program/:id",
+        path: "application-programs/:id",
         component: () => import("pages/ApplicationProgram/edit.vue"),
       },
       {
