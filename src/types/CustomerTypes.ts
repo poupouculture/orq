@@ -33,7 +33,7 @@ interface CompanyRelation {
 type Gender = "m" | "f";
 
 export interface ICustomer {
-  companies: [CompanyRelation];
+  companies?: [CompanyRelation];
   customer_code: string;
   date_created: string;
   date_updated: string;
@@ -46,12 +46,12 @@ export interface ICustomer {
   isActive: null | boolean;
   last_name: string;
   position: string;
-  service_records: [string];
+  service_records?: [string];
   status: string;
   user_created: string;
   user_updated: string;
 }
 
 export interface IState {
-  customer: ICustomer | null;
+  customer: ICustomer;
 }

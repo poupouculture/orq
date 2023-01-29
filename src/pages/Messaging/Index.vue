@@ -1,6 +1,49 @@
 <template>
-  <div class="row justify-end q-gutter-sm">
-    <q-btn outline color="primary" label="Reassign" no-caps />
+  <div v-if="getSelectedChatIndex !== null" class="row justify-end q-gutter-sm">
+    <q-btn
+      outline
+      color="primary"
+      label="Reassign"
+      icon-right="expand_more"
+      no-caps
+      v-if="Role.CS_MANAGER"
+    >
+      <q-menu
+        class="q-ma-lg"
+        anchor="bottom left"
+        self="top left"
+        :offset="[0, 5]"
+        style="width: 300px"
+        fit
+      >
+        <q-list separator>
+          <q-item
+            v-for="(manager, index) in managers"
+            :key="index"
+            clickable
+            v-close-popup
+            @click="assignUser(manager)"
+          >
+            <q-item-section>
+              <div class="row items-center">
+                <q-avatar size="md">
+                  <img src="../../assets/images/profileavatar.png" />
+                </q-avatar>
+                <div class="q-ml-md">
+                  <div class="text-weight-bold">
+                    {{ manager.first_name }} {{ manager.last_name }}
+                  </div>
+                  <div class="text-weight-light">
+                    {{ manager.role_name }}
+                  </div>
+                </div>
+              </div>
+            </q-item-section>
+            <q-separator />
+          </q-item>
+        </q-list>
+      </q-menu>
+    </q-btn>
     <q-btn color="primary" label="Close Conversation" no-caps />
   </div>
   <div>
@@ -72,25 +115,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
+import { storeToRefs } from "pinia";
 import useCustomerStore from "src/stores/modules/customer";
+import useMessagingStore from "src/stores/modules/messaging";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
+import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 
 const enum Tabs {
   CUSTOMER = "customer",
   SERVICE_DETAIL = "serviceDetail",
   SERVICE_RECORD = "serviceRecord",
 }
-
 const enum CustomerInformationTabs {
   GENERAL = "general",
   OTHER = "other",
 }
+const enum Role {
+  CS = "CS",
+  CS_MANAGER = "CS-Manager",
+}
+interface Manager {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  role_name: string;
+}
 
 const customerStore = useCustomerStore();
-
+const messagingStore = useMessagingStore();
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
@@ -98,11 +153,38 @@ const customerInformationTab: Ref<CustomerInformationTabs> = ref(
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
+const managers: Ref<Array<Manager>> = ref([]);
+const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 
-const saveCustomer = (val: FormPayload) => {
-  if (customerStore.getCustomer) {
+onMounted(async () => {
+  const { data } = await getChatUsers();
+
+  // const csManager = data.filter(
+  //   // (item: Manager) => item.role_name === Role.CS_MANAGER
+  // );
+  managers.value = data;
+});
+
+const saveCustomer = async (val: FormPayload) => {
+  if (customerStore.getCustomer.id) {
+    // update
     customerStore.updateCustomer(customerStore.getCustomer.id, val);
+  } else {
+    // insert
+    const selectedChat = getChats.value[getSelectedChatIndex.value];
+    const contactId = selectedChat.contacts_id;
+    const customer = await customerStore.addCustomer(val);
+    customerStore.addCustomerContact(customer.id, contactId);
   }
+
+  messagingStore.fetchChats(messagingStore.getSelectedTab);
+};
+
+const assignUser = (manager: Manager) => {
+  const chatId = getChats.value[getSelectedChatIndex.value].id;
+  const userId = manager.user_id;
+
+  assignUserHelper(chatId, userId);
 };
 </script>
 

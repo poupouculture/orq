@@ -2,6 +2,7 @@
   <BaseLayout
     :applicationProgram="applicationProgram"
     @submitGeneralInformation="submit"
+    v-if="!loading"
   />
 </template>
 

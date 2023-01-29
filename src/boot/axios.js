@@ -43,7 +43,7 @@ export default boot(({ app, store, router }) => {
           try {
             const result = await userStore.refreshToken();
 
-            originalConfig.headers.Authorization = `Bearer ${result.access_token}`;
+            originalConfig.headers.Authorization = `Bearer ${result?.access_token}`;
             return api(originalConfig);
           } catch (err) {
             console.log(err);

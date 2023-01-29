@@ -1,14 +1,17 @@
 import { defineStore } from "pinia";
 import { Loading, Notify } from "quasar";
 import {
+  addUserToUserGroup,
   deleteInternalGroup,
-  deleteUser,
+  deleteUserFromInternalGroup,
+  getInternalGroup,
   getInternalGroups,
 } from "src/api/InternalGroup";
 
-const useInternalGroup = defineStore("internalGroup", {
+const useInternalGroupStore = defineStore("internalGroup", {
   state: () => ({
     items: [],
+    item: null,
     meta: {
       filter_count: 0,
       total_count: 0,
@@ -34,6 +37,12 @@ const useInternalGroup = defineStore("internalGroup", {
         filter_count: meta?.filter_count,
       };
     },
+    async get(id) {
+      const {
+        data: { data: internalGroups },
+      } = await getInternalGroup(id);
+      this.item = internalGroups;
+    },
     async delete(id) {
       Loading.show();
       try {
@@ -51,18 +60,32 @@ const useInternalGroup = defineStore("internalGroup", {
         });
       }
     },
-    async deleteUser(id) {
+    async addUsers(payload) {
+      Loading.show();
       try {
-        await deleteUser(id);
-        this.items = this.items.filter((item) => item.id !== id);
+        await addUserToUserGroup(payload);
+        Loading.hide();
+        Notify.create({
+          message: "User successfully added!",
+        });
+        this.getAll();
+      } catch (error) {}
+      Loading.hide();
+    },
+    async deleteUser(payload) {
+      try {
+        Loading.show();
+        await deleteUserFromInternalGroup(payload);
         Notify.create({
           message: "User successfully deleted!",
         });
+        Loading.hide();
         this.getAll(this.meta.rowsPerPage, this.meta.page);
       } catch (error) {
         Notify.create({
           message: error.response?.data.errors[0].message,
         });
+        Loading.hide();
       }
     },
     setMeta(val) {
@@ -71,4 +94,4 @@ const useInternalGroup = defineStore("internalGroup", {
   },
 });
 
-export default useInternalGroup;
+export default useInternalGroupStore;

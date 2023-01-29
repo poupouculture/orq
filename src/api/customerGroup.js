@@ -7,20 +7,62 @@ const customerCreate = ({ id = "+", customers }) => {
     };
   });
 };
-export const getCustomerGroups = async ({ limit = 10, page = 1 }) => {
+
+export const getCustomerGroups = async (
+  { limit = 10, page = 1 },
+  id = null
+) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const customerGroups = await api.get("/items/customer_groups", {
+  const url =
+    id !== null ? "/items/customer_groups/" + id : "/items/customer_groups";
+  const customerGroups = await api.get(url, {
     params: {
       limit,
       offset,
-      fields: "id, name, status, customers.customers_id.*, user_groups.*",
+      fields:
+        "id, name, status, customer.id, customers.customers_id.*, user_groups.*",
       meta: "*",
     },
   });
   return customerGroups;
 };
 
-export const getCustomerGroupFilter = async ({ limit = 10, page = 1 }, id) => {
+export const getAllCustomerEdit = async (payload) => {
+  const { limit, page, customers } = payload;
+  const fields = "id, first_name, last_name, gender, date_created, position";
+  const companies = "companies.companies_id.name_english";
+
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const customer = await api.get("/items/customers", {
+    params: {
+      "filter[id][_nin]": customers.join(),
+      fields: `${fields},${companies}`,
+      sort: "-date_created",
+      limit,
+      offset,
+      meta: "*",
+    },
+  });
+  return customer;
+};
+export const getAllCustomerGroupEdit = async (payload) => {
+  const { limit, page, customerGroups } = payload;
+  const fields = "id, name, status, customer.id";
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const customerGroup = await api.get("/items/customer_groups", {
+    params: {
+      "filter[id][_nin]": customerGroups.join(),
+      fields: `${fields}`,
+      sort: "-date_created",
+      limit,
+      offset,
+      meta: "*",
+    },
+  });
+  return customerGroup;
+};
+
+export const getCustomersFilter = async ({ limit = 10, page = 1 }, id) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const customer = await api.get("/items/customers", {
     params: {
@@ -37,6 +79,11 @@ export const getCustomerGroupFilter = async ({ limit = 10, page = 1 }, id) => {
 
 export const addCustomerGroup = async (payload) => {
   const customer = await api.post("/items/customer_groups", payload);
+  return customer;
+};
+
+export const updateCustomerGroup = async (id, payload) => {
+  const customer = await api.patch("/items/customer_groups/" + id, payload);
   return customer;
 };
 

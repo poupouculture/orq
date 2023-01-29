@@ -4,7 +4,7 @@
       <span class="font-semibold"> Type of Action </span>
       <InputSelect
         :options="actionTypeOptions"
-        default="Call Phone Number"
+        :default="props.action?.type"
         :value="actionType"
         @input="updateActionType"
         class="bg-white rounded-lg"
@@ -29,7 +29,7 @@
             ? actionCountryOptions
             : actionWebtypeOptions
         "
-        :default="actionType === at.CALL_PHONE ? 'ID +62' : 'Static'"
+        :default="actionCountryOrWebtype"
         :value="actionCountryOrWebtype"
         @input="updateActionCountryOrWebtype"
         class="bg-white rounded-lg"
@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { actionType as at } from "../../constants/ApplicationProgram.js";
 import InputSelect from "../InputSelect.vue";
 
@@ -58,6 +58,10 @@ const props = defineProps({
   index: {
     type: Number,
     default: () => 0,
+  },
+  action: {
+    type: Object,
+    default: () => null,
   },
 });
 
@@ -70,10 +74,11 @@ const actionWebtypeOptions = ["Static", "Dynamic"];
 const actionType = ref(at.CALL_PHONE);
 const actionValue = ref("");
 const actionText = ref("");
-const actionCountryOrWebtype = ref("");
+const actionCountryOrWebtype = ref("ID +62");
 
 const updateActionType = (value) => {
   actionType.value = value;
+  actionCountryOrWebtype.value = value === at.CALL_PHONE ? "ID +62" : "Static";
   handleAllChange();
 };
 
@@ -91,4 +96,13 @@ const handleAllChange = () => {
     value: actionValue.value,
   });
 };
+
+onMounted(() => {
+  if (props.action !== undefined) {
+    actionType.value = props.action.type;
+    actionText.value = props.action.label;
+    actionCountryOrWebtype.value = props.action.countryOrWebtype;
+    actionValue.value = props.action.value;
+  }
+});
 </script>

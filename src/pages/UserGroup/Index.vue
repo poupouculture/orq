@@ -41,31 +41,30 @@
         :key="group.name"
       >
         <div
-          class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
+          class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
         >
-          <div class="shrink-0 flex items-center">
+          <div class="flex items-center w-10/12 flex-nowrap overflow-x-hidden">
             <div
-              class="w-16 h-16 items-center justify-center flex text-white mr-3"
-              :style="{ backgroundColor: '#eaeaea' }"
+              class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
             >
               {{ group.name }}
             </div>
-            <div>
-              <div>{{ group.name }}</div>
+            <div class="truncate">
+              <div class="truncate">{{ group.name }}</div>
               <p class="text-gray-400">{{ group.customers.length }} Members</p>
             </div>
           </div>
-          <ButtonGroupMenu :id="group.id" />
+          <ButtonGroupMenu class="w-2/12 grow-0 justify-end" :id="group.id" />
         </div>
         <!-- customers -->
         <div
-          class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
+          class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
           v-for="({ customers_id }, i) in group.customers.filter(
             (item) => item.customers_id !== null
           )"
           :key="i"
         >
-          <div class="shrink-0 flex items-center">
+          <div class="flex items-center w-10/12 flex-nowrap overflow-x-hidden">
             <!-- for while set image default -->
             <img
               :src="
@@ -74,8 +73,8 @@
               "
               class="w-10 h-10 rounded-full mx-3"
             />
-            <div>
-              <div class="relative">
+            <div class="truncate">
+              <div class="relative truncate">
                 {{ customers_id.first_name }} {{ customers_id.last_name }}
                 <span
                   v-if="group.name == 'VIP'"
@@ -83,12 +82,12 @@
                   >VIP</span
                 >
               </div>
-              <div class="text-gray-400 cursor-pointer">
+              <div class="text-gray-400 cursor-pointer truncate">
                 {{ customers_id.position }}
               </div>
             </div>
           </div>
-          <div class="flex items-center">
+          <div class="flex items-center w-2/12 grow-0 justify-end">
             <ButtonCustomerMenu :id="group.id" :customer-id="customers_id.id" />
           </div>
         </div>

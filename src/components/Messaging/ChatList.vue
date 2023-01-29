@@ -49,8 +49,7 @@
               :active="parseInt(index) === activeChat"
               :name="
                 chat?.customers_id
-                  ? `${chat.first_name}
-              ${chat.last_name}`
+                  ? TrimWord(`${chat.first_name} ${chat.last_name}`)
                   : 'Visitor'
               "
               :message="getLastMessage(JSON.parse(chat.last_message))"
@@ -71,14 +70,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import type { Ref } from "vue";
+import { storeToRefs } from "pinia";
 import { format } from "date-fns";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction } from "src/types/MessagingTypes";
+import TrimWord from "src/utils/trim-word";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -91,7 +92,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["changeTab"]);
 
-const activeChat: Ref<number> = ref(0);
+const activeChat: Ref<number | null> = ref(null);
 const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
 const tabs: Ref<ChatTypes[]> = ref([
@@ -99,12 +100,10 @@ const tabs: Ref<ChatTypes[]> = ref([
   ChatTypes.ONGOING,
   ChatTypes.CLOSED,
 ]);
-
-onMounted(() => {
-  selectChat(0);
-});
+const { getChats } = storeToRefs(messagingStore);
 
 const onChangeTab = (val: ChatTypes) => {
+  messagingStore.setSelectedTab(val);
   emit("changeTab", val);
 };
 
@@ -127,12 +126,14 @@ const getLastMessage = (lastMessage: LastMessage) => {
 };
 
 const selectChat = (index: number) => {
+  customerStore.$reset();
+
   activeChat.value = index;
   const { id: chatId } = props.chatList[index];
 
+  messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
-
-  customerStore.resetCustomer();
+  messagingStore.fetchContactNumber(getChats.value[index].contacts_id);
 
   if (props.chatList[index].customers_id) {
     const customerId = props.chatList[index].customers_id;

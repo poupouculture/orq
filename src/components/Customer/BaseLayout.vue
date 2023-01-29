@@ -23,7 +23,10 @@
       <div class="pannels-holder">
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="general" class="pannel-each">
-            <GeneralInformation @submit="submitGeneralInformation" />
+            <GeneralInformation
+              @submit="submitGeneralInformation"
+              :mode="mode"
+            />
           </q-tab-panel>
 
           <q-tab-panel name="Other-Information">
@@ -60,7 +63,9 @@ import ServiceRecord from "./ServiceRecord.vue";
 // import OtherInformation from "../OtherInformation/OtherInformation.vue";
 // import Remark from "../Remark/Remark.vue";
 // import Attachement from "../Attachement/Attachement.vue";
-
+defineProps({
+  mode: String,
+});
 const emit = defineEmits(["submitGeneralInformation"]);
 
 const tab = ref("general");

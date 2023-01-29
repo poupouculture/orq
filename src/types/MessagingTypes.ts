@@ -1,6 +1,16 @@
+import { ChatTypes } from "src/constants/ChatKeyword";
+
 export const enum Direction {
   OUTGOING = "outgoing",
   INCOMING = "incoming",
+}
+
+export const enum Product {
+  WHATSAPP = "whatsapp",
+}
+
+export const enum MessageType {
+  TEXT = "text",
 }
 
 export interface IMessage {
@@ -13,15 +23,29 @@ export interface IMessage {
 }
 
 export interface IChat {
-  chat_id: string;
-  last_message_date: string;
-  last_message_text: string;
-  customer_name: string;
-  direction: Direction;
+  id: string;
+  status: string;
+  name: string;
+  last_message: string;
+  contacts_id: string;
+  customers_id: string;
+  first_name: string;
+  last_name: string;
+  members: string;
 }
 
 export interface IState {
   chatMessages: Array<IMessage>;
-  selectedChat: IChat;
+  selectedChatIndex: number;
+  selectedTab: ChatTypes;
   chats: Array<IChat>;
+  contactNumber: null | string;
+}
+
+export interface SendTextMessage {
+  chatId: string;
+  messageProduct: Product;
+  to: string;
+  type: MessageType;
+  messageBody: string;
 }
