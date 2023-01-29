@@ -51,7 +51,7 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { actionType as at } from "../../constants/ApplicationProgram.js";
+import { actionType as at } from "../../constants/messageTemplate.js";
 import InputSelect from "../InputSelect.vue";
 
 const props = defineProps({
