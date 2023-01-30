@@ -4,7 +4,7 @@
       v-model="drawer"
       show-if-above
       :width="288"
-      :breakpoint="500"
+      :breakpoint="768"
       bordered
       class="drawerclass"
     >

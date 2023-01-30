@@ -2,7 +2,7 @@
   <div class="menu-holder">
     <q-icon
       name="menu"
-      class="mr-auto text-[#9A9AAF]"
+      class="mr-auto text-[#9A9AAF] cursor-pointer md:hidden"
       @click="toggleDrawer()"
       size="sm"
     />
