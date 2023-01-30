@@ -66,6 +66,20 @@
         </q-tab-panel>
       </q-tab-panels>
     </q-list>
+    <footer class="fixed bottom-0 q-pa-xs q-pa-md">
+      <div class="row justify-end">
+        <q-btn
+          flat
+          color="grey"
+          icon="home"
+          size="md"
+          class="q-mt-md"
+          label="Back to Home"
+          no-caps
+          @click="router.push('/')"
+        />
+      </div>
+    </footer>
   </q-drawer>
 </template>
 
@@ -74,6 +88,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { format } from "date-fns";
+import { useRouter } from "vue-router";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
@@ -81,6 +96,7 @@ import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
 
+const router = useRouter();
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 
