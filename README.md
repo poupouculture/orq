@@ -33,7 +33,7 @@ this is where all data-models are created, designed, stored, and managed.
 ## Components
 #### Pagination `(BasePagination.vue)`
 - `v-model` for the state pagination, eq: 1, 2 which is for tracking the pagination page value. if the model value is 2 then the pagination page is 2.
-- when the pagination page change, it will throw the `updateModel` Emit value for call the API
+- when the pagination page change, it will trigger the `updateModel` Emit value for call the API
 - Props: max[string|number], modelValue[string|number], maxPages[string|number]
 - Emits: updateModel
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
