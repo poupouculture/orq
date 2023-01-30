@@ -47,6 +47,42 @@
     <q-btn color="primary" label="Close Conversation" no-caps />
   </div>
   <div>
+    <!-- Search Customer -->
+    <div class="bg-[#F2F3F7] py-3 px-6 w-full rounded-md mt-5 flex flex-col">
+      <div>Customer</div>
+      <div class="rounded flex items-start px-6 py-2 bg-white mt-3 w-full">
+        <div class="flex items-center gap-x-2 border-r pr-2 cursor-pointer">
+          <div>Name</div>
+          <svg
+            width="10"
+            height="7"
+            viewBox="0 0 10 7"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 4.22337L8.72727 0.157582L10 1.5459L5 7L0 1.5459L1.36364 0.157582L5 4.22337Z"
+              fill="#9A9AAF"
+            />
+          </svg>
+          <q-menu v-model="openCustomerFilter" :offset="[0, 10]" auto-close>
+            <q-list class="w-20">
+              <q-item clickable dense>
+                <q-item-section>ID</q-item-section>
+              </q-item>
+              <q-item clickable dense>
+                <q-item-section>Role</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
+        <input
+          type="text"
+          class="bg-transparent focus:outline-none flex-1 pl-3"
+          placeholder="Search ..."
+        />
+      </div>
+    </div>
     <div v-if="newCustomer">
       <div class="text-weight-medium">New Contact</div>
       <q-tabs
@@ -162,6 +198,7 @@ const customerInformationTab: Ref<CustomerInformationTabs> = ref(
 );
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
+const openCustomerFilter: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
