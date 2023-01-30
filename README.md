@@ -27,15 +27,15 @@ this is where all data-models are created, designed, stored, and managed.
   - filter all page objects with no parent_id, then attach icon from page-codes.ts
   - first-level menu has to exist in exist in page-codes.ts
   - role needs to be assigned to the page code: assign role to the page, e.g. as a manager, I can access UI: F07
-#### Pagination
-- the flow like UI-access in the `DrawerLayout.vue` there are some menus integrated, the menus data called in `@/utils/page-codes.ts`
-- in the `page-codes.ts` there are `id` and `icon`.
-- `id` for user role e.g. as a manager, I can access UI: F07
-- `icon` for icon of the menu
 #### API-access
 -
 
-
+## Components
+#### Pagination `(BasePagination.vue)`
+- `v-model` for the state pagination, eq: 1, 2 which is for tracking the pagination page value. if the model value is 2 then the pagination page is 2.
+- when the pagination page change, it will trigger the `updateModel` Emit value for call the API
+- Props: max[string|number], modelValue[string|number], maxPages[string|number]
+- Emits: updateModel
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
