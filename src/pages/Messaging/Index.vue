@@ -112,6 +112,16 @@
       @submit="saveCustomer"
     />
   </div>
+  <div class="fixed right-9 top-7 z-[9999]">
+    <router-link class="block w-3 h-3 cursor-pointer" to="">
+      <q-icon
+        name="close"
+        size="1rem"
+        class="block"
+        @click="$router.go(-1)"
+      ></q-icon>
+    </router-link>
+  </div>
 </template>
 
 <script setup lang="ts">
