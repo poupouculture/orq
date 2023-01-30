@@ -1,5 +1,11 @@
 <template>
   <div class="menu-holder">
+    <q-icon
+      name="menu"
+      class="mr-auto text-[#9A9AAF] cursor-pointer md:hidden"
+      @click="toggleDrawer()"
+      size="sm"
+    />
     <img src="../../assets/images/pluscomp.png" class="plus-img" />
     <img src="../../assets/images/messages.png" class="message-img" /><img
       src="../../assets/images/notification.png"
@@ -76,10 +82,20 @@ import { computed } from "vue";
 import { LocalStorage } from "quasar";
 import useUserInfoStore from "stores/modules/userInfo";
 
+const props = defineProps({
+  modelValue: Boolean,
+});
+const emits = defineEmits(["update:modelValue"]);
 const router = useRouter();
 const userInfo = useUserInfoStore();
-
 const user = computed(() => userInfo.getUserProfile);
+const drawer = computed({
+  set: (value) => emits("update:modelValue", value),
+  get: () => props.modelValue,
+});
+const toggleDrawer = () => {
+  drawer.value = !drawer.value;
+};
 
 const logout = () => {
   LocalStorage.remove("userinfo");
