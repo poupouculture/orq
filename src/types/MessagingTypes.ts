@@ -24,14 +24,14 @@ export interface IMessage {
 
 export interface IChat {
   id: string;
-  status: string;
-  name: string;
-  last_message: string;
+  status: ChatTypes;
+  name?: string;
+  last_message?: string;
   contacts_id: string;
   customers_id: string;
   first_name: string;
   last_name: string;
-  members: string;
+  members?: string;
 }
 
 export interface IState {
@@ -40,6 +40,7 @@ export interface IState {
   selectedTab: ChatTypes;
   chats: Array<IChat>;
   contactNumber: null | string;
+  customerName: null | string;
 }
 
 export interface SendTextMessage {
@@ -48,11 +49,4 @@ export interface SendTextMessage {
   to: string;
   type: MessageType;
   messageBody: string;
-}
-
-export interface StartNewChat {
-  name: string;
-  status: ChatTypes;
-  sort?: string | null;
-  user_created?: string | null;
 }

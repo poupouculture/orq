@@ -1,6 +1,6 @@
 import { api } from "boot/axios";
 import { ChatKeywords, ChatTypes } from "../constants/ChatKeyword";
-import { SendTextMessage, StartNewChat } from "src/types/MessagingTypes";
+import { SendTextMessage } from "src/types/MessagingTypes";
 
 export const getChats = async (type: ChatTypes) => {
   const { data } = await api.post(`/waba/handle-cs-waba-message`, {
@@ -45,27 +45,13 @@ export const getContact = async (contactId: string) => {
   return data;
 };
 
-export const startNewChat = async (
-  payload: StartNewChat,
-  contactId: string
-) => {
-  const { name, status } = payload;
+export const startNewChat = async (customerId: string, textMessage: string) => {
   const {
     data: { data },
-  } = await api.post(`/items/chats`, {
-    name,
-    status,
+  } = await api.post(`/waba/create-chat`, {
+    customer_id: customerId,
+    text_message: textMessage,
   });
-
-  await addChatsContacts(data.id, contactId);
 
   return data;
-};
-
-const addChatsContacts = async (chatId: string, contactId: string) => {
-  const chatsContacts = await api.post("/items/chats_contacts", {
-    chats_id: chatId,
-    contacts_id: contactId,
-  });
-  return chatsContacts;
 };

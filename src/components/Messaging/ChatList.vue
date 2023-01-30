@@ -120,7 +120,6 @@ import { Direction } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
 import { getCustomersWithContacts } from "src/api/customers";
 import { ICustomer } from "src/types/CustomerTypes";
-import { startNewChat as startChat } from "src/api/messaging";
 
 // Interfaces
 interface LastMessage {
@@ -181,6 +180,7 @@ const { getCustomer } = storeToRefs(customerStore);
 // Methods
 const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
+  tab.value = val;
   emit("changeTab", val);
 };
 
@@ -218,6 +218,12 @@ const selectChat = (index: number) => {
   messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
   messagingStore.fetchContactNumber(getChats.value[index].contacts_id);
+  if (getChats.value[index].first_name) {
+    messagingStore.setCustomerName(`${getChats.value[index].first_name}
+  ${getChats.value[index].last_name}`);
+  } else {
+    messagingStore.setCustomerName("Visitor");
+  }
 
   if (props.chatList[index].customers_id) {
     const customerId = props.chatList[index].customers_id;
@@ -229,15 +235,9 @@ const startNewChat = async (user: ICustomer) => {
   const customerId = user.id;
   await customerStore.fetchCustomer(customerId);
 
-  const contactId = getCustomer.value.contacts[0].contacts_id.id;
+  messagingStore.setCustomerName(`${user.first_name} ${user.last_name}`);
   const contactNumber = getCustomer.value.contacts[0].contacts_id.number;
-  await startChat(
-    {
-      name: `${contactNumber} chat`,
-      status: ChatTypes.ONGOING,
-    },
-    contactId
-  );
+  messagingStore.setContactNumber(contactNumber);
 
   chatToggleLabel.state = ChatToggleLabel.SHOW;
 };

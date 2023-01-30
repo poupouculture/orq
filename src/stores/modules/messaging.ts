@@ -16,12 +16,14 @@ const useMessagingStore = defineStore("messaging", {
       selectedTab: ChatTypes.PENDING,
       chatMessages: [],
       contactNumber: null,
+      customerName: null,
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
     getChatMessages: (state) => state.chatMessages,
     getSelectedChatIndex: (state) => state.selectedChatIndex,
     getContactNumber: (state) => state.contactNumber,
+    getCustomerName: (state) => state.customerName,
     getSelectedTab: (state) => state.selectedTab,
   },
   actions: {
@@ -45,7 +47,13 @@ const useMessagingStore = defineStore("messaging", {
     },
     async fetchContactNumber(contactId: string) {
       const { data } = await getContact(contactId);
-      this.contactNumber = data.number;
+      this.setContactNumber(data.number);
+    },
+    setCustomerName(name: string) {
+      this.customerName = name;
+    },
+    setContactNumber(contactNumber: string) {
+      this.contactNumber = contactNumber;
     },
   },
 });
