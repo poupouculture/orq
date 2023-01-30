@@ -77,7 +77,7 @@
     </q-page-container>
     <q-page-sticky expand position="top">
       <q-toolbar style="background: #f5f5f5">
-        <MenuBar />
+        <MenuBar v-model="drawer" />
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
