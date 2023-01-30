@@ -9,11 +9,11 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
+import BaseLayout from "src/components/ApplicationProgram/BaseLayout.vue";
 import {
   getMessageTemplate,
   updateMessageTemplate,
-} from "../../api/messageTemplate";
+} from "src/api/messageTemplate";
 
 const router = useRouter();
 const route = useRoute();
@@ -28,7 +28,7 @@ onMounted(async () => {
 
 const submit = async (payload) => {
   await updateMessageTemplate(route.params.id, payload);
-  router.push("/application-program");
+  router.push("/application-programs/message-templates");
 };
 </script>
 

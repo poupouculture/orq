@@ -5,8 +5,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
-import { addMessageTemplate } from "../../api/messageTemplate.js";
+import BaseLayout from "src/components/ApplicationProgram/BaseLayout.vue";
+import { addMessageTemplate } from "src/api/messageTemplate.js";
 
 const router = useRouter();
 const loading = ref(true);
@@ -17,7 +17,7 @@ onMounted(() => {
 
 const submit = async (payload) => {
   await addMessageTemplate(payload);
-  router.push("/application-program");
+  router.push("/application-programs/message-templates");
 };
 </script>
 

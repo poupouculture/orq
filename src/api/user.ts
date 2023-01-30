@@ -34,17 +34,30 @@ export const getUser = async (id: string) => {
   return customer;
 };
 
-export const addUser = async (payload: unknown) => {
-  const customer = await api.post("/users", payload);
-  return customer;
-};
+// uncomment this when we have the user management function
+// export const addUser = async (payload: unknown) => {
+//   const user = await api.post("/users", payload);
+//   return user;
+// };
 
-export const getManagerUsers = async () => {
+/**
+ * if user is a manager, then load all users with roles: cs and cs-manager
+ * if user is a cs, then load all users with roles: cs
+ * @returns
+ */
+export const getChatUsers = async () => {
   const managers = await api.post(`/waba/load-cs-manager-users`, {});
   return managers;
 };
 
-export const assignManager = async (chatId: string, userId: string) => {
+/**
+ * if user is already in chat, then ignore
+ * if user is not in chat, then add user to chat
+ * @param chatId
+ * @param userId
+ * @returns
+ */
+export const assignUser = async (chatId: string, userId: string) => {
   const result = await api.post(`/waba/assign-chat-user`, {
     chat_id: chatId,
     user_id: userId,

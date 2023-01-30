@@ -59,11 +59,11 @@ module.exports = {
 
   // add your custom rules here
   rules: {
-    'prettier/prettier': [
-      'error',
+    "prettier/prettier": [
+      "error",
       {
-        'endOfLine': 'auto',
-      }
+        endOfLine: "auto",
+      },
     ],
     // allow async-await
     "generator-star-spacing": "off",
@@ -99,6 +99,7 @@ module.exports = {
     // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-inferrable-types": "off",
     "no-unused-vars": "off",
   },
 };

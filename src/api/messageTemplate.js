@@ -1,6 +1,6 @@
 import { api } from "boot/axios";
 
-export const getApplicationPrograms = async ({ limit = 10, page = 1 }) => {
+export const getMessageTemplates = async ({ limit = 10, page = 1 }) => {
   const fields = `*, users.*`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -18,7 +18,7 @@ export const getApplicationPrograms = async ({ limit = 10, page = 1 }) => {
   return templates;
 };
 
-export const getApplicationProgram = async (id) => {
+export const getMessageTemplate = async (id) => {
   const fields = `*`;
 
   const applicationProgram = await api.get(
@@ -27,7 +27,7 @@ export const getApplicationProgram = async (id) => {
   return applicationProgram;
 };
 
-export const addApplicationProgram = async (payload) => {
+export const addMessageTemplate = async (payload) => {
   const applicationProgram = await api.post(
     "/items/message_templates",
     payload
@@ -35,7 +35,7 @@ export const addApplicationProgram = async (payload) => {
   return applicationProgram;
 };
 
-export const updateApplicationProgram = async (id, payload) => {
+export const updateMessageTemplate = async (id, payload) => {
   const applicationProgram = await api.patch(
     `/items/message_templates/${id}`,
     payload

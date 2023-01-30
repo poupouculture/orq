@@ -31,12 +31,14 @@
       </q-btn>
     </div>
 
-    <q-table
+    <BaseTable
       :rows="rows"
+      :total-count="pagination.totalCount"
+      :page="pagination.page"
+      :rows-per-page="pagination.rowsPerPage"
       :columns="columns"
-      :pagination="pagination"
-      class="opacity-80"
-      row-key="index"
+      :loading="loading"
+      @changePage="changePage"
     >
       <template v-slot:body-cell-customer="props">
         <q-td :props="props">
@@ -97,7 +99,7 @@
           :size="pagination.rowsPerPage"
         />
       </template>
-    </q-table>
+    </BaseTable>
   </div>
 </template>
 <script setup>
@@ -106,6 +108,7 @@ import Pagination from "src/components/Pagination.vue";
 import useServiceRecordStore from "src/stores/modules/serviceRecord";
 import img from "src/assets/images/whatsapp.png";
 import { format } from "date-fns";
+import BaseTable from "src/components/BaseTable.vue";
 
 import { ref, onMounted, computed } from "vue";
 const message = `Every time you talk with a customer, a "service record" will be automatically generated, and each record contains at least - more conversation records to form a complete service information for you to query Close it.`;
@@ -174,6 +177,7 @@ const show = ref(true),
   pagination = ref({
     page: 1,
     rowsPerPage: 6,
+    totalCount: 0,
   });
 
 onMounted(async () => {

@@ -29,7 +29,7 @@
               v-if="actions[0].type === at.CALL_PHONE"
             ></q-icon>
             <q-icon name="fa fa-link" v-else></q-icon>
-            {{ actions[0].type === at.CALL_PHONE ? "Call Us!" : "Visit Us" }}
+            {{ actions[0].label }}
           </button>
           <button class="w-full bg-white py-2 mt-2 text-center text-gray-600">
             <q-icon
@@ -37,7 +37,7 @@
               v-if="actions[1].type === at.CALL_PHONE"
             ></q-icon>
             <q-icon name="fa fa-link" v-else></q-icon>
-            {{ actions[1].type === at.CALL_PHONE ? "Call Us!" : "Visit Us" }}
+            {{ actions[1].label }}
           </button>
         </div>
         <div v-if="props.actionCategory === 'Quick Reply'">
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { actionType as at } from "../../constants/ApplicationProgram.js";
+import { actionType as at } from "../../constants/messageTemplate.js";
 
 const props = defineProps({
   header: {
