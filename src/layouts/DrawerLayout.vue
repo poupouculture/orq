@@ -47,7 +47,7 @@
                 :key="cIndex"
               >
                 <router-link
-                  :to="child.url"
+                  :to="child.url || ''"
                   style="text-decoration: none; color: inherit"
                 >
                   <div class="expanded-content">
