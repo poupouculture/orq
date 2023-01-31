@@ -156,7 +156,7 @@
 
         <div class="row justify-between mt-4">
           <router-link
-            :to="`/application-program`"
+            :to="`/application-programs/message-templates`"
             style="text-decoration: none; color: inherit"
           >
             <p
@@ -199,7 +199,11 @@ import CallToAction from "../../components/ApplicationProgram/CallToAction.vue";
 import ReplyAction from "../../components/ApplicationProgram/ReplyAction.vue";
 import Preview from "../../components/ApplicationProgram/Preview.vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import { actionCategory as ac } from "../../constants/ApplicationProgram.js";
+import {
+  actionCategory as ac,
+  actionType as at,
+  formattedActionType as fat,
+} from "../../constants/messageTemplate.js";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
@@ -249,16 +253,16 @@ onMounted(() => {
     language.value =
       tempData.language === "en_US" ? "English" : tempData.language;
 
-    header.value = headerComponent?.value?.format;
+    header.value = headerComponent?.format;
     if (header.value === "Text") {
-      headerMessage.value = headerComponent?.value?.value;
+      headerMessage.value = headerComponent?.text;
     } else {
-      media.value = headerComponent?.value?.value;
+      media.value = headerComponent?.text;
     }
 
     bodyMessage.value =
-      bodyComponent?.value === undefined ? "" : bodyComponent?.value;
-    footerMessage.value = footerComponent?.value;
+      bodyComponent?.text === undefined ? "" : bodyComponent?.text;
+    footerMessage.value = footerComponent?.text;
 
     updateActionCategory(buttonsComponent?.value?.category);
 
@@ -266,14 +270,36 @@ onMounted(() => {
       actionCategory.value !== ac.NONE &&
       actionCategory.value !== undefined
     ) {
-      const buttons = buttonsComponent?.value?.buttons;
+      const buttons = buttonsComponent?.buttons;
 
-      if (buttons !== undefined) {
+      if (buttons !== undefined && buttons !== "") {
         if (actionCategory.value === ac.CALL_TO_ACTION) {
           actions.value =
-            buttons === "" || buttons === null ? Array(2).fill(null) : buttons;
+            buttons === null
+              ? Array(2).fill(null)
+              : buttons.map(function (btn) {
+                  const formatted = {};
+                  if (btn.type === fat.CALL_PHONE) {
+                    formatted.type = at.CALL_PHONE;
+                    if (formatted.phone_number?.indexOf(" ")) {
+                      formatted.value = btn.phone_number;
+                    } else {
+                      const arrPhone = formatted.phone_number?.spllit(" ");
+                      formatted.countryOrWebtype = arrPhone[0];
+                      formatted.value = arrPhone[1];
+                    }
+                  } else {
+                    formatted.type = at.VIEW_WEB;
+                    formatted.countryOrWebtype = "Static";
+                    formatted.value = btn.url;
+                  }
+                  formatted.label = btn.text;
+
+                  return formatted;
+                });
         } else {
-          replies.value = buttons === "" || buttons === null ? [] : buttons;
+          replies.value =
+            buttons === null ? [] : buttons?.map((btn) => btn.text);
         }
       }
     }
@@ -322,10 +348,25 @@ const updateReply = (value) => {
 const submitGeneralInformation = () => {
   let buttonValues = "";
   if (actionCategory.value !== ac.NONE) {
-    buttonValues =
-      actionCategory.value === ac.CALL_TO_ACTION
-        ? actions.value
-        : replies.value;
+    if (actionCategory.value === ac.CALL_TO_ACTION) {
+      console.log(actions.value);
+      buttonValues = actions.value?.map(function (btn) {
+        const formatted = {};
+        if (btn.type === at.CALL_PHONE) {
+          formatted.type = fat.CALL_PHONE;
+          formatted.phone_number = btn.countryOrWebtype + " " + btn.value;
+        } else {
+          formatted.type = fat.VIEW_WEB;
+          formatted.url = btn.value;
+        }
+        formatted.text = btn.label;
+        return formatted;
+      });
+    } else {
+      buttonValues = replies.value?.map(function (text) {
+        return { type: "REPLY", text };
+      });
+    }
   }
 
   emit("submitGeneralInformation", {
@@ -335,18 +376,16 @@ const submitGeneralInformation = () => {
     components: [
       {
         type: "HEADER",
-        value: {
-          format: header.value,
-          value: header.value === "Text" ? headerMessage.value : media.value,
-        },
+        format: header.value,
+        text: header.value === "Text" ? headerMessage.value : media.value,
       },
       {
         type: "BODY",
-        value: bodyMessage.value,
+        text: bodyMessage.value,
       },
       {
         type: "FOOTER",
-        value: footerMessage.value,
+        text: footerMessage.value,
       },
       {
         type: "BUTTONS",

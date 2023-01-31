@@ -4,7 +4,7 @@
       v-model="drawer"
       show-if-above
       :width="288"
-      :breakpoint="500"
+      :breakpoint="768"
       bordered
       class="drawerclass"
     >
@@ -40,6 +40,7 @@
               :icon="menu.icon"
               :label="menu.pages_id.name"
               style="color: #fff"
+              v-if="menu.pages_id.name !== 'Application Programs'"
             >
               <div
                 v-for="(child, cIndex) in menu.pages_id.children"
@@ -57,6 +58,14 @@
                 </router-link>
               </div>
             </q-expansion-item>
+            <q-expansion-item
+              :icon="menu.icon"
+              :label="menu.pages_id.name"
+              style="color: #fff"
+              @click="router.push(menu.pages_id.url)"
+              v-else
+            >
+            </q-expansion-item>
           </q-list>
         </div>
       </q-scroll-area>
@@ -68,7 +77,7 @@
     </q-page-container>
     <q-page-sticky expand position="top">
       <q-toolbar style="background: #f5f5f5">
-        <MenuBar />
+        <MenuBar v-model="drawer" />
       </q-toolbar>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
@@ -95,6 +104,7 @@
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
@@ -102,6 +112,7 @@ import { pageCodes } from "../utils/page-codes";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
+const router = useRouter();
 
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;

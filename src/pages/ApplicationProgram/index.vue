@@ -21,178 +21,108 @@
           color="primary"
           label="Add"
           class="q-mr-sm"
-          @click="router.push('/application-program/create')"
+          @click="router.push('/application-programs/create')"
         />
-        <q-btn icon="delete" no-caps rounded label="Archive" />
+        <q-btn
+          icon="archive"
+          no-caps
+          rounded
+          label="Archive"
+          @click="archiveSelected"
+        />
       </div>
     </div>
-    <div class="main-content">
-      <BaseTable
-        :rows="data.applicationPrograms"
-        :total-count="data.totalCount"
-        :page="data.page"
-        :rows-per-page="data.rowsPerPage"
-        :columns="headerColumns"
-        :loading="loading"
-        @changePage="changePage"
-      >
-        <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            auto-width
+    <div class="main-content flex">
+      <div class="w-3/12 pr-4">
+        <SubmenuFilter
+          :menus="subfilters"
+          v-if="!loading"
+          @changeChildMenu="setChildMenu"
+        />
+      </div>
+      <div class="w-9/12 grid grid-rows-2 grid-cols-3 gap-2">
+        <div
+          class="w-full flex flex-col bg-white rounded-lg hover:cursor-pointer"
+          v-for="(menu, index) of childMenus"
+          :key="index"
+          @click="router.push('/application-programs' + menu.url)"
+        >
+          <div
+            class="w-full flex py-10 rounded-t-lg justify-center bg-indigo-200"
           >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-        <template #body-cell-name="props">
-          <q-td :props="props">
-            {{ props.row.name }}
-          </q-td>
-        </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <span
-              class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200"
+            <div
+              class="w-16 h-16 bg-white rounded-full flex justify-center items-center"
             >
-              {{ props.row.status }}
-            </span>
-          </q-td>
-        </template>
-        <template #body-cell-language="props">
-          <q-td :props="props">
-            {{ props.row.language }}
-          </q-td>
-        </template>
-        <template #body-cell-delivered="props">
-          <q-td :props="props">
-            {{ props.row.delivered ? props.row.delivered : 0 }}
-          </q-td>
-        </template>
-        <template #body-cell-read="props">
-          <q-td :props="props">
-            {{ props.row.read ? props.row.read : 0 }}
-          </q-td>
-        </template>
-        <template #body-cell-replied="props">
-          <q-td :props="props">
-            {{ props.row.replied ? props.row.replied : 0 }}
-          </q-td>
-        </template>
-        <template #body-cell-created_by="props">
-          <q-td :props="props">
-            {{ props.row.user_created }}
-          </q-td>
-        </template>
-        <template #body-cell-created_on="props">
-          <q-td :props="props">
-            {{ props.row.date_created }}
-          </q-td>
-        </template>
-        <template #body-cell-action="props">
-          <q-td :props="props">
-            <router-link
-              :to="`/application-program/${props.row.id}`"
-              style="text-decoration: none; color: inherit"
-            >
-              <p class="edit-button">Edit</p>
-            </router-link>
-          </q-td>
-        </template>
-      </BaseTable>
+              <q-icon
+                :name="menu?.icon ? menu.icon : 'fa-solid fa-users'"
+                class="text-2xl text-purple-600"
+              />
+            </div>
+          </div>
+          <div class="w-full p-2">
+            <h2 class="font-semibold">
+              {{ menu.name }}
+            </h2>
+            <p class="text-gray-400">{{ menu.description }}</p>
+            <div class="text-gray-400 mt-2 flex gap-2 items-center">
+              <q-icon name="fa-solid fa-lock" />
+              {{ menu.extra_description }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="w-9/12">
+        <TableComponent
+          :applicationPrograms="data.applicationPrograms"
+          :totalCount="data.totalCount"
+          :page="data.page"
+          :rowsPerPage="data.rowsPerPage"
+          v-model:selected="selected"
+          @changePage="changePage"
+          v-if="!loading"
+        />
+      </div> -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { getApplicationPrograms } from "src/api/aplicationPrograms";
+import {
+  getMessageTemplates,
+  updateMessageTemplate,
+} from "src/api/messageTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import BaseTable from "src/components/BaseTable.vue";
+import useUserInfoStore from "../../stores/modules/userInfo";
+// import { pageCodes } from "../../utils/page-codes";
+// import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
+import SubmenuFilter from "src/components/ApplicationProgram/SubmenuFilter.vue";
+
 const router = useRouter();
-const headerColumns = [
-  {
-    name: "name",
-    align: "left",
-    label: "Template Name",
-    field: "name",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "status",
-    align: "center",
-    label: "Status",
-    field: "status",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "language",
-    align: "center",
-    label: "Language",
-    field: "language",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "delivered",
-    align: "center",
-    label: "Delivered",
-    field: "delivered",
-    classes: "text-black",
-  },
-  {
-    name: "read",
-    align: "center",
-    label: "Read",
-    field: "read",
-    classes: "text-black",
-  },
-  {
-    name: "replied",
-    align: "center",
-    label: "Replied",
-    field: "replied",
-    classes: "text-black",
-  },
-  {
-    name: "user_created",
-    align: "center",
-    label: "Created By",
-    field: "user_created",
-    classes: "text-black",
-  },
-  {
-    name: "date_created",
-    align: "center",
-    label: "Created On",
-    field: "date_created",
-    classes: "text-black",
-  },
-  {
-    name: "action",
-    align: "center",
-    label: "",
-    field: "action",
-    classes: "text-blue",
-  },
-];
+const userInfo = useUserInfoStore();
+
 const loading = ref(true);
+const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
   totalCount: 0,
   page: 1,
   rowsPerPage: 10,
 });
+const subfilters = ref([]);
+const childMenus = ref([]);
+
 onMounted(() => {
   fetchApplicationPrograms();
+  const menu = userInfo.userProfile.role.pages.find(
+    (m) => m?.pages_id?.id === "F07"
+  );
+  subfilters.value = menu.pages_id.children;
 });
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
-  } = await getApplicationPrograms({
+  } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
   });
@@ -200,9 +130,19 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.total_count;
   loading.value = false;
 };
-const changePage = (val) => {
-  data.page = val;
-  fetchApplicationPrograms();
+// const changePage = (val) => {
+//   data.page = val;
+//   fetchApplicationPrograms();
+// };
+const archiveSelected = () => {
+  selected.value.forEach(async (data) => {
+    data.status = "archive";
+    await updateMessageTemplate(data.id, data);
+  });
+};
+
+const setChildMenu = (value) => {
+  childMenus.value = value;
 };
 </script>
 <style scoped src="./style.scss" />
