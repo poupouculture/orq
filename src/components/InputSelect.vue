@@ -39,7 +39,7 @@
     <div
       class="items"
       :class="{ selectHide: !open }"
-      :style="icon && { top: `40px` }"
+      style="top: 40px; max-height: 200px !important; overflow: scroll"
     >
       <div
         v-for="(option, i) of options"

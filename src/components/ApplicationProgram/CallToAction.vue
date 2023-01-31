@@ -19,7 +19,7 @@
         @change="handleAllChange"
       />
     </div>
-    <div class="col-span-3 flex flex-col">
+    <div class="col-span-2 flex flex-col">
       <span class="font-semibold">
         {{ actionType === at.CALL_PHONE ? "Country" : "URL Type" }}
       </span>
@@ -52,6 +52,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { actionType as at } from "../../constants/messageTemplate.js";
+import { phoneCodes } from "src/constants/phoneCodes";
 import InputSelect from "../InputSelect.vue";
 
 const props = defineProps({
@@ -68,7 +69,7 @@ const props = defineProps({
 const emit = defineEmits(["updateAction"]);
 
 const actionTypeOptions = [at.CALL_PHONE, at.VIEW_WEB];
-const actionCountryOptions = ["HK +852", "ID +62"];
+let actionCountryOptions = [];
 const actionWebtypeOptions = ["Static", "Dynamic"];
 
 const actionType = ref(at.CALL_PHONE);
@@ -98,6 +99,10 @@ const handleAllChange = () => {
 };
 
 onMounted(() => {
+  console.log(phoneCodes);
+  actionCountryOptions = phoneCodes.map(
+    (phone) => phone.code + " " + phone.dial_code
+  );
   if (props.action !== undefined) {
     actionType.value = props.action.type;
     actionText.value = props.action.label;
