@@ -58,3 +58,12 @@ export const addCustomerContact = async (customerId, contactId) => {
   });
   return customerContact;
 };
+
+export const searchCustomers = async (payload: any) => {
+  const data = await api.get("/items/customers", {
+    params: {
+      ...payload,
+    },
+  });
+  return data;
+};

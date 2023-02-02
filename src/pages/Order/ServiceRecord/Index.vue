@@ -133,9 +133,9 @@ const show = ref(true),
       headerClasses: "header",
     },
     {
-      name: "employee",
+      name: "company_name",
       label: "Agent",
-      field: "employee",
+      field: "company_name",
       align: "left",
       headerStyle: "width: 300px",
       headerClasses: "header",
@@ -174,6 +174,7 @@ const show = ref(true),
     },
   ],
   rows = computed(() => serviceRecordStore.getItems),
+  loading = ref(false),
   pagination = ref({
     page: 1,
     rowsPerPage: 6,
@@ -181,7 +182,9 @@ const show = ref(true),
   });
 
 onMounted(async () => {
+  loading.value = true;
   await serviceRecordStore.getAll();
+  loading.value = false;
 });
 function close(state) {
   show.value = state;
