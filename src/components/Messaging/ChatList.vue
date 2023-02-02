@@ -183,6 +183,7 @@ const onChangeTab = (val: ChatTypes) => {
   tab.value = val;
   emit("changeTab", val);
 };
+defineExpose({ onChangeTab });
 
 const fetchCustomers = async () => {
   if (chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon) {
@@ -218,6 +219,7 @@ const selectChat = (index: number) => {
   messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
   messagingStore.fetchContactNumber(getChats.value[index].contacts_id);
+
   if (getChats.value[index].first_name) {
     messagingStore.setCustomerName(`${getChats.value[index].first_name}
   ${getChats.value[index].last_name}`);

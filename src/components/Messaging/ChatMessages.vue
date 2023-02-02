@@ -85,9 +85,12 @@ import {
 } from "../../types/MessagingTypes";
 import MessageTemplateDialog from "./MessageTemplateDialog.vue";
 import { startNewChat } from "src/api/messaging";
+import { ChatTypes } from "src/constants/ChatKeyword";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
+
+const emit = defineEmits(["newChatCreated"]);
 
 const message: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
@@ -136,12 +139,17 @@ const sendMessage = async () => {
       messageBody: message.value,
     });
 
-    message.value = "";
-
     messagingStore.fetchChatMessagesByChatId(chatId);
   } else {
     startNewChat(getCustomer.value.id, message.value);
+
+    messagingStore.fetchChats(ChatTypes.ONGOING);
+    messagingStore.setSelectedTab(ChatTypes.ONGOING);
+
+    emit("newChatCreated", ChatTypes.ONGOING);
   }
+
+  message.value = "";
 };
 </script>
 
