@@ -1,4 +1,4 @@
-export interface MessageTemplateComponents {
+export interface IMessageTemplate {
   components: object[];
   created_by: string;
   language: string;
