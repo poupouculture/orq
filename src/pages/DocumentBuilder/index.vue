@@ -32,29 +32,119 @@
       </div>
     </div>
     <div class="main-content">
-      <TableComponent
-        :applicationPrograms="data.applicationPrograms"
-        :totalCount="data.totalCount"
+      <BaseTable
+        :rows="data.applicationPrograms"
+        :total-count="data.totalCount"
         :page="data.page"
-        :rowsPerPage="data.rowsPerPage"
+        :rows-per-page="data.rowsPerPage"
+        :columns="headerColumns"
+        :loading="false"
         v-model:selected="selected"
         @changePage="changePage"
-        v-if="!loading"
-      />
+      >
+        <q-tr :props="props">
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            auto-width
+          >
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+        <template #body-cell-name="props">
+          <q-td :props="props">
+            {{ props.row.name }}
+          </q-td>
+        </template>
+        <template #body-cell-status="props">
+          <q-td :props="props">
+            <span
+              class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200"
+            >
+              {{ props.row.status }}
+            </span>
+          </q-td>
+        </template>
+        <template #body-cell-action="props">
+          <q-td :props="props">
+            <router-link
+              :to="`/document-builders/${props.row.id}`"
+              style="text-decoration: none; color: inherit"
+            >
+              <p class="edit-button">Edit</p>
+            </router-link>
+          </q-td>
+        </template>
+      </BaseTable>
     </div>
   </div>
 </template>
 
 <script setup>
 import {
-  getMessageTemplates,
-  updateMessageTemplate,
-} from "src/api/messageTemplate";
+  getDocumentTemplates,
+  updateDocumentTemplate,
+} from "src/api/documentTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
+import BaseTable from "src/components/BaseTable.vue";
 
 const router = useRouter();
+
+const headerColumns = [
+  {
+    name: "status",
+    align: "center",
+    label: "Status",
+    field: "status",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "invoice_currency",
+    align: "center",
+    label: "Currency",
+    field: "invoice_currency",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "payment_methods",
+    align: "center",
+    label: "Payment Methods",
+    field: "payment_methods",
+    classes: "text-black",
+  },
+  {
+    name: "fee_issued_to",
+    align: "center",
+    label: "Fee Issued To",
+    field: "fee_issued_to",
+    classes: "text-black",
+  },
+  {
+    name: "user_created",
+    align: "center",
+    label: "Created By",
+    field: "user_created",
+    classes: "text-black",
+  },
+  {
+    name: "date_created",
+    align: "center",
+    label: "Created On",
+    field: "date_created",
+    classes: "text-black",
+  },
+  {
+    name: "action",
+    align: "center",
+    label: "",
+    field: "action",
+    classes: "text-blue",
+  },
+];
 
 const loading = ref(true);
 const selected = ref([]);
@@ -71,7 +161,7 @@ onMounted(() => {
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
-  } = await getMessageTemplates({
+  } = await getDocumentTemplates({
     limit: data.rowsPerPage,
     page: data.page,
   });
@@ -79,14 +169,16 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.total_count;
   loading.value = false;
 };
-// const changePage = (val) => {
-//   data.page = val;
-//   fetchApplicationPrograms();
-// };
+
+const changePage = (val) => {
+  data.page = val;
+  fetchApplicationPrograms();
+};
+
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
     data.status = "archive";
-    await updateMessageTemplate(data.id, data);
+    await updateDocumentTemplate(data.id, data);
   });
 };
 </script>
