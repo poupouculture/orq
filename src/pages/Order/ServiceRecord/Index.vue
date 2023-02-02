@@ -33,13 +33,19 @@
 
     <BaseTable
       :rows="rows"
-      :total-count="pagination.totalCount"
+      :total-count="meta.total_count"
       :page="pagination.page"
       :rows-per-page="pagination.rowsPerPage"
       :columns="columns"
       :loading="loading"
       @changePage="changePage"
+      :disableSelect="true"
     >
+      <template v-slot:index="props">
+        <q-td :props="props">
+          {{ props }}
+        </q-td>
+      </template>
       <template v-slot:body-cell-customer="props">
         <q-td :props="props">
           <q-icon name="fa-solid fa-headphones" />
@@ -53,14 +59,19 @@
       <template v-slot:body-cell-employee="props">
         <q-td class="align-text-top" :props="props">
           <q-icon name="fa-regular fa-user" />
-          <span class="ml-2"
+          <span class="ml-2" v-if="props.value"
             >{{ props.value.first_name }} {{ props.value.last_name }}</span
           >
         </q-td>
       </template>
 
       <template v-slot:body-cell-channel="props">
-        <q-td><img :src="img" class="w-10 h-10" :alt="props.value" /></q-td>
+        <q-td
+          ><img
+            :src="getChannelImages(props.value)"
+            class="w-7 h-7"
+            :alt="props.value"
+        /></q-td>
       </template>
 
       <template v-slot:body-cell-reference_number="props">
@@ -106,7 +117,10 @@
 import MessageBox from "src/components/MessageBox.vue";
 import Pagination from "src/components/Pagination.vue";
 import useServiceRecordStore from "src/stores/modules/serviceRecord";
-import img from "src/assets/images/whatsapp.png";
+import whatsapp from "src/assets/images/whatsapp.png";
+import instagram from "src/assets/images/instagram.png";
+import line from "src/assets/images/line.png";
+import facebook from "src/assets/images/facebook.png";
 import { format } from "date-fns";
 import BaseTable from "src/components/BaseTable.vue";
 
@@ -114,15 +128,13 @@ import { ref, onMounted, computed } from "vue";
 const message = `Every time you talk with a customer, a "service record" will be automatically generated, and each record contains at least - more conversation records to form a complete service information for you to query Close it.`;
 
 const serviceRecordStore = useServiceRecordStore();
+const meta = computed(() => serviceRecordStore.meta);
 const show = ref(true),
   columns = [
     {
       name: "index",
       label: "#",
       field: "index",
-      align: "left",
-      headerStyle: "width: 80px",
-      headerClasses: "header",
     },
     {
       name: "customer",
@@ -133,9 +145,9 @@ const show = ref(true),
       headerClasses: "header",
     },
     {
-      name: "company_name",
+      name: "employee",
       label: "Agent",
-      field: "company_name",
+      field: "employee",
       align: "left",
       headerStyle: "width: 300px",
       headerClasses: "header",
@@ -181,11 +193,30 @@ const show = ref(true),
     totalCount: 0,
   });
 
+// would be seperate to helper or utilities
+const getChannelImages = (type) => {
+  switch (type) {
+    case "facebook":
+      return facebook;
+    case "line":
+      return line;
+    case "instagram":
+      return instagram;
+    default:
+      return whatsapp;
+  }
+};
 onMounted(async () => {
   loading.value = true;
   await serviceRecordStore.getAll();
   loading.value = false;
 });
+const changePage = async () => {
+  await serviceRecordStore.getAll({
+    limit: pagination.value.rowsPerPage,
+    page: pagination.value.page,
+  });
+};
 function close(state) {
   show.value = state;
 }
