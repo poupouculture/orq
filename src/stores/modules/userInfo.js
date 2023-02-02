@@ -10,11 +10,13 @@ const useUserInfoStore = defineStore("userInfo", {
       refresh_token: "",
     },
     userProfile: null,
+    userRoleName: "",
   }),
   getters: {
     token: (state) => state.userInfo?.access_token,
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
+    getUserRoleName: (state) => state.userRoleName,
   },
   actions: {
     async login(params) {
@@ -57,6 +59,7 @@ const useUserInfoStore = defineStore("userInfo", {
           );
 
           this.userProfile = data;
+          this.userRoleName = data?.role.name;
           return data;
         }
       } catch (err) {

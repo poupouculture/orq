@@ -6,7 +6,7 @@
       label="Reassign"
       icon-right="expand_more"
       no-caps
-      v-if="Role.CS_MANAGER"
+      v-if="userRole === Role.CS_MANAGER"
     >
       <q-menu
         class="q-ma-lg"
@@ -114,6 +114,16 @@
       @submit="saveCustomer"
     />
   </div>
+  <div class="fixed right-9 top-7 z-[9999]">
+    <router-link class="block w-3 h-3 cursor-pointer" to="">
+      <q-icon
+        name="close"
+        size="1rem"
+        class="block"
+        @click="$router.go(-1)"
+      ></q-icon>
+    </router-link>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -126,6 +136,7 @@ import GeneralInformation from "src/components/Customer/GeneralInformation/index
 import { FormPayload } from "src/types/CustomerTypes";
 import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -149,6 +160,8 @@ interface Manager {
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const userInfo = useUserInfoStore();
+const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
@@ -161,11 +174,11 @@ const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 
 onMounted(async () => {
   const { data } = await getChatUsers();
-
   // const csManager = data.filter(
   //   // (item: Manager) => item.role_name === Role.CS_MANAGER
   // );
   managers.value = data;
+  userRole.value = userInfo.getUserRoleName;
 });
 
 const saveCustomer = async (val: FormPayload) => {
