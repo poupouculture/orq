@@ -7,7 +7,7 @@
       :show="show"
       @click="close()"
     />
-    <!-- Search -->
+    <!-- Search and Add button-->
     <div class="flex items-center justify-between my-5">
       <div class="w-52">
         <q-input
@@ -25,7 +25,10 @@
           </template>
         </q-input>
       </div>
-      <q-btn class="bg-primary text-white">
+      <q-btn
+        class="bg-primary text-white"
+        @click="showAddServiceReference = true"
+      >
         <q-icon name="add" class="text-white mr-2" />
         <span>Add</span>
       </q-btn>
@@ -111,6 +114,11 @@
         />
       </template>
     </BaseTable>
+    <AddServiceReference
+      v-if="showAddServiceReference"
+      @close="showAddServiceReference = false"
+      @submit="onSubmit"
+    />
   </div>
 </template>
 <script setup>
@@ -125,11 +133,13 @@ import { format } from "date-fns";
 import BaseTable from "src/components/BaseTable.vue";
 
 import { ref, onMounted, computed } from "vue";
+import AddServiceReference from "src/components/ServiceReference/AddServiceReference.vue";
 const message = `Every time you talk with a customer, a "service record" will be automatically generated, and each record contains at least - more conversation records to form a complete service information for you to query Close it.`;
 
 const serviceRecordStore = useServiceRecordStore();
 const meta = computed(() => serviceRecordStore.meta);
 const show = ref(true),
+  showAddServiceReference = ref(false),
   columns = [
     {
       name: "index",
@@ -211,6 +221,11 @@ onMounted(async () => {
   await serviceRecordStore.getAll();
   loading.value = false;
 });
+const onSubmit = async () => {
+  loading.value = true;
+  await serviceRecordStore.getAll();
+  loading.value = false;
+};
 const changePage = async () => {
   await serviceRecordStore.getAll({
     limit: pagination.value.rowsPerPage,

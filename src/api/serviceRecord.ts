@@ -1,3 +1,4 @@
+import { Notify } from "quasar";
 import { api } from "src/boot/axios";
 
 export const getServiceReferences = async (
@@ -10,7 +11,7 @@ export const getServiceReferences = async (
     : "-date_created";
   const fields = id
     ? "*, service_records.*, service_records.employee.first_name, service_records.employee.last_name"
-    : "*";
+    : "*, employee.first_name, employee.last_name";
   const params = {
     limit,
     offset,
@@ -25,4 +26,16 @@ export const getServiceReferences = async (
     params,
   });
   return serviceRecord;
+};
+
+export const addServiceReference = async (payload: any) => {
+  try {
+    const { data } = await api.post("/items/service_references", payload);
+    return data;
+  } catch (error: any) {
+    Notify.create({
+      message: "Error: " + error,
+      type: "error",
+    });
+  }
 };
