@@ -1,6 +1,6 @@
 <template>
-  <BaseLayout
-    :applicationProgram="applicationProgram"
+  <BaseForm
+    :documentTemplate="documentTemplate"
     @submitGeneralInformation="submit"
     v-if="!loading"
   />
@@ -9,26 +9,26 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
+import BaseForm from "src/components/DocumentBuilder/BaseForm.vue";
 import {
-  getMessageTemplate,
-  updateMessageTemplate,
-} from "../../api/messageTemplate";
+  getDocumentTemplate,
+  updateDocumentTemplate,
+} from "src/api/DocumentTemplates";
 
 const router = useRouter();
 const route = useRoute();
 const loading = ref(true);
-const applicationProgram = ref(null);
+const documentTemplate = ref(null);
 
 onMounted(async () => {
   const id = route.params.id;
-  applicationProgram.value = await getMessageTemplate(id);
+  documentTemplate.value = await getDocumentTemplate(id);
   loading.value = false;
 });
 
 const submit = async (payload) => {
-  await updateMessageTemplate(route.params.id, payload);
-  router.push("/application-program");
+  await updateDocumentTemplate(route.params.id, payload);
+  router.push("/document-builders");
 };
 </script>
 

@@ -27,7 +27,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     keyword: ChatKeywords.SEND_TEXT_MESSAGE,
     waba_content: {
       messaging_product: messageProduct,
-      recipien_type: "individual",
+      recipient_type: "individual",
       to,
       type,
       text: {

@@ -41,6 +41,7 @@
         borderless
         bg-color="grey-2"
         type="textarea"
+        @keydown.enter.prevent="sendMessage"
       />
       <div class="row justify-end">
         <q-btn

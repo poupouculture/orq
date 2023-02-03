@@ -81,6 +81,7 @@ export const addCustomerGroup = async (payload) => {
   const customer = await api.post("/items/customer_groups", payload);
   return customer;
 };
+
 export const updateCustomerGroup = async (id, payload) => {
   const customer = await api.patch("/items/customer_groups/" + id, payload);
   return customer;

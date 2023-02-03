@@ -19,4 +19,12 @@ export const pageCodes = [
     id: "F07",
     icon: "rocket_launch",
   },
+  {
+    id: "F08",
+    icon: "rocket_launch",
+  },
+  {
+    id: "F09",
+    icon: "rocket_launch",
+  },
 ];

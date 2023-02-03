@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { api, axiosInstance } from "boot/axios";
-import { LocalStorage } from "quasar";
+import { LocalStorage, Notify } from "quasar";
 
 const useUserInfoStore = defineStore("userInfo", {
   state: () => ({
@@ -10,29 +10,40 @@ const useUserInfoStore = defineStore("userInfo", {
       refresh_token: "",
     },
     userProfile: null,
+    userRoleName: "",
   }),
   getters: {
     token: (state) => state.userInfo?.access_token,
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
+    getUserRoleName: (state) => state.userRoleName,
   },
   actions: {
     async login(params) {
       try {
         api.defaults.headers.common.Authorization = "";
-        const {
-          data: { data },
-        } = await api.post("/auth/login", params);
-
-        this.userInfo = data;
-
-        LocalStorage.set("userinfo", JSON.stringify(data));
-
+        const data = await api.post("/auth/login", params);
+        if (!data) {
+          return Notify.create({
+            message: "Invalid user credentials.",
+            color: "red-7",
+            position: "top",
+            type: "negative",
+          });
+        }
+        const user = data.data.data;
+        this.userInfo = user;
+        LocalStorage.set("userinfo", JSON.stringify(user));
         await this.getProfile();
-
+        Notify.create({
+          message: "Successful login.",
+          color: "blue-9",
+          position: "top",
+          type: "positive",
+        });
         this.router.push("/");
       } catch (err) {
-        console.log(err);
+        console.log(err.response, err);
       }
     },
     async getProfile() {
@@ -48,6 +59,7 @@ const useUserInfoStore = defineStore("userInfo", {
           );
 
           this.userProfile = data;
+          this.userRoleName = data?.role.name;
           return data;
         }
       } catch (err) {

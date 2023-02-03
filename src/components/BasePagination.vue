@@ -14,14 +14,16 @@
 </template>
 <script setup>
 import { ref } from "vue";
-defineProps({
+const props = defineProps({
   maxPages: { type: [String, Number], required: true },
   max: { type: [String, Number], required: true },
+  modelValue: { type: [String, Number] },
 });
-const emits = defineEmits(["updateModel"]);
-const pagination = ref(1);
+const emits = defineEmits(["updateModel", "update:modelValue"]);
+const pagination = ref(props.modelValue);
 const updateModel = (value) => {
   emits("updateModel", value);
+  emits("update:modelValue", value);
 };
 </script>
 <style lang="scss" scoped>

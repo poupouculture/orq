@@ -6,6 +6,7 @@
       label="Reassign"
       icon-right="expand_more"
       no-caps
+      v-if="userRole === Role.CS_MANAGER"
     >
       <q-menu
         class="q-ma-lg"
@@ -21,7 +22,7 @@
             :key="index"
             clickable
             v-close-popup
-            @click="assignManager(manager)"
+            @click="assignUser(manager)"
           >
             <q-item-section>
               <div class="row items-center">
@@ -46,6 +47,8 @@
     <q-btn color="primary" label="Close Conversation" no-caps />
   </div>
   <div>
+    <!-- Search Customer -->
+    <SearchCustomer />
     <div v-if="newCustomer">
       <div class="text-weight-medium">New Contact</div>
       <q-tabs
@@ -111,6 +114,16 @@
       @submit="saveCustomer"
     />
   </div>
+  <div class="fixed right-9 top-7 z-[9999]">
+    <router-link class="block w-3 h-3 cursor-pointer" to="">
+      <q-icon
+        name="close"
+        size="1rem"
+        class="block"
+        @click="$router.go(-1)"
+      ></q-icon>
+    </router-link>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -121,10 +134,9 @@ import useCustomerStore from "src/stores/modules/customer";
 import useMessagingStore from "src/stores/modules/messaging";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
-import {
-  getManagerUsers,
-  assignManager as assignUserManager,
-} from "src/api/user";
+import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
+import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -148,6 +160,8 @@ interface Manager {
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const userInfo = useUserInfoStore();
+const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
@@ -159,11 +173,12 @@ const managers: Ref<Array<Manager>> = ref([]);
 const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 
 onMounted(async () => {
-  const { data } = await getManagerUsers();
-  const csManager = data.filter(
-    (item: Manager) => item.role_name === Role.CS_MANAGER
-  );
-  managers.value = csManager;
+  const { data } = await getChatUsers();
+  // const csManager = data.filter(
+  //   // (item: Manager) => item.role_name === Role.CS_MANAGER
+  // );
+  managers.value = data;
+  userRole.value = userInfo.getUserRoleName;
 });
 
 const saveCustomer = async (val: FormPayload) => {
@@ -181,11 +196,11 @@ const saveCustomer = async (val: FormPayload) => {
   messagingStore.fetchChats(messagingStore.getSelectedTab);
 };
 
-const assignManager = (manager: Manager) => {
+const assignUser = (manager: Manager) => {
   const chatId = getChats.value[getSelectedChatIndex.value].id;
   const userId = manager.user_id;
 
-  assignUserManager(chatId, userId);
+  assignUserHelper(chatId, userId);
 };
 </script>
 
