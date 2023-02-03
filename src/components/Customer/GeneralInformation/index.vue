@@ -127,6 +127,7 @@
             <q-select
               outlined
               v-model="position"
+              :options="positionOptions"
               dense
               :disable="mode == 'show'"
             />
@@ -197,13 +198,24 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
+
+interface Position {
+  value: string;
+  label: string;
+}
+
+interface Gender {
+  value: "m" | "f";
+  label: "Male" | "Female";
+}
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
@@ -223,13 +235,26 @@ const props = defineProps({
 });
 const customerStore = useCustomerStore();
 
+const positionOptions: Position[] = [
+  { value: "purchase_manager", label: "Purchase Manager" },
+  { value: "owner", label: "Owner" },
+  { value: "restaurant_chef", label: "Restaurant Chef" },
+];
+const genderOptions: Gender[] = [
+  {
+    value: "m",
+    label: "Male",
+  },
+  { value: "f", label: "Female" },
+];
+
 const firstName = ref("");
 const lastName = ref("");
 const idNumber = ref("");
 const customerCode = ref("");
-const gender = ref("");
+const gender: Ref<Gender | any> = ref(null);
 const dateOfBirth = ref("");
-const position = ref("");
+const position: Ref<Position | any> = ref(null);
 const company = ref("");
 const customerGroup = ref("");
 const isActive = ref(true);
@@ -237,14 +262,7 @@ const isActive = ref(true);
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const tags = ref("");
-const genderOptions = [
-  {
-    value: "m",
-    label: "Male",
-  },
-  { value: "f", label: "Female" },
-];
-const customerForm = ref(null);
+const customerForm: Ref<any> = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(() => {
@@ -256,6 +274,9 @@ onMounted(() => {
     customerCode.value = customer.customer_code;
     dateOfBirth.value = customer.dob;
     isActive.value = customer.isActive;
+    position.value = positionOptions.find(
+      (item) => item.value === customer.position
+    );
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
   }
@@ -280,6 +301,10 @@ const submitDelete = () => {
 
 const onSubmit = async () => {
   try {
+    if (!customerForm.value) {
+      return;
+    }
+
     const validate = await customerForm.value.validate();
 
     if (validate) {
@@ -288,9 +313,10 @@ const onSubmit = async () => {
         last_name: lastName.value,
         id_number: idNumber.value,
         customer_code: customerCode.value,
-        gender: gender.value.value,
+        gender: gender.value?.value,
         isActive: isActive.value,
         dob: dateOfBirth.value,
+        position: position.value?.value,
       };
       emit("submit", payload);
     }

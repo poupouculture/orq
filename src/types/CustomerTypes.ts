@@ -43,7 +43,7 @@ export interface ICustomer {
   gender: Gender;
   id: string;
   id_number: string;
-  isActive: null | boolean;
+  isActive: boolean;
   last_name: string;
   position: string;
   service_records?: [string];
