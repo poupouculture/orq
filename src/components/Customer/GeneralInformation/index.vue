@@ -148,6 +148,7 @@
             <q-select
               outlined
               v-model="customerGroup"
+              :options="customerGroupOptions"
               dense
               :disable="mode == 'show'"
             />
@@ -205,7 +206,9 @@ import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
+import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
+import { getAllCustomerGroups } from "src/api/customerGroup";
 
 interface Position {
   value: string;
@@ -258,6 +261,7 @@ const position: Ref<Position | any> = ref(null);
 const company = ref("");
 const customerGroup = ref("");
 const isActive = ref(true);
+const customerGroupOptions: Ref<ICustomerGroup[] | any> = ref([]);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -265,7 +269,7 @@ const tags = ref("");
 const customerForm: Ref<any> = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
-onMounted(() => {
+onMounted(async () => {
   const customer = customerStore.getCustomer;
   if (customer) {
     firstName.value = customer.first_name;
@@ -280,6 +284,23 @@ onMounted(() => {
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
   }
+
+  interface ICustomerGroupOptions extends ICustomerGroup {
+    value: string;
+    label: string;
+  }
+
+  const {
+    data: { data: customerGroups },
+  } = await getAllCustomerGroups();
+  const mappedCustomerGroups = customerGroups.map(
+    (item: ICustomerGroupOptions) => {
+      item.value = item.id;
+      item.label = item.name;
+      return item;
+    }
+  );
+  customerGroupOptions.value = mappedCustomerGroups;
 });
 
 watch(getCustomer, () => {
@@ -289,6 +310,9 @@ watch(getCustomer, () => {
   customerCode.value = getCustomer.value.customer_code;
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.isActive;
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
 
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
