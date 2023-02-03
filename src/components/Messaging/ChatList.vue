@@ -66,18 +66,60 @@
         </q-tab-panel>
       </q-tab-panels>
     </q-list>
-    <footer class="fixed bottom-0 q-pa-xs q-pa-md">
-      <div class="row justify-end">
+    <footer class="w-full fixed bottom-0 q-pa-md">
+      <div class="w-full flex justify-center items-center">
         <q-btn
+          round
           flat
           color="grey"
           icon="home"
           size="md"
-          class="q-mt-md"
-          label="Back to Home"
-          no-caps
+          class="px-2"
           @click="router.push('/')"
         />
+        <q-btn round flat color="grey" icon="add_box" size="md" class="px-2" />
+        <q-btn
+          round
+          flat
+          color="grey"
+          icon="chat_bubble"
+          size="md"
+          class="px-2"
+        />
+        <q-btn
+          round
+          flat
+          color="grey"
+          icon="notifications"
+          size="md"
+          class="px-2"
+        />
+        <q-btn-dropdown round flat color="grey" class="pl-2 pr-0">
+          <template v-slot:label>
+            <q-avatar size="md">
+              <img src="https://cdn.quasar.dev/img/avatar1.jpg" />
+            </q-avatar>
+          </template>
+          <q-list>
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-item-label>menu 1</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-item-label>menu 2</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-item-label>menu 3</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </div>
     </footer>
   </q-drawer>

@@ -38,9 +38,10 @@ export default function () {
     }
 
     if (to.matched.some((record) => record.meta.requiresAuth) && !userProfile) {
-      next("/login");
+      // need to return, because it throw the warn and will be error if in production
+      return next("/login");
     } else {
-      next();
+      return next();
     }
   });
 
