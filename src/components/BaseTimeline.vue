@@ -8,7 +8,7 @@
       v-for="(item, i) in items"
       :key="i"
     >
-      <slot :item="item"></slot>
+      <slot :item="item" :i="i"></slot>
     </q-timeline-entry>
   </q-timeline>
 </template>
