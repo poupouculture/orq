@@ -30,10 +30,20 @@ interface CompanyRelation {
   companies_id: Company;
 }
 
+interface Contact {
+  id: string;
+  number: string;
+}
+
+interface ContactRelation {
+  contacts_id: Contact;
+}
+
 type Gender = "m" | "f";
 
 export interface ICustomer {
   companies?: [CompanyRelation];
+  contacts: [ContactRelation];
   customer_code: string;
   date_created: string;
   date_updated: string;
