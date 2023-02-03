@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { IMessageTemplate } from "src/api/messageTemplateTypes";
+import { IMessageTemplate } from "src/types/messageTemplateTypes";
 import { getMessageTemplates } from "src/api/messageTemplate";
 import { ref, onMounted, watch } from "vue";
 import type { Ref } from "vue";
