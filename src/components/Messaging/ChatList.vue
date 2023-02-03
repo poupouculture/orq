@@ -68,14 +68,23 @@
     </q-list>
     <footer class="w-full fixed bottom-0 q-pa-md">
       <div class="w-full flex justify-center items-center">
-        <q-btn round flat color="grey" icon="add_box" size="md" class="px-3" />
+        <q-btn
+          round
+          flat
+          color="grey"
+          icon="home"
+          size="md"
+          class="px-2"
+          @click="router.push('/')"
+        />
+        <q-btn round flat color="grey" icon="add_box" size="md" class="px-2" />
         <q-btn
           round
           flat
           color="grey"
           icon="chat_bubble"
           size="md"
-          class="px-3"
+          class="px-2"
         />
         <q-btn
           round
@@ -83,9 +92,9 @@
           color="grey"
           icon="notifications"
           size="md"
-          class="px-3"
+          class="px-2"
         />
-        <q-btn-dropdown round flat color="grey" class="pl-3 pr-0">
+        <q-btn-dropdown round flat color="grey" class="pl-2 pr-0">
           <template v-slot:label>
             <q-avatar size="md">
               <img src="https://cdn.quasar.dev/img/avatar1.jpg" />
@@ -121,6 +130,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { format } from "date-fns";
+import { useRouter } from "vue-router";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
@@ -128,6 +138,7 @@ import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
 
+const router = useRouter();
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 
