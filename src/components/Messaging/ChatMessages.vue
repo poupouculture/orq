@@ -13,7 +13,7 @@
           <img src="https://cdn.quasar.dev/img/avatar.png" />
         </q-avatar>
         <div class="q-ml-md">
-          <div class="text-h6">{{ getCustomerName() }}</div>
+          <div class="text-h6">{{ getCustomerName }}</div>
           <div class="text-grey-5">{{ getContactNumber }}</div>
         </div>
       </div>
@@ -77,6 +77,7 @@ import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
+import useCustomerStore from "src/stores/modules/customer";
 import {
   IMessage,
   Direction,
@@ -84,15 +85,21 @@ import {
   MessageType,
 } from "../../types/MessagingTypes";
 import MessageTemplateDialog from "./MessageTemplateDialog.vue";
+import { startNewChat } from "src/api/messaging";
+import { ChatTypes } from "src/constants/ChatKeyword";
 
 const messagingStore = useMessagingStore();
+const customerStore = useCustomerStore();
+
+const emit = defineEmits(["newChatCreated"]);
 
 const message: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
-const { getChats, getSelectedChatIndex, getContactNumber } =
+const { getChats, getSelectedChatIndex, getContactNumber, getCustomerName } =
   storeToRefs(messagingStore);
+const { getCustomer } = storeToRefs(customerStore);
 
-const messages = computed(() => {
+const messages = computed<unknown[]>(() => {
   const arr: Array<IMessage> = messagingStore.getChatMessages;
 
   type GroupedMessages = {
@@ -120,29 +127,30 @@ const messages = computed(() => {
 });
 
 const sendMessage = async () => {
-  const chat = getChats.value[getSelectedChatIndex.value];
-  const chatId = chat.id;
-  const contactNumber = getContactNumber.value;
+  if (messages.value.length > 0) {
+    const chat = getChats.value[getSelectedChatIndex.value];
+    const chatId = chat.id;
+    const contactNumber = getContactNumber.value;
 
-  await messagingStore.sendChatTextMessage({
-    chatId,
-    messageProduct: Product.WHATSAPP,
-    to: contactNumber as string,
-    type: MessageType.TEXT,
-    messageBody: message.value,
-  });
+    await messagingStore.sendChatTextMessage({
+      chatId,
+      messageProduct: Product.WHATSAPP,
+      to: contactNumber as string,
+      type: MessageType.TEXT,
+      messageBody: message.value,
+    });
+
+    messagingStore.fetchChatMessagesByChatId(chatId);
+  } else {
+    startNewChat(getCustomer.value.id, message.value);
+
+    messagingStore.fetchChats(ChatTypes.ONGOING);
+    messagingStore.setSelectedTab(ChatTypes.ONGOING);
+
+    emit("newChatCreated", ChatTypes.ONGOING);
+  }
 
   message.value = "";
-
-  messagingStore.fetchChatMessagesByChatId(chatId);
-};
-
-const getCustomerName = () => {
-  const chat = getChats.value[getSelectedChatIndex.value];
-  if (chat?.first_name) {
-    return `${chat.first_name} ${chat.last_name}`;
-  }
-  return "Visitor";
 };
 </script>
 
