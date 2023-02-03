@@ -28,6 +28,7 @@ export interface IPagination {
 }
 export interface IState {
   items: string[];
+  item: null;
   meta: IMeta;
   pagination: IPagination;
 }
