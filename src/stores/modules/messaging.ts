@@ -6,7 +6,11 @@ import {
   getContact,
 } from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
-import { IState, SendTextMessage } from "../../types/MessagingTypes";
+import {
+  IState,
+  IChatMessageCacheItem,
+  SendTextMessage,
+} from "../../types/MessagingTypes";
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -36,7 +40,21 @@ const useMessagingStore = defineStore("messaging", {
       this.chats = data;
     },
     async fetchChatMessagesByChatId(chatId: string) {
-      const data = await getChatMessagesByChatId(chatId);
+      const storageItem: string | null = localStorage.getItem("chatMessages");
+      let data: IChatMessageCacheItem[] = [];
+
+      if (storageItem) {
+        data = JSON.parse(storageItem).filter(
+          (message: IChatMessageCacheItem) => message.chatId === chatId
+        );
+      } else {
+        data = await getChatMessagesByChatId(chatId);
+        localStorage.setItem(
+          "chatMessages",
+          JSON.stringify(data.map((item) => ({ ...item, chatId })))
+        );
+      }
+
       this.chatMessages = data;
     },
     async sendChatTextMessage(payload: SendTextMessage) {

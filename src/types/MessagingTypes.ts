@@ -22,6 +22,10 @@ export interface IMessage {
   direction: Direction;
 }
 
+export interface IChatMessageCacheItem extends IMessage {
+  chatId: string;
+}
+
 export interface IChat {
   id: string;
   status: string;
