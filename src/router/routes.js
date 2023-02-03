@@ -62,6 +62,10 @@ const routes = [
         component: () => import("pages/DocumentBuilder/create.vue"),
       },
       {
+        path: "document-builders/:id",
+        component: () => import("pages/DocumentBuilder/edit.vue"),
+      },
+      {
         path: "calendar",
         component: () => import("pages/Calendar.vue"),
       },
