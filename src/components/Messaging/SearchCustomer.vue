@@ -95,7 +95,7 @@ const searchHandler = async () => {
   if (!query.value.length) return;
   Loading.show();
   try {
-    const key = `filter[${selectedOption.value.key}][_eq]`;
+    const key = `filter[${selectedOption.value.key}][_contains]`;
     const { data } = await searchCustomers({
       fields: "*",
       [key]: query.value,

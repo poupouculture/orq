@@ -16,7 +16,7 @@
             >
               {{ name }}
             </div>
-            <div class="text-grey-5">{{ shortenedString(message) }}</div>
+            <div class="text-grey-5">{{ message }}</div>
           </div>
         </div>
       </div>
@@ -60,14 +60,6 @@ defineProps({
     default: 0,
   },
 });
-
-const maxLength = 20;
-
-const shortenedString = (text) => {
-  if (text.length < maxLength) return text;
-
-  return text.substring(0, maxLength) + "...";
-};
 </script>
 
 <style scoped lang="scss">
