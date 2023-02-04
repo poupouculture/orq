@@ -6,9 +6,7 @@ export const getServiceReferences = async (
   id?: string
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const sort = id
-    ? "-date_created,service_records.date_created"
-    : "-date_created";
+  const sort = id ? "service_records.date_created" : "-date_created";
   const fields = id
     ? "*, service_records.*, service_records.employee.first_name, service_records.employee.last_name"
     : "*, employee.first_name, employee.last_name";
@@ -27,7 +25,15 @@ export const getServiceReferences = async (
   });
   return serviceRecord;
 };
-
+export const getServiceRecords = async (id: string) => {
+  return await api.get("/items/service_records", {
+    params: {
+      fields: "*, employee.first_name, employee.last_name",
+      sort: "date_created",
+      "filter[service_reference][_eq]": id,
+    },
+  });
+};
 export const addServiceReference = async (payload: any) => {
   try {
     const { data } = await api.post("/items/service_references", payload);

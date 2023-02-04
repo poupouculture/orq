@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getServiceReferences } from "src/api/serviceRecord";
+import { getServiceRecords, getServiceReferences } from "src/api/serviceRecord";
 import { IServiceRecord, IState } from "src/types/ServiceRecordTypes";
 
 const useServiceRecordStore = defineStore("serviceRecord", {
@@ -7,6 +7,7 @@ const useServiceRecordStore = defineStore("serviceRecord", {
     ({
       items: [],
       item: null,
+      serviceRecords: null,
       meta: {
         total_count: 0,
         filter_count: 0,
@@ -44,12 +45,12 @@ const useServiceRecordStore = defineStore("serviceRecord", {
         };
       } catch (error) {}
     },
-    async get(id: string) {
+    async getServiceRecords(id: string) {
       try {
         const {
-          data: { data: serviceReference },
-        } = await getServiceReferences({}, id);
-        this.item = serviceReference;
+          data: { data: serviceRecords },
+        } = await getServiceRecords(id);
+        this.serviceRecords = serviceRecords;
       } catch (error) {}
     },
   },
