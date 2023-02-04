@@ -3,7 +3,7 @@
     side="right"
     show-if-above
     bordered
-    :width="300"
+    :width="450"
     :breakpoint="500"
     class="bg-white q-pa-md"
   >
