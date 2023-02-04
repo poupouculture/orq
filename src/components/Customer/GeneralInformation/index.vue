@@ -210,8 +210,8 @@ import useCustomerStore from "src/stores/modules/customer";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
 import { getAllCustomerGroups } from "src/api/customerGroup";
-import { getCompanies } from "src/api/companies.ts";
-import { ICompany } from "src/types/CompanyTypes";
+import { getCompanies } from "src/api/companies";
+import { Company as ICompany } from "src/types/CompanyTypes";
 
 interface Position {
   value: string;
@@ -221,6 +221,16 @@ interface Position {
 interface Gender {
   value: "m" | "f";
   label: "Male" | "Female";
+}
+
+interface ICustomerGroupOptions extends ICustomerGroup {
+  value: string;
+  label: string;
+}
+
+interface ICompanyOptions extends ICompany {
+  value: string | number;
+  label: string;
 }
 
 const emit = defineEmits(["submit"]);
@@ -262,7 +272,6 @@ const gender: Ref<Gender | any> = ref(null);
 const dateOfBirth = ref("");
 const position: Ref<Position | any> = ref(null);
 const company: Ref<ICompany | any> = ref(null);
-const customerGroup = ref("");
 const customerGroup: Ref<ICustomerGroup | any> = ref(null);
 const isActive = ref(true);
 const companyOptions: Ref<ICompany[] | any> = ref(null);
@@ -277,11 +286,6 @@ const { getCustomer } = storeToRefs(customerStore);
 onMounted(async () => {
   const customer = customerStore.getCustomer;
 
-  interface ICustomerGroupOptions extends ICustomerGroup {
-    value: string;
-    label: string;
-  }
-
   const {
     data: { data: customerGroups },
   } = await getAllCustomerGroups();
@@ -294,10 +298,6 @@ onMounted(async () => {
   );
   customerGroupOptions.value = mappedCustomerGroups;
 
-  interface ICompanyOptions extends ICompany {
-    value: string;
-    label: string;
-  }
   const {
     data: { data: companies },
   } = await getCompanies();
@@ -322,10 +322,12 @@ onMounted(async () => {
     gender.value = genderOptions.find((item) => item.value === customer.gender);
 
     customerGroup.value = customerGroupOptions.value.find(
-      (item: ICustomerGroup) =>
+      (item: ICustomerGroupOptions) =>
         item.value === customer.customer_groups[0].customer_groups_id
+    );
     company.value = companyOptions.value.find(
-      (item: ICompany) => item.value === customer.companies[0].companies_id.id
+      (item: ICompanyOptions) =>
+        item.value === customer.companies[0].companies_id.id
     );
   }
 });
@@ -346,10 +348,11 @@ watch(getCustomer, () => {
   );
 
   customerGroup.value = customerGroupOptions.value.find(
-    (item: ICustomerGroup) =>
+    (item: ICustomerGroupOptions) =>
       item.value === getCustomer.value.customer_groups[0].customer_groups_id
+  );
   company.value = companyOptions.value.find(
-    (item: ICompany) =>
+    (item: ICompanyOptions) =>
       item.value === getCustomer.value.companies[0].companies_id.id
   );
 });
