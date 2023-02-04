@@ -70,6 +70,8 @@ cicd with vercel
 package manager: use yarn, NOT npm
 
 # Code Library
+## country codes
+- https://www.npmjs.com/package/i18n-iso-countries
 ## tailwindcss
 ### References
 ```
