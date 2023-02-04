@@ -52,18 +52,17 @@ const useUserInfoStore = defineStore("userInfo", {
         if (userinfo) {
           api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 
-          const {
-            data: { data },
-          } = await api.get(
+          const data = await api.get(
             "/users/me?fields=*,role.description, role.name, role.tags, role.pages.pages_id.*,role.pages.pages_id.children.*"
           );
-
-          this.userProfile = data;
-          this.userRoleName = data?.role.name;
+          if (data) {
+            const user = data.data.data;
+            this.userProfile = user;
+            this.userRoleName = user?.role.name;
+          }
           return data;
         }
       } catch (err) {
-        console.log(err);
         this.router.push("/login");
       }
     },
@@ -78,12 +77,10 @@ const useUserInfoStore = defineStore("userInfo", {
             refresh_token: userinfo.refresh_token,
           });
           this.userInfo = data;
-
           LocalStorage.set("userinfo", JSON.stringify(data));
           return data;
         }
       } catch (err) {
-        console.log(err);
         this.router.push("/login");
       }
     },

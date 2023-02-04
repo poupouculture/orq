@@ -32,9 +32,8 @@ export default function () {
   Router.beforeEach(async (to, from, next) => {
     const userStore = useUserInfoStore();
     const userProfile = userStore.getUserProfile;
-
     if (to.path === "/login" && userProfile) {
-      next("/");
+      return next("/");
     }
 
     if (to.matched.some((record) => record.meta.requiresAuth) && !userProfile) {
