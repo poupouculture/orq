@@ -259,7 +259,7 @@ const gender: Ref<Gender | any> = ref(null);
 const dateOfBirth = ref("");
 const position: Ref<Position | any> = ref(null);
 const company = ref("");
-const customerGroup = ref("");
+const customerGroup: Ref<ICustomerGroup | any> = ref(null);
 const isActive = ref(true);
 const customerGroupOptions: Ref<ICustomerGroup[] | any> = ref([]);
 
@@ -271,19 +271,6 @@ const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(async () => {
   const customer = customerStore.getCustomer;
-  if (customer) {
-    firstName.value = customer.first_name;
-    lastName.value = customer.last_name;
-    idNumber.value = customer.id_number;
-    customerCode.value = customer.customer_code;
-    dateOfBirth.value = customer.dob;
-    isActive.value = customer.isActive;
-    position.value = positionOptions.find(
-      (item) => item.value === customer.position
-    );
-
-    gender.value = genderOptions.find((item) => item.value === customer.gender);
-  }
 
   interface ICustomerGroupOptions extends ICustomerGroup {
     value: string;
@@ -301,6 +288,25 @@ onMounted(async () => {
     }
   );
   customerGroupOptions.value = mappedCustomerGroups;
+
+  if (customer) {
+    firstName.value = customer.first_name;
+    lastName.value = customer.last_name;
+    idNumber.value = customer.id_number;
+    customerCode.value = customer.customer_code;
+    dateOfBirth.value = customer.dob;
+    isActive.value = customer.isActive;
+    position.value = positionOptions.find(
+      (item) => item.value === customer.position
+    );
+
+    gender.value = genderOptions.find((item) => item.value === customer.gender);
+
+    customerGroup.value = customerGroupOptions.value.find(
+      (item: ICustomerGroup) =>
+        item.value === customer.customer_groups[0].customer_groups_id
+    );
+  }
 });
 
 watch(getCustomer, () => {
@@ -316,6 +322,11 @@ watch(getCustomer, () => {
 
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
+  );
+
+  customerGroup.value = customerGroupOptions.value.find(
+    (item: ICustomerGroup) =>
+      item.value === getCustomer.value.customer_groups[0].customer_groups_id
   );
 });
 
@@ -341,6 +352,7 @@ const onSubmit = async () => {
         isActive: isActive.value,
         dob: dateOfBirth.value,
         position: position.value?.value,
+        customer_groups: [{ customer_groups_id: customerGroup.value.id }],
       };
       emit("submit", payload);
     }
