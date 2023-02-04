@@ -6,7 +6,7 @@
       label="Reassign"
       icon-right="expand_more"
       no-caps
-      v-if="Role.CS_MANAGER"
+      v-if="userRole === Role.CS_MANAGER"
     >
       <q-menu
         class="q-ma-lg"
@@ -48,41 +48,7 @@
   </div>
   <div>
     <!-- Search Customer -->
-    <div class="bg-[#F2F3F7] py-3 px-6 w-full rounded-md mt-5 flex flex-col">
-      <div>Customer</div>
-      <div class="rounded flex items-start px-6 py-2 bg-white mt-3 w-full">
-        <div class="flex items-center gap-x-2 border-r pr-2 cursor-pointer">
-          <div>Name</div>
-          <svg
-            width="10"
-            height="7"
-            viewBox="0 0 10 7"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 4.22337L8.72727 0.157582L10 1.5459L5 7L0 1.5459L1.36364 0.157582L5 4.22337Z"
-              fill="#9A9AAF"
-            />
-          </svg>
-          <q-menu v-model="openCustomerFilter" :offset="[0, 10]" auto-close>
-            <q-list class="w-20">
-              <q-item clickable dense>
-                <q-item-section>ID</q-item-section>
-              </q-item>
-              <q-item clickable dense>
-                <q-item-section>Role</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </div>
-        <input
-          type="text"
-          class="bg-transparent focus:outline-none flex-1 pl-3"
-          placeholder="Search ..."
-        />
-      </div>
-    </div>
+    <SearchCustomer />
     <div v-if="newCustomer">
       <div class="text-weight-medium">New Contact</div>
       <q-tabs
@@ -148,6 +114,16 @@
       @submit="saveCustomer"
     />
   </div>
+  <div class="fixed right-9 top-7 z-[9999]">
+    <router-link class="block w-3 h-3 cursor-pointer" to="">
+      <q-icon
+        name="close"
+        size="1rem"
+        class="block"
+        @click="$router.go(-1)"
+      ></q-icon>
+    </router-link>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -159,6 +135,8 @@ import useMessagingStore from "src/stores/modules/messaging";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
 import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
+import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -182,24 +160,25 @@ interface Manager {
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const userInfo = useUserInfoStore();
+const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
 );
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
-const openCustomerFilter: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 
 onMounted(async () => {
   const { data } = await getChatUsers();
-
   // const csManager = data.filter(
   //   // (item: Manager) => item.role_name === Role.CS_MANAGER
   // );
   managers.value = data;
+  userRole.value = userInfo.getUserRoleName;
 });
 
 const saveCustomer = async (val: FormPayload) => {

@@ -27,7 +27,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     keyword: ChatKeywords.SEND_TEXT_MESSAGE,
     waba_content: {
       messaging_product: messageProduct,
-      recipien_type: "individual",
+      recipient_type: "individual",
       to,
       type,
       text: {
@@ -42,5 +42,16 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 
 export const getContact = async (contactId: string) => {
   const { data } = await api.get(`/items/contacts/${contactId}`);
+  return data;
+};
+
+export const startNewChat = async (customerId: string, textMessage: string) => {
+  const {
+    data: { data },
+  } = await api.post(`/waba/create-chat`, {
+    customer_id: customerId,
+    text_message: textMessage,
+  });
+
   return data;
 };

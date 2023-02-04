@@ -25,6 +25,21 @@ export const getCustomers = async (payload: CustomerPayload) => {
   return customers;
 };
 
+// get all customers who has contacts
+export const getCustomersWithContacts = async () => {
+  const fields = "id, first_name, last_name, gender, date_created, position";
+
+  const customers = await api.get("/items/customers", {
+    params: {
+      fields: `${fields}`,
+      sort: "-date_created",
+      "filter[count(contacts)][_neq]": 0,
+    },
+  });
+
+  return customers;
+};
+
 export const getCustomer = async (id: string) => {
   const fields = "*";
   const companies = "companies.companies_id.*";
@@ -57,4 +72,13 @@ export const addCustomerContact = async (customerId, contactId) => {
     contacts_id: contactId,
   });
   return customerContact;
+};
+
+export const searchCustomers = async (payload: any) => {
+  const data = await api.get("/items/customers", {
+    params: {
+      ...payload,
+    },
+  });
+  return data;
 };

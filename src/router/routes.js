@@ -54,8 +54,16 @@ const routes = [
           import("pages/ApplicationProgram/MessageTemplate/edit.vue"),
       },
       {
-        path: "document-builder",
+        path: "document-builders",
         component: () => import("pages/DocumentBuilder/index.vue"),
+      },
+      {
+        path: "document-builders/create",
+        component: () => import("pages/DocumentBuilder/create.vue"),
+      },
+      {
+        path: "document-builders/:id",
+        component: () => import("pages/DocumentBuilder/edit.vue"),
       },
       {
         path: "calendar",

@@ -6,7 +6,11 @@ import {
   getContact,
 } from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
-import { IState, SendTextMessage } from "../../types/MessagingTypes";
+import {
+  IState,
+  IChatMessageCacheItem,
+  SendTextMessage,
+} from "../../types/MessagingTypes";
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -16,12 +20,14 @@ const useMessagingStore = defineStore("messaging", {
       selectedTab: ChatTypes.PENDING,
       chatMessages: [],
       contactNumber: null,
+      customerName: null,
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
     getChatMessages: (state) => state.chatMessages,
     getSelectedChatIndex: (state) => state.selectedChatIndex,
     getContactNumber: (state) => state.contactNumber,
+    getCustomerName: (state) => state.customerName,
     getSelectedTab: (state) => state.selectedTab,
   },
   actions: {
@@ -36,7 +42,21 @@ const useMessagingStore = defineStore("messaging", {
       this.chats = data;
     },
     async fetchChatMessagesByChatId(chatId: string) {
-      const data = await getChatMessagesByChatId(chatId);
+      const storageItem: string | null = localStorage.getItem("chatMessages");
+      let data: IChatMessageCacheItem[] = [];
+
+      if (storageItem) {
+        data = JSON.parse(storageItem).filter(
+          (message: IChatMessageCacheItem) => message.chatId === chatId
+        );
+      } else {
+        data = await getChatMessagesByChatId(chatId);
+        localStorage.setItem(
+          "chatMessages",
+          JSON.stringify(data.map((item) => ({ ...item, chatId })))
+        );
+      }
+
       this.chatMessages = data;
     },
     async sendChatTextMessage(payload: SendTextMessage) {
@@ -45,7 +65,13 @@ const useMessagingStore = defineStore("messaging", {
     },
     async fetchContactNumber(contactId: string) {
       const { data } = await getContact(contactId);
-      this.contactNumber = data.number;
+      this.setContactNumber(data.number);
+    },
+    setCustomerName(name: string) {
+      this.customerName = name;
+    },
+    setContactNumber(contactNumber: string) {
+      this.contactNumber = contactNumber;
     },
   },
 });

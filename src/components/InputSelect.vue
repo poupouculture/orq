@@ -8,7 +8,6 @@
     class="custom-select"
     :class="icon ? `custom-select-icon` : `custom-select`"
     :tabindex="tabindex"
-    @blur="open = false"
   >
     <div
       style="
@@ -39,10 +38,19 @@
     <div
       class="items"
       :class="{ selectHide: !open }"
-      :style="icon && { top: `40px` }"
+      style="top: 40px; max-height: 200px !important; overflow: scroll"
     >
+      <div class="w-full h-14 flex justify-center items-center">
+        <input
+          type="text"
+          class="w-full h-10 -ml-3 px-2 rounded-md"
+          placeholder="Search"
+          v-model="search"
+          @input="filterOptions"
+        />
+      </div>
       <div
-        v-for="(option, i) of options"
+        v-for="(option, i) of filteredOptions"
         :key="i"
         @click="
           selected = option;
@@ -121,13 +129,24 @@ const _selected = props.default
   : null;
 const selected = ref(_selected);
 const open = ref(false);
+const search = ref("");
+const filteredOptions = ref([]);
 
 onMounted(() => {
   emit("input", selected.value);
+  filteredOptions.value = props.options;
 });
 
 const updateValue = (value) => {
   emit("update:value", value);
+};
+
+const filterOptions = () => {
+  if (search.value !== "") {
+    filteredOptions.value = props.options.filter((o) =>
+      o.toLowerCase().includes(search.value.toLowerCase())
+    );
+  }
 };
 </script>
 

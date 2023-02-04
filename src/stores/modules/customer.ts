@@ -24,7 +24,7 @@ const useCustomerStore = defineStore("customer", {
         id_number: "",
         isActive: true,
         last_name: "",
-        position: "",
+        position: null,
         status: "",
         user_created: "",
         user_updated: "",

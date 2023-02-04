@@ -127,6 +127,7 @@
             <q-select
               outlined
               v-model="position"
+              :options="positionOptions"
               dense
               :disable="mode == 'show'"
             />
@@ -136,6 +137,7 @@
             <q-select
               outlined
               v-model="company"
+              :options="companyOptions"
               dense
               :disable="mode == 'show'"
             />
@@ -197,13 +199,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
+import { getCompanies } from "src/api/companies.ts";
+import { ICompany } from "src/types/CompanyTypes";
+
+interface Position {
+  value: string;
+  label: string;
+}
+
+interface Gender {
+  value: "m" | "f";
+  label: "Male" | "Female";
+}
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
@@ -223,32 +238,54 @@ const props = defineProps({
 });
 const customerStore = useCustomerStore();
 
-const firstName = ref("");
-const lastName = ref("");
-const idNumber = ref("");
-const customerCode = ref("");
-const gender = ref("");
-const dateOfBirth = ref("");
-const position = ref("");
-const company = ref("");
-const customerGroup = ref("");
-const isActive = ref(true);
-
-const deleteDialog = ref(false);
-const returnDialog = ref(false);
-const tags = ref("");
-const genderOptions = [
+const positionOptions: Position[] = [
+  { value: "purchase_manager", label: "Purchase Manager" },
+  { value: "owner", label: "Owner" },
+  { value: "restaurant_chef", label: "Restaurant Chef" },
+];
+const genderOptions: Gender[] = [
   {
     value: "m",
     label: "Male",
   },
   { value: "f", label: "Female" },
 ];
-const customerForm = ref(null);
+
+const firstName = ref("");
+const lastName = ref("");
+const idNumber = ref("");
+const customerCode = ref("");
+const gender: Ref<Gender | any> = ref(null);
+const dateOfBirth = ref("");
+const position: Ref<Position | any> = ref(null);
+const company: Ref<ICompany | any> = ref(null);
+const customerGroup = ref("");
+const isActive = ref(true);
+const companyOptions: Ref<ICompany[] | any> = ref(null);
+
+const deleteDialog = ref(false);
+const returnDialog = ref(false);
+const tags = ref("");
+const customerForm: Ref<any> = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
-onMounted(() => {
+onMounted(async () => {
   const customer = customerStore.getCustomer;
+
+  interface ICompanyOptions extends ICompany {
+    value: string;
+    label: string;
+  }
+  const {
+    data: { data: companies },
+  } = await getCompanies();
+  const mappedCompanies = companies.map((item: ICompanyOptions) => {
+    item.value = item.id;
+    item.label = item.name_english;
+    return item;
+  });
+  companyOptions.value = mappedCompanies;
+
   if (customer) {
     firstName.value = customer.first_name;
     lastName.value = customer.last_name;
@@ -256,8 +293,15 @@ onMounted(() => {
     customerCode.value = customer.customer_code;
     dateOfBirth.value = customer.dob;
     isActive.value = customer.isActive;
+    position.value = positionOptions.find(
+      (item) => item.value === customer.position
+    );
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
+
+    company.value = companyOptions.value.find(
+      (item: ICompany) => item.value === customer.companies[0].companies_id.id
+    );
   }
 });
 
@@ -272,6 +316,11 @@ watch(getCustomer, () => {
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
+
+  company.value = companyOptions.value.find(
+    (item: ICompany) =>
+      item.value === getCustomer.value.companies[0].companies_id.id
+  );
 });
 
 const submitDelete = () => {
@@ -280,6 +329,10 @@ const submitDelete = () => {
 
 const onSubmit = async () => {
   try {
+    if (!customerForm.value) {
+      return;
+    }
+
     const validate = await customerForm.value.validate();
 
     if (validate) {
@@ -288,9 +341,11 @@ const onSubmit = async () => {
         last_name: lastName.value,
         id_number: idNumber.value,
         customer_code: customerCode.value,
-        gender: gender.value.value,
+        gender: gender.value?.value,
         isActive: isActive.value,
         dob: dateOfBirth.value,
+        position: position.value?.value,
+        companies: [{ companies_id: company.value.id }],
       };
       emit("submit", payload);
     }

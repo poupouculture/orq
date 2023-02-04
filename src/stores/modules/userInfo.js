@@ -10,11 +10,13 @@ const useUserInfoStore = defineStore("userInfo", {
       refresh_token: "",
     },
     userProfile: null,
+    userRoleName: "",
   }),
   getters: {
     token: (state) => state.userInfo?.access_token,
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
+    getUserRoleName: (state) => state.userRoleName,
   },
   actions: {
     async login(params) {

@@ -8,6 +8,8 @@
     v-model:selected="selected"
     flat
   >
+    <template v-slot:header-selection v-if="disableSelect"> </template>
+    <template v-slot:body-selection v-if="disableSelect"></template>
     <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope" />
     </template>
@@ -18,9 +20,10 @@
         </div>
         <div class="col absolute-bottom-right q-ma-lg">
           <q-pagination
-            :modelValue="props.page"
+            v-model="page"
             @update:model-value="changePage"
-            :max="totalPage()"
+            :max="totalPage"
+            :max-pages="10"
             direction-links
             flat
             color="grey"
@@ -33,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 
 const props = defineProps({
   rows: {
@@ -60,13 +63,19 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  disableSelect: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits(["changePage"]);
-
+const page = ref(props.page);
 const selected = ref([]);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
+  page: page.value,
+  rowsPerPage: 10,
 });
 
 const getPaginationLabel = () => {
@@ -78,9 +87,9 @@ const getPaginationLabel = () => {
   ${props.totalCount} results`;
 };
 
-const totalPage = () => {
-  return Math.ceil(props.totalCount / props.rowsPerPage);
-};
+const totalPage = computed(() =>
+  Math.ceil(props.totalCount / props.rowsPerPage)
+);
 
 const changePage = (page: number) => {
   emit("changePage", page);
