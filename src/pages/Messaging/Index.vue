@@ -48,7 +48,12 @@
           </q-list>
         </q-menu>
       </q-btn>
-      <q-btn color="primary" label="Close Conversation" no-caps />
+      <q-btn
+        color="primary"
+        label="Close Conversation"
+        no-caps
+        @click="closeConversation"
+      />
     </div>
     <div>
       <!-- Search Customer -->
@@ -133,6 +138,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import { FormPayload } from "src/types/CustomerTypes";
 import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
+import { closeChat } from "src/api/messaging";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
 
@@ -199,6 +205,11 @@ const assignUser = (manager: Manager) => {
   const userId = manager.user_id;
 
   assignUserHelper(chatId, userId);
+};
+
+const closeConversation = async () => {
+  const chatId = getChats.value[getSelectedChatIndex.value].id;
+  await closeChat(chatId);
 };
 </script>
 

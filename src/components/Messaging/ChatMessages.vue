@@ -59,33 +59,56 @@
       </div>
     </q-scroll-area>
     <footer class="fixed bottom-0 q-pa-xs q-pb-md" style="width: 90%">
-      <q-input
-        v-model="message"
-        dense
-        borderless
-        bg-color="grey-2"
-        type="textarea"
-        @keydown.enter.prevent="sendMessage"
-      />
-      <div class="row justify-end">
-        <q-btn
-          flat
-          round
-          color="grey"
-          icon="insert_comment"
-          size="md"
-          class="q-mt-md"
-          @click="showMessageTemplate = true"
+      <div v-if="getSelectedTab === ChatTypes.ONGOING">
+        <q-input
+          v-model="message"
+          dense
+          borderless
+          bg-color="grey-2"
+          type="textarea"
+          @keydown.enter.prevent="sendMessage"
         />
-        <q-btn flat round color="grey" icon="mic" size="md" class="q-mt-md" />
-        <q-btn flat round color="grey" icon="image" size="md" class="q-mt-md" />
-        <div class="row justify-end q-mt-md">
+        <div class="row justify-end">
           <q-btn
-            color="primary"
-            label="Send"
-            class="dark-btn"
-            @click="sendMessage"
+            flat
+            round
+            color="grey"
+            icon="insert_comment"
+            size="md"
+            class="q-mt-md"
+            @click="showMessageTemplate = true"
           />
+          <q-btn flat round color="grey" icon="mic" size="md" class="q-mt-md" />
+          <q-btn
+            flat
+            round
+            color="grey"
+            icon="image"
+            size="md"
+            class="q-mt-md"
+          />
+          <div class="row justify-end q-mt-md">
+            <q-btn
+              color="primary"
+              label="Send"
+              class="dark-btn"
+              @click="sendMessage"
+            />
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="w-full p-4 flex gap-2 items-center bg-gray-200 rounded-md">
+          <p class="text-gray-400 text-xs w-7/12">
+            You are in preview mode of this chat
+          </p>
+          <button
+            class="w-4/12 bg-primary text-white p-2 rounded-md shadow-md"
+            @click="activateChat"
+          >
+            <q-icon name="message"></q-icon>
+            Take it
+          </button>
         </div>
       </div>
     </footer>
@@ -109,7 +132,7 @@ import {
   MessageType,
 } from "../../types/MessagingTypes";
 import MessageTemplateDialog from "./MessageTemplateDialog.vue";
-import { startNewChat } from "src/api/messaging";
+import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 
 const messagingStore = useMessagingStore();
@@ -119,8 +142,13 @@ const emit = defineEmits(["newChatCreated"]);
 
 const message: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
-const { getChats, getSelectedChatIndex, getContactNumber, getCustomerName } =
-  storeToRefs(messagingStore);
+const {
+  getChats,
+  getSelectedChatIndex,
+  getContactNumber,
+  getCustomerName,
+  getSelectedTab,
+} = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const messages = computed<unknown[]>(() => {
@@ -179,6 +207,13 @@ const sendMessage = async () => {
   }
 
   message.value = "";
+};
+
+const activateChat = async () => {
+  const chat = getChats.value[getSelectedChatIndex.value];
+  const chatId = chat.id;
+  await updateChatStatus(chatId, ChatTypes.ONGOING);
+  emit("newChatCreated", ChatTypes.ONGOING);
 };
 </script>
 
