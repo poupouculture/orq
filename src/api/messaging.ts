@@ -55,3 +55,24 @@ export const startNewChat = async (customerId: string, textMessage: string) => {
 
   return data;
 };
+
+export const updateChatStatus = async (id: string, status: string) => {
+  const {
+    data: { data },
+  } = await api.post(`/waba/update-chat-status`, {
+    chat_id: id,
+    status,
+  });
+
+  return data;
+};
+
+export const closeChat = async (id: string) => {
+  const {
+    data: { data },
+  } = await api.post(`/waba/close-chat`, {
+    chat_id: id,
+  });
+
+  return data;
+};
