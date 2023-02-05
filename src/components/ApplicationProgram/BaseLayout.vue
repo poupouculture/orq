@@ -254,7 +254,7 @@ onMounted(() => {
       tempData.language === "en_US" ? "English" : tempData.language;
 
     header.value = headerComponent?.format;
-    if (header.value === "Text") {
+    if (header.value.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent?.text;
     } else {
       media.value = headerComponent?.text;
@@ -376,7 +376,7 @@ const submitGeneralInformation = () => {
     components: [
       {
         type: "HEADER",
-        format: header.value,
+        format: header.value.toUpperCase(),
         text: header.value === "Text" ? headerMessage.value : media.value,
       },
       {
