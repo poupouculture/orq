@@ -32,7 +32,7 @@
       </svg>
     </div>
     <q-scroll-area style="height: 70%">
-      <div class="row items-center">
+      <div class="row items-center sticky top-0">
         <q-avatar class="rounded-avatar">
           <img src="https://cdn.quasar.dev/img/avatar.png" />
         </q-avatar>
