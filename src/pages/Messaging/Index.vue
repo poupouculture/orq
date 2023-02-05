@@ -1,58 +1,106 @@
 <template>
-  <div v-if="getSelectedChatIndex !== null" class="row justify-end q-gutter-sm">
-    <q-btn
-      outline
-      color="primary"
-      label="Reassign"
-      icon-right="expand_more"
-      no-caps
-      v-if="userRole === Role.CS_MANAGER"
+  <div class="hidden lg:!block">
+    <div
+      v-if="getSelectedChatIndex !== null"
+      class="row justify-end q-gutter-sm"
     >
-      <q-menu
-        class="q-ma-lg"
-        anchor="bottom left"
-        self="top left"
-        :offset="[0, 5]"
-        style="width: 300px"
-        fit
+      <q-btn
+        outline
+        color="primary"
+        label="Reassign"
+        icon-right="expand_more"
+        no-caps
+        v-if="userRole === Role.CS_MANAGER"
       >
-        <q-list separator>
-          <q-item
-            v-for="(manager, index) in managers"
-            :key="index"
-            clickable
-            v-close-popup
-            @click="assignUser(manager)"
-          >
-            <q-item-section>
-              <div class="row items-center">
-                <q-avatar size="md">
-                  <img src="../../assets/images/profileavatar.png" />
-                </q-avatar>
-                <div class="q-ml-md">
-                  <div class="text-weight-bold">
-                    {{ manager.first_name }} {{ manager.last_name }}
-                  </div>
-                  <div class="text-weight-light">
-                    {{ manager.role_name }}
+        <q-menu
+          class="q-ma-lg"
+          anchor="bottom left"
+          self="top left"
+          :offset="[0, 5]"
+          style="width: 300px"
+          fit
+        >
+          <q-list separator>
+            <q-item
+              v-for="(manager, index) in managers"
+              :key="index"
+              clickable
+              v-close-popup
+              @click="assignUser(manager)"
+            >
+              <q-item-section>
+                <div class="row items-center">
+                  <q-avatar size="md">
+                    <img src="../../assets/images/profileavatar.png" />
+                  </q-avatar>
+                  <div class="q-ml-md">
+                    <div class="text-weight-bold">
+                      {{ manager.first_name }} {{ manager.last_name }}
+                    </div>
+                    <div class="text-weight-light">
+                      {{ manager.role_name }}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </q-item-section>
-            <q-separator />
-          </q-item>
-        </q-list>
-      </q-menu>
-    </q-btn>
-    <q-btn color="primary" label="Close Conversation" no-caps />
-  </div>
-  <div>
-    <!-- Search Customer -->
-    <SearchCustomer />
-    <div v-if="newCustomer">
-      <div class="text-weight-medium">New Contact</div>
+              </q-item-section>
+              <q-separator />
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+      <q-btn color="primary" label="Close Conversation" no-caps />
+    </div>
+    <div>
+      <!-- Search Customer -->
+      <SearchCustomer />
+      <div v-if="newCustomer">
+        <div class="text-weight-medium">New Contact</div>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey q-mt-md"
+          align="left"
+          active-color="primary"
+          indicator-color="primary"
+          narrow-indicator
+          no-caps
+          inset
+        >
+          <q-tab name="customer" label="Customer" />
+          <q-tab name="serviceDetail" label="Service Detail" />
+          <q-tab name="serviceRecord" label="Service Record" />
+        </q-tabs>
+        <q-separator size="2px" style="margin-top: -2px" />
+        <q-card class="q-py-md q-px-lg q-mt-md bg-grey-2" flat>
+          User Group
+          <q-card class="bg-white q-mt-sm row" flat>
+            <q-btn label="Name" class="row text-grey-8" unelevated no-caps>
+              <img
+                src="../../assets/images/dropdown.png"
+                class="dropdown-img"
+              />
+              <q-menu class="q-ma-lg" style="width: 400px">
+                <div class="column"></div>
+              </q-menu>
+            </q-btn>
+            <q-separator spaced vertical inset />
+            <q-input
+              v-model="inputGroup"
+              class="col-8"
+              placeholder="Public Group - Only Managers"
+              dense
+              borderless
+            />
+            <q-btn class="row no-hover-btn" unelevated no-caps>
+              <img src="../../assets/images/dropdown.png" />
+            </q-btn>
+            <q-separator spaced vertical inset />
+            <q-toggle v-model="toggle" color="primary" />
+          </q-card>
+        </q-card>
+      </div>
       <q-tabs
-        v-model="tab"
+        v-model="customerInformationTab"
         dense
         class="text-grey q-mt-md"
         align="left"
@@ -62,67 +110,17 @@
         no-caps
         inset
       >
-        <q-tab name="customer" label="Customer" />
-        <q-tab name="serviceDetail" label="Service Detail" />
-        <q-tab name="serviceRecord" label="Service Record" />
+        <q-tab name="general" label="General Information" />
+        <q-tab name="other" label="Other Information" />
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" />
-      <q-card class="q-py-md q-px-lg q-mt-md bg-grey-2" flat>
-        User Group
-        <q-card class="bg-white q-mt-sm row" flat>
-          <q-btn label="Name" class="row text-grey-8" unelevated no-caps>
-            <img src="../../assets/images/dropdown.png" class="dropdown-img" />
-            <q-menu class="q-ma-lg" style="width: 400px">
-              <div class="column"></div>
-            </q-menu>
-          </q-btn>
-          <q-separator spaced vertical inset />
-          <q-input
-            v-model="inputGroup"
-            class="col-8"
-            placeholder="Public Group - Only Managers"
-            dense
-            borderless
-          />
-          <q-btn class="row no-hover-btn" unelevated no-caps>
-            <img src="../../assets/images/dropdown.png" />
-          </q-btn>
-          <q-separator spaced vertical inset />
-          <q-toggle v-model="toggle" color="primary" />
-        </q-card>
-      </q-card>
+      <GeneralInformation
+        :show-active="false"
+        :show-return-button="false"
+        :show-delete-button="false"
+        @submit="saveCustomer"
+      />
     </div>
-    <q-tabs
-      v-model="customerInformationTab"
-      dense
-      class="text-grey q-mt-md"
-      align="left"
-      active-color="primary"
-      indicator-color="primary"
-      narrow-indicator
-      no-caps
-      inset
-    >
-      <q-tab name="general" label="General Information" />
-      <q-tab name="other" label="Other Information" />
-    </q-tabs>
-    <q-separator size="2px" style="margin-top: -2px" />
-    <GeneralInformation
-      :show-active="false"
-      :show-return-button="false"
-      :show-delete-button="false"
-      @submit="saveCustomer"
-    />
-  </div>
-  <div class="fixed right-9 top-7 z-[9999]">
-    <router-link class="block w-3 h-3 cursor-pointer" to="">
-      <q-icon
-        name="close"
-        size="1rem"
-        class="block"
-        @click="$router.go(-1)"
-      ></q-icon>
-    </router-link>
   </div>
 </template>
 

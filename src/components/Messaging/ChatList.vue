@@ -1,6 +1,11 @@
 <template>
-  <q-drawer :modelValue="true" class="bg-grey-2" show-if-above bordered>
-    <q-list>
+  <q-drawer
+    v-model="openDrawer"
+    class="bg-grey-2 w-full"
+    show-if-above
+    bordered
+  >
+    <q-list class="pb-14">
       <q-item-label header>
         <img class="q-mb-lg" src="../../assets/images/logo-invert.png" />
         <q-input
@@ -219,6 +224,7 @@ const emit = defineEmits(["changeTab"]);
 
 // States
 const activeChat: Ref<number | null> = ref(null);
+const openDrawer: Ref<boolean> = ref(true);
 const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
 const tabs: Ref<ChatTypes[]> = ref([
@@ -270,6 +276,7 @@ const getLastMessage = (lastMessage: LastMessage) => {
 
 const selectChat = (index: number) => {
   customerStore.$reset();
+  if (window.innerWidth <= 1024) openDrawer.value = false;
 
   activeChat.value = index;
   const { id: chatId } = props.chatList[index];
@@ -303,9 +310,14 @@ const startNewChat = async (user: ICustomer) => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+:deep(.q-drawer) {
+  width: 100% !important;
+  @media screen and (min-width: 1024px) {
+    width: 300px !important;
+  }
+}
 .contact-card:hover {
   cursor: pointer;
 }
 </style>
-:sp

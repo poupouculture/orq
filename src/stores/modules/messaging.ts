@@ -31,6 +31,12 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedTab: (state) => state.selectedTab,
   },
   actions: {
+    closeChat() {
+      this.selectedChatIndex = -1;
+      this.chatMessages = [];
+      this.contactNumber = null;
+      this.customerName = null;
+    },
     setSelectedChatIndex(index: number) {
       this.selectedChatIndex = index;
     },
