@@ -20,11 +20,11 @@ const useCustomerStore = defineStore("customer", {
         email: "",
         first_name: "",
         gender: "",
-        id: "",
+        id: null,
         id_number: "",
         isActive: true,
         last_name: "",
-        position: null,
+        position: "",
         status: "",
         user_created: "",
         user_updated: "",
@@ -38,6 +38,7 @@ const useCustomerStore = defineStore("customer", {
       const {
         data: { data: customer },
       } = await getCustomer(id);
+      console.log(customer);
       this.customer = customer;
     },
     async fetchUser(id: string) {

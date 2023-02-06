@@ -120,6 +120,7 @@
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" />
       <GeneralInformation
+        :mode="isContactNumberExist ? '' : 'show'"
         :show-active="false"
         :show-return-button="false"
         :show-delete-button="false"
@@ -130,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useCustomerStore from "src/stores/modules/customer";
@@ -164,6 +165,9 @@ interface Manager {
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const isContactNumberExist = computed(
+  () => messagingStore.isContactNumberExist
+);
 const userInfo = useUserInfoStore();
 const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);

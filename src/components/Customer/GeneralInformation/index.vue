@@ -313,6 +313,9 @@ watch(getCustomer, () => {
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.isActive;
 
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
