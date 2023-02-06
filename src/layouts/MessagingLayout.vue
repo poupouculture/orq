@@ -45,3 +45,10 @@ const changeTab = (val: ChatTypes) => {
   chatList.value.onChangeTab(val);
 };
 </script>
+<style scoped lang="scss">
+:deep(.q-page-container) {
+  @media screen and (max-width: 1024px) {
+    padding-right: 0px !important;
+  }
+}
+</style>

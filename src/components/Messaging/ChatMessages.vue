@@ -3,12 +3,36 @@
     side="right"
     show-if-above
     bordered
+    :breakpoint="0"
+    :model-value="true"
     :width="450"
-    :breakpoint="500"
     class="bg-white q-pa-md"
   >
+    <!-- Close button -->
+    <div
+      v-if="getContactNumber"
+      class="absolute top-7 right-8 cursor-pointer z-10"
+    >
+      <svg
+        @click="closeChat()"
+        xmlns="http://www.w3.org/2000/svg"
+        class="text-gray-600 cursor-pointer"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M18 6l-12 12"></path>
+        <path d="M6 6l12 12"></path>
+      </svg>
+    </div>
     <q-scroll-area style="height: 70%">
-      <div class="row items-center">
+      <div class="row items-center sticky top-0">
         <q-avatar class="rounded-avatar">
           <img src="https://cdn.quasar.dev/img/avatar.png" />
         </q-avatar>
@@ -154,6 +178,10 @@ const messages = computed<unknown[]>(() => {
   return groupedMessages;
 });
 
+const closeChat = () => {
+  console.log("close chat");
+  messagingStore.closeChat();
+};
 const sendMessage = async () => {
   if (messages.value.length > 0) {
     const chat = getChats.value[getSelectedChatIndex.value];
@@ -190,6 +218,11 @@ const activateChat = async () => {
 </script>
 
 <style scoped lang="scss">
+:deep(.q-drawer) {
+  @media screen and (max-width: 1024px) {
+    width: 100% !important;
+  }
+}
 .rounded-avatar {
   border-radius: 50% !important;
 }
