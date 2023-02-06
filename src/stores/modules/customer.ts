@@ -29,6 +29,7 @@ const useCustomerStore = defineStore("customer", {
         user_created: "",
         user_updated: "",
         customer_groups: [],
+        companies: [],
       },
     } as unknown as IState),
   getters: {
