@@ -15,3 +15,7 @@ export interface Company {
   status: string;
   user_created: string;
 }
+
+export interface CompanyRelation {
+  companies_id: Company;
+}

@@ -211,7 +211,8 @@ import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
 import { getAllCustomerGroups } from "src/api/customerGroup";
 import { getCompanies } from "src/api/companies";
-import { Company as ICompany } from "src/types/CompanyTypes";
+import type { Company as ICompany } from "src/types/CompanyTypes";
+import { useQuasar } from "quasar";
 
 interface Position {
   value: string;
@@ -250,6 +251,7 @@ const props = defineProps({
   },
 });
 const customerStore = useCustomerStore();
+const $q = useQuasar();
 
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
@@ -268,22 +270,29 @@ const firstName = ref("");
 const lastName = ref("");
 const idNumber = ref("");
 const customerCode = ref("");
-const gender: Ref<Gender | any> = ref(null);
+const gender: Ref<Gender | undefined> = ref(undefined);
 const dateOfBirth = ref("");
-const position: Ref<Position | any> = ref(null);
-const company: Ref<ICompany | any> = ref(null);
-const customerGroup: Ref<ICustomerGroup | any> = ref(null);
+const position: Ref<Position | undefined> = ref(undefined);
+const company: Ref<ICompany | undefined> = ref(undefined);
+const customerGroup: Ref<ICustomerGroup | undefined> = ref(undefined);
 const isActive = ref(true);
-const companyOptions: Ref<ICompany[] | any> = ref(null);
-const customerGroupOptions: Ref<ICustomerGroup[] | any> = ref([]);
+const companyOptions: Ref<ICompanyOptions[] | undefined> = ref(undefined);
+const customerGroupOptions: Ref<ICustomerGroupOptions[] | undefined> =
+  ref(undefined);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const tags = ref("");
-const customerForm: Ref<any> = ref(null);
+const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(async () => {
+  $q.loading.show({
+    message: "Please wait...",
+    boxClass: "bg-grey-2 text-grey-9",
+    spinnerColor: "primary",
+  });
+
   const customer = customerStore.getCustomer;
 
   const {
@@ -321,15 +330,22 @@ onMounted(async () => {
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
 
-    customerGroup.value = customerGroupOptions.value.find(
-      (item: ICustomerGroupOptions) =>
-        item.value === customer.customer_groups[0].customer_groups_id
-    );
-    company.value = companyOptions.value.find(
-      (item: ICompanyOptions) =>
-        item.value === customer.companies[0].companies_id.id
-    );
+    if (customer.customer_groups.length) {
+      customerGroup.value = customerGroupOptions.value?.find(
+        (item: ICustomerGroupOptions) =>
+          item.value === customer.customer_groups[0].customer_groups_id
+      );
+    }
+
+    if (customer.companies?.length) {
+      company.value = companyOptions.value?.find(
+        (item: ICompanyOptions) =>
+          item.value === customer.companies[0].companies_id.id
+      );
+    }
   }
+
+  $q.loading.hide();
 });
 
 watch(getCustomer, () => {
@@ -347,14 +363,18 @@ watch(getCustomer, () => {
     (item) => item.value === getCustomer.value.gender
   );
 
-  customerGroup.value = customerGroupOptions.value.find(
-    (item: ICustomerGroupOptions) =>
-      item.value === getCustomer.value.customer_groups[0].customer_groups_id
-  );
-  company.value = companyOptions.value.find(
-    (item: ICompanyOptions) =>
-      item.value === getCustomer.value.companies[0].companies_id.id
-  );
+  if (getCustomer.value.customer_groups.length) {
+    customerGroup.value = customerGroupOptions.value?.find(
+      (item: ICustomerGroupOptions) =>
+        item.value === getCustomer.value.customer_groups[0].customer_groups_id
+    );
+  }
+  if (getCustomer.value.companies?.length) {
+    company.value = companyOptions.value?.find(
+      (item: ICompanyOptions) =>
+        item.value === getCustomer.value.companies[0].companies_id.id
+    );
+  }
 });
 
 const submitDelete = () => {
@@ -379,8 +399,8 @@ const onSubmit = async () => {
         isActive: isActive.value,
         dob: dateOfBirth.value,
         position: position.value?.value,
-        customer_groups: [{ customer_groups_id: customerGroup.value.id }],
-        companies: [{ companies_id: company.value.id }],
+        customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
+        companies: [{ companies_id: company.value?.id }],
       };
       emit("submit", payload);
     }
