@@ -149,6 +149,7 @@
             <q-select
               outlined
               v-model="customerGroup"
+              :options="customerGroupOptions"
               dense
               :disable="mode == 'show'"
             />
@@ -206,9 +207,12 @@ import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
+import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
-import { getCompanies } from "src/api/companies.ts";
-import { ICompany } from "src/types/CompanyTypes";
+import { getAllCustomerGroups } from "src/api/customerGroup";
+import { getCompanies } from "src/api/companies";
+import type { Company as ICompany } from "src/types/CompanyTypes";
+import { useQuasar } from "quasar";
 
 interface Position {
   value: string;
@@ -218,6 +222,16 @@ interface Position {
 interface Gender {
   value: "m" | "f";
   label: "Male" | "Female";
+}
+
+interface ICustomerGroupOptions extends ICustomerGroup {
+  value: string;
+  label: string;
+}
+
+interface ICompanyOptions extends ICompany {
+  value: string | number;
+  label: string;
 }
 
 const emit = defineEmits(["submit"]);
@@ -237,6 +251,7 @@ const props = defineProps({
   },
 });
 const customerStore = useCustomerStore();
+const $q = useQuasar();
 
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
@@ -255,27 +270,43 @@ const firstName = ref("");
 const lastName = ref("");
 const idNumber = ref("");
 const customerCode = ref("");
-const gender: Ref<Gender | any> = ref(null);
+const gender: Ref<Gender | undefined> = ref(undefined);
 const dateOfBirth = ref("");
-const position: Ref<Position | any> = ref(null);
-const company: Ref<ICompany | any> = ref(null);
-const customerGroup = ref("");
+const position: Ref<Position | undefined> = ref(undefined);
+const company: Ref<ICompany | undefined> = ref(undefined);
+const customerGroup: Ref<ICustomerGroup | undefined> = ref(undefined);
 const isActive = ref(true);
-const companyOptions: Ref<ICompany[] | any> = ref(null);
+const companyOptions: Ref<ICompanyOptions[] | undefined> = ref(undefined);
+const customerGroupOptions: Ref<ICustomerGroupOptions[] | undefined> =
+  ref(undefined);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const tags = ref("");
-const customerForm: Ref<any> = ref(null);
+const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(async () => {
+  $q.loading.show({
+    message: "Please wait...",
+    boxClass: "bg-grey-2 text-grey-9",
+    spinnerColor: "primary",
+  });
+
   const customer = customerStore.getCustomer;
 
-  interface ICompanyOptions extends ICompany {
-    value: string;
-    label: string;
-  }
+  const {
+    data: { data: customerGroups },
+  } = await getAllCustomerGroups();
+  const mappedCustomerGroups = customerGroups.map(
+    (item: ICustomerGroupOptions) => {
+      item.value = item.id;
+      item.label = item.name;
+      return item;
+    }
+  );
+  customerGroupOptions.value = mappedCustomerGroups;
+
   const {
     data: { data: companies },
   } = await getCompanies();
@@ -299,10 +330,22 @@ onMounted(async () => {
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
 
-    company.value = companyOptions.value.find(
-      (item: ICompany) => item.value === customer.companies[0].companies_id.id
-    );
+    if (customer.customer_groups.length) {
+      customerGroup.value = customerGroupOptions.value?.find(
+        (item: ICustomerGroupOptions) =>
+          item.value === customer.customer_groups[0].customer_groups_id
+      );
+    }
+
+    if (customer.companies?.length) {
+      company.value = companyOptions.value?.find(
+        (item: ICompanyOptions) =>
+          item.value === customer.companies[0].companies_id.id
+      );
+    }
   }
+
+  $q.loading.hide();
 });
 
 watch(getCustomer, () => {
@@ -312,6 +355,9 @@ watch(getCustomer, () => {
   customerCode.value = getCustomer.value.customer_code;
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.isActive;
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
 
   position.value = positionOptions.find(
     (item) => item.value === getCustomer.value.position
@@ -320,10 +366,18 @@ watch(getCustomer, () => {
     (item) => item.value === getCustomer.value.gender
   );
 
-  company.value = companyOptions.value.find(
-    (item: ICompany) =>
-      item.value === getCustomer.value.companies[0].companies_id.id
-  );
+  if (getCustomer.value.customer_groups.length) {
+    customerGroup.value = customerGroupOptions.value?.find(
+      (item: ICustomerGroupOptions) =>
+        item.value === getCustomer.value.customer_groups[0].customer_groups_id
+    );
+  }
+  if (getCustomer.value.companies?.length) {
+    company.value = companyOptions.value?.find(
+      (item: ICompanyOptions) =>
+        item.value === getCustomer.value.companies[0].companies_id.id
+    );
+  }
 });
 
 const submitDelete = () => {
@@ -348,7 +402,8 @@ const onSubmit = async () => {
         isActive: isActive.value,
         dob: dateOfBirth.value,
         position: position.value?.value,
-        companies: [{ companies_id: company.value.id }],
+        customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
+        companies: [{ companies_id: company.value?.id }],
       };
       emit("submit", payload);
     }
