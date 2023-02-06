@@ -27,6 +27,11 @@ export const getCustomerGroups = async (
   return customerGroups;
 };
 
+export const getAllCustomerGroups = async () => {
+  const result = await api.get(`/items/customer_groups`);
+  return result;
+};
+
 export const getAllCustomerEdit = async (payload) => {
   const { limit, page, customers } = payload;
   const fields = "id, first_name, last_name, gender, date_created, position";

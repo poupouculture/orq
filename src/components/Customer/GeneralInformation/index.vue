@@ -149,6 +149,7 @@
             <q-select
               outlined
               v-model="customerGroup"
+              :options="customerGroupOptions"
               dense
               :disable="mode == 'show'"
             />
@@ -206,9 +207,11 @@ import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
+import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
-import { getCompanies } from "src/api/companies.ts";
-import { ICompany } from "src/types/CompanyTypes";
+import { getAllCustomerGroups } from "src/api/customerGroup";
+import { getCompanies } from "src/api/companies";
+import { Company as ICompany } from "src/types/CompanyTypes";
 
 interface Position {
   value: string;
@@ -218,6 +221,16 @@ interface Position {
 interface Gender {
   value: "m" | "f";
   label: "Male" | "Female";
+}
+
+interface ICustomerGroupOptions extends ICustomerGroup {
+  value: string;
+  label: string;
+}
+
+interface ICompanyOptions extends ICompany {
+  value: string | number;
+  label: string;
 }
 
 const emit = defineEmits(["submit"]);
@@ -259,9 +272,10 @@ const gender: Ref<Gender | any> = ref(null);
 const dateOfBirth = ref("");
 const position: Ref<Position | any> = ref(null);
 const company: Ref<ICompany | any> = ref(null);
-const customerGroup = ref("");
+const customerGroup: Ref<ICustomerGroup | any> = ref(null);
 const isActive = ref(true);
 const companyOptions: Ref<ICompany[] | any> = ref(null);
+const customerGroupOptions: Ref<ICustomerGroup[] | any> = ref([]);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -272,10 +286,18 @@ const { getCustomer } = storeToRefs(customerStore);
 onMounted(async () => {
   const customer = customerStore.getCustomer;
 
-  interface ICompanyOptions extends ICompany {
-    value: string;
-    label: string;
-  }
+  const {
+    data: { data: customerGroups },
+  } = await getAllCustomerGroups();
+  const mappedCustomerGroups = customerGroups.map(
+    (item: ICustomerGroupOptions) => {
+      item.value = item.id;
+      item.label = item.name;
+      return item;
+    }
+  );
+  customerGroupOptions.value = mappedCustomerGroups;
+
   const {
     data: { data: companies },
   } = await getCompanies();
@@ -299,8 +321,13 @@ onMounted(async () => {
 
     gender.value = genderOptions.find((item) => item.value === customer.gender);
 
+    customerGroup.value = customerGroupOptions.value.find(
+      (item: ICustomerGroupOptions) =>
+        item.value === customer.customer_groups[0].customer_groups_id
+    );
     company.value = companyOptions.value.find(
-      (item: ICompany) => item.value === customer.companies[0].companies_id.id
+      (item: ICompanyOptions) =>
+        item.value === customer.companies[0].companies_id.id
     );
   }
 });
@@ -312,13 +339,20 @@ watch(getCustomer, () => {
   customerCode.value = getCustomer.value.customer_code;
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.isActive;
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
 
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
 
+  customerGroup.value = customerGroupOptions.value.find(
+    (item: ICustomerGroupOptions) =>
+      item.value === getCustomer.value.customer_groups[0].customer_groups_id
+  );
   company.value = companyOptions.value.find(
-    (item: ICompany) =>
+    (item: ICompanyOptions) =>
       item.value === getCustomer.value.companies[0].companies_id.id
   );
 });
@@ -345,6 +379,7 @@ const onSubmit = async () => {
         isActive: isActive.value,
         dob: dateOfBirth.value,
         position: position.value?.value,
+        customer_groups: [{ customer_groups_id: customerGroup.value.id }],
         companies: [{ companies_id: company.value.id }],
       };
       emit("submit", payload);

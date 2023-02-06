@@ -44,6 +44,7 @@ export interface ICustomer {
   status: string;
   user_created: string;
   user_updated: string;
+  customer_groups: any[];
 }
 
 export interface IState {
