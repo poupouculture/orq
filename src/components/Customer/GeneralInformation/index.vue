@@ -20,7 +20,8 @@
               <p class="label-style">Label</p>
               <q-select
                 outlined
-                v-model="tags"
+                v-model="tag"
+                :options="tagOptions"
                 :disable="mode == 'show'"
                 dense
               />
@@ -212,10 +213,12 @@ import { required } from "src/utils/validation-rules";
 import { getAllCustomerGroups } from "src/api/customerGroup";
 import { getCompanies } from "src/api/companies";
 import type { Company as ICompany } from "src/types/CompanyTypes";
+import type { Tag } from "src/types/TagTypes";
+import { getTags } from "src/api/tag";
 import { useQuasar } from "quasar";
 
-interface Position {
-  value: string;
+interface Option {
+  value: string | number;
   label: string;
 }
 
@@ -224,15 +227,10 @@ interface Gender {
   label: "Male" | "Female";
 }
 
-interface ICustomerGroupOptions extends ICustomerGroup {
-  value: string;
-  label: string;
-}
-
-interface ICompanyOptions extends ICompany {
-  value: string | number;
-  label: string;
-}
+type Position = Option;
+type ICustomerGroupOptions = Option & ICustomerGroup;
+type ICompanyOptions = Option & ICompany;
+type ITagOptions = Option & Tag;
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
@@ -279,10 +277,11 @@ const isActive = ref(true);
 const companyOptions: Ref<ICompanyOptions[] | undefined> = ref(undefined);
 const customerGroupOptions: Ref<ICustomerGroupOptions[] | undefined> =
   ref(undefined);
+const tagOptions: Ref<Tag[] | undefined> = ref(undefined);
+const tag: Ref<Tag | undefined> = ref(undefined);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
-const tags = ref("");
 const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
@@ -295,10 +294,12 @@ onMounted(async () => {
 
   const customer = customerStore.getCustomer;
 
-  const {
-    data: { data: customerGroups },
-  } = await getAllCustomerGroups();
-  const mappedCustomerGroups = customerGroups.map(
+  const [customerGroups_, companies_, tags_] = await Promise.all([
+    getAllCustomerGroups(),
+    getCompanies(),
+    getTags(),
+  ]);
+  const mappedCustomerGroups = customerGroups_.data.data.map(
     (item: ICustomerGroupOptions) => {
       item.value = item.id;
       item.label = item.name;
@@ -306,16 +307,18 @@ onMounted(async () => {
     }
   );
   customerGroupOptions.value = mappedCustomerGroups;
-
-  const {
-    data: { data: companies },
-  } = await getCompanies();
-  const mappedCompanies = companies.map((item: ICompanyOptions) => {
+  const mappedCompanies = companies_.data.data.map((item: ICompanyOptions) => {
     item.value = item.id;
     item.label = item.name_english;
     return item;
   });
   companyOptions.value = mappedCompanies;
+  const mappedTags = tags_.data.data.map((item: ITagOptions) => {
+    item.value = item.id;
+    item.label = item.name;
+    return item;
+  });
+  tagOptions.value = mappedTags;
 
   if (customer) {
     firstName.value = customer.first_name;
@@ -341,6 +344,12 @@ onMounted(async () => {
       company.value = companyOptions.value?.find(
         (item: ICompanyOptions) =>
           item.value === customer.companies[0].companies_id.id
+      );
+    }
+
+    if (customer.tags?.length) {
+      tag.value = tagOptions.value?.find(
+        (item: ITagOptions) => item.value === customer.tags[0].tags_id.id
       );
     }
   }
@@ -375,6 +384,12 @@ watch(getCustomer, () => {
         item.value === getCustomer.value.companies[0].companies_id.id
     );
   }
+
+  if (getCustomer.value.tags?.length) {
+    tag.value = tagOptions.value?.find(
+      (item: ITagOptions) => item.value === getCustomer.value.tags[0].tags_id.id
+    );
+  }
 });
 
 const submitDelete = () => {
@@ -401,6 +416,7 @@ const onSubmit = async () => {
         position: position.value?.value,
         customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
         companies: [{ companies_id: company.value?.id }],
+        tags: [{ tags_id: tag.value?.id }],
       };
       emit("submit", payload);
     }
