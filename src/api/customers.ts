@@ -45,9 +45,10 @@ export const getCustomer = async (id: string) => {
   const companies = "companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
   const customerGroups = "customer_groups.*";
+  const tags = "tags.tags_id.*";
 
   const customer = await api.get(
-    `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups}`
+    `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`
   );
   return customer;
 };

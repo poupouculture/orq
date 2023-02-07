@@ -1,4 +1,5 @@
 import { CompanyRelation } from "./CompanyTypes";
+import { TagRelation } from "./TagTypes";
 
 export interface FormPayload {
   first_name: string;
@@ -41,6 +42,7 @@ export interface ICustomer {
   user_created: string;
   user_updated: string;
   customer_groups: any[];
+  tags: [TagRelation];
 }
 
 export interface IState {
