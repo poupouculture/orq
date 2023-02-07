@@ -40,7 +40,6 @@ const useCustomerStore = defineStore("customer", {
       const {
         data: { data: customer },
       } = await getCustomer(id);
-      console.log(customer);
       this.customer = customer;
     },
     async fetchUser(id: string) {
