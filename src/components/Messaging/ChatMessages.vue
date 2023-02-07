@@ -179,7 +179,7 @@ const messages = computed<unknown[]>(() => {
 });
 
 const closeChat = () => {
-  console.log("close chat");
+  customerStore.$reset();
   messagingStore.closeChat();
 };
 const sendMessage = async () => {

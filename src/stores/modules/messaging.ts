@@ -29,6 +29,7 @@ const useMessagingStore = defineStore("messaging", {
     getContactNumber: (state) => state.contactNumber,
     getCustomerName: (state) => state.customerName,
     getSelectedTab: (state) => state.selectedTab,
+    isContactNumberExist: (state) => !!state.contactNumber,
   },
   actions: {
     closeChat() {

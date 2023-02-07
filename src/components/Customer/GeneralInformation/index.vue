@@ -213,6 +213,7 @@ import { getAllCustomerGroups } from "src/api/customerGroup";
 import { getCompanies } from "src/api/companies";
 import type { Company as ICompany } from "src/types/CompanyTypes";
 import { useQuasar } from "quasar";
+import useMessagingStore from "src/stores/modules/messaging";
 
 interface Position {
   value: string;
@@ -251,6 +252,8 @@ const props = defineProps({
   },
 });
 const customerStore = useCustomerStore();
+const messagingStore = useMessagingStore();
+const { getContactNumber } = storeToRefs(messagingStore);
 const $q = useQuasar();
 
 const positionOptions: Position[] = [
@@ -359,6 +362,9 @@ watch(getCustomer, () => {
     (item) => item.value === getCustomer.value.position
   );
 
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
@@ -375,6 +381,11 @@ watch(getCustomer, () => {
         item.value === getCustomer.value.companies[0].companies_id.id
     );
   }
+});
+
+// Watch Contact number
+watch(getContactNumber, (val: string) => {
+  idNumber.value = val;
 });
 
 const submitDelete = () => {
