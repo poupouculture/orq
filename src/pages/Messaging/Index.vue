@@ -49,6 +49,7 @@
         </q-menu>
       </q-btn>
       <q-btn
+        v-if="userRole === Role.CS_MANAGER"
         color="primary"
         label="Close Conversation"
         no-caps
