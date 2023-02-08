@@ -15,6 +15,7 @@ export const enum MessageType {
 
 export interface IMessage {
   id: number;
+  chat_id: string;
   status: string;
   date_created: string;
   type: string;

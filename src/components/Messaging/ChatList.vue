@@ -276,6 +276,7 @@ const getLastMessage = (lastMessage: LastMessage) => {
 
 const selectChat = (index: number) => {
   customerStore.$reset();
+  // close drawer when mobile view
   if (window.innerWidth <= 1024) openDrawer.value = false;
 
   activeChat.value = index;

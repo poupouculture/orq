@@ -58,7 +58,11 @@
               "
               class="text-center py-4 text-[#9A9AAF] date"
             >
-              {{ format(new Date(message.date_created), "eee, d MMM") }}
+              {{
+                isToday(new Date(message.date_created))
+                  ? "Today"
+                  : format(new Date(message.date_created), "eee, d MMM")
+              }}
             </div>
             <!-- Chat Items -->
             <div
@@ -201,7 +205,7 @@ import {
 import MessageTemplateDialog from "./MessageTemplateDialog.vue";
 import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import { format, differenceInDays } from "date-fns";
+import { format, differenceInDays, isToday } from "date-fns";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -259,7 +263,7 @@ const sendMessage = async () => {
       messageBody: message.value,
     });
 
-    messagingStore.fetchChatMessagesByChatId(chatId);
+    messagingStore.fetchChatMessagesByChatId(chatId, true);
   } else {
     startNewChat(getCustomer.value.id, message.value);
 

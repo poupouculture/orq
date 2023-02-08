@@ -31,6 +31,7 @@ const chatList = ref();
 const loading: Ref<boolean> = ref(true);
 
 onMounted(async () => {
+  localStorage.removeItem("chatMessages");
   await fetchChats(ChatTypes.PENDING);
   loading.value = false;
 });
