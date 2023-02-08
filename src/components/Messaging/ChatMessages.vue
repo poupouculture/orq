@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -134,15 +134,6 @@ import {
 import MessageTemplateDialog from "./MessageTemplateDialog.vue";
 import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import {
-  db,
-  getDocs,
-  collection,
-  onSnapshot,
-  doc,
-  auth,
-  signInWithCustomToken,
-} from "src/boot/firebase";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -159,37 +150,6 @@ const {
   getSelectedTab,
 } = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
-
-onMounted(async () => {
-  const token = "";
-  signInWithCustomToken(auth, token)
-    .then(async (userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-
-      console.log(`**********LOGGED User***********`);
-      console.log(`user id : ${user.uid}`);
-      console.log(`**************************`);
-    })
-    .then(async () => {
-      const querySnapshot = await getDocs(collection(db, "chats"));
-      querySnapshot.forEach((docSnap) => {
-        onSnapshot(doc(db, "chats", docSnap.id), (doc_) => {
-          const source = doc_.metadata.hasPendingWrites ? "Local" : "Server";
-          console.log(`chat_id `, doc_.id);
-          console.log(source, " data: ", doc_.data());
-        });
-      });
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(`**********ERROR*************`);
-      console.log(errorCode);
-      console.log(errorMessage);
-      console.log(`*****************************`);
-    });
-});
 
 const messages = computed<unknown[]>(() => {
   const arr: Array<IMessage> = messagingStore.getChatMessages;

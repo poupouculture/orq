@@ -49,6 +49,7 @@ const useMessagingStore = defineStore("messaging", {
       this.chats = data;
     },
     async fetchChatMessagesByChatId(chatId: string) {
+      console.log("fetch");
       const storageItem: string | null = localStorage.getItem("chatMessages");
       let data: IChatMessageCacheItem[] = [];
 
