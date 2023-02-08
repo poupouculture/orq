@@ -49,6 +49,8 @@
         </q-menu>
       </q-btn>
       <q-btn
+        :loading="closeConversationLoading"
+        v-if="userRole === Role.CS_MANAGER"
         color="primary"
         label="Close Conversation"
         no-caps
@@ -142,6 +144,7 @@ import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import { Notify } from "quasar";
 import {
   db,
   getDocs,
@@ -242,9 +245,28 @@ const assignUser = (manager: Manager) => {
   assignUserHelper(chatId, userId);
 };
 
+const closeConversationLoading = ref(false);
 const closeConversation = async () => {
   const chatId = getChats.value[getSelectedChatIndex.value].id;
-  await closeChat(chatId);
+  try {
+    closeConversationLoading.value = true;
+    await closeChat(chatId);
+    Notify.create({
+      message: "Conversation closed",
+      type: "positive",
+      position: "top",
+    });
+    closeConversationLoading.value = false;
+  } catch (error: any) {
+    closeConversationLoading.value = false;
+    // if the status: invalid chat id (no associated member)
+    // It means chat is not available / deleted
+    Notify.create({
+      message: error.response.data,
+      type: "negative",
+      position: "top",
+    });
+  }
 };
 </script>
 

@@ -6,11 +6,7 @@ import {
   getContact,
 } from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
-import {
-  IState,
-  IChatMessageCacheItem,
-  SendTextMessage,
-} from "../../types/MessagingTypes";
+import { IState, SendTextMessage, IMessage } from "../../types/MessagingTypes";
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -48,22 +44,34 @@ const useMessagingStore = defineStore("messaging", {
       const data = await getChats(type);
       this.chats = data;
     },
-    async fetchChatMessagesByChatId(chatId: string) {
-      const storageItem: string | null = localStorage.getItem("chatMessages");
-      let data: IChatMessageCacheItem[] = [];
-
-      if (storageItem) {
-        data = JSON.parse(storageItem).filter(
-          (message: IChatMessageCacheItem) => message.chatId === chatId
-        );
+    async fetchChatMessagesByChatId(chatId: string, refresh?: boolean = false) {
+      // In the MessagingLayout, when onMounted the storageItem "chatMessage"
+      // would be removed, because for get tracking the updated data
+      let storageItem: Array<IMessage> | any =
+        localStorage.getItem("chatMessages");
+      let data: IMessage[] = [];
+      storageItem = JSON.parse(storageItem) || [];
+      const filteredItems: IMessage[] = storageItem
+        ? storageItem.filter((message: IMessage) => message.chat_id === chatId)
+        : [];
+      // if has storage item and this chat has in storage
+      // refresh for the call getChatMessagesByChatId again
+      if (storageItem && filteredItems.length > 0 && !refresh) {
+        data = filteredItems;
       } else {
         data = await getChatMessagesByChatId(chatId);
-        localStorage.setItem(
-          "chatMessages",
-          JSON.stringify(data.map((item) => ({ ...item, chatId })))
-        );
+        // set storage items
+        storageItem = [
+          ...storageItem,
+          // mapping the data
+          ...data.map((item) => ({
+            ...item,
+            // chat_id for filtering the data when chat selected
+            chat_id: chatId,
+          })),
+        ];
+        localStorage.setItem("chatMessages", JSON.stringify(storageItem));
       }
-
       this.chatMessages = data;
     },
     async sendChatTextMessage(payload: SendTextMessage) {
