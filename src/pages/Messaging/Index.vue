@@ -145,6 +145,15 @@ import { closeChat } from "src/api/messaging";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import { Notify } from "quasar";
+import {
+  db,
+  getDocs,
+  collection,
+  onSnapshot,
+  doc,
+  auth,
+  signInWithCustomToken,
+} from "src/boot/firebase";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -168,6 +177,8 @@ interface Manager {
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const userInfoStore = useUserInfoStore();
+
 const isContactNumberExist = computed(
   () => messagingStore.isContactNumberExist
 );
@@ -181,15 +192,35 @@ const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
+
 const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
+const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
   const { data } = await getChatUsers();
-  // const csManager = data.filter(
-  //   // (item: Manager) => item.role_name === Role.CS_MANAGER
-  // );
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
+
+  const token = getFirebaseToken.value;
+
+  if (token) {
+    const loggedIn = await signInWithCustomToken(auth, token);
+    if (loggedIn) {
+      const querySnapshot = await getDocs(collection(db, "chats"));
+
+      querySnapshot.forEach((docSnap) => {
+        onSnapshot(doc(db, "chats", docSnap.id), (doc_) => {
+          const selectedChat = getChats.value[getSelectedChatIndex.value];
+          if (selectedChat) {
+            const chatId = selectedChat.id;
+            if (doc_.id === chatId) {
+              messagingStore.fetchChatMessagesByChatId(chatId);
+            }
+          }
+        });
+      });
+    }
+  }
 });
 
 const saveCustomer = async (val: FormPayload) => {

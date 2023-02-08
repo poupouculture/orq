@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { api, axiosInstance } from "boot/axios";
 import { LocalStorage, Notify } from "quasar";
+import { getFirebaseToken } from "src/api/firebase";
 
 const useUserInfoStore = defineStore("userInfo", {
   state: () => ({
@@ -11,12 +12,14 @@ const useUserInfoStore = defineStore("userInfo", {
     },
     userProfile: null,
     userRoleName: "",
+    firebaseToken: null,
   }),
   getters: {
     token: (state) => state.userInfo?.access_token,
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
     getUserRoleName: (state) => state.userRoleName,
+    getFirebaseToken: (state) => state.firebaseToken,
   },
   actions: {
     async login(params) {
@@ -55,10 +58,15 @@ const useUserInfoStore = defineStore("userInfo", {
           const data = await api.get(
             "/users/me?fields=*,role.description, role.name, role.tags, role.pages.pages_id.*,role.pages.pages_id.children.*"
           );
+          const {
+            data: { data: firebaseToken },
+          } = await getFirebaseToken();
           if (data) {
             const user = data.data.data;
             this.userProfile = user;
             this.userRoleName = user?.role.name;
+
+            this.firebaseToken = firebaseToken;
           }
           return data;
         }
