@@ -183,6 +183,7 @@ const closeChat = () => {
   messagingStore.closeChat();
 };
 const sendMessage = async () => {
+  if (message.value.length < 1) return;
   if (messages.value.length > 0) {
     const chat = getChats.value[getSelectedChatIndex.value];
     const chatId = chat.id;
