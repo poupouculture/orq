@@ -42,6 +42,7 @@ export interface IChat {
 
 export interface IState {
   chatMessages: Array<IMessage>;
+  cacheMessages: Array<IMessage>;
   selectedChatIndex: number;
   selectedTab: ChatTypes;
   chats: Array<IChat>;
