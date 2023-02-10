@@ -6,7 +6,12 @@ import {
   getContact,
 } from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
-import { IState, SendTextMessage, IMessage } from "../../types/MessagingTypes";
+import {
+  IState,
+  SendTextMessage,
+  IMessage,
+  Direction,
+} from "../../types/MessagingTypes";
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -60,6 +65,10 @@ const useMessagingStore = defineStore("messaging", {
         data = filteredItems;
       } else {
         data = await getChatMessagesByChatId(chatId);
+
+        this.cacheMessages = this.cacheMessages.filter(
+          (message: IMessage) => message.chat_id !== chatId
+        );
         this.cacheMessages = [
           ...cacheMessages,
           ...data.map((item) => ({
@@ -70,6 +79,28 @@ const useMessagingStore = defineStore("messaging", {
         ];
       }
       this.chatMessages = data;
+    },
+    addMessageToCache({
+      chatId = "",
+      status = "",
+      type = "text",
+      content = "",
+      direction = Direction.INCOMING,
+      dateCreated = "",
+    }: Pick<IMessage, "status" | "type" | "content" | "direction"> & {
+      chatId: IMessage["chat_id"];
+      dateCreated: IMessage["date_created"];
+    }) {
+      const payload = {
+        chat_id: chatId,
+        status,
+        type,
+        content,
+        direction,
+        date_created: dateCreated,
+      };
+      this.chatMessages.push(payload);
+      this.cacheMessages.push(payload);
     },
     async sendChatTextMessage(payload: SendTextMessage) {
       const data = await sendChatTextMessage(payload);

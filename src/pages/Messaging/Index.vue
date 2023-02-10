@@ -150,7 +150,6 @@ import {
   getDocs,
   collection,
   onSnapshot,
-  doc,
   auth,
   signInWithCustomToken,
 } from "src/boot/firebase";
@@ -167,6 +166,11 @@ const enum CustomerInformationTabs {
 const enum Role {
   CS = "CS",
   CS_MANAGER = "CS-Manager",
+}
+const enum ChangeDocType {
+  ADDED = "added",
+  REMOVED = "removed",
+  MODIFIED = "modified",
 }
 interface Manager {
   user_id: string;
@@ -206,18 +210,33 @@ onMounted(async () => {
   if (token) {
     const loggedIn = await signInWithCustomToken(auth, token);
     if (loggedIn) {
-      const querySnapshot = await getDocs(collection(db, "chats"));
+      const messageSnapshot = await getDocs(collection(db, "messages"));
 
-      querySnapshot.forEach((docSnap) => {
-        onSnapshot(doc(db, "chats", docSnap.id), (doc_) => {
-          const selectedChat = getChats.value[getSelectedChatIndex.value];
-          if (selectedChat) {
-            const chatId = selectedChat.id;
-            if (doc_.id === chatId) {
-              messagingStore.fetchChatMessagesByChatId(chatId);
+      messageSnapshot.forEach((colSnap) => {
+        onSnapshot(
+          collection(db, "messages", colSnap.id, "members"),
+          (querySnapshot: any) => {
+            for (const change of querySnapshot.docChanges()) {
+              const selectedChat = getChats.value[getSelectedChatIndex.value];
+              if (selectedChat) {
+                const chatId = selectedChat.id;
+                if (colSnap.id === chatId) {
+                  if (change.type === ChangeDocType.ADDED) {
+                    const { content, status, type } = change.doc.data();
+                    const dateCreated = new Date();
+                    messagingStore.addMessageToCache({
+                      chatId: colSnap.id,
+                      dateCreated: dateCreated.toString(),
+                      status,
+                      content,
+                      type,
+                    });
+                  }
+                }
+              }
             }
           }
-        });
+        );
       });
     }
   }
