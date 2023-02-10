@@ -19,7 +19,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = initializeFirestore(app, { ignoreUndefinedProperties: true });
+const db = initializeFirestore(app, {
+  ignoreUndefinedProperties: true,
+});
 const auth = getAuth(app);
 
 export {

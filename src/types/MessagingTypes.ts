@@ -14,14 +14,14 @@ export const enum MessageType {
 }
 
 export interface IMessage {
-  id: number;
+  id?: number;
   chat_id: string;
   status: string;
-  date_created: string;
+  date_created?: string;
   type: string;
   content: string;
-  channel: string;
-  direction: Direction;
+  channel?: string;
+  direction?: Direction;
 }
 
 export interface IChatMessageCacheItem extends IMessage {
