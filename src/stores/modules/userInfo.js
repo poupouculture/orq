@@ -12,7 +12,7 @@ const useUserInfoStore = defineStore("userInfo", {
     },
     userProfile: null,
     userRoleName: "",
-    firebaseToken: null,
+    firebaseToken: "",
   }),
   getters: {
     token: (state) => state.userInfo?.access_token,

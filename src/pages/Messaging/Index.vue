@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useCustomerStore from "src/stores/modules/customer";
@@ -147,7 +147,6 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import { Notify } from "quasar";
 import {
   db,
-  getDocs,
   collection,
   onSnapshot,
   auth,
@@ -196,6 +195,7 @@ const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
+const firebaseToken: Ref<string> = ref("");
 
 const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
@@ -205,39 +205,37 @@ onMounted(async () => {
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
 
-  const token = getFirebaseToken.value;
+  firebaseToken.value = getFirebaseToken.value;
+});
 
-  if (token) {
-    const loggedIn = await signInWithCustomToken(auth, token);
+watch(getSelectedChatIndex, async () => {
+  if (firebaseToken.value) {
+    const loggedIn = await signInWithCustomToken(auth, firebaseToken.value);
     if (loggedIn) {
-      const messageSnapshot = await getDocs(collection(db, "messages"));
+      const selectedChat = getChats.value[getSelectedChatIndex.value];
 
-      messageSnapshot.forEach((colSnap) => {
-        onSnapshot(
-          collection(db, "messages", colSnap.id, "members"),
-          (querySnapshot: any) => {
-            for (const change of querySnapshot.docChanges()) {
-              const selectedChat = getChats.value[getSelectedChatIndex.value];
-              if (selectedChat) {
-                const chatId = selectedChat.id;
-                if (colSnap.id === chatId) {
-                  if (change.type === ChangeDocType.ADDED) {
-                    const { content, status, type } = change.doc.data();
-                    const dateCreated = new Date();
-                    messagingStore.addMessageToCache({
-                      chatId: colSnap.id,
-                      dateCreated: dateCreated.toString(),
-                      status,
-                      content,
-                      type,
-                    });
-                  }
-                }
+      onSnapshot(
+        collection(db, "messages", selectedChat.id, "members"),
+        (querySnapshot: any) => {
+          for (const change of querySnapshot.docChanges()) {
+            const selectedChat = getChats.value[getSelectedChatIndex.value];
+            console.log(change.doc.data());
+            if (selectedChat) {
+              if (change.type === ChangeDocType.ADDED) {
+                const { content, status, type } = change.doc.data();
+                const dateCreated = new Date();
+                messagingStore.addMessageToCache({
+                  chatId: selectedChat.id,
+                  dateCreated: dateCreated.toString(),
+                  status,
+                  content,
+                  type,
+                });
               }
             }
           }
-        );
-      });
+        }
+      );
     }
   }
 });
