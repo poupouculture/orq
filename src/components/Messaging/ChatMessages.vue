@@ -206,9 +206,11 @@ import MessageTemplateDialog from "./MessageTemplateDialog.vue";
 import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { format, differenceInDays, isToday } from "date-fns";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
+const userInfoStore = useUserInfoStore();
 
 const emit = defineEmits(["newChatCreated"]);
 
@@ -278,7 +280,8 @@ const sendMessage = async () => {
 const activateChat = async () => {
   const chat = getChats.value[getSelectedChatIndex.value];
   const chatId = chat.id;
-  await updateChatStatus(chatId, ChatTypes.ONGOING);
+  const userId: any | null = userInfoStore.getUserProfile;
+  await updateChatStatus(chatId, userId?.id);
   emit("newChatCreated", ChatTypes.ONGOING);
 };
 </script>
