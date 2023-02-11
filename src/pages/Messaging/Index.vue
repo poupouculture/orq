@@ -144,7 +144,7 @@ import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { Notify } from "quasar";
+import { Loading, Notify } from "quasar";
 import {
   db,
   collection,
@@ -255,11 +255,27 @@ const saveCustomer = async (val: FormPayload) => {
   messagingStore.fetchChats(messagingStore.getSelectedTab);
 };
 
-const assignUser = (manager: Manager) => {
+const assignUser = async (manager: Manager) => {
   const chatId = getChats.value[getSelectedChatIndex.value].id;
   const userId = manager.user_id;
-
-  assignUserHelper(chatId, userId);
+  try {
+    Loading.show();
+    await assignUserHelper(chatId, userId);
+    Notify.create({
+      message: `Successful assigned to ${manager.first_name} ${manager.last_name}`,
+      position: "top",
+      type: "positive",
+      color: "blue-9",
+    });
+    Loading.hide();
+  } catch (err: any) {
+    Notify.create({
+      message: err.response.data.message,
+      position: "top",
+      type: "negative",
+    });
+    Loading.hide();
+  }
 };
 
 const closeConversationLoading = ref(false);
