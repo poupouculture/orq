@@ -56,12 +56,12 @@ export const startNewChat = async (customerId: string, textMessage: string) => {
   return data;
 };
 
-export const updateChatStatus = async (id: string, status: string) => {
+export const updateChatStatus = async (id: string, userId: string) => {
   const {
     data: { data },
-  } = await api.post(`/waba/update-chat-status`, {
+  } = await api.post(`/waba/assign-chat-user`, {
     chat_id: id,
-    status,
+    user_id: userId,
   });
 
   return data;
