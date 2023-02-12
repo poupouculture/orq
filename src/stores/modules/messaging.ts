@@ -122,12 +122,6 @@ const useMessagingStore = defineStore("messaging", {
       this.chatMessages.push(payload);
       this.cacheMessages.push(payload);
     },
-    /* addChatsToCache(chat: IChat, status: ChatTypes) {
-      const chatGroupIndex: number = this.chats.findIndex(
-        (item: ChatGroup) => item.status === status
-      );
-      this.chats[chatGroupIndex].chats.push(chat);
-    }, */
     async setChatsByStatus(status: ChatTypes) {
       const chatGroupIndex = this.chats.findIndex(
         (group: ChatGroup) => group.status === status
