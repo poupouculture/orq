@@ -242,6 +242,7 @@ const closeConversation = async () => {
       message: "Conversation closed",
       type: "positive",
       position: "top",
+      color: "primary",
     });
     closeConversationLoading.value = false;
   } catch (error: any) {
