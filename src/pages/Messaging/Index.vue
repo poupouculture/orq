@@ -131,6 +131,8 @@ import {
   signInWithCustomToken,
 } from "src/boot/firebase";
 import { Tabs as TabOptions } from "src/constants/Tabs";
+// import { ChatTypes } from "src/constants/ChatKeyword";
+import { ChatGroup, IChat } from "src/types/MessagingTypes";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -166,6 +168,7 @@ const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
+const first = ref(false);
 
 const { getChats, getSelectedChatIndex, getSelectedTab } =
   storeToRefs(messagingStore);
@@ -179,31 +182,47 @@ onMounted(async () => {
   firebaseToken.value = getFirebaseToken.value;
 });
 
+watch(getChats, async () => {
+  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+  if (loggedInUser) {
+    onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
+      for await (const change of querySnapshot.docChanges()) {
+        const findChat = allChats.value.find((chat: IChat) => {
+          return chat.id === change.doc.id;
+        });
+
+        if (!findChat && first.value) {
+          messagingStore.setChatsByStatus(change.doc.data().status);
+        }
+      }
+      first.value = true;
+    });
+  }
+});
+
 watch(getSelectedChatIndex, async () => {
-  if (firebaseToken.value) {
-    const loggedIn = await signInWithCustomToken(auth, firebaseToken.value);
-    if (loggedIn) {
-      onSnapshot(
-        collection(db, "messages", selectedChat.value.id, "members"),
-        (querySnapshot: any) => {
-          for (const change of querySnapshot.docChanges()) {
-            if (selectedChat.value) {
-              if (change.type === ChangeDocType.ADDED) {
-                const { content, status, type } = change.doc.data();
-                const dateCreated = new Date();
-                messagingStore.addMessageToCache({
-                  chatId: selectedChat.value.id,
-                  dateCreated: dateCreated.toString(),
-                  status,
-                  content,
-                  type,
-                });
-              }
+  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+  if (loggedInUser) {
+    onSnapshot(
+      collection(db, "messages", selectedChat.value.id, "members"),
+      (querySnapshot: any) => {
+        for (const change of querySnapshot.docChanges()) {
+          if (selectedChat.value) {
+            if (change.type === ChangeDocType.ADDED) {
+              const { content, status, type } = change.doc.data();
+              const dateCreated = new Date();
+              messagingStore.addMessageToCache({
+                chatId: selectedChat.value.id,
+                dateCreated: dateCreated.toString(),
+                status,
+                content,
+                type,
+              });
             }
           }
         }
-      );
-    }
+      }
+    );
   }
 });
 
@@ -211,6 +230,17 @@ const selectedChat = computed(() => {
   return getChats.value[TabOptions.indexOf(getSelectedTab.value)].chats[
     getSelectedChatIndex.value
   ];
+});
+
+const allChats = computed(() => {
+  const chats: IChat[] = [];
+  getChats.value.forEach((item: ChatGroup) => {
+    item.chats.forEach((chat: IChat) => {
+      chats.push(chat);
+    });
+  });
+
+  return chats;
 });
 
 const assignUser = async (manager: Manager) => {

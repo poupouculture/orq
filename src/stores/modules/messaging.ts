@@ -11,6 +11,7 @@ import {
   SendTextMessage,
   IMessage,
   Direction,
+  ChatGroup,
 } from "../../types/MessagingTypes";
 
 const useMessagingStore = defineStore("messaging", {
@@ -62,6 +63,10 @@ const useMessagingStore = defineStore("messaging", {
         { status: ChatTypes.PENDING, chats: waiting },
         { status: ChatTypes.CLOSED, chats: closed },
       ];
+    },
+    async fetchChatsByStatus(status: ChatTypes) {
+      const chats = await getChats(status);
+      return chats;
     },
     async fetchChatMessagesByChatId(chatId: string, refresh: boolean = false) {
       const cacheMessages: Array<IMessage> = this.cacheMessages;
@@ -116,6 +121,19 @@ const useMessagingStore = defineStore("messaging", {
       };
       this.chatMessages.push(payload);
       this.cacheMessages.push(payload);
+    },
+    /* addChatsToCache(chat: IChat, status: ChatTypes) {
+      const chatGroupIndex: number = this.chats.findIndex(
+        (item: ChatGroup) => item.status === status
+      );
+      this.chats[chatGroupIndex].chats.push(chat);
+    }, */
+    async setChatsByStatus(status: ChatTypes) {
+      const chatGroupIndex = this.chats.findIndex(
+        (group: ChatGroup) => group.status === status
+      );
+      const chats = await getChats(status);
+      this.chats[chatGroupIndex].chats = chats;
     },
     async sendChatTextMessage(payload: SendTextMessage) {
       const data = await sendChatTextMessage(payload);
