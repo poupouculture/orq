@@ -45,12 +45,9 @@
           <q-td :props="props" auto-width>
             <div class="firstrowholder">
               <div>
-                <q-avatar
-                  size="36px"
-                  color="red"
-                  text-color="white"
-                  icon="directions"
-                />
+                <q-avatar size="md">
+                  <img src="../../assets/images/profileavatar.png" />
+                </q-avatar>
               </div>
               <div class="subrow">
                 <p class="headingtext">
