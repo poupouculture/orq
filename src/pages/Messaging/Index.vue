@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -130,6 +130,7 @@ import {
   auth,
   signInWithCustomToken,
 } from "src/boot/firebase";
+import { Tabs as TabOptions } from "src/constants/Tabs";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -166,7 +167,8 @@ const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
 
-const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
+const { getChats, getSelectedChatIndex, getSelectedTab } =
+  storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -181,20 +183,16 @@ watch(getSelectedChatIndex, async () => {
   if (firebaseToken.value) {
     const loggedIn = await signInWithCustomToken(auth, firebaseToken.value);
     if (loggedIn) {
-      const selectedChat = getChats.value[getSelectedChatIndex.value];
-
       onSnapshot(
-        collection(db, "messages", selectedChat.id, "members"),
+        collection(db, "messages", selectedChat.value.id, "members"),
         (querySnapshot: any) => {
           for (const change of querySnapshot.docChanges()) {
-            const selectedChat = getChats.value[getSelectedChatIndex.value];
-            console.log(change.doc.data());
-            if (selectedChat) {
+            if (selectedChat.value) {
               if (change.type === ChangeDocType.ADDED) {
                 const { content, status, type } = change.doc.data();
                 const dateCreated = new Date();
                 messagingStore.addMessageToCache({
-                  chatId: selectedChat.id,
+                  chatId: selectedChat.value.id,
                   dateCreated: dateCreated.toString(),
                   status,
                   content,
@@ -209,8 +207,14 @@ watch(getSelectedChatIndex, async () => {
   }
 });
 
+const selectedChat = computed(() => {
+  return getChats.value[TabOptions.indexOf(getSelectedTab.value)].chats[
+    getSelectedChatIndex.value
+  ];
+});
+
 const assignUser = async (manager: Manager) => {
-  const chatId = getChats.value[getSelectedChatIndex.value].id;
+  const chatId = selectedChat.value.id;
   const userId = manager.user_id;
   try {
     Loading.show();
@@ -234,7 +238,7 @@ const assignUser = async (manager: Manager) => {
 
 const closeConversationLoading = ref(false);
 const closeConversation = async () => {
-  const chatId = getChats.value[getSelectedChatIndex.value].id;
+  const chatId = selectedChat.value.id;
   try {
     closeConversationLoading.value = true;
     await closeChat(chatId);

@@ -182,6 +182,7 @@ import { Direction, ChatGroup } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
 import { getCustomersWithContacts } from "src/api/customers";
 import { ICustomer } from "src/types/CustomerTypes";
+import { Tabs } from "src/constants/Tabs";
 
 // Interfaces
 interface LastMessage {
@@ -226,11 +227,7 @@ const activeChat: Ref<number | null> = ref(null);
 const openDrawer: Ref<boolean> = ref(true);
 const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
-const tabs: Ref<ChatTypes[]> = ref([
-  ChatTypes.ONGOING,
-  ChatTypes.PENDING,
-  ChatTypes.CLOSED,
-]);
+const tabs: Ref<ChatTypes[]> = ref(Tabs);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
