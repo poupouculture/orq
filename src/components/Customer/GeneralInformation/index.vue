@@ -6,6 +6,7 @@
       autocapitalize="off"
       autocomplete="off"
       spellcheck="false"
+      @submit="onSubmit"
     >
       <div class="q-pa-md">
         <div class="row q-mb-lg">
@@ -181,7 +182,7 @@
                 color="primary"
                 label="Save"
                 class="dark-btn"
-                @click="onSubmit"
+                type="submit"
               />
             </div>
           </div>
@@ -253,7 +254,6 @@ const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const { getContactNumber } = storeToRefs(messagingStore);
 const $q = useQuasar();
-
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
@@ -412,25 +412,22 @@ const onSubmit = async () => {
     if (!customerForm.value) {
       return;
     }
-
     const validate = await customerForm.value.validate();
-
-    if (validate) {
-      const payload = {
-        first_name: firstName.value,
-        last_name: lastName.value,
-        id_number: idNumber.value,
-        customer_code: customerCode.value,
-        gender: gender.value?.value,
-        isActive: isActive.value,
-        dob: dateOfBirth.value,
-        position: position.value?.value,
-        customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
-        companies: [{ companies_id: company.value?.id }],
-        tags: [{ tags_id: tag.value?.id }],
-      };
-      emit("submit", payload);
-    }
+    if (!validate) return;
+    const payload = {
+      first_name: firstName.value,
+      last_name: lastName.value,
+      id_number: idNumber.value,
+      customer_code: customerCode.value,
+      gender: gender.value?.value,
+      isActive: isActive.value,
+      dob: dateOfBirth.value,
+      position: position.value?.value,
+      customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
+      companies: [{ companies_id: company.value?.id }],
+      tags: [{ tags_id: tag.value?.id }],
+    };
+    emit("submit", payload);
   } catch (err) {
     console.log(err);
   }

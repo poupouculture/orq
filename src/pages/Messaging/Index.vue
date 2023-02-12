@@ -106,43 +106,21 @@
           </q-card>
         </q-card>
       </div>
-      <q-tabs
-        v-model="customerInformationTab"
-        dense
-        class="text-grey q-mt-md"
-        align="left"
-        active-color="primary"
-        indicator-color="primary"
-        narrow-indicator
-        no-caps
-        inset
-      >
-        <q-tab name="general" label="General Information" />
-        <q-tab name="other" label="Other Information" />
-      </q-tabs>
-      <q-separator size="2px" style="margin-top: -2px" />
-      <GeneralInformation
-        :mode="isContactNumberExist ? '' : 'show'"
-        :show-active="false"
-        :show-return-button="false"
-        :show-delete-button="false"
-        @submit="saveCustomer"
-      />
+      <!-- Customer Information Tabs -->
+      <CustomerInformationTabs />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import useCustomerStore from "src/stores/modules/customer";
 import useMessagingStore from "src/stores/modules/messaging";
-import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
-import { FormPayload } from "src/types/CustomerTypes";
 import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
+import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import { Loading, Notify } from "quasar";
 import {
@@ -158,10 +136,7 @@ const enum Tabs {
   SERVICE_DETAIL = "serviceDetail",
   SERVICE_RECORD = "serviceRecord",
 }
-const enum CustomerInformationTabs {
-  GENERAL = "general",
-  OTHER = "other",
-}
+
 const enum Role {
   CS = "CS",
   CS_MANAGER = "CS-Manager",
@@ -178,19 +153,13 @@ interface Manager {
   role_name: string;
 }
 
-const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 
-const isContactNumberExist = computed(
-  () => messagingStore.isContactNumberExist
-);
 const userInfo = useUserInfoStore();
 const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
-const customerInformationTab: Ref<CustomerInformationTabs> = ref(
-  CustomerInformationTabs.GENERAL
-);
+
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
@@ -239,21 +208,6 @@ watch(getSelectedChatIndex, async () => {
     }
   }
 });
-
-const saveCustomer = async (val: FormPayload) => {
-  if (customerStore.getCustomer.id) {
-    // update
-    customerStore.updateCustomer(customerStore.getCustomer.id, val);
-  } else {
-    // insert
-    const selectedChat = getChats.value[getSelectedChatIndex.value];
-    const contactId = selectedChat.contacts_id;
-    const customer = await customerStore.addCustomer(val);
-    customerStore.addCustomerContact(customer.id, contactId);
-  }
-
-  messagingStore.fetchChats(messagingStore.getSelectedTab);
-};
 
 const assignUser = async (manager: Manager) => {
   const chatId = getChats.value[getSelectedChatIndex.value].id;
