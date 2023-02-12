@@ -8,6 +8,7 @@ import {
 } from "../../api/customers";
 import { IState, FormPayload } from "src/types/CustomerTypes";
 import { getUser } from "src/api/user";
+import { Loading, Notify } from "quasar";
 
 const useCustomerStore = defineStore("customer", {
   state: () =>
@@ -50,10 +51,30 @@ const useCustomerStore = defineStore("customer", {
       this.customer = user;
     },
     async updateCustomer(id: string, payload: FormPayload) {
-      const {
-        data: { data },
-      } = await updateCustomer(id, payload);
-      return data;
+      Loading.show();
+      try {
+        const {
+          data: { data },
+        } = await updateCustomer(id, payload);
+        Notify.create({
+          message: "Successful to update customer",
+          position: "top",
+          color: "primary",
+          type: "positive",
+        });
+        Loading.hide();
+        return data;
+      } catch (err: any) {
+        console.log(err);
+        Notify.create({
+          message: `Error: ${
+            err.response.data?.errors[0]?.message || "Fail to updated"
+          }`,
+          position: "top",
+          type: "negative",
+        });
+        Loading.hide();
+      }
     },
     async addContact(customerId: string, payload: unknown) {
       const {
@@ -65,10 +86,29 @@ const useCustomerStore = defineStore("customer", {
       return result;
     },
     async addCustomer(payload: FormPayload) {
-      const {
-        data: { data },
-      } = await addCustomer(payload);
-      return data;
+      Loading.show();
+      try {
+        const {
+          data: { data },
+        } = await addCustomer(payload);
+        Notify.create({
+          message: "Successful to saved customer",
+          position: "top",
+          color: "primary",
+          type: "positive",
+        });
+        Loading.hide();
+        return data;
+      } catch (err: any) {
+        Notify.create({
+          message: `Error: ${
+            err.response.data?.errors[0]?.message || "Fail to saved"
+          }`,
+          position: "top",
+          type: "negative",
+        });
+        Loading.hide();
+      }
     },
     async addCustomerContact(customerId: string, contactId: string) {
       const result = await addCustomerContact(customerId, contactId);
