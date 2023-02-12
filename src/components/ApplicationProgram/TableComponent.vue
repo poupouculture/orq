@@ -35,25 +35,17 @@
     </template>
     <template #body-cell-delivered="props">
       <q-td :props="props">
-        {{
-          props.row.delivered && props.row.delivered !== null
-            ? props.row.delivered
-            : 0
-        }}
+        {{ props.row.delivered ? props.row.delivered : 0 }}
       </q-td>
     </template>
     <template #body-cell-read="props">
       <q-td :props="props">
-        {{ props.row.read && props.row.read !== null ? props.row.read : 0 }}
+        {{ props.row.messages_opened ? props.row.messages_opened : 0 }}
       </q-td>
     </template>
     <template #body-cell-replied="props">
       <q-td :props="props">
-        {{
-          props.row.replied && propw.row.replied !== null
-            ? props.row.replied
-            : 0
-        }}
+        {{ props.row.top_block_reason ? props.row.top_block_reason : 0 }}
       </q-td>
     </template>
     <template #body-cell-created_by="props">

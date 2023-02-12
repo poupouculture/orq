@@ -1,7 +1,10 @@
 <template>
   <q-dialog :modelValue="modelValue" @hide="hide">
-    <q-card style="min-width: 85%; min-height: 85%" class="q-pa-lg">
-      <div v-if="usedTemplate === null">
+    <q-card
+      style="min-width: 85%; min-height: 85%"
+      class="q-pa-lg flex flex-col justify-between"
+    >
+      <div class="w-full" v-if="usedTemplate === null">
         <q-card-section>
           <div class="text-h6">Choose Template</div>
           <div class="text-h7">All Templates</div>
@@ -88,6 +91,16 @@
           />
         </div>
       </div>
+
+      <div class="w-full flex justify-end gap-2 px-4">
+        <button class="btn-dotted" @click="hide">Return</button>
+        <button
+          class="px-4 py-2 bg-primary text-white rounded-md"
+          @click="send"
+        >
+          Send
+        </button>
+      </div>
     </q-card>
   </q-dialog>
 </template>
@@ -104,7 +117,7 @@ defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["hide"]);
+const emit = defineEmits(["hide", "send"]);
 
 const loading = ref(false);
 const search: Ref<string> = ref("");
@@ -155,10 +168,28 @@ const hide = () => {
   emit("hide");
 };
 
-const countNumbers = (str: string) => {
-  const regex = /{{\s*[\d]+\s*}}/g;
-  const matches = str.match(regex);
-  return matches !== null ? matches.length : 0;
+const send = () => {
+  const numbers = listNumbers(bodyMessage.value);
+
+  numbers.forEach((num, index) => {
+    bodyMessage.value = bodyMessage.value.replace(
+      num,
+      customVariables.value[index]
+    );
+  });
+
+  emit("send", bodyMessage.value);
+  emit("hide");
+};
+
+const listNumbers = (str: string) => {
+  const regex = /{{\s*([\d]+)\s*}}/g;
+  let match;
+  const numbers: string[] = [];
+  while ((match = regex.exec(str)) !== null) {
+    numbers.push("{{" + Number(match[1]) + "}}");
+  }
+  return numbers;
 };
 
 const useTemplate = (val: any) => {
@@ -180,7 +211,7 @@ const useTemplate = (val: any) => {
       (c: any) => c?.type === "BODY"
     );
     bodyMessage.value = bodyComponent.text;
-    const customerVariableCounted = countNumbers(bodyMessage.value);
+    const customerVariableCounted = listNumbers(bodyMessage.value).length;
     if (customerVariableCounted > 0) {
       customVariables.value = Array(customerVariableCounted).fill("");
     }
