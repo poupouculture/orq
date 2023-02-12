@@ -7,6 +7,7 @@ export const getChats = async (type: ChatTypes) => {
     keyword: ChatKeywords.GET_CHATS,
     type,
   });
+  console.log(type);
 
   return data;
 };

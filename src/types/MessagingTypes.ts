@@ -40,12 +40,17 @@ export interface IChat {
   members?: string;
 }
 
+export interface ChatGroup {
+  status: ChatTypes;
+  chats: IChat[];
+}
+
 export interface IState {
   chatMessages: Array<IMessage>;
   cacheMessages: Array<IMessage>;
   selectedChatIndex: number;
   selectedTab: ChatTypes;
-  chats: Array<IChat>;
+  chats: ChatGroup[];
   contactNumber: null | string;
   customerName: null | string;
 }

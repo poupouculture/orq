@@ -46,19 +46,34 @@ const useMessagingStore = defineStore("messaging", {
     setSelectedTab(type: ChatTypes) {
       this.selectedTab = type;
     },
-    async fetchChats(type: ChatTypes) {
-      const data = await getChats(type);
-      this.chats = data;
+    async fetchChats() {
+      const ongoingPromise = getChats(ChatTypes.ONGOING);
+      const waitingPromise = getChats(ChatTypes.PENDING);
+      const closedPromise = getChats(ChatTypes.CLOSED);
+
+      const [ongoing, waiting, closed] = await Promise.all([
+        ongoingPromise,
+        waitingPromise,
+        closedPromise,
+      ]);
+
+      this.chats = [
+        { status: ChatTypes.ONGOING, chats: ongoing },
+        { status: ChatTypes.PENDING, chats: waiting },
+        { status: ChatTypes.CLOSED, chats: closed },
+      ];
     },
     async fetchChatMessagesByChatId(chatId: string, refresh: boolean = false) {
       const cacheMessages: Array<IMessage> = this.cacheMessages;
       let data: IMessage[] = [];
+
       // filtering data by chatID
       const filteredItems: IMessage[] = cacheMessages.length
         ? cacheMessages.filter(
             (message: IMessage) => message.chat_id === chatId
           )
         : [];
+
       // checking cache messages exists
       // refresh for the call getChatMessagesByChatId again
       if (cacheMessages && filteredItems.length > 0 && !refresh) {

@@ -1,12 +1,7 @@
 <template>
   <div style="background: white">
     <q-layout view="lHh Lpr lFf">
-      <Drawer
-        ref="chatList"
-        v-if="!loading"
-        :chat-list="chats"
-        @change-tab="fetchChats"
-      />
+      <Drawer ref="chatList" v-if="!loading" :chat-list="chats" />
       <q-page-container>
         <q-page padding>
           <router-view />
@@ -31,14 +26,14 @@ const chatList = ref();
 const loading: Ref<boolean> = ref(true);
 
 onMounted(async () => {
-  await fetchChats(ChatTypes.PENDING);
+  await fetchChats();
   loading.value = false;
 });
 
 const chats = computed(() => messagingStore.getChats);
 
-const fetchChats = async (type: ChatTypes) => {
-  messagingStore.fetchChats(type);
+const fetchChats = async () => {
+  messagingStore.fetchChats();
 };
 
 const changeTab = (val: ChatTypes) => {
