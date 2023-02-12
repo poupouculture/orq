@@ -99,8 +99,14 @@ const useMessagingStore = defineStore("messaging", {
         direction,
         date_created: dateCreated,
       };
-      this.chatMessages.push(payload);
-      this.cacheMessages.push(payload);
+
+      const message = this.cacheMessages.find(
+        (item: IMessage) => item.content === content
+      );
+      if (!message) {
+        this.chatMessages.push(payload);
+        this.cacheMessages.push(payload);
+      }
     },
     async sendChatTextMessage(payload: SendTextMessage) {
       const data = await sendChatTextMessage(payload);
