@@ -71,9 +71,21 @@
         no-caps
         @update:model-value="onChangeTab"
       >
-        <q-tab :name="ChatTypes.ONGOING" label="Ongoing" />
-        <q-tab :name="ChatTypes.PENDING" label="Waiting" />
-        <q-tab :name="ChatTypes.CLOSED" label="Closed" />
+        <q-tab
+          :name="ChatTypes.ONGOING"
+          :label="`Ongoing
+        ${countChats(ChatTypes.ONGOING)}`"
+        />
+        <q-tab
+          :name="ChatTypes.PENDING"
+          :label="`Waiting
+            ${countChats(ChatTypes.PENDING)}`"
+        />
+        <q-tab
+          :name="ChatTypes.CLOSED"
+          :label="`Closed
+              ${countChats(ChatTypes.CLOSED)}`"
+        />
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" inset />
       <q-tab-panels
@@ -259,6 +271,10 @@ const fetchCustomers = async () => {
   } else {
     chatToggleLabel.state = ChatToggleLabel.SHOW;
   }
+};
+
+const countChats = (status: ChatTypes) => {
+  return props.chatList[tabs.value.indexOf(status)].chats.length;
 };
 
 const dateFormat = (date: string) => {
