@@ -13,6 +13,7 @@ import {
   Direction,
   ChatGroup,
 } from "../../types/MessagingTypes";
+import { db, collection, onSnapshot } from "src/boot/firebase";
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -24,9 +25,16 @@ const useMessagingStore = defineStore("messaging", {
       cacheMessages: [],
       contactNumber: null,
       customerName: null,
+      chatSnapshotGroup: {},
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
+    getSelectedChat: (state) => {
+      const selectedChats = state.chats.find(
+        (chat) => chat.status === state.selectedTab
+      );
+      return selectedChats?.chats[state.selectedChatIndex];
+    },
     getChatMessages: (state) => state.chatMessages,
     getSelectedChatIndex: (state) => state.selectedChatIndex,
     getContactNumber: (state) => state.contactNumber,
@@ -46,6 +54,22 @@ const useMessagingStore = defineStore("messaging", {
     },
     setSelectedTab(type: ChatTypes) {
       this.selectedTab = type;
+    },
+    setChatsLastMessage(id: string, lastMessage: any) {
+      this.chats = this.chats.map((chats) => {
+        chats.chats.forEach((chat) => {
+          if (chat.id === id) {
+            console.log(55555, lastMessage);
+
+            // chat.last_message = JSON.stringify(lastMessage);
+          }
+        });
+        return chats;
+      });
+      console.log(777777, this.chats);
+    },
+    setChatSnapshotGroup(id: string, cancleFn: unknown) {
+      this.chatSnapshotGroup[id] = cancleFn;
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
@@ -85,18 +109,18 @@ const useMessagingStore = defineStore("messaging", {
         data = filteredItems;
       } else {
         data = await getChatMessagesByChatId(chatId);
-
-        this.cacheMessages = this.cacheMessages.filter(
-          (message: IMessage) => message.chat_id !== chatId
-        );
-        this.cacheMessages = [
-          ...cacheMessages,
-          ...data.map((item) => ({
-            ...item,
-            // chat_id for filtering the data when chat selected
-            chat_id: chatId,
-          })),
-        ];
+        data = data.map((item) => ({ ...item, chat_id: chatId }));
+        // this.cacheMessages = this.cacheMessages.filter(
+        //   (message: IMessage) => message.chat_id !== chatId
+        // );
+        // this.cacheMessages = [
+        //   ...cacheMessages,
+        //   ...data.map((item) => ({
+        //     ...item,
+        //     // chat_id for filtering the data when chat selected
+        //     chat_id: chatId,
+        //   })),
+        // ];
       }
       this.chatMessages = data;
     },
@@ -126,8 +150,10 @@ const useMessagingStore = defineStore("messaging", {
       const chatGroupIndex = this.chats.findIndex(
         (group: ChatGroup) => group.status === status
       );
-      const chats = await getChats(status);
-      this.chats[chatGroupIndex].chats = chats;
+      if (chatGroupIndex >= 0) {
+        const chats = await getChats(status);
+        this.chats[chatGroupIndex].chats = chats;
+      }
     },
     async sendChatTextMessage(payload: SendTextMessage) {
       const data = await sendChatTextMessage(payload);
@@ -142,6 +168,47 @@ const useMessagingStore = defineStore("messaging", {
     },
     setContactNumber(contactNumber: string) {
       this.contactNumber = contactNumber;
+    },
+    onSnapshotMessage(chatId: string) {
+      if (!this.chatSnapshotGroup[chatId]) {
+        const snpshotCancel = onSnapshot(
+          collection(db, "messages", chatId, "members"),
+          async (querySnapshot: any) => {
+            console.log("监听到消息");
+
+            for await (const change of querySnapshot.docChanges()) {
+              console.log(123213);
+
+              // 获取当前的id与现有id比较
+              const chats = this.chats.find(
+                (chat) => chat.status === this.selectedTab
+              );
+              const selectedChat: any = chats?.chats[this.selectedChatIndex];
+              console.log(selectedChat && selectedChat.id === chatId);
+              if (selectedChat && selectedChat.id === chatId) {
+                console.log("good 渲染数据");
+                const { content, status, type } = change.doc.data();
+                const dateCreated = new Date();
+                const direction =
+                  status === "sent" ? Direction.OUTGOING : Direction.INCOMING;
+                this.addMessageToCache({
+                  chatId,
+                  dateCreated: dateCreated.toString(),
+                  direction,
+                  status,
+                  content,
+                  type,
+                });
+              } else {
+                // 左侧chats更新
+                this.setChatsLastMessage(chatId, change.doc.data());
+              }
+              console.log(11111, change.doc.id, change.doc.data());
+            }
+          }
+        );
+        this.setChatSnapshotGroup(chatId, snpshotCancel);
+      }
     },
   },
 });

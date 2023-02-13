@@ -254,7 +254,10 @@ const closeChat = () => {
 const sendMessage = async () => {
   if (message.value.length < 1) return;
   if (messages.value.length > 0) {
-    const chat = getChats.value[getSelectedChatIndex.value];
+    const chats: any = getChats.value.find(
+      (chat) => chat.status === getSelectedTab.value
+    );
+    const chat = chats.chats[getSelectedChatIndex.value];
     const chatId = chat.id;
     const contactNumber = getContactNumber.value;
 
