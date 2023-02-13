@@ -73,18 +73,15 @@
       >
         <q-tab
           :name="ChatTypes.ONGOING"
-          :label="`Ongoing
-        ${countChats(ChatTypes.ONGOING)}`"
+          :label="`Ongoing ${countChats(ChatTypes.ONGOING)}`"
         />
         <q-tab
           :name="ChatTypes.PENDING"
-          :label="`Waiting
-            ${countChats(ChatTypes.PENDING)}`"
+          :label="`Waiting ${countChats(ChatTypes.PENDING)}`"
         />
         <q-tab
           :name="ChatTypes.CLOSED"
-          :label="`Closed
-              ${countChats(ChatTypes.CLOSED)}`"
+          :label="`Closed ${countChats(ChatTypes.CLOSED)}`"
         />
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" inset />
