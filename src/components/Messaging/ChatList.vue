@@ -286,7 +286,7 @@ const selectChat = (index: number) => {
   emit("setChatId", chatId);
 
   messagingStore.setSelectedChatIndex(index);
-  messagingStore.fetchChatMessagesByChatId(chatId);
+  messagingStore.fetchChatMessagesByChatId(chatId, true);
   messagingStore.fetchContactNumber(chats.value[index].contacts_id);
 
   if (chats.value[index].first_name) {

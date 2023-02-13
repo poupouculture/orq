@@ -54,6 +54,7 @@ export interface IState {
   chats: ChatGroup[];
   contactNumber: null | string;
   customerName: null | string;
+  chatSnapshotGroup: any;
 }
 
 export interface SendTextMessage {

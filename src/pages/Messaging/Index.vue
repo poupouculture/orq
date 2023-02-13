@@ -144,11 +144,11 @@ const enum Role {
   CS = "CS",
   CS_MANAGER = "CS-Manager",
 }
-const enum ChangeDocType {
-  ADDED = "added",
-  REMOVED = "removed",
-  MODIFIED = "modified",
-}
+// const enum ChangeDocType {
+//   ADDED = "added",
+//   REMOVED = "removed",
+//   MODIFIED = "modified",
+// }
 interface Manager {
   user_id: string;
   first_name: string;
@@ -200,31 +200,31 @@ watch(getChats, async () => {
   }
 });
 
-watch(getSelectedChatIndex, async () => {
-  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-  if (loggedInUser) {
-    onSnapshot(
-      collection(db, "messages", selectedChat.value.id, "members"),
-      (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (selectedChat.value) {
-            if (change.type === ChangeDocType.ADDED) {
-              const { content, status, type } = change.doc.data();
-              const dateCreated = new Date();
-              messagingStore.addMessageToCache({
-                chatId: selectedChat.value.id,
-                dateCreated: dateCreated.toString(),
-                status,
-                content,
-                type,
-              });
-            }
-          }
-        }
-      }
-    );
-  }
-});
+// watch(getSelectedChatIndex, async () => {
+//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+//   if (loggedInUser) {
+//     onSnapshot(
+//       collection(db, "messages", selectedChat.value.id, "members"),
+//       (querySnapshot: any) => {
+//         for (const change of querySnapshot.docChanges()) {
+//           if (selectedChat.value) {
+//             if (change.type === ChangeDocType.ADDED) {
+//               const { content, status, type } = change.doc.data();
+//               const dateCreated = new Date();
+//               messagingStore.addMessageToCache({
+//                 chatId: selectedChat.value.id,
+//                 dateCreated: dateCreated.toString(),
+//                 status,
+//                 content,
+//                 type,
+//               });
+//             }
+//           }
+//         }
+//       }
+//     );
+//   }
+// });
 
 const selectedChat = computed(() => {
   return getChats.value[TabOptions.indexOf(getSelectedTab.value)].chats[
@@ -236,6 +236,8 @@ const allChats = computed(() => {
   const chats: IChat[] = [];
   getChats.value.forEach((item: ChatGroup) => {
     item.chats.forEach((chat: IChat) => {
+      // add snapshot for every chat
+      messagingStore.onSnapshotMessage(chat.id);
       chats.push(chat);
     });
   });
