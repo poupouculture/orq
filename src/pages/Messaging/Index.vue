@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -130,6 +130,9 @@ import {
   auth,
   signInWithCustomToken,
 } from "src/boot/firebase";
+import { Tabs as TabOptions } from "src/constants/Tabs";
+// import { ChatTypes } from "src/constants/ChatKeyword";
+import { ChatGroup, IChat } from "src/types/MessagingTypes";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -165,8 +168,10 @@ const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
+const first = ref(false);
 
-const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
+const { getChats, getSelectedChatIndex, getSelectedTab } =
+  storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -177,40 +182,69 @@ onMounted(async () => {
   firebaseToken.value = getFirebaseToken.value;
 });
 
-watch(getSelectedChatIndex, async () => {
-  if (firebaseToken.value) {
-    const loggedIn = await signInWithCustomToken(auth, firebaseToken.value);
-    if (loggedIn) {
-      const selectedChat = getChats.value[getSelectedChatIndex.value];
+watch(getChats, async () => {
+  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+  if (loggedInUser) {
+    onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
+      for await (const change of querySnapshot.docChanges()) {
+        const findChat = allChats.value.find((chat: IChat) => {
+          return chat.id === change.doc.id;
+        });
 
-      onSnapshot(
-        collection(db, "messages", selectedChat.id, "members"),
-        (querySnapshot: any) => {
-          for (const change of querySnapshot.docChanges()) {
-            const selectedChat = getChats.value[getSelectedChatIndex.value];
-            console.log(change.doc.data());
-            if (selectedChat) {
-              if (change.type === ChangeDocType.ADDED) {
-                const { content, status, type } = change.doc.data();
-                const dateCreated = new Date();
-                messagingStore.addMessageToCache({
-                  chatId: selectedChat.id,
-                  dateCreated: dateCreated.toString(),
-                  status,
-                  content,
-                  type,
-                });
-              }
-            }
-          }
+        if (!findChat && first.value) {
+          messagingStore.setChatsByStatus(change.doc.data().status);
         }
-      );
-    }
+      }
+      first.value = true;
+    });
   }
 });
 
+watch(getSelectedChatIndex, async () => {
+  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+  if (loggedInUser) {
+    onSnapshot(
+      collection(db, "messages", selectedChat.value.id, "members"),
+      (querySnapshot: any) => {
+        for (const change of querySnapshot.docChanges()) {
+          if (selectedChat.value) {
+            if (change.type === ChangeDocType.ADDED) {
+              const { content, status, type } = change.doc.data();
+              const dateCreated = new Date();
+              messagingStore.addMessageToCache({
+                chatId: selectedChat.value.id,
+                dateCreated: dateCreated.toString(),
+                status,
+                content,
+                type,
+              });
+            }
+          }
+        }
+      }
+    );
+  }
+});
+
+const selectedChat = computed(() => {
+  return getChats.value[TabOptions.indexOf(getSelectedTab.value)].chats[
+    getSelectedChatIndex.value
+  ];
+});
+
+const allChats = computed(() => {
+  const chats: IChat[] = [];
+  getChats.value.forEach((item: ChatGroup) => {
+    item.chats.forEach((chat: IChat) => {
+      chats.push(chat);
+    });
+  });
+
+  return chats;
+});
+
 const assignUser = async (manager: Manager) => {
-  const chatId = getChats.value[getSelectedChatIndex.value].id;
+  const chatId = selectedChat.value.id;
   const userId = manager.user_id;
   try {
     Loading.show();
@@ -234,7 +268,7 @@ const assignUser = async (manager: Manager) => {
 
 const closeConversationLoading = ref(false);
 const closeConversation = async () => {
-  const chatId = getChats.value[getSelectedChatIndex.value].id;
+  const chatId = selectedChat.value.id;
   try {
     closeConversationLoading.value = true;
     await closeChat(chatId);

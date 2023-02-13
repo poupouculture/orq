@@ -71,9 +71,9 @@
         no-caps
         @update:model-value="onChangeTab"
       >
-        <q-tab :name="ChatTypes.ONGOING" label="Ongoing 6" />
-        <q-tab :name="ChatTypes.PENDING" label="Waiting 1" />
-        <q-tab :name="ChatTypes.CLOSED" label="Closed 0" />
+        <q-tab :name="ChatTypes.ONGOING" label="Ongoing" />
+        <q-tab :name="ChatTypes.PENDING" label="Waiting" />
+        <q-tab :name="ChatTypes.CLOSED" label="Closed" />
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" inset />
       <q-tab-panels
@@ -87,7 +87,7 @@
           :key="tabIndex"
           :name="tab_"
         >
-          <div v-for="(chat, index) in props.chatList" :key="index">
+          <div v-for="(chat, index) in chats" :key="index">
             <ContactCard
               :active="parseInt(index) === activeChat"
               :name="
@@ -169,8 +169,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import type { Ref } from "vue";
+import { ref, reactive, computed } from "vue";
+import type { Ref, PropType } from "vue";
 import { storeToRefs } from "pinia";
 import { format } from "date-fns";
 import { useRouter } from "vue-router";
@@ -178,10 +178,11 @@ import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import { Direction } from "src/types/MessagingTypes";
+import { Direction, ChatGroup } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
 import { getCustomersWithContacts } from "src/api/customers";
 import { ICustomer } from "src/types/CustomerTypes";
+import { Tabs } from "src/constants/Tabs";
 
 // Interfaces
 interface LastMessage {
@@ -216,36 +217,34 @@ const customerStore = useCustomerStore();
 // Props & Emits
 const props = defineProps({
   chatList: {
-    type: Object,
-    default: () => null,
+    type: Array as PropType<ChatGroup[]>,
+    default: () => [],
   },
 });
-const emit = defineEmits(["changeTab"]);
 
 // States
 const activeChat: Ref<number | null> = ref(null);
 const openDrawer: Ref<boolean> = ref(true);
 const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
-const tabs: Ref<ChatTypes[]> = ref([
-  ChatTypes.PENDING,
-  ChatTypes.ONGOING,
-  ChatTypes.CLOSED,
-]);
+const tabs: Ref<ChatTypes[]> = ref(Tabs);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const data: CustomerData = reactive({
   customers: [],
 });
-const { getChats } = storeToRefs(messagingStore);
+const { getSelectedTab } = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
+
+const chats = computed(
+  () => props.chatList[tabs.value.indexOf(getSelectedTab.value)].chats
+);
 
 // Methods
 const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
   tab.value = val;
-  emit("changeTab", val);
 };
 defineExpose({ onChangeTab });
 
@@ -280,21 +279,21 @@ const selectChat = (index: number) => {
   if (window.innerWidth <= 1024) openDrawer.value = false;
 
   activeChat.value = index;
-  const { id: chatId } = props.chatList[index];
+  const { id: chatId } = chats.value[index];
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);
-  messagingStore.fetchContactNumber(getChats.value[index].contacts_id);
+  messagingStore.fetchContactNumber(chats.value[index].contacts_id);
 
-  if (getChats.value[index].first_name) {
-    messagingStore.setCustomerName(`${getChats.value[index].first_name}
-  ${getChats.value[index].last_name}`);
+  if (chats.value[index].first_name) {
+    messagingStore.setCustomerName(`${chats.value[index].first_name}
+  ${chats.value[index].last_name}`);
   } else {
     messagingStore.setCustomerName("Visitor");
   }
 
-  if (props.chatList[index].customers_id) {
-    const customerId = props.chatList[index].customers_id;
+  if (chats.value[index].customers_id) {
+    const customerId = chats.value[index].customers_id;
     customerStore.fetchCustomer(customerId);
   }
 };
