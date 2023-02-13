@@ -57,12 +57,13 @@ const useMessagingStore = defineStore("messaging", {
     },
     setChatsLastMessage(id: string, lastMessage: any) {
       this.chats = this.chats.map((chats) => {
-        chats.chats.forEach((chat) => {
+        chats.chats.map((chat) => {
           if (chat.id === id) {
             console.log(55555, lastMessage);
 
-            // chat.last_message = JSON.stringify(lastMessage);
+            chat.last_message = JSON.stringify(lastMessage);
           }
+          return chat;
         });
         return chats;
       });
