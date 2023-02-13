@@ -146,16 +146,11 @@
           </div>
         </div>
         <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Customer Group</p>
-            <q-select
-              outlined
-              v-model="customerGroup"
-              :options="customerGroupOptions"
-              dense
-              :disable="mode == 'show'"
-            />
-          </div>
+          <CustomerGroupOptions
+            v-model="customerGroups"
+            :customer="getCustomer"
+            :mode="mode"
+          />
           <div class="col"></div>
         </div>
         <q-checkbox
@@ -209,15 +204,15 @@ import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
-import { getAllCustomerGroups } from "src/api/customerGroup";
 import { getCompanies } from "src/api/companies";
 import type { Company as ICompany } from "src/types/CompanyTypes";
 import type { Tag } from "src/types/TagTypes";
 import { getTags } from "src/api/tag";
 import { useQuasar } from "quasar";
 import useMessagingStore from "src/stores/modules/messaging";
+import CustomerGroupOptions from "./Modules/CustomerGroupOptions.vue";
+import { difference } from "src/helpers";
 
 interface Option {
   value: string | number;
@@ -230,7 +225,6 @@ interface Gender {
 }
 
 type Position = Option;
-type ICustomerGroupOptions = Option & ICustomerGroup;
 type ICompanyOptions = Option & ICompany;
 type ITagOptions = Option & Tag;
 
@@ -275,13 +269,11 @@ const gender: Ref<Gender | undefined> = ref(undefined);
 const dateOfBirth = ref("");
 const position: Ref<Position | undefined> = ref(undefined);
 const company: Ref<ICompany | undefined> = ref(undefined);
-const customerGroup: Ref<ICustomerGroup | undefined> = ref(undefined);
+const customerGroups: Ref<Option[]> = ref([]);
 const isActive = ref(true);
 const companyOptions: Ref<ICompanyOptions[] | undefined> = ref(undefined);
-const customerGroupOptions: Ref<ICustomerGroupOptions[] | undefined> =
-  ref(undefined);
 const tagOptions: Ref<Tag[] | undefined> = ref(undefined);
-const tag: Ref<Tag | undefined> = ref(undefined);
+const tag: Ref<Tag | undefined> = ref(null);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -297,30 +289,20 @@ onMounted(async () => {
 
   const customer = customerStore.getCustomer;
 
-  const [customerGroups_, companies_, tags_] = await Promise.all([
-    getAllCustomerGroups(),
-    getCompanies(),
-    getTags(),
-  ]);
-  const mappedCustomerGroups = customerGroups_.data.data.map(
-    (item: ICustomerGroupOptions) => {
-      item.value = item.id;
-      item.label = item.name;
-      return item;
-    }
-  );
-  customerGroupOptions.value = mappedCustomerGroups;
+  const [companies_, tags_] = await Promise.all([getCompanies(), getTags()]);
   const mappedCompanies = companies_.data.data.map((item: ICompanyOptions) => {
     item.value = item.id;
     item.label = item.name_english;
     return item;
   });
   companyOptions.value = mappedCompanies;
-  const mappedTags = tags_.data.data.map((item: ITagOptions) => {
-    item.value = item.id;
-    item.label = item.name;
-    return item;
-  });
+  const mappedTags = tags_.data.data
+    .map((item: ITagOptions) => {
+      item.value = item.id;
+      item.label = item.name;
+      return item;
+    })
+    .filter((item: ITagOptions) => item !== null);
   tagOptions.value = mappedTags;
 
   if (customer) {
@@ -333,16 +315,7 @@ onMounted(async () => {
     position.value = positionOptions.find(
       (item) => item.value === customer.position
     );
-
     gender.value = genderOptions.find((item) => item.value === customer.gender);
-
-    if (customer.customer_groups.length) {
-      customerGroup.value = customerGroupOptions.value?.find(
-        (item: ICustomerGroupOptions) =>
-          item.value === customer.customer_groups[0].customer_groups_id
-      );
-    }
-
     if (customer.companies?.length) {
       company.value = companyOptions.value?.find(
         (item: ICompanyOptions) =>
@@ -356,7 +329,6 @@ onMounted(async () => {
       );
     }
   }
-
   $q.loading.hide();
 });
 
@@ -378,12 +350,6 @@ watch(getCustomer, () => {
     (item) => item.value === getCustomer.value.gender
   );
 
-  if (getCustomer.value.customer_groups.length) {
-    customerGroup.value = customerGroupOptions.value?.find(
-      (item: ICustomerGroupOptions) =>
-        item.value === getCustomer.value.customer_groups[0].customer_groups_id
-    );
-  }
   if (getCustomer.value.companies?.length) {
     company.value = companyOptions.value?.find(
       (item: ICompanyOptions) =>
@@ -414,6 +380,47 @@ const onSubmit = async () => {
     }
     const validate = await customerForm.value.validate();
     if (!validate) return;
+    let customerGroupsData = [] as any;
+    // Should be refactor later
+    if (getCustomer.value.id) {
+      const deletedCustomerGroup = difference(
+        getCustomer.value.customer_groups.map(
+          (c: any) => c.customer_groups_id.id
+        ),
+        customerGroups.value.map((c: any) => c.value)
+      );
+      const insertedCustomerGroup = difference(
+        customerGroups.value.map((c: any) => c.value),
+        getCustomer.value.customer_groups.map(
+          (c: any) => c.customer_groups_id.id
+        )
+      );
+      customerGroupsData = {
+        create:
+          (insertedCustomerGroup.length &&
+            insertedCustomerGroup.map((group) => ({
+              customer_id: getCustomer.value.id,
+              customer_groups_id: group,
+            }))) ||
+          [],
+        delete:
+          (deletedCustomerGroup.length &&
+            getCustomer.value.customer_groups
+              .filter((cg: any) =>
+                deletedCustomerGroup.includes(cg.customer_groups_id.id)
+              )
+              .map((data: any) => data.id)) ||
+          [],
+      };
+    } else {
+      // insert or add page just create the data
+      customerGroupsData = {
+        create: customerGroups.value.map((group: Option) => ({
+          customer_id: "+",
+          customer_groups_id: group.value,
+        })),
+      };
+    }
     const payload = {
       first_name: firstName.value,
       last_name: lastName.value,
@@ -423,9 +430,9 @@ const onSubmit = async () => {
       isActive: isActive.value,
       dob: dateOfBirth.value,
       position: position.value?.value,
-      customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
-      companies: [{ companies_id: company.value?.id }],
-      tags: [{ tags_id: tag.value?.id }],
+      customer_groups: customerGroupsData,
+      companies: [],
+      tags: [],
     };
     emit("submit", payload);
   } catch (err) {

@@ -45,7 +45,8 @@ export const getCustomer = async (id: string) => {
   const fields = "*";
   const companies = "companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
-  const customerGroups = "customer_groups.*";
+  const customerGroups =
+    "customer_groups.*, customer_groups.customer_groups_id.*";
   const tags = "tags.tags_id.*";
 
   const customer = await api.get(
@@ -84,4 +85,15 @@ export const searchCustomers = async (payload: any) => {
     },
   });
   return data;
+};
+/*
+  delete relation data from customer
+  (customer relation data) eq: customer_groups
+*/
+export const deleteCustomerRelationship = async (customerId, contactId) => {
+  const customerContact = await api.post("/items/contacts_customers", {
+    customers_id: customerId,
+    contacts_id: contactId,
+  });
+  return customerContact;
 };
