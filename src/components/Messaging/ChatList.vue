@@ -222,6 +222,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["setChatId"]);
+
 // States
 const activeChat: Ref<number | null> = ref(null);
 const openDrawer: Ref<boolean> = ref(true);
@@ -280,6 +282,8 @@ const selectChat = (index: number) => {
 
   activeChat.value = index;
   const { id: chatId } = chats.value[index];
+
+  emit("setChatId", chatId);
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.fetchChatMessagesByChatId(chatId);

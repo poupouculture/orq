@@ -1,13 +1,18 @@
 <template>
   <div style="background: white">
     <q-layout view="lHh Lpr lFf">
-      <Drawer ref="chatList" v-if="!loading" :chat-list="chats" />
+      <Drawer
+        ref="chatList"
+        v-if="!loading"
+        :chat-list="chats"
+        @set-chat-id="setChatID"
+      />
       <q-page-container>
         <q-page padding>
           <router-view />
         </q-page>
       </q-page-container>
-      <ChatMessages @new-chat-created="changeTab" />
+      <ChatMessages @new-chat-created="changeTab" :current-chat-id="chatID" />
     </q-layout>
   </div>
 </template>
@@ -23,6 +28,7 @@ import { ChatTypes } from "src/constants/ChatKeyword";
 const messagingStore = useMessagingStore();
 
 const chatList = ref();
+const chatID = ref("");
 const loading: Ref<boolean> = ref(true);
 
 onMounted(async () => {
@@ -38,6 +44,11 @@ const fetchChats = async () => {
 
 const changeTab = (val: ChatTypes) => {
   chatList.value.onChangeTab(val);
+};
+
+const setChatID = (val: string) => {
+  chatID.value = val;
+  console.log(chatID.value);
 };
 </script>
 <style scoped lang="scss">

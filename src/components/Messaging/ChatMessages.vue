@@ -213,12 +213,19 @@ const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 const userInfoStore = useUserInfoStore();
 
+const props = defineProps({
+  currentChatId: {
+    type: String,
+    default: () => "",
+  },
+});
 const emit = defineEmits(["newChatCreated"]);
 
 const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
+const isTemplate: Ref<boolean> = ref(false);
 const {
   getChats,
   getSelectedChatIndex,
@@ -253,20 +260,22 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
-const sendMessage = async (isTemplate: boolean = false) => {
+const sendMessage = async () => {
   if (message.value.length < 1) return;
   if (messages.value.length > 0) {
-    const chat = getChats.value[getSelectedChatIndex.value];
-    const chatId = chat.id;
+    // const chat = getChats.value[getSelectedChatIndex.value];
+    // const chatId = chat.id;
+    const chatId = props.currentChatId;
+
     const contactNumber = getContactNumber.value;
 
     await messagingStore.sendChatTextMessage({
       chatId,
       messageProduct: Product.WHATSAPP,
       to: contactNumber as string,
-      type: isTemplate ? MessageType.TEMPLATE : MessageType.TEXT,
+      type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
       messageBody: message.value,
-      isTemplate,
+      isTemplate: isTemplate.value,
       templateName: templateName.value,
       language: language.value,
     });
@@ -281,6 +290,7 @@ const sendMessage = async (isTemplate: boolean = false) => {
     emit("newChatCreated", ChatTypes.ONGOING);
   }
   message.value = "";
+  isTemplate.value = false;
 };
 
 const activateChat = async () => {
@@ -295,7 +305,8 @@ const sendMessageTemplate = (name: string, msg: string, lang: string) => {
   templateName.value = name;
   message.value = msg;
   language.value = lang;
-  sendMessage(true);
+  isTemplate.value = true;
+  sendMessage();
 };
 </script>
 
