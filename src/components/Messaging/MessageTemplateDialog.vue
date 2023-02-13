@@ -125,6 +125,8 @@ const page = ref(1);
 const rowsPerPage = ref(10);
 const selectedTemplate = ref([]);
 const usedTemplate = ref(null);
+const language = ref("");
+const templateName = ref("");
 const header = ref("");
 const headerMessage = ref("");
 const media = ref("");
@@ -178,7 +180,7 @@ const send = () => {
     );
   });
 
-  emit("send", bodyMessage.value);
+  emit("send", templateName.value, bodyMessage.value, language.value);
   emit("hide");
 };
 
@@ -193,6 +195,9 @@ const listNumbers = (str: string) => {
 };
 
 const useTemplate = (val: any) => {
+  templateName.value = val.name;
+  language.value = val.language;
+
   usedTemplate.value = val;
   if (val.components) {
     const headerComponent = val.components.find(

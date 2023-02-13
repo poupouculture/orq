@@ -215,7 +215,9 @@ const userInfoStore = useUserInfoStore();
 
 const emit = defineEmits(["newChatCreated"]);
 
+const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
+const language: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
 const {
   getChats,
@@ -251,7 +253,7 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
-const sendMessage = async () => {
+const sendMessage = async (isTemplate: boolean = false) => {
   if (message.value.length < 1) return;
   if (messages.value.length > 0) {
     const chat = getChats.value[getSelectedChatIndex.value];
@@ -262,8 +264,11 @@ const sendMessage = async () => {
       chatId,
       messageProduct: Product.WHATSAPP,
       to: contactNumber as string,
-      type: MessageType.TEXT,
+      type: isTemplate ? MessageType.TEMPLATE : MessageType.TEXT,
       messageBody: message.value,
+      isTemplate,
+      templateName: templateName.value,
+      language: language.value,
     });
 
     messagingStore.fetchChatMessagesByChatId(chatId, true);
@@ -286,9 +291,11 @@ const activateChat = async () => {
   emit("newChatCreated", ChatTypes.ONGOING);
 };
 
-const sendMessageTemplate = (msg: string) => {
+const sendMessageTemplate = (name: string, msg: string, lang: string) => {
+  templateName.value = name;
   message.value = msg;
-  sendMessage();
+  language.value = lang;
+  sendMessage(true);
 };
 </script>
 
