@@ -187,6 +187,7 @@
   <MessageTemplateDialog
     v-model="showMessageTemplate"
     @hide="showMessageTemplate = false"
+    @send="sendMessageTemplate"
   />
 </template>
 
@@ -283,6 +284,11 @@ const activateChat = async () => {
   const userId: any | null = userInfoStore.getUserProfile;
   await updateChatStatus(chatId, userId?.id);
   emit("newChatCreated", ChatTypes.ONGOING);
+};
+
+const sendMessageTemplate = (msg: string) => {
+  message.value = msg;
+  sendMessage();
 };
 </script>
 

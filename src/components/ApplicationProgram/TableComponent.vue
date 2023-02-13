@@ -40,12 +40,12 @@
     </template>
     <template #body-cell-read="props">
       <q-td :props="props">
-        {{ props.row.read ? props.row.read : 0 }}
+        {{ props.row.messages_opened ? props.row.messages_opened : 0 }}
       </q-td>
     </template>
     <template #body-cell-replied="props">
       <q-td :props="props">
-        {{ props.row.replied ? props.row.replied : 0 }}
+        {{ props.row.top_block_reason ? props.row.top_block_reason : 0 }}
       </q-td>
     </template>
     <template #body-cell-created_by="props">
@@ -63,16 +63,18 @@
         <router-link
           :to="`/application-programs/message-templates/${props.row.id}`"
           style="text-decoration: none; color: inherit"
+          v-if="!propsTable.isSimple"
         >
           <p class="edit-button">Edit</p>
         </router-link>
+        <button @click="useTemplate(props.row)" v-else>Use</button>
       </q-td>
     </template>
   </BaseTable>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import BaseTable from "src/components/BaseTable.vue";
 
 const propsTable = defineProps({
@@ -92,11 +94,15 @@ const propsTable = defineProps({
     type: Number,
     default: () => 0,
   },
+  isSimple: {
+    type: Boolean,
+    default: () => false,
+  },
 });
 
-const emit = defineEmits(["updateAction"]);
+const emit = defineEmits(["changePage", "useTemplate"]);
 
-const headerColumns = [
+const headerColumns = ref([
   {
     name: "name",
     align: "left",
@@ -122,24 +128,24 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "delivered",
+    name: "messages_sent",
     align: "center",
     label: "Delivered",
-    field: "delivered",
+    field: "messages_sent",
     classes: "text-black",
   },
   {
-    name: "read",
+    name: "messages_opened",
     align: "center",
     label: "Read",
-    field: "read",
+    field: "messages_opened",
     classes: "text-black",
   },
   {
-    name: "replied",
+    name: "top_block_reason",
     align: "center",
     label: "Replied",
-    field: "replied",
+    field: "top_block_reason",
     classes: "text-black",
   },
   {
@@ -163,11 +169,26 @@ const headerColumns = [
     field: "action",
     classes: "text-blue",
   },
-];
+]);
 
 const selected = ref([]);
 
 const changePage = (val) => {
   emit("changePage", val);
 };
+
+const useTemplate = (val) => {
+  emit("useTemplate", val);
+};
+
+onMounted(() => {
+  if (propsTable.isSimple) {
+    headerColumns.value = headerColumns.value.filter(
+      (h) =>
+        h.name !== "top_block_reason" &&
+        h.name !== "date_created" &&
+        h.name !== "user_created"
+    );
+  }
+});
 </script>
