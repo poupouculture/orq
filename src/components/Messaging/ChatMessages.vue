@@ -240,6 +240,13 @@ const messages = computed<unknown[]>(() => {
   });
 });
 
+const getSelectedChat: any = computed(() => {
+  const chats = getChats.value.find(
+    (chat) => chat.status === getSelectedTab.value
+  );
+  return chats?.chats[getSelectedChatIndex.value] || {};
+});
+
 const scrollAreaRef = ref<HTMLDivElement>();
 watch(messages, async () => {
   // scroll to end bottom
@@ -254,8 +261,7 @@ const closeChat = () => {
 const sendMessage = async () => {
   if (message.value.length < 1) return;
   if (messages.value.length > 0) {
-    const chat = getChats.value[getSelectedChatIndex.value];
-    const chatId = chat.id;
+    const chatId = getSelectedChat.value.id;
     const contactNumber = getContactNumber.value;
 
     await messagingStore.sendChatTextMessage({
@@ -279,8 +285,7 @@ const sendMessage = async () => {
 };
 
 const activateChat = async () => {
-  const chat = getChats.value[getSelectedChatIndex.value];
-  const chatId = chat.id;
+  const chatId = getSelectedChat.value.id;
   const userId: any | null = userInfoStore.getUserProfile;
   await updateChatStatus(chatId, userId?.id);
   emit("newChatCreated", ChatTypes.ONGOING);
