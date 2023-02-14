@@ -299,7 +299,7 @@ const selectChat = (index: number) => {
   activeChat.value = index;
   const chat = chats.value[index];
 
-  emit("setChatId", chatId);
+  emit("setChatId", chat.id);
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.setSelectedChat(chat);
