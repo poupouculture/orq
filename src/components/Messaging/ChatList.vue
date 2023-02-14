@@ -189,7 +189,7 @@ import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { Direction, ChatGroup } from "src/types/MessagingTypes";
 import TrimWord from "src/utils/trim-word";
-import { getCustomersWithContacts } from "src/api/customers";
+// import { getCustomersWithContacts } from "src/api/customers";
 import { ICustomer } from "src/types/CustomerTypes";
 import { Tabs } from "src/constants/Tabs";
 
@@ -231,7 +231,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["setChatId"]);
+const emit = defineEmits(["setChatId", "showCustomerDialog"]);
 
 // States
 const activeChat: Ref<number | null> = ref(null);
@@ -264,14 +264,16 @@ defineExpose({ onChangeTab });
 
 const fetchCustomers = async () => {
   if (chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon) {
-    const {
-      data: { data: customers },
-    } = await getCustomersWithContacts();
+    emit("showCustomerDialog", true);
+    // const {
+    //   data: { data: customers },
+    // } = await getCustomersWithContacts();
 
-    data.customers = customers;
-    chatToggleLabel.state = ChatToggleLabel.HIDE;
+    // data.customers = customers;
+    // chatToggleLabel.state = ChatToggleLabel.HIDE;
   } else {
-    chatToggleLabel.state = ChatToggleLabel.SHOW;
+    emit("showCustomerDialog", false);
+    // chatToggleLabel.state = ChatToggleLabel.SHOW;
   }
 };
 
