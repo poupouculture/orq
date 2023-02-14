@@ -59,15 +59,16 @@ const useMessagingStore = defineStore("messaging", {
       this.chats = this.chats.map((chats) => {
         chats.chats.map((chat) => {
           if (chat.id === id) {
-            console.log(55555, lastMessage);
-
-            chat.last_message = JSON.stringify(lastMessage);
+            const a = {
+              ...JSON.parse(chat.last_message),
+              ...lastMessage,
+            };
+            chat.last_message = JSON.stringify(a);
           }
           return chat;
         });
         return chats;
       });
-      console.log(777777, this.chats);
     },
     setChatSnapshotGroup(id: string, cancleFn: unknown) {
       this.chatSnapshotGroup[id] = cancleFn;
@@ -157,6 +158,7 @@ const useMessagingStore = defineStore("messaging", {
       const chatGroupIndex = this.chats.findIndex(
         (group: ChatGroup) => group.status === status
       );
+      console.log(chatGroupIndex);
       if (chatGroupIndex >= 0) {
         const chats = await getChats(status);
         this.chats[chatGroupIndex].chats = chats;
@@ -181,19 +183,13 @@ const useMessagingStore = defineStore("messaging", {
         const snpshotCancel = onSnapshot(
           collection(db, "messages", chatId, "members"),
           async (querySnapshot: any) => {
-            console.log("监听到消息");
-
             for await (const change of querySnapshot.docChanges()) {
-              console.log(123213);
-
               // 获取当前的id与现有id比较
               const chats = this.chats.find(
                 (chat) => chat.status === this.selectedTab
               );
               const selectedChat: any = chats?.chats[this.selectedChatIndex];
-              console.log(selectedChat && selectedChat.id === chatId);
               if (selectedChat && selectedChat.id === chatId) {
-                console.log("good 渲染数据");
                 const { content, status, type } = change.doc.data();
                 const dateCreated = new Date();
                 const direction =
@@ -210,7 +206,6 @@ const useMessagingStore = defineStore("messaging", {
                 // 左侧chats更新
                 this.setChatsLastMessage(chatId, change.doc.data());
               }
-              console.log(11111, change.doc.id, change.doc.data());
             }
           }
         );

@@ -185,31 +185,32 @@ onMounted(async () => {
 });
 
 watch(getChats, async () => {
-  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-  if (loggedInUser) {
-    onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-      for await (const change of querySnapshot.docChanges()) {
-        const findChat = allChats.value.find((chat: IChat) => {
-          return chat.id === change.doc.id;
-        });
-
-        if (first.value) {
-          if (!findChat) {
-            messagingStore.setChatsByStatus(change.doc.data().status);
-          }
-          if (change.type === ChangeDocType.MODIFIED) {
-            const foundChat = allChats.value.find(
-              (chat) => chat.id === change.doc.id
-            );
-            if (foundChat) {
+  if (!first.value) {
+    const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+    if (loggedInUser) {
+      onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
+        for await (const change of querySnapshot.docChanges()) {
+          const findChat = allChats.value.find((chat: IChat) => {
+            return chat.id === change.doc.id;
+          });
+          if (first.value) {
+            if (!findChat) {
               messagingStore.setChatsByStatus(change.doc.data().status);
-              messagingStore.setChatsByStatus(foundChat.status);
+            }
+            if (change.type === ChangeDocType.MODIFIED) {
+              const foundChat = allChats.value.find(
+                (chat) => chat.id === change.doc.id
+              );
+              if (foundChat) {
+                messagingStore.setChatsByStatus(change.doc.data().status);
+                messagingStore.setChatsByStatus(foundChat.status);
+              }
             }
           }
         }
-      }
-      first.value = true;
-    });
+        first.value = true;
+      });
+    }
   }
 });
 
