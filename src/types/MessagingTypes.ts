@@ -11,6 +11,7 @@ export const enum Product {
 
 export const enum MessageType {
   TEXT = "text",
+  TEMPLATE = "template",
 }
 
 export interface IMessage {
@@ -63,4 +64,37 @@ export interface SendTextMessage {
   to: string;
   type: MessageType;
   messageBody: string;
+  isTemplate?: boolean;
+  templateName?: string;
+  language?: string;
+}
+
+export interface ChatPayloadWabaContentText {
+  preview_url: boolean;
+  body: string;
+}
+
+export interface Language {
+  code: string | undefined;
+}
+
+export interface ChatPayloadWabaContentTemplate {
+  name: string | undefined;
+  language: Language;
+  body: string;
+}
+
+export interface ChatPayloadWabaContent {
+  messaging_product: string;
+  recipient_type: string;
+  to: string;
+  type: string;
+  text?: ChatPayloadWabaContentText;
+  template?: ChatPayloadWabaContentTemplate;
+}
+
+export interface ChatPayload {
+  chat_id: string;
+  keyword: string;
+  waba_content: ChatPayloadWabaContent;
 }

@@ -213,10 +213,19 @@ const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 const userInfoStore = useUserInfoStore();
 
+const props = defineProps({
+  currentChatId: {
+    type: String,
+    default: () => "",
+  },
+});
 const emit = defineEmits(["newChatCreated"]);
 
+const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
+const language: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
+const isTemplate: Ref<boolean> = ref(false);
 const { getContactNumber, getCustomerName, getSelectedChat } =
   storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
@@ -249,15 +258,21 @@ const closeChat = () => {
 const sendMessage = async () => {
   if (message.value.length < 1) return;
   if (messages.value.length > 0) {
-    const chatId = getSelectedChat.value.id;
+    // const chat = getChats.value[getSelectedChatIndex.value];
+    // const chatId = chat.id;
+    const chatId = props.currentChatId;
+
     const contactNumber = getContactNumber.value;
 
     await messagingStore.sendChatTextMessage({
       chatId,
       messageProduct: Product.WHATSAPP,
       to: contactNumber as string,
-      type: MessageType.TEXT,
+      type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
       messageBody: message.value,
+      isTemplate: isTemplate.value,
+      templateName: templateName.value,
+      language: language.value,
     });
 
     messagingStore.fetchChatMessagesByChatId(chatId, true);
@@ -268,6 +283,7 @@ const sendMessage = async () => {
     emit("newChatCreated", ChatTypes.ONGOING);
   }
   message.value = "";
+  isTemplate.value = false;
 };
 
 const activateChat = async () => {
@@ -277,8 +293,11 @@ const activateChat = async () => {
   emit("newChatCreated", ChatTypes.ONGOING);
 };
 
-const sendMessageTemplate = (msg: string) => {
+const sendMessageTemplate = (name: string, msg: string, lang: string) => {
+  templateName.value = name;
   message.value = msg;
+  language.value = lang;
+  isTemplate.value = true;
   sendMessage();
 };
 </script>
