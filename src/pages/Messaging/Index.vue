@@ -144,11 +144,13 @@ const enum Role {
   CS = "CS",
   CS_MANAGER = "CS-Manager",
 }
-// const enum ChangeDocType {
-//   ADDED = "added",
-//   REMOVED = "removed",
-//   MODIFIED = "modified",
-// }
+
+const enum ChangeDocType {
+  ADDED = "added",
+  REMOVED = "removed",
+  MODIFIED = "modified",
+}
+
 interface Manager {
   user_id: string;
   first_name: string;
@@ -191,8 +193,19 @@ watch(getChats, async () => {
           return chat.id === change.doc.id;
         });
 
-        if (!findChat && first.value) {
-          messagingStore.setChatsByStatus(change.doc.data().status);
+        if (first.value) {
+          if (!findChat) {
+            messagingStore.setChatsByStatus(change.doc.data().status);
+          }
+          if (change.type === ChangeDocType.MODIFIED) {
+            const foundChat = allChats.value.find(
+              (chat) => chat.id === change.doc.id
+            );
+            if (foundChat) {
+              messagingStore.setChatsByStatus(change.doc.data().status);
+              messagingStore.setChatsByStatus(foundChat.status);
+            }
+          }
         }
       }
       first.value = true;
@@ -301,6 +314,7 @@ const closeConversation = async () => {
   height: 6.5px;
   cursor: pointer;
 }
+
 .no-hover-btn:active,
 .no-hover-btn:focus,
 .no-hover-btn:hover {
