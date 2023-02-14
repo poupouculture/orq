@@ -212,7 +212,7 @@ import { getTags } from "src/api/tag";
 import { useQuasar } from "quasar";
 import useMessagingStore from "src/stores/modules/messaging";
 import CustomerGroupOptions from "./Modules/CustomerGroupOptions.vue";
-import { difference } from "src/helpers";
+import { transforCustomerGroupPayload } from "src/utils/transform-object";
 
 interface Option {
   value: string | number;
@@ -380,47 +380,6 @@ const onSubmit = async () => {
     }
     const validate = await customerForm.value.validate();
     if (!validate) return;
-    let customerGroupsData = [] as any;
-    // Should be refactor later
-    if (getCustomer.value.id) {
-      const deletedCustomerGroup = difference(
-        getCustomer.value.customer_groups.map(
-          (c: any) => c.customer_groups_id.id
-        ),
-        customerGroups.value.map((c: any) => c.value)
-      );
-      const insertedCustomerGroup = difference(
-        customerGroups.value.map((c: any) => c.value),
-        getCustomer.value.customer_groups.map(
-          (c: any) => c.customer_groups_id.id
-        )
-      );
-      customerGroupsData = {
-        create:
-          (insertedCustomerGroup.length &&
-            insertedCustomerGroup.map((group) => ({
-              customer_id: getCustomer.value.id,
-              customer_groups_id: group,
-            }))) ||
-          [],
-        delete:
-          (deletedCustomerGroup.length &&
-            getCustomer.value.customer_groups
-              .filter((cg: any) =>
-                deletedCustomerGroup.includes(cg.customer_groups_id.id)
-              )
-              .map((data: any) => data.id)) ||
-          [],
-      };
-    } else {
-      // insert or add page just create the data
-      customerGroupsData = {
-        create: customerGroups.value.map((group: Option) => ({
-          customer_id: "+",
-          customer_groups_id: group.value,
-        })),
-      };
-    }
     const payload = {
       first_name: firstName.value,
       last_name: lastName.value,
@@ -430,7 +389,10 @@ const onSubmit = async () => {
       isActive: isActive.value,
       dob: dateOfBirth.value,
       position: position.value?.value,
-      customer_groups: customerGroupsData,
+      customer_groups: transforCustomerGroupPayload(
+        getCustomer.value,
+        customerGroups.value
+      ),
       companies: [],
       tags: [],
     };
