@@ -1,4 +1,5 @@
 import { CompanyRelation } from "./CompanyTypes";
+import { ICustomerGroup } from "./CustomerGroupTypes";
 import { TagRelation } from "./TagTypes";
 
 export interface FormPayload {
@@ -23,7 +24,7 @@ interface ContactRelation {
 type Gender = "m" | "f";
 
 export interface ICustomer {
-  companies?: [CompanyRelation];
+  companies: [CompanyRelation];
   contacts: [ContactRelation];
   customer_code: string;
   date_created: string;
@@ -41,7 +42,7 @@ export interface ICustomer {
   status: string;
   user_created: string;
   user_updated: string;
-  customer_groups: any[];
+  customer_groups: ICustomerGroup[];
   tags: [TagRelation];
 }
 

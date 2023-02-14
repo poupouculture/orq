@@ -18,14 +18,7 @@
           </div>
           <div class="col-10">
             <div class="field-holder">
-              <p class="label-style">Label</p>
-              <q-select
-                outlined
-                v-model="tag"
-                :options="tagOptions"
-                :disable="mode == 'show'"
-                dense
-              />
+              <TagOptions v-model="tags" :customer="getCustomer" :mode="mode" />
             </div>
           </div>
         </div>
@@ -123,7 +116,7 @@
             </q-input>
           </div>
         </div>
-        <div class="row q-mb-lg q-gutter-xl">
+        <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
             <p class="label-style">Position</p>
             <q-select
@@ -135,25 +128,19 @@
             />
           </div>
           <div class="col">
-            <p class="label-style">Company</p>
-            <q-select
-              outlined
-              v-model="company"
-              :options="companyOptions"
-              dense
-              :disable="mode == 'show'"
+            <CompanyOptions
+              v-model="companies"
+              :customer="getCustomer"
+              :mode="mode"
             />
           </div>
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Customer Group</p>
-            <q-select
-              outlined
-              v-model="customerGroup"
-              :options="customerGroupOptions"
-              dense
-              :disable="mode == 'show'"
+            <CustomerGroupOptions
+              v-model="customerGroups"
+              :customer="getCustomer"
+              :mode="mode"
             />
           </div>
           <div class="col"></div>
@@ -209,15 +196,17 @@ import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import { required } from "src/utils/validation-rules";
-import { getAllCustomerGroups } from "src/api/customerGroup";
-import { getCompanies } from "src/api/companies";
-import type { Company as ICompany } from "src/types/CompanyTypes";
-import type { Tag } from "src/types/TagTypes";
-import { getTags } from "src/api/tag";
 import { useQuasar } from "quasar";
 import useMessagingStore from "src/stores/modules/messaging";
+import CustomerGroupOptions from "./Modules/CustomerGroupOptions.vue";
+import CompanyOptions from "./Modules/CompanyOptions.vue";
+import TagOptions from "./Modules/TagOptions.vue";
+import {
+  transforCustomerGroupPayload,
+  transformCompaniesPayload,
+  transformTagPayload,
+} from "src/utils/transform-object";
 
 interface Option {
   value: string | number;
@@ -230,9 +219,6 @@ interface Gender {
 }
 
 type Position = Option;
-type ICustomerGroupOptions = Option & ICustomerGroup;
-type ICompanyOptions = Option & ICompany;
-type ITagOptions = Option & Tag;
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
@@ -274,14 +260,10 @@ const customerCode = ref("");
 const gender: Ref<Gender | undefined> = ref(undefined);
 const dateOfBirth = ref("");
 const position: Ref<Position | undefined> = ref(undefined);
-const company: Ref<ICompany | undefined> = ref(undefined);
-const customerGroup: Ref<ICustomerGroup | undefined> = ref(undefined);
+const companies: Ref<Option[]> = ref([]);
+const customerGroups: Ref<Option[]> = ref([]);
+const tags: Ref<Option[]> = ref([]);
 const isActive = ref(true);
-const companyOptions: Ref<ICompanyOptions[] | undefined> = ref(undefined);
-const customerGroupOptions: Ref<ICustomerGroupOptions[] | undefined> =
-  ref(undefined);
-const tagOptions: Ref<Tag[] | undefined> = ref(undefined);
-const tag: Ref<Tag | undefined> = ref(undefined);
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
@@ -297,32 +279,6 @@ onMounted(async () => {
 
   const customer = customerStore.getCustomer;
 
-  const [customerGroups_, companies_, tags_] = await Promise.all([
-    getAllCustomerGroups(),
-    getCompanies(),
-    getTags(),
-  ]);
-  const mappedCustomerGroups = customerGroups_.data.data.map(
-    (item: ICustomerGroupOptions) => {
-      item.value = item.id;
-      item.label = item.name;
-      return item;
-    }
-  );
-  customerGroupOptions.value = mappedCustomerGroups;
-  const mappedCompanies = companies_.data.data.map((item: ICompanyOptions) => {
-    item.value = item.id;
-    item.label = item.name_english;
-    return item;
-  });
-  companyOptions.value = mappedCompanies;
-  const mappedTags = tags_.data.data.map((item: ITagOptions) => {
-    item.value = item.id;
-    item.label = item.name;
-    return item;
-  });
-  tagOptions.value = mappedTags;
-
   if (customer) {
     firstName.value = customer.first_name;
     lastName.value = customer.last_name;
@@ -333,30 +289,8 @@ onMounted(async () => {
     position.value = positionOptions.find(
       (item) => item.value === customer.position
     );
-
     gender.value = genderOptions.find((item) => item.value === customer.gender);
-
-    if (customer.customer_groups.length) {
-      customerGroup.value = customerGroupOptions.value?.find(
-        (item: ICustomerGroupOptions) =>
-          item.value === customer.customer_groups[0].customer_groups_id
-      );
-    }
-
-    if (customer.companies?.length) {
-      company.value = companyOptions.value?.find(
-        (item: ICompanyOptions) =>
-          item.value === customer.companies[0].companies_id.id
-      );
-    }
-
-    if (customer.tags?.length) {
-      tag.value = tagOptions.value?.find(
-        (item: ITagOptions) => item.value === customer.tags[0].tags_id.id
-      );
-    }
   }
-
   $q.loading.hide();
 });
 
@@ -377,35 +311,12 @@ watch(getCustomer, () => {
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
-
-  if (getCustomer.value.customer_groups.length) {
-    customerGroup.value = customerGroupOptions.value?.find(
-      (item: ICustomerGroupOptions) =>
-        item.value === getCustomer.value.customer_groups[0].customer_groups_id
-    );
-  }
-  if (getCustomer.value.companies?.length) {
-    company.value = companyOptions.value?.find(
-      (item: ICompanyOptions) =>
-        item.value === getCustomer.value.companies[0].companies_id.id
-    );
-  }
-
-  if (getCustomer.value.tags?.length) {
-    tag.value = tagOptions.value?.find(
-      (item: ITagOptions) => item.value === getCustomer.value.tags[0].tags_id.id
-    );
-  }
 });
 
 // Watch Contact number
 watch(getContactNumber, (val: string) => {
   idNumber.value = val;
 });
-
-const submitDelete = () => {
-  deleteDialog.value = false;
-};
 
 const onSubmit = async () => {
   try {
@@ -423,14 +334,21 @@ const onSubmit = async () => {
       isActive: isActive.value,
       dob: dateOfBirth.value,
       position: position.value?.value,
-      customer_groups: [{ customer_groups_id: customerGroup.value?.id }],
-      companies: [{ companies_id: company.value?.id }],
-      tags: [{ tags_id: tag.value?.id }],
+      customer_groups: transforCustomerGroupPayload(
+        getCustomer.value,
+        customerGroups.value
+      ),
+      companies: transformCompaniesPayload(getCustomer.value, companies.value),
+      tags: transformTagPayload(getCustomer.value, tags.value),
     };
     emit("submit", payload);
   } catch (err) {
     console.log(err);
   }
+};
+
+const submitDelete = () => {
+  deleteDialog.value = false;
 };
 </script>
 

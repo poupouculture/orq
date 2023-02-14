@@ -178,7 +178,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, watchEffect } from "vue";
 import type { Ref, PropType } from "vue";
 import { storeToRefs } from "pinia";
 import { format } from "date-fns";
@@ -255,8 +255,11 @@ const chats = computed(
 // Methods
 const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
-  tab.value = val;
 };
+
+watchEffect(() => {
+  tab.value = getSelectedTab.value;
+});
 defineExpose({ onChangeTab });
 
 const fetchCustomers = async () => {

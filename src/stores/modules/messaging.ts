@@ -12,6 +12,7 @@ import {
   IMessage,
   Direction,
   ChatGroup,
+  IChat,
 } from "../../types/MessagingTypes";
 import { db, collection, onSnapshot } from "src/boot/firebase";
 
@@ -36,6 +37,15 @@ const useMessagingStore = defineStore("messaging", {
       return selectedChats?.chats[state.selectedChatIndex];
     },
     getChatMessages: (state) => state.chatMessages,
+    getAllChatMessages: (state) => {
+      const allChatMessages: Array<IChat> = [];
+      state.chats.forEach((chats: ChatGroup) => {
+        chats.chats.forEach((chat: IChat) => {
+          allChatMessages.push(chat);
+        });
+      });
+      return allChatMessages;
+    },
     getSelectedChatIndex: (state) => state.selectedChatIndex,
     getContactNumber: (state) => state.contactNumber,
     getCustomerName: (state) => state.customerName,
@@ -55,22 +65,23 @@ const useMessagingStore = defineStore("messaging", {
     setSelectedTab(type: ChatTypes) {
       this.selectedTab = type;
     },
+    setChatSnapshotGroup(id: string, cancleFn: unknown) {
+      this.chatSnapshotGroup[id] = cancleFn;
+    },
     setChatsLastMessage(id: string, lastMessage: any) {
       this.chats = this.chats.map((chats) => {
         chats.chats.map((chat) => {
           if (chat.id === id) {
-            console.log(55555, lastMessage);
-
-            chat.last_message = JSON.stringify(lastMessage);
+            const data = {
+              ...JSON.parse(chat.last_message || ""),
+              ...lastMessage,
+            };
+            chat.last_message = JSON.stringify(data);
           }
           return chat;
         });
         return chats;
       });
-      console.log(777777, this.chats);
-    },
-    setChatSnapshotGroup(id: string, cancleFn: unknown) {
-      this.chatSnapshotGroup[id] = cancleFn;
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
@@ -177,23 +188,17 @@ const useMessagingStore = defineStore("messaging", {
       this.contactNumber = contactNumber;
     },
     onSnapshotMessage(chatId: string) {
+      let snapshoted = false;
       if (!this.chatSnapshotGroup[chatId]) {
         const snpshotCancel = onSnapshot(
           collection(db, "messages", chatId, "members"),
           async (querySnapshot: any) => {
-            console.log("监听到消息");
-
             for await (const change of querySnapshot.docChanges()) {
-              console.log(123213);
-
-              // 获取当前的id与现有id比较
-              const chats = this.chats.find(
+              const chats: ChatGroup | undefined = this.chats.find(
                 (chat) => chat.status === this.selectedTab
               );
-              const selectedChat: any = chats?.chats[this.selectedChatIndex];
-              console.log(selectedChat && selectedChat.id === chatId);
+              const selectedChat = chats?.chats[this.selectedChatIndex];
               if (selectedChat && selectedChat.id === chatId) {
-                console.log("good 渲染数据");
                 const { content, status, type } = change.doc.data();
                 const dateCreated = new Date();
                 const direction =
@@ -207,15 +212,31 @@ const useMessagingStore = defineStore("messaging", {
                   type,
                 });
               } else {
-                // 左侧chats更新
-                this.setChatsLastMessage(chatId, change.doc.data());
+                // let status: any;
+                // this.chats.forEach((chats) => {
+                //   chats.chats.forEach((chat) => {
+                //     if (chat.id === chatId) {
+                //       status = chat.status;
+                //     }
+                //   });
+                // });
+                if (snapshoted) {
+                  this.setChatsLastMessage(chatId, change.doc.data());
+                  // this.setChatsByStatus(status);
+                }
               }
-              console.log(11111, change.doc.id, change.doc.data());
             }
+            snapshoted = true;
           }
         );
         this.setChatSnapshotGroup(chatId, snpshotCancel);
       }
+    },
+    removeChatById(chatId: string) {
+      this.chats = this.chats.map((chats: ChatGroup) => {
+        chats.chats = chats.chats.filter((item) => item.id !== chatId);
+        return chats;
+      });
     },
   },
 });
