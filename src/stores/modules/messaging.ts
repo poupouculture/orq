@@ -72,11 +72,11 @@ const useMessagingStore = defineStore("messaging", {
       this.chats = this.chats.map((chats) => {
         chats.chats.map((chat) => {
           if (chat.id === id) {
-            const a = {
+            const data = {
               ...JSON.parse(chat.last_message || ""),
               ...lastMessage,
             };
-            chat.last_message = JSON.stringify(a);
+            chat.last_message = JSON.stringify(data);
           }
           return chat;
         });
