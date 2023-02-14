@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watchEffect, onMounted, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -145,11 +145,11 @@ const enum Role {
   CS_MANAGER = "CS-Manager",
 }
 
-const enum ChangeDocType {
-  ADDED = "added",
-  REMOVED = "removed",
-  MODIFIED = "modified",
-}
+// const enum ChangeDocType {
+//   ADDED = "added",
+//   REMOVED = "removed",
+//   MODIFIED = "modified",
+// }
 
 interface Manager {
   user_id: string;
@@ -180,39 +180,72 @@ onMounted(async () => {
   const { data } = await getChatUsers();
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
-
   firebaseToken.value = getFirebaseToken.value;
+  snapshotByChats();
 });
 
-watch(getChats, async () => {
-  if (!first.value) {
-    const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-    if (loggedInUser) {
-      onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-        for await (const change of querySnapshot.docChanges()) {
-          const findChat = allChats.value.find((chat: IChat) => {
-            return chat.id === change.doc.id;
-          });
-          if (first.value) {
-            if (!findChat) {
-              messagingStore.setChatsByStatus(change.doc.data().status);
-            }
-            if (change.type === ChangeDocType.MODIFIED) {
-              const foundChat = allChats.value.find(
-                (chat) => chat.id === change.doc.id
-              );
-              if (foundChat) {
-                messagingStore.setChatsByStatus(change.doc.data().status);
-                messagingStore.setChatsByStatus(foundChat.status);
-              }
-            }
-          }
+const snapshotByChats = async () => {
+  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+  if (loggedInUser) {
+    onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
+      console.log("chats快照");
+      for await (const change of querySnapshot.docChanges()) {
+        // const findChat = allChats.value.find((chat: IChat) => {
+        //   return chat.id === change.doc.id;
+        // });
+        console.log("chats 信息：", change.doc.id, change.doc.data());
+
+        if (first.value) {
+          const { status } = change.doc.data();
+          // delet from old chats
+          messagingStore.removeChatById(change.doc.id);
+          messagingStore.setSelectedChatIndex(-1);
+          messagingStore.setSelectedTab(status);
+          messagingStore.setChatsByStatus(status);
         }
-        first.value = true;
-      });
-    }
+      }
+      first.value = true;
+    });
   }
+};
+
+watchEffect(() => {
+  getChats.value.forEach((item: ChatGroup) => {
+    item.chats.forEach((chat: IChat) => {
+      // add snapshot for every chat
+      messagingStore.onSnapshotMessage(chat.id);
+    });
+  });
 });
+
+// watch(getChats, async () => {
+//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+//   if (loggedInUser) {
+//     onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
+//       for await (const change of querySnapshot.docChanges()) {
+//         const findChat = allChats.value.find((chat: IChat) => {
+//           return chat.id === change.doc.id;
+//         });
+
+//         if (first.value) {
+//           if (!findChat) {
+//             messagingStore.setChatsByStatus(change.doc.data().status);
+//           }
+//           if (change.type === ChangeDocType.MODIFIED) {
+//             const foundChat = allChats.value.find(
+//               (chat) => chat.id === change.doc.id
+//             );
+//             if (foundChat) {
+//               messagingStore.setChatsByStatus(change.doc.data().status);
+//               messagingStore.setChatsByStatus(foundChat.status);
+//             }
+//           }
+//         }
+//       }
+//       first.value = true;
+//     });
+//   }
+// });
 
 // watch(getSelectedChatIndex, async () => {
 //   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
@@ -246,18 +279,18 @@ const selectedChat = computed(() => {
   ];
 });
 
-const allChats = computed(() => {
-  const chats: IChat[] = [];
-  getChats.value.forEach((item: ChatGroup) => {
-    item.chats.forEach((chat: IChat) => {
-      // add snapshot for every chat
-      messagingStore.onSnapshotMessage(chat.id);
-      chats.push(chat);
-    });
-  });
+// const allChats = computed(() => {
+//   const chats: IChat[] = [];
+//   getChats.value.forEach((item: ChatGroup) => {
+//     item.chats.forEach((chat: IChat) => {
+//       // add snapshot for every chat
+//       messagingStore.onSnapshotMessage(chat.id);
+//       chats.push(chat);
+//     });
+//   });
 
-  return chats;
-});
+//   return chats;
+// });
 
 const assignUser = async (manager: Manager) => {
   const chatId = selectedChat.value.id;
