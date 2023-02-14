@@ -1,9 +1,6 @@
 <template>
   <div class="hidden lg:!block">
-    <div
-      v-if="getSelectedChatIndex !== null"
-      class="row justify-end q-gutter-sm"
-    >
+    <div v-if="getSelectedChat.id" class="row justify-end q-gutter-sm">
       <q-btn
         outline
         color="primary"
@@ -31,7 +28,7 @@
               <q-item-section>
                 <div class="row items-center">
                   <q-avatar size="md">
-                    <img src="../../assets/images/profileavatar.png" />
+                    <!-- <img src="../../assets/images/profileavatar.png" /> -->
                   </q-avatar>
                   <div class="q-ml-md">
                     <div class="text-weight-bold">
@@ -113,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, computed } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -130,8 +127,6 @@ import {
   auth,
   signInWithCustomToken,
 } from "src/boot/firebase";
-import { Tabs as TabOptions } from "src/constants/Tabs";
-// import { ChatTypes } from "src/constants/ChatKeyword";
 import { ChatGroup, IChat } from "src/types/MessagingTypes";
 
 const enum Tabs {
@@ -172,8 +167,7 @@ const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
 const first = ref(false);
 
-const { getChats, getSelectedChatIndex, getSelectedTab } =
-  storeToRefs(messagingStore);
+const { getChats, getSelectedChat } = storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -188,18 +182,15 @@ const snapshotByChats = async () => {
   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
   if (loggedInUser) {
     onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-      console.log("chats快照");
       for await (const change of querySnapshot.docChanges()) {
-        // const findChat = allChats.value.find((chat: IChat) => {
-        //   return chat.id === change.doc.id;
-        // });
-        console.log("chats 信息：", change.doc.id, change.doc.data());
-
         if (first.value) {
           const { status } = change.doc.data();
           // delet from old chats
           messagingStore.removeChatById(change.doc.id);
-          messagingStore.setSelectedChatIndex(-1);
+          if (change.doc.id === getSelectedChat.value.id) {
+            messagingStore.setSelectedChatByStatus(status);
+          }
+          // messagingStore.setSelectedChatIndex(-1);
           messagingStore.setSelectedTab(status);
           messagingStore.setChatsByStatus(status);
         }
@@ -218,82 +209,8 @@ watchEffect(() => {
   });
 });
 
-// watch(getChats, async () => {
-//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-//   if (loggedInUser) {
-//     onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-//       for await (const change of querySnapshot.docChanges()) {
-//         const findChat = allChats.value.find((chat: IChat) => {
-//           return chat.id === change.doc.id;
-//         });
-
-//         if (first.value) {
-//           if (!findChat) {
-//             messagingStore.setChatsByStatus(change.doc.data().status);
-//           }
-//           if (change.type === ChangeDocType.MODIFIED) {
-//             const foundChat = allChats.value.find(
-//               (chat) => chat.id === change.doc.id
-//             );
-//             if (foundChat) {
-//               messagingStore.setChatsByStatus(change.doc.data().status);
-//               messagingStore.setChatsByStatus(foundChat.status);
-//             }
-//           }
-//         }
-//       }
-//       first.value = true;
-//     });
-//   }
-// });
-
-// watch(getSelectedChatIndex, async () => {
-//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-//   if (loggedInUser) {
-//     onSnapshot(
-//       collection(db, "messages", selectedChat.value.id, "members"),
-//       (querySnapshot: any) => {
-//         for (const change of querySnapshot.docChanges()) {
-//           if (selectedChat.value) {
-//             if (change.type === ChangeDocType.ADDED) {
-//               const { content, status, type } = change.doc.data();
-//               const dateCreated = new Date();
-//               messagingStore.addMessageToCache({
-//                 chatId: selectedChat.value.id,
-//                 dateCreated: dateCreated.toString(),
-//                 status,
-//                 content,
-//                 type,
-//               });
-//             }
-//           }
-//         }
-//       }
-//     );
-//   }
-// });
-
-const selectedChat = computed(() => {
-  return getChats.value[TabOptions.indexOf(getSelectedTab.value)].chats[
-    getSelectedChatIndex.value
-  ];
-});
-
-// const allChats = computed(() => {
-//   const chats: IChat[] = [];
-//   getChats.value.forEach((item: ChatGroup) => {
-//     item.chats.forEach((chat: IChat) => {
-//       // add snapshot for every chat
-//       messagingStore.onSnapshotMessage(chat.id);
-//       chats.push(chat);
-//     });
-//   });
-
-//   return chats;
-// });
-
 const assignUser = async (manager: Manager) => {
-  const chatId = selectedChat.value.id;
+  const chatId = getSelectedChat.value.id;
   const userId = manager.user_id;
   try {
     Loading.show();
@@ -317,7 +234,7 @@ const assignUser = async (manager: Manager) => {
 
 const closeConversationLoading = ref(false);
 const closeConversation = async () => {
-  const chatId = selectedChat.value.id;
+  const chatId = getSelectedChat.value.id;
   try {
     closeConversationLoading.value = true;
     await closeChat(chatId);

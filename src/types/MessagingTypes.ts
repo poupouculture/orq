@@ -51,6 +51,7 @@ export interface IState {
   cacheMessages: Array<IMessage>;
   selectedChatIndex: number;
   selectedTab: ChatTypes;
+  selectedChat: IChat;
   chats: ChatGroup[];
   contactNumber: null | string;
   customerName: null | string;

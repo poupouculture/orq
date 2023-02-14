@@ -98,7 +98,7 @@
         >
           <div v-for="(chat, index) in chats" :key="index">
             <ContactCard
-              :active="parseInt(index) === activeChat"
+              :active="chat.id === getSelectedChat.id"
               :name="
                 chat?.customers_id
                   ? TrimWord(`${chat.first_name} ${chat.last_name}`)
@@ -245,7 +245,7 @@ const chatToggleLabel: ChatToggleType = reactive({
 const data: CustomerData = reactive({
   customers: [],
 });
-const { getSelectedTab } = storeToRefs(messagingStore);
+const { getSelectedTab, getSelectedChat } = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const chats = computed(
@@ -297,23 +297,24 @@ const selectChat = (index: number) => {
   if (window.innerWidth <= 1024) openDrawer.value = false;
 
   activeChat.value = index;
-  const { id: chatId } = chats.value[index];
+  const chat = chats.value[index];
 
-  emit("setChatId", chatId);
+  emit("setChatId", chat.id);
 
   messagingStore.setSelectedChatIndex(index);
-  messagingStore.fetchChatMessagesByChatId(chatId, true);
-  messagingStore.fetchContactNumber(chats.value[index].contacts_id);
+  messagingStore.setSelectedChat(chat);
+  messagingStore.fetchChatMessagesByChatId(chat.id, true);
+  messagingStore.fetchContactNumber(chat.contacts_id);
 
-  if (chats.value[index].first_name) {
-    messagingStore.setCustomerName(`${chats.value[index].first_name}
-  ${chats.value[index].last_name}`);
+  if (chat.first_name) {
+    messagingStore.setCustomerName(`${chat.first_name}
+  ${chat.last_name}`);
   } else {
     messagingStore.setCustomerName("Visitor");
   }
 
-  if (chats.value[index].customers_id) {
-    const customerId = chats.value[index].customers_id;
+  if (chat.customers_id) {
+    const customerId = chat.customers_id;
     customerStore.fetchCustomer(customerId);
   }
 };
