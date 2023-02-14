@@ -187,6 +187,9 @@ const snapshotByChats = async () => {
           const { status } = change.doc.data();
           // delet from old chats
           messagingStore.removeChatById(change.doc.id);
+          if (change.doc.id === getSelectedChat.value.id) {
+            messagingStore.setSelectedChatByStatus(status);
+          }
           // messagingStore.setSelectedChatIndex(-1);
           messagingStore.setSelectedTab(status);
           messagingStore.setChatsByStatus(status);

@@ -73,6 +73,9 @@ const useMessagingStore = defineStore("messaging", {
     setSelectedChat(chat: IChat) {
       this.selectedChat = chat;
     },
+    setSelectedChatByStatus(status: ChatTypes) {
+      this.selectedChat.status = status;
+    },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
       const waitingPromise = getChats(ChatTypes.PENDING);
