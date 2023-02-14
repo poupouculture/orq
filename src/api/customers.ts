@@ -43,11 +43,11 @@ export const getCustomersWithContacts = async () => {
 
 export const getCustomer = async (id: string) => {
   const fields = "*";
-  const companies = "companies.companies_id.*";
+  const companies = "companies.*, companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
   const customerGroups =
     "customer_groups.*, customer_groups.customer_groups_id.*";
-  const tags = "tags.tags_id.*";
+  const tags = "tags.*, tags.tags_id.*";
 
   const customer = await api.get(
     `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`

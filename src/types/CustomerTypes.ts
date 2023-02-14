@@ -24,7 +24,7 @@ interface ContactRelation {
 type Gender = "m" | "f";
 
 export interface ICustomer {
-  companies?: [CompanyRelation];
+  companies: [CompanyRelation];
   contacts: [ContactRelation];
   customer_code: string;
   date_created: string;

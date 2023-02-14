@@ -1,9 +1,9 @@
 <template>
   <div>
-    <p class="mb-2">Customer Group</p>
+    <p class="mb-2">Company</p>
     <q-select
-      v-model="customerGroup"
-      :options="customerGroupOptionsFilter"
+      v-model="companies"
+      :options="companyOptionsFilter"
       use-input
       :rules="[(val) => required(val)]"
       @filter="filter"
@@ -22,14 +22,14 @@
 import { required } from "src/utils/validation-rules";
 import { ref, computed, watch, onMounted } from "vue";
 import type { Ref } from "vue";
-import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
+import type { Company as ICompany } from "src/types/CompanyTypes";
 import { api } from "src/boot/axios";
 
 interface Option {
   value: string | number;
   label: string;
 }
-type ICustomerGroupOptions = Option & ICustomerGroup;
+type ICompanyOptions = Option & ICompany;
 
 const props = defineProps({
   mode: { default: "edit" },
@@ -39,40 +39,40 @@ const props = defineProps({
 const customer = computed(() => props.customer);
 const emits = defineEmits(["update:modelValue"]);
 watch(customer, (val: any) => {
-  customerGroup.value = [];
-  setCustomerGroupDefault(val);
+  companies.value = [];
+  setCompanyDefault(val);
 });
-const customerGroup = computed({
-  set: (val: ICustomerGroupOptions[]) => emits("update:modelValue", val),
+const companies = computed({
+  set: (val: ICompanyOptions[]) => emits("update:modelValue", val),
   get: () => props.modelValue,
 });
-const customerGroupOptions: Ref<ICustomerGroupOptions[]> = ref([]);
-const customerGroupOptionsFilter: Ref<Option[]> = ref(customerGroupOptions);
+const companyOptions: Ref<ICompanyOptions[]> = ref([]);
+const companyOptionsFilter: Ref<Option[]> = ref(companyOptions);
 
-const setCustomerGroupDefault = (customer: any) => {
-  if (customer.id && customer.customer_groups.length) {
-    customerGroup.value = customer.customer_groups.map((data: any) => ({
-      label: data.customer_groups_id.name,
-      value: data.customer_groups_id.id,
+const setCompanyDefault = (customer: any) => {
+  if (customer.id && customer.companies.length) {
+    companies.value = customer.companies.map((data: any) => ({
+      label: data.companies_id.name_english,
+      value: data.companies_id.id,
     }));
   }
 };
 onMounted(async () => {
-  setCustomerGroupDefault(customer.value);
+  setCompanyDefault(customer.value);
 });
 
 const filter = async (val: string, update: any) => {
   try {
     if (val === "") {
-      customerGroupOptions.value = await searchCustomerGroups();
+      companyOptions.value = await searchCompany();
     } else {
-      customerGroupOptions.value = await searchCustomerGroups(val);
+      companyOptions.value = await searchCompany(val);
     }
     update(async () => {
       const needle = val.toLowerCase();
-      customerGroupOptionsFilter.value = customerGroupOptions.value
-        .map((item: ICustomerGroup) => ({
-          label: `${item.name}`,
+      companyOptionsFilter.value = companyOptions.value
+        .map((item: ICompany) => ({
+          label: `${item.name_english}`,
           value: item.id,
         }))
         .filter((v) => v.label.toLowerCase().indexOf(needle) > -1);
@@ -80,8 +80,8 @@ const filter = async (val: string, update: any) => {
   } catch (error) {}
 };
 
-const searchCustomerGroups = async (val?: string) => {
-  const { data } = await api.get("/items/customer_groups", {
+const searchCompany = async (val?: string) => {
+  const { data } = await api.get("/items/companies", {
     params: {
       fields: "*",
       limit: 10,
