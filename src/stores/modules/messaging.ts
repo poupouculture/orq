@@ -68,6 +68,21 @@ const useMessagingStore = defineStore("messaging", {
     setChatSnapshotGroup(id: string, cancleFn: unknown) {
       this.chatSnapshotGroup[id] = cancleFn;
     },
+    setChatsLastMessage(id: string, lastMessage: any) {
+      this.chats = this.chats.map((chats) => {
+        chats.chats.map((chat) => {
+          if (chat.id === id) {
+            const a = {
+              ...JSON.parse(chat.last_message || ""),
+              ...lastMessage,
+            };
+            chat.last_message = JSON.stringify(a);
+          }
+          return chat;
+        });
+        return chats;
+      });
+    },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
       const waitingPromise = getChats(ChatTypes.PENDING);
@@ -178,14 +193,12 @@ const useMessagingStore = defineStore("messaging", {
         const snpshotCancel = onSnapshot(
           collection(db, "messages", chatId, "members"),
           async (querySnapshot: any) => {
-            console.log("监听到消息");
             for await (const change of querySnapshot.docChanges()) {
               const chats: ChatGroup | undefined = this.chats.find(
                 (chat) => chat.status === this.selectedTab
               );
               const selectedChat = chats?.chats[this.selectedChatIndex];
               if (selectedChat && selectedChat.id === chatId) {
-                console.log("good 渲染数据", change.doc.data());
                 const { content, status, type } = change.doc.data();
                 const dateCreated = new Date();
                 const direction =
@@ -199,18 +212,17 @@ const useMessagingStore = defineStore("messaging", {
                   type,
                 });
               } else {
-                // 左侧chats更新
-                console.log("message更新", chatId, change.doc.data());
-                let status: any;
-                this.chats.forEach((chats) => {
-                  chats.chats.forEach((chat) => {
-                    if (chat.id === chatId) {
-                      status = chat.status;
-                    }
-                  });
-                });
+                // let status: any;
+                // this.chats.forEach((chats) => {
+                //   chats.chats.forEach((chat) => {
+                //     if (chat.id === chatId) {
+                //       status = chat.status;
+                //     }
+                //   });
+                // });
                 if (snapshoted) {
-                  this.setChatsByStatus(status);
+                  this.setChatsLastMessage(chatId, change.doc.data());
+                  // this.setChatsByStatus(status);
                 }
               }
             }
