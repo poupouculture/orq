@@ -8,7 +8,7 @@
     :width="450"
     class="bg-white q-pa-md"
   >
-    <div class="h-full w-full flex flex-col">
+    <div v-if="getSelectedChat.id" class="h-full w-full flex flex-col">
       <header
         class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
       >
@@ -117,7 +117,7 @@
         </div>
       </main>
       <footer class="q-pa-xs q-pb-md bg-white w-full px-2 pt-2.5">
-        <div v-if="getSelectedTab === ChatTypes.ONGOING">
+        <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
           <q-input
             v-model="message"
             placeholder="Enter reply information"
@@ -217,13 +217,8 @@ const emit = defineEmits(["newChatCreated"]);
 
 const message: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
-const {
-  getChats,
-  getSelectedChatIndex,
-  getContactNumber,
-  getCustomerName,
-  getSelectedTab,
-} = storeToRefs(messagingStore);
+const { getContactNumber, getCustomerName, getSelectedChat } =
+  storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const messages = computed<unknown[]>(() => {
@@ -238,13 +233,6 @@ const messages = computed<unknown[]>(() => {
       date_created: item.date_created,
     };
   });
-});
-
-const getSelectedChat: any = computed(() => {
-  const chats = getChats.value.find(
-    (chat) => chat.status === getSelectedTab.value
-  );
-  return chats?.chats[getSelectedChatIndex.value] || {};
 });
 
 const scrollAreaRef = ref<HTMLDivElement>();
@@ -275,10 +263,8 @@ const sendMessage = async () => {
     messagingStore.fetchChatMessagesByChatId(chatId, true);
   } else {
     startNewChat(getCustomer.value.id, message.value);
-
-    messagingStore.fetchChats(ChatTypes.ONGOING);
+    messagingStore.fetchChats();
     messagingStore.setSelectedTab(ChatTypes.ONGOING);
-
     emit("newChatCreated", ChatTypes.ONGOING);
   }
   message.value = "";

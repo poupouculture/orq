@@ -22,6 +22,7 @@ const useMessagingStore = defineStore("messaging", {
       chats: [],
       selectedChatIndex: null,
       selectedTab: ChatTypes.PENDING,
+      selectedChat: {},
       chatMessages: [],
       cacheMessages: [],
       contactNumber: null,
@@ -30,23 +31,9 @@ const useMessagingStore = defineStore("messaging", {
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
-    getSelectedChat: (state) => {
-      const selectedChats = state.chats.find(
-        (chat) => chat.status === state.selectedTab
-      );
-      return selectedChats?.chats[state.selectedChatIndex];
-    },
     getChatMessages: (state) => state.chatMessages,
-    getAllChatMessages: (state) => {
-      const allChatMessages: Array<IChat> = [];
-      state.chats.forEach((chats: ChatGroup) => {
-        chats.chats.forEach((chat: IChat) => {
-          allChatMessages.push(chat);
-        });
-      });
-      return allChatMessages;
-    },
     getSelectedChatIndex: (state) => state.selectedChatIndex,
+    getSelectedChat: (state) => state.selectedChat,
     getContactNumber: (state) => state.contactNumber,
     getCustomerName: (state) => state.customerName,
     getSelectedTab: (state) => state.selectedTab,
@@ -82,6 +69,9 @@ const useMessagingStore = defineStore("messaging", {
         });
         return chats;
       });
+    },
+    setSelectedChat(chat: IChat) {
+      this.selectedChat = chat;
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
