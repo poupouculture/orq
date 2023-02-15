@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#F2F3F7] py-3 px-6 w-full rounded-md mt-5 flex flex-col">
+  <div class="bg-[#F2F3F7] py-3 px-6 w-full rounded-md flex flex-col">
     <div>Customer</div>
     <div class="rounded flex items-start px-6 py-2 bg-white mt-3 w-full">
       <div class="flex items-center gap-x-2 border-r pr-3 cursor-pointer">
