@@ -1,18 +1,26 @@
 import { api } from "boot/axios";
 
-export const getMessageTemplates = async ({ limit = 10, page = 1 }) => {
+export const getMessageTemplates = async ({
+  limit = 10,
+  page = 1,
+  status = "*",
+}) => {
   const fields = `*, users.*`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
 
+  const params = {
+    fields: `${fields}`,
+    sort: `-date_created`,
+    limit,
+    offset,
+    meta: "*",
+  };
+
+  if (status !== "*") params["filter[status][_eq]"] = status;
+
   const templates = await api.get(`/items/message_templates`, {
-    params: {
-      fields: `${fields}`,
-      sort: `-date_created`,
-      limit,
-      offset,
-      meta: "*",
-    },
+    params,
   });
 
   return templates;
