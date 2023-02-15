@@ -49,13 +49,13 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   };
 
   if (isTemplate) {
+    currPayload.template_content = messageBody;
     const lang: Language = {
       code: language,
     };
     currPayload.waba_content.template = {
       name: templateName,
       language: lang,
-      body: messageBody,
     };
   } else {
     currPayload.waba_content.text = {
