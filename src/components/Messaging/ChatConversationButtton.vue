@@ -1,59 +1,57 @@
 <template>
-  <div class="hidden lg:!block">
-    <div v-if="getSelectedChat.id" class="row justify-end q-gutter-sm">
-      <q-btn
-        outline
-        color="primary"
-        label="Reassign"
-        icon-right="expand_more"
-        no-caps
-        v-if="userRole === Role.CS_MANAGER"
+  <div v-if="getSelectedChat.id" class="row justify-end q-gutter-sm pb-2">
+    <q-btn
+      outline
+      color="primary"
+      label="Reassign"
+      icon-right="expand_more"
+      no-caps
+      v-if="userRole === Role.CS_MANAGER"
+    >
+      <q-menu
+        class="q-ma-lg"
+        anchor="bottom left"
+        self="top left"
+        :offset="[0, 5]"
+        style="width: 300px"
+        fit
       >
-        <q-menu
-          class="q-ma-lg"
-          anchor="bottom left"
-          self="top left"
-          :offset="[0, 5]"
-          style="width: 300px"
-          fit
-        >
-          <q-list separator>
-            <q-item
-              v-for="(manager, index) in managers"
-              :key="index"
-              clickable
-              v-close-popup
-              @click="assignUser(manager)"
-            >
-              <q-item-section>
-                <div class="row items-center">
-                  <q-avatar size="md">
-                    <!-- <img src="../../assets/images/profileavatar.png" /> -->
-                  </q-avatar>
-                  <div class="q-ml-md">
-                    <div class="text-weight-bold">
-                      {{ manager.first_name }} {{ manager.last_name }}
-                    </div>
-                    <div class="text-weight-light">
-                      {{ manager.role_name }}
-                    </div>
+        <q-list separator>
+          <q-item
+            v-for="(manager, index) in managers"
+            :key="index"
+            clickable
+            v-close-popup
+            @click="assignUser(manager)"
+          >
+            <q-item-section>
+              <div class="row items-center">
+                <q-avatar size="md">
+                  <!-- <img src="../../assets/images/profileavatar.png" /> -->
+                </q-avatar>
+                <div class="q-ml-md">
+                  <div class="text-weight-bold">
+                    {{ manager.first_name }} {{ manager.last_name }}
+                  </div>
+                  <div class="text-weight-light">
+                    {{ manager.role_name }}
                   </div>
                 </div>
-              </q-item-section>
-              <q-separator />
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
-      <q-btn
-        :loading="closeConversationLoading"
-        v-if="userRole === Role.CS_MANAGER"
-        color="primary"
-        label="Close Conversation"
-        no-caps
-        @click="closeConversation"
-      />
-    </div>
+              </div>
+            </q-item-section>
+            <q-separator />
+          </q-item>
+        </q-list>
+      </q-menu>
+    </q-btn>
+    <q-btn
+      :loading="closeConversationLoading"
+      v-if="userRole === Role.CS_MANAGER"
+      color="primary"
+      label="Close Conversation"
+      no-caps
+      @click="closeConversation"
+    />
   </div>
 </template>
 
@@ -92,15 +90,6 @@ onMounted(async () => {
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
 });
-
-// watchEffect(() => {
-//   getChats.value.forEach((item: ChatGroup) => {
-//     item.chats.forEach((chat: IChat) => {
-//       // add snapshot for every chat
-//       messagingStore.onSnapshotMessage(chat.id);
-//     });
-//   });
-// });
 
 const assignUser = async (manager: Manager) => {
   const chatId = getSelectedChat.value.id;
