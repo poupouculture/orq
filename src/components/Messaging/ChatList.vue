@@ -245,7 +245,8 @@ const chatToggleLabel: ChatToggleType = reactive({
 const data: CustomerData = reactive({
   customers: [],
 });
-const { getSelectedTab, getSelectedChat } = storeToRefs(messagingStore);
+const { getSelectedTab, getSelectedChat, getShowChatList } =
+  storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const chats = computed(
@@ -260,6 +261,11 @@ const onChangeTab = (val: ChatTypes) => {
 watchEffect(() => {
   tab.value = getSelectedTab.value;
 });
+
+watchEffect(() => {
+  openDrawer.value = getShowChatList.value;
+});
+
 defineExpose({ onChangeTab });
 
 const fetchCustomers = async () => {
@@ -294,7 +300,9 @@ const getLastMessage = (lastMessage: LastMessage) => {
 const selectChat = (index: number) => {
   customerStore.$reset();
   // close drawer when mobile view
-  if (window.innerWidth <= 1024) openDrawer.value = false;
+  if (window.innerWidth <= 1024) {
+    messagingStore.setShowChatList(false);
+  }
 
   activeChat.value = index;
   const chat = chats.value[index];
