@@ -64,7 +64,7 @@ const useMessagingStore = defineStore("messaging", {
         chats.chats.map((chat) => {
           if (chat.id === id) {
             const data = {
-              ...JSON.parse(chat.last_message || ""),
+              ...JSON.parse(chat.last_message || "{}"),
               ...lastMessage,
             };
             chat.last_message = JSON.stringify(data);
@@ -194,11 +194,7 @@ const useMessagingStore = defineStore("messaging", {
           collection(db, "messages", chatId, "members"),
           async (querySnapshot: any) => {
             for await (const change of querySnapshot.docChanges()) {
-              const chats: ChatGroup | undefined = this.chats.find(
-                (chat) => chat.status === this.selectedTab
-              );
-              const selectedChat = chats?.chats[this.selectedChatIndex];
-              if (selectedChat && selectedChat.id === chatId) {
+              if (this.getSelectedChat.id === chatId) {
                 const { content, status, type } = change.doc.data();
                 const dateCreated = new Date();
                 const direction =
@@ -212,17 +208,8 @@ const useMessagingStore = defineStore("messaging", {
                   type,
                 });
               } else {
-                // let status: any;
-                // this.chats.forEach((chats) => {
-                //   chats.chats.forEach((chat) => {
-                //     if (chat.id === chatId) {
-                //       status = chat.status;
-                //     }
-                //   });
-                // });
                 if (snapshoted) {
                   this.setChatsLastMessage(chatId, change.doc.data());
-                  // this.setChatsByStatus(status);
                 }
               }
             }
