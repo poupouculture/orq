@@ -251,6 +251,13 @@ watch(messages, async () => {
   if (!scrollAreaRef.value) return;
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 });
+
+watch(
+  () => getSelectedChat.value.id,
+  () => {
+    message.value = "";
+  }
+);
 const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
