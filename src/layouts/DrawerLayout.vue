@@ -50,10 +50,11 @@
                   :to="child.url || ''"
                   style="text-decoration: none; color: inherit"
                 >
-                  <div class="expanded-content">
-                    <p class="drawer-text">
-                      {{ child.name }}
-                    </p>
+                  <div
+                    class="expanded-content"
+                    :class="{ 'bg-primary py-2': route.path === child.url }"
+                  >
+                    <p class="drawer-text">{{ child.name }}</p>
                   </div>
                 </router-link>
               </div>
@@ -104,7 +105,7 @@
 import "../components/SideDrawer/drawer.scss";
 import "./DrawerLayout.scss";
 import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
@@ -113,6 +114,7 @@ import { pageCodes } from "../utils/page-codes";
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
 const router = useRouter();
+const route = useRoute();
 
 const menus = computed(() => {
   const pages = userInfo.userProfile.role.pages;

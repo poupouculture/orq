@@ -6,6 +6,7 @@
     :rows-per-page="propsTable.rowsPerPage"
     :columns="headerColumns"
     :loading="false"
+    :disable-select="propsTable.isSimple"
     v-model:selected="selected"
     @changePage="changePage"
   >

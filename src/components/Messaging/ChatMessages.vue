@@ -142,14 +142,14 @@
               class="q-mt-md"
               @click="showMessageTemplate = true"
             />
-            <q-btn
+            <!-- <q-btn
               flat
               round
               color="grey"
               icon="mic"
               size="md"
               class="q-mt-md"
-            />
+            /> -->
             <q-btn
               flat
               round

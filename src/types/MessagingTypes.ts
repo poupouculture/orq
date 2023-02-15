@@ -81,7 +81,6 @@ export interface Language {
 export interface ChatPayloadWabaContentTemplate {
   name: string | undefined;
   language: Language;
-  body: string;
 }
 
 export interface ChatPayloadWabaContent {
@@ -96,5 +95,6 @@ export interface ChatPayloadWabaContent {
 export interface ChatPayload {
   chat_id: string;
   keyword: string;
+  template_content?: string;
   waba_content: ChatPayloadWabaContent;
 }
