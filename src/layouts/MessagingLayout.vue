@@ -26,15 +26,16 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import type { Ref } from "vue";
-import Drawer from "src/components/Messaging/ChatList.vue";
-import ChatMessages from "src/components/Messaging/ChatMessages.vue";
-import CustomerDialog from "src/components/Messaging/CustomerDialog.vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { ICustomer } from "src/types/CustomerTypes";
 import { startNewChat } from "src/api/messaging";
+import Drawer from "src/components/Messaging/ChatList.vue";
+import ChatMessages from "src/components/Messaging/ChatMessages.vue";
+import CustomerDialog from "src/components/Messaging/CustomerDialog.vue";
+import Swal from "sweetalert2";
 
 const messagingStore = useMessagingStore();
 
@@ -70,15 +71,24 @@ const setShowCustomerDialog = (val: boolean) => {
 };
 
 const chooseCustomer = async (user: ICustomer) => {
-  const customerId = user.id;
+  try {
+    const customerId = user.id;
 
-  chatList.value.selectChatByCustomer(user.id);
-  await customerStore.fetchCustomer(customerId);
-  messagingStore.setCustomerName(`${user.first_name} ${user.last_name}`);
-  const contactNumber = getCustomer.value.contacts[0].contacts_id.number;
-  messagingStore.setContactNumber(contactNumber);
+    chatList.value.selectChatByCustomer(user.id);
+    await customerStore.fetchCustomer(customerId);
+    messagingStore.setCustomerName(`${user.first_name} ${user.last_name}`);
+    const contactNumber = getCustomer.value.contacts[0].contacts_id.number;
+    messagingStore.setContactNumber(contactNumber);
 
-  await startNewChat(customerId, "Hi");
+    await startNewChat(customerId, "Hi");
+  } catch (e) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Something went wrong!",
+    });
+    console.log(e);
+  }
 };
 </script>
 <style scoped lang="scss">
