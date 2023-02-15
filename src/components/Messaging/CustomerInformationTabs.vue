@@ -48,7 +48,7 @@ const enum CustomerInformationTabs {
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 
-const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
+const { getSelectedChat } = storeToRefs(messagingStore);
 const isContactNumberExist = computed(
   () => messagingStore.isContactNumberExist
 );
@@ -68,8 +68,8 @@ const saveCustomer = async (val: FormPayload) => {
     customerID = customer.id;
   }
 
-  const selectedChat = getChats.value[getSelectedChatIndex.value];
-  const contactId = selectedChat.chats[0].contacts_id;
+  // const selectedChat = getChats.value[getSelectedChatIndex.value];
+  const contactId = getSelectedChat.value.contacts_id;
 
   await customerStore.addCustomerContact(customerID, contactId);
 

@@ -97,6 +97,7 @@ const useCustomerStore = defineStore("customer", {
           color: "primary",
           type: "positive",
         });
+        this.customer.id = data.id;
         Loading.hide();
         return data;
       } catch (err: any) {
