@@ -257,10 +257,17 @@ const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
 };
 
+const selectChatByCustomer = (customerID: string) => {
+  for (let index = 0; index < chats.value.length; index++) {
+    const tempChat = chats.value[index];
+    if (tempChat.customers_id === customerID) selectChat(index);
+  }
+};
+
 watchEffect(() => {
   tab.value = getSelectedTab.value;
 });
-defineExpose({ onChangeTab });
+defineExpose({ onChangeTab, selectChatByCustomer });
 
 const fetchCustomers = async () => {
   if (chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon) {

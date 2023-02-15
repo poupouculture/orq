@@ -71,6 +71,8 @@ const setShowCustomerDialog = (val: boolean) => {
 
 const chooseCustomer = async (user: ICustomer) => {
   const customerId = user.id;
+
+  chatList.value.selectChatByCustomer(user.id);
   await customerStore.fetchCustomer(customerId);
   messagingStore.setCustomerName(`${user.first_name} ${user.last_name}`);
   const contactNumber = getCustomer.value.contacts[0].contacts_id.number;
