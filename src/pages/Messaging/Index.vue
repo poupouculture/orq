@@ -1,62 +1,5 @@
 <template>
   <div class="hidden lg:!block">
-    <div
-      v-if="getSelectedChatIndex !== null"
-      class="row justify-end q-gutter-sm"
-    >
-      <q-btn
-        outline
-        color="primary"
-        label="Reassign"
-        icon-right="expand_more"
-        no-caps
-        v-if="userRole === Role.CS_MANAGER"
-      >
-        <q-menu
-          class="q-ma-lg"
-          anchor="bottom left"
-          self="top left"
-          :offset="[0, 5]"
-          style="width: 300px"
-          fit
-        >
-          <q-list separator>
-            <q-item
-              v-for="(manager, index) in managers"
-              :key="index"
-              clickable
-              v-close-popup
-              @click="assignUser(manager)"
-            >
-              <q-item-section>
-                <div class="row items-center">
-                  <q-avatar size="md">
-                    <img src="../../assets/images/profileavatar.png" />
-                  </q-avatar>
-                  <div class="q-ml-md">
-                    <div class="text-weight-bold">
-                      {{ manager.first_name }} {{ manager.last_name }}
-                    </div>
-                    <div class="text-weight-light">
-                      {{ manager.role_name }}
-                    </div>
-                  </div>
-                </div>
-              </q-item-section>
-              <q-separator />
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
-      <q-btn
-        :loading="closeConversationLoading"
-        v-if="userRole === Role.CS_MANAGER"
-        color="primary"
-        label="Close Conversation"
-        no-caps
-        @click="closeConversation"
-      />
-    </div>
     <div>
       <!-- Search Customer -->
       <SearchCustomer />
@@ -113,16 +56,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, computed } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
-import { closeChat } from "src/api/messaging";
+import { getChatUsers } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { Loading, Notify } from "quasar";
 import {
   db,
   collection,
@@ -130,8 +71,6 @@ import {
   auth,
   signInWithCustomToken,
 } from "src/boot/firebase";
-import { Tabs as TabOptions } from "src/constants/Tabs";
-// import { ChatTypes } from "src/constants/ChatKeyword";
 import { ChatGroup, IChat } from "src/types/MessagingTypes";
 
 const enum Tabs {
@@ -139,17 +78,6 @@ const enum Tabs {
   SERVICE_DETAIL = "serviceDetail",
   SERVICE_RECORD = "serviceRecord",
 }
-
-const enum Role {
-  CS = "CS",
-  CS_MANAGER = "CS-Manager",
-}
-
-// const enum ChangeDocType {
-//   ADDED = "added",
-//   REMOVED = "removed",
-//   MODIFIED = "modified",
-// }
 
 interface Manager {
   user_id: string;
@@ -172,8 +100,7 @@ const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
 const first = ref(false);
 
-const { getChats, getSelectedChatIndex, getSelectedTab } =
-  storeToRefs(messagingStore);
+const { getChats, getSelectedChat } = storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -188,19 +115,15 @@ const snapshotByChats = async () => {
   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
   if (loggedInUser) {
     onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-      console.log("chats快照");
       for await (const change of querySnapshot.docChanges()) {
-        // const findChat = allChats.value.find((chat: IChat) => {
-        //   return chat.id === change.doc.id;
-        // });
-        console.log("chats 信息：", change.doc.id, change.doc.data());
-
         if (first.value) {
           const { status } = change.doc.data();
-          // delet from old chats
+          // delete from old chats
           messagingStore.removeChatById(change.doc.id);
-          messagingStore.setSelectedChatIndex(-1);
-          messagingStore.setSelectedTab(status);
+          if (change.doc.id === getSelectedChat.value.id) {
+            messagingStore.setSelectedChatByStatus(status);
+          }
+          // messagingStore.setSelectedChatIndex(-1);
           messagingStore.setChatsByStatus(status);
         }
       }
@@ -217,128 +140,6 @@ watchEffect(() => {
     });
   });
 });
-
-// watch(getChats, async () => {
-//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-//   if (loggedInUser) {
-//     onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-//       for await (const change of querySnapshot.docChanges()) {
-//         const findChat = allChats.value.find((chat: IChat) => {
-//           return chat.id === change.doc.id;
-//         });
-
-//         if (first.value) {
-//           if (!findChat) {
-//             messagingStore.setChatsByStatus(change.doc.data().status);
-//           }
-//           if (change.type === ChangeDocType.MODIFIED) {
-//             const foundChat = allChats.value.find(
-//               (chat) => chat.id === change.doc.id
-//             );
-//             if (foundChat) {
-//               messagingStore.setChatsByStatus(change.doc.data().status);
-//               messagingStore.setChatsByStatus(foundChat.status);
-//             }
-//           }
-//         }
-//       }
-//       first.value = true;
-//     });
-//   }
-// });
-
-// watch(getSelectedChatIndex, async () => {
-//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-//   if (loggedInUser) {
-//     onSnapshot(
-//       collection(db, "messages", selectedChat.value.id, "members"),
-//       (querySnapshot: any) => {
-//         for (const change of querySnapshot.docChanges()) {
-//           if (selectedChat.value) {
-//             if (change.type === ChangeDocType.ADDED) {
-//               const { content, status, type } = change.doc.data();
-//               const dateCreated = new Date();
-//               messagingStore.addMessageToCache({
-//                 chatId: selectedChat.value.id,
-//                 dateCreated: dateCreated.toString(),
-//                 status,
-//                 content,
-//                 type,
-//               });
-//             }
-//           }
-//         }
-//       }
-//     );
-//   }
-// });
-
-const selectedChat = computed(() => {
-  return getChats.value[TabOptions.indexOf(getSelectedTab.value)].chats[
-    getSelectedChatIndex.value
-  ];
-});
-
-// const allChats = computed(() => {
-//   const chats: IChat[] = [];
-//   getChats.value.forEach((item: ChatGroup) => {
-//     item.chats.forEach((chat: IChat) => {
-//       // add snapshot for every chat
-//       messagingStore.onSnapshotMessage(chat.id);
-//       chats.push(chat);
-//     });
-//   });
-
-//   return chats;
-// });
-
-const assignUser = async (manager: Manager) => {
-  const chatId = selectedChat.value.id;
-  const userId = manager.user_id;
-  try {
-    Loading.show();
-    await assignUserHelper(chatId, userId);
-    Notify.create({
-      message: `Successful assigned to ${manager.first_name} ${manager.last_name}`,
-      position: "top",
-      type: "positive",
-      color: "blue-9",
-    });
-    Loading.hide();
-  } catch (err: any) {
-    Notify.create({
-      message: err.response.data.message,
-      position: "top",
-      type: "negative",
-    });
-    Loading.hide();
-  }
-};
-
-const closeConversationLoading = ref(false);
-const closeConversation = async () => {
-  const chatId = selectedChat.value.id;
-  try {
-    closeConversationLoading.value = true;
-    await closeChat(chatId);
-    Notify.create({
-      message: "Conversation closed",
-      type: "positive",
-      position: "top",
-      color: "primary",
-    });
-    closeConversationLoading.value = false;
-  } catch (error: any) {
-    closeConversationLoading.value = false;
-    // if the status: invalid chat id (no associated member)
-    // It means chat is not available / deleted
-    Notify.create({
-      message: error.response.data,
-      type: "negative",
-      position: "top",
-    });
-  }
-};
 </script>
 
 <style scoped>

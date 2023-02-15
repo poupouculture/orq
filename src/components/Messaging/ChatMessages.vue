@@ -8,7 +8,7 @@
     :width="450"
     class="bg-white q-pa-md"
   >
-    <div class="h-full w-full flex flex-col">
+    <div v-if="getSelectedChat.id" class="h-full w-full flex flex-col">
       <header
         class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
       >
@@ -42,6 +42,9 @@
           </svg>
         </div>
       </header>
+      <chat-conversation-buttton
+        v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+      />
       <main class="flex-1 relative z-10 w-full h-full">
         <div
           class="absolute top-0 h-full overflow-y-auto w-full z-50 pt-3 px-2"
@@ -117,7 +120,7 @@
         </div>
       </main>
       <footer class="q-pa-xs q-pb-md bg-white w-full px-2 pt-2.5">
-        <div v-if="getSelectedTab === ChatTypes.ONGOING">
+        <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
           <q-input
             v-model="message"
             placeholder="Enter reply information"
@@ -208,6 +211,7 @@ import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { format, differenceInDays, isToday } from "date-fns";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -226,13 +230,8 @@ const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
 const isTemplate: Ref<boolean> = ref(false);
-const {
-  getChats,
-  getSelectedChatIndex,
-  getContactNumber,
-  getCustomerName,
-  getSelectedTab,
-} = storeToRefs(messagingStore);
+const { getContactNumber, getCustomerName, getSelectedChat } =
+  storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const messages = computed<unknown[]>(() => {
@@ -249,13 +248,6 @@ const messages = computed<unknown[]>(() => {
   });
 });
 
-const getSelectedChat: any = computed(() => {
-  const chats = getChats.value.find(
-    (chat) => chat.status === getSelectedTab.value
-  );
-  return chats?.chats[getSelectedChatIndex.value] || {};
-});
-
 const scrollAreaRef = ref<HTMLDivElement>();
 watch(messages, async () => {
   // scroll to end bottom
@@ -263,6 +255,13 @@ watch(messages, async () => {
   if (!scrollAreaRef.value) return;
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 });
+
+watch(
+  () => getSelectedChat.value.id,
+  () => {
+    message.value = "";
+  }
+);
 const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
@@ -290,10 +289,8 @@ const sendMessage = async () => {
     messagingStore.fetchChatMessagesByChatId(chatId, true);
   } else {
     startNewChat(getCustomer.value.id, message.value);
-
-    messagingStore.fetchChats(ChatTypes.ONGOING);
+    messagingStore.fetchChats();
     messagingStore.setSelectedTab(ChatTypes.ONGOING);
-
     emit("newChatCreated", ChatTypes.ONGOING);
   }
   message.value = "";
