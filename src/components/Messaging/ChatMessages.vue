@@ -42,6 +42,9 @@
           </svg>
         </div>
       </header>
+      <chat-conversation-buttton
+        v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+      />
       <main class="flex-1 relative z-10 w-full h-full">
         <div
           class="absolute top-0 h-full overflow-y-auto w-full z-50 pt-3 px-2"
@@ -208,6 +211,7 @@ import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { format, differenceInDays, isToday } from "date-fns";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -251,6 +255,13 @@ watch(messages, async () => {
   if (!scrollAreaRef.value) return;
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 });
+
+watch(
+  () => getSelectedChat.value.id,
+  () => {
+    message.value = "";
+  }
+);
 const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
