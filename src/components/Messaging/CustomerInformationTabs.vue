@@ -57,16 +57,21 @@ const customerInformationTab: Ref<CustomerInformationTabs> = ref(
 );
 
 const saveCustomer = async (val: FormPayload) => {
+  let customerID = "";
   if (customerStore.getCustomer.id) {
     // update
     await customerStore.updateCustomer(customerStore.getCustomer.id, val);
+    customerID = customerStore.getCustomer.id;
   } else {
     // insert
-    const selectedChat = getChats.value[getSelectedChatIndex.value];
-    const contactId = selectedChat.contacts_id;
     const customer = await customerStore.addCustomer(val);
-    await customerStore.addCustomerContact(customer.id, contactId);
+    customerID = customer.id;
   }
+
+  const selectedChat = getChats.value[getSelectedChatIndex.value];
+  const contactId = selectedChat.chats[0].contacts_id;
+
+  await customerStore.addCustomerContact(customerID, contactId);
 
   messagingStore.fetchChats(messagingStore.getSelectedTab);
 };
