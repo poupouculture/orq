@@ -50,7 +50,7 @@
         </div>
         <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
-            <p class="label-style">ID Number</p>
+            <p class="label-style">Contact Number</p>
             <q-input
               v-model="idNumber"
               class="indi"
