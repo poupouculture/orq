@@ -30,7 +30,14 @@ module.exports = configure(function () {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
-    boot: ["i18n", "axios", "getProfile", "sentry", "global-component"],
+    boot: [
+      "i18n",
+      "axios",
+      "getProfile",
+      "sentry",
+      "global-component",
+      "firebase",
+    ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ["app.scss", "tailwind.css"],
@@ -67,6 +74,13 @@ module.exports = configure(function () {
       env: {
         BACKEND_URL: process.env.BACKEND_URL,
         SENTRY_DSN: process.env.SENTRY_DSN,
+        API_KEY: process.env.API_KEY,
+        AUTH_DOMAIN: process.env.AUTH_DOMAIN,
+        PROJECT_ID: process.env.PROJECT_ID,
+        STORAGE_BUCKET: process.env.STORAGE_BUCKET,
+        SENDER_ID: process.env.SENDER_ID,
+        APP_ID: process.env.APP_ID,
+        MEASUREMENT_ID: process.env.MEASUREMENT_ID,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

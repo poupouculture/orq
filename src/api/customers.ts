@@ -7,7 +7,8 @@ interface CustomerPayload {
 
 export const getCustomers = async (payload: CustomerPayload) => {
   const { limit, page } = payload;
-  const fields = "id, first_name, last_name, gender, date_created, position";
+  const fields =
+    "id, first_name, last_name, gender, date_created, position, customer_code";
   const companies = "companies.companies_id.name_english";
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -25,13 +26,31 @@ export const getCustomers = async (payload: CustomerPayload) => {
   return customers;
 };
 
+// get all customers who has contacts
+export const getCustomersWithContacts = async () => {
+  const fields = "id, first_name, last_name, gender, date_created, position";
+
+  const customers = await api.get("/items/customers", {
+    params: {
+      fields: `${fields}`,
+      sort: "-date_created",
+      "filter[count(contacts)][_neq]": 0,
+    },
+  });
+
+  return customers;
+};
+
 export const getCustomer = async (id: string) => {
   const fields = "*";
-  const companies = "companies.companies_id.*";
+  const companies = "companies.*, companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
+  const customerGroups =
+    "customer_groups.*, customer_groups.customer_groups_id.*";
+  const tags = "tags.*, tags.tags_id.*";
 
   const customer = await api.get(
-    `/items/customers/${id}?fields=${fields},${companies},${contacts}`
+    `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`
   );
   return customer;
 };
@@ -66,4 +85,15 @@ export const searchCustomers = async (payload: any) => {
     },
   });
   return data;
+};
+/*
+  delete relation data from customer
+  (customer relation data) eq: customer_groups
+*/
+export const deleteCustomerRelationship = async (customerId, contactId) => {
+  const customerContact = await api.post("/items/contacts_customers", {
+    customers_id: customerId,
+    contacts_id: contactId,
+  });
+  return customerContact;
 };

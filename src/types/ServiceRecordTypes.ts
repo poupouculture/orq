@@ -28,6 +28,8 @@ export interface IPagination {
 }
 export interface IState {
   items: string[];
+  item: null;
+  serviceRecords: null | IServiceRecord;
   meta: IMeta;
   pagination: IPagination;
 }

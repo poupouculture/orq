@@ -6,6 +6,7 @@
       autocapitalize="off"
       autocomplete="off"
       spellcheck="false"
+      @submit="onSubmit"
     >
       <div class="q-pa-md">
         <div class="row q-mb-lg">
@@ -17,13 +18,7 @@
           </div>
           <div class="col-10">
             <div class="field-holder">
-              <p class="label-style">Label</p>
-              <q-select
-                outlined
-                v-model="tags"
-                :disable="mode == 'show'"
-                dense
-              />
+              <TagOptions v-model="tags" :customer="getCustomer" :mode="mode" />
             </div>
           </div>
         </div>
@@ -121,34 +116,31 @@
             </q-input>
           </div>
         </div>
-        <div class="row q-mb-lg q-gutter-xl">
+        <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
             <p class="label-style">Position</p>
             <q-select
               outlined
               v-model="position"
+              :options="positionOptions"
               dense
               :disable="mode == 'show'"
             />
           </div>
           <div class="col">
-            <p class="label-style">Company</p>
-            <q-select
-              outlined
-              v-model="company"
-              dense
-              :disable="mode == 'show'"
+            <CompanyOptions
+              v-model="companies"
+              :customer="getCustomer"
+              :mode="mode"
             />
           </div>
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Customer Group</p>
-            <q-select
-              outlined
-              v-model="customerGroup"
-              dense
-              :disable="mode == 'show'"
+            <CustomerGroupOptions
+              v-model="customerGroups"
+              :customer="getCustomer"
+              :mode="mode"
             />
           </div>
           <div class="col"></div>
@@ -177,7 +169,7 @@
                 color="primary"
                 label="Save"
                 class="dark-btn"
-                @click="onSubmit"
+                type="submit"
               />
             </div>
           </div>
@@ -197,13 +189,36 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
+import { useQuasar } from "quasar";
+import useMessagingStore from "src/stores/modules/messaging";
+import CustomerGroupOptions from "./Modules/CustomerGroupOptions.vue";
+import CompanyOptions from "./Modules/CompanyOptions.vue";
+import TagOptions from "./Modules/TagOptions.vue";
+import {
+  transforCustomerGroupPayload,
+  transformCompaniesPayload,
+  transformTagPayload,
+} from "src/utils/transform-object";
+
+interface Option {
+  value: string | number;
+  label: string;
+}
+
+interface Gender {
+  value: "m" | "f";
+  label: "Male" | "Female";
+}
+
+type Position = Option;
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
@@ -222,33 +237,48 @@ const props = defineProps({
   },
 });
 const customerStore = useCustomerStore();
-
-const firstName = ref("");
-const lastName = ref("");
-const idNumber = ref("");
-const customerCode = ref("");
-const gender = ref("");
-const dateOfBirth = ref("");
-const position = ref("");
-const company = ref("");
-const customerGroup = ref("");
-const isActive = ref(true);
-
-const deleteDialog = ref(false);
-const returnDialog = ref(false);
-const tags = ref("");
-const genderOptions = [
+const messagingStore = useMessagingStore();
+const { getContactNumber } = storeToRefs(messagingStore);
+const $q = useQuasar();
+const positionOptions: Position[] = [
+  { value: "purchase_manager", label: "Purchase Manager" },
+  { value: "owner", label: "Owner" },
+  { value: "restaurant_chef", label: "Restaurant Chef" },
+];
+const genderOptions: Gender[] = [
   {
     value: "m",
     label: "Male",
   },
   { value: "f", label: "Female" },
 ];
+
+const firstName = ref("");
+const lastName = ref("");
+const idNumber = ref("");
+const customerCode = ref("");
+const gender: Ref<Gender | undefined> = ref(undefined);
+const dateOfBirth = ref("");
+const position: Ref<Position | undefined> = ref(undefined);
+const companies: Ref<Option[]> = ref([]);
+const customerGroups: Ref<Option[]> = ref([]);
+const tags: Ref<Option[]> = ref([]);
+const isActive = ref(true);
+
+const deleteDialog = ref(false);
+const returnDialog = ref(false);
 const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
-onMounted(() => {
+onMounted(async () => {
+  $q.loading.show({
+    message: "Please wait...",
+    boxClass: "bg-grey-2 text-grey-9",
+    spinnerColor: "primary",
+  });
+
   const customer = customerStore.getCustomer;
+
   if (customer) {
     firstName.value = customer.first_name;
     lastName.value = customer.last_name;
@@ -256,9 +286,12 @@ onMounted(() => {
     customerCode.value = customer.customer_code;
     dateOfBirth.value = customer.dob;
     isActive.value = customer.isActive;
-
+    position.value = positionOptions.find(
+      (item) => item.value === customer.position
+    );
     gender.value = genderOptions.find((item) => item.value === customer.gender);
   }
+  $q.loading.hide();
 });
 
 watch(getCustomer, () => {
@@ -268,35 +301,54 @@ watch(getCustomer, () => {
   customerCode.value = getCustomer.value.customer_code;
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.isActive;
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
 
+  position.value = positionOptions.find(
+    (item) => item.value === getCustomer.value.position
+  );
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
 });
 
-const submitDelete = () => {
-  deleteDialog.value = false;
-};
+// Watch Contact number
+watch(getContactNumber, (val: string) => {
+  idNumber.value = val;
+});
 
 const onSubmit = async () => {
   try {
-    const validate = await customerForm.value.validate();
-
-    if (validate) {
-      const payload = {
-        first_name: firstName.value,
-        last_name: lastName.value,
-        id_number: idNumber.value,
-        customer_code: customerCode.value,
-        gender: gender.value.value,
-        isActive: isActive.value,
-        dob: dateOfBirth.value,
-      };
-      emit("submit", payload);
+    if (!customerForm.value) {
+      return;
     }
+    const validate = await customerForm.value.validate();
+    if (!validate) return;
+    const payload = {
+      first_name: firstName.value,
+      last_name: lastName.value,
+      id_number: idNumber.value,
+      customer_code: customerCode.value,
+      gender: gender.value?.value,
+      isActive: isActive.value,
+      dob: dateOfBirth.value,
+      position: position.value?.value,
+      customer_groups: transforCustomerGroupPayload(
+        getCustomer.value,
+        customerGroups.value
+      ),
+      companies: transformCompaniesPayload(getCustomer.value, companies.value),
+      tags: transformTagPayload(getCustomer.value, tags.value),
+    };
+    emit("submit", payload);
   } catch (err) {
     console.log(err);
   }
+};
+
+const submitDelete = () => {
+  deleteDialog.value = false;
 };
 </script>
 

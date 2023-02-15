@@ -15,7 +15,10 @@ if (userinfo) {
   axios.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 }
 
-const api = axios.create({ baseURL: process.env.BACKEND_URL });
+const api = axios.create({
+  baseURL: process.env.BACKEND_URL,
+  withCredentials: true,
+});
 
 // different axios instance to handle the refresh token. Because
 // refresh token need new instance of axios
@@ -39,19 +42,16 @@ export default boot(({ app, store, router }) => {
       if (error.response) {
         if (error.response.status === 401 && !originalConfig._retry) {
           originalConfig._retry = true;
-
           try {
             const result = await userStore.refreshToken();
-
             originalConfig.headers.Authorization = `Bearer ${result?.access_token}`;
+            api.defaults.headers.common.Authorization = `Bearer ${result?.access_token}`;
             return api(originalConfig);
           } catch (err) {
-            console.log("err", err);
             router.push("/login");
             return Promise.reject(err);
           }
         }
-        return Promise.reject(error);
       }
     }
   );

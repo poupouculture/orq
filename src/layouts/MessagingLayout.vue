@@ -1,13 +1,18 @@
 <template>
   <div style="background: white">
     <q-layout view="lHh Lpr lFf">
-      <Drawer v-if="!loading" :chat-list="chats" @change-tab="changeTab" />
+      <Drawer
+        ref="chatList"
+        v-if="!loading"
+        :chat-list="chats"
+        @set-chat-id="setChatID"
+      />
       <q-page-container>
         <q-page padding>
           <router-view />
         </q-page>
       </q-page-container>
-      <ChatMessages />
+      <ChatMessages @new-chat-created="changeTab" :current-chat-id="chatID" />
     </q-layout>
   </div>
 </template>
@@ -22,20 +27,34 @@ import { ChatTypes } from "src/constants/ChatKeyword";
 
 const messagingStore = useMessagingStore();
 
+const chatList = ref();
+const chatID = ref("");
 const loading: Ref<boolean> = ref(true);
 
 onMounted(async () => {
-  await fetchChats(ChatTypes.PENDING);
+  await fetchChats();
   loading.value = false;
 });
 
 const chats = computed(() => messagingStore.getChats);
 
-const fetchChats = async (type: ChatTypes) => {
-  messagingStore.fetchChats(type);
+const fetchChats = async () => {
+  messagingStore.fetchChats();
 };
 
 const changeTab = (val: ChatTypes) => {
-  fetchChats(val);
+  chatList.value.onChangeTab(val);
+};
+
+const setChatID = (val: string) => {
+  chatID.value = val;
+  console.log(chatID.value);
 };
 </script>
+<style scoped lang="scss">
+:deep(.q-page-container) {
+  @media screen and (max-width: 1024px) {
+    padding-right: 0px !important;
+  }
+}
+</style>
