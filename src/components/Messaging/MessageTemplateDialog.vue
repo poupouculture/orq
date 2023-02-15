@@ -151,6 +151,7 @@ const fetchTemplates = async () => {
   } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
+    status: "published",
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;
