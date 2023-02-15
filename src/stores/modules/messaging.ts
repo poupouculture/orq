@@ -28,6 +28,7 @@ const useMessagingStore = defineStore("messaging", {
       contactNumber: null,
       customerName: null,
       chatSnapshotGroup: {},
+      showChatList: true,
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
@@ -38,13 +39,16 @@ const useMessagingStore = defineStore("messaging", {
     getCustomerName: (state) => state.customerName,
     getSelectedTab: (state) => state.selectedTab,
     isContactNumberExist: (state) => !!state.contactNumber,
+    getShowChatList: (state) => state.showChatList,
   },
   actions: {
     closeChat() {
       this.selectedChatIndex = -1;
       this.chatMessages = [];
+      this.selectedChat = {} as IChat;
       this.contactNumber = null;
       this.customerName = null;
+      this.showChatList = true;
     },
     setSelectedChatIndex(index: number) {
       this.selectedChatIndex = index;
@@ -75,6 +79,9 @@ const useMessagingStore = defineStore("messaging", {
     },
     setSelectedChatByStatus(status: ChatTypes) {
       this.selectedChat.status = status;
+    },
+    setShowChatList(show: boolean) {
+      this.showChatList = show;
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
