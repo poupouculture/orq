@@ -23,6 +23,7 @@
             :rows-per-page="data.rowsPerPage"
             :columns="headerColumns"
             :loading="loading"
+            :disable-select="true"
             @changePage="changePage"
           >
             <template #body-cell-name="props">
