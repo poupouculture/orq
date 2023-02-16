@@ -54,19 +54,22 @@ const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
 );
 const saveCustomer = async (val: FormPayload) => {
-  let customerID = "";
+  let customer = null;
   if (customerStore.getCustomer.id) {
     // update
     await customerStore.updateCustomer(customerStore.getCustomer.id, val);
-    customerID = customerStore.getCustomer.id;
+    customer = customerStore.getCustomer;
   } else {
     // insert
-    const customer = await customerStore.addCustomer(val);
-    customerID = customer.id;
+    customer = await customerStore.addCustomer(val);
   }
-  const selectedChat = getChats.value[getSelectedChatIndex.value];
-  const contactId = selectedChat.chats[0].contacts_id;
-  await customerStore.addCustomerContact(customerID, contactId);
+
+  if (!customer?.contacts?.length) {
+    const selectedChat = getChats.value[getSelectedChatIndex.value];
+    const contactId = selectedChat.chats[0].contacts_id;
+    await customerStore.addCustomerContact(customer.id, contactId);
+  }
+
   messagingStore.fetchChats();
 };
 </script>
