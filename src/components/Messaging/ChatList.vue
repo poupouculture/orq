@@ -1,10 +1,5 @@
 <template>
-  <q-drawer
-    v-model="openDrawer"
-    class="bg-grey-2 w-full"
-    show-if-above
-    bordered
-  >
+  <q-drawer v-model="openDrawer" class="bg-grey-2" show-if-above bordered>
     <q-list class="pb-14">
       <q-item-label header>
         <img class="q-mb-lg" src="../../assets/images/logo-invert.png" />
@@ -229,13 +224,24 @@ const props = defineProps({
     type: Array as PropType<ChatGroup[]>,
     default: () => [],
   },
+  modelValue: {
+    type: Boolean,
+    default: true,
+  },
 });
 
-const emit = defineEmits(["setChatId", "showCustomerDialog"]);
+const emit = defineEmits([
+  "setChatId",
+  "showCustomerDialog",
+  "update:modelValue",
+]);
 
 // States
 const activeChat: Ref<number | null> = ref(null);
-const openDrawer: Ref<boolean> = ref(true);
+const openDrawer = computed({
+  set: (val: boolean) => emit("update:modelValue", val),
+  get: () => props.modelValue,
+});
 const tab: Ref<string> = ref(ChatTypes.PENDING);
 const searchText: Ref<string> = ref("");
 const tabs: Ref<ChatTypes[]> = ref(Tabs);

@@ -1,57 +1,76 @@
 <template>
-  <div class="hidden lg:!block">
-    <div>
-      <!-- Search Customer -->
-      <SearchCustomer />
-      <div v-if="newCustomer">
-        <div class="text-weight-medium">New Contact</div>
-        <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey q-mt-md"
-          align="left"
-          active-color="primary"
-          indicator-color="primary"
-          narrow-indicator
-          no-caps
-          inset
-        >
-          <q-tab name="customer" label="Customer" />
-          <q-tab name="serviceDetail" label="Service Detail" />
-          <q-tab name="serviceRecord" label="Service Record" />
-        </q-tabs>
-        <q-separator size="2px" style="margin-top: -2px" />
-        <q-card class="q-py-md q-px-lg q-mt-md bg-grey-2" flat>
-          User Group
-          <q-card class="bg-white q-mt-sm row" flat>
-            <q-btn label="Name" class="row text-grey-8" unelevated no-caps>
-              <img
-                src="../../assets/images/dropdown.png"
-                class="dropdown-img"
-              />
-              <q-menu class="q-ma-lg" style="width: 400px">
-                <div class="column"></div>
-              </q-menu>
-            </q-btn>
-            <q-separator spaced vertical inset />
-            <q-input
-              v-model="inputGroup"
-              class="col-8"
-              placeholder="Public Group - Only Managers"
-              dense
-              borderless
-            />
-            <q-btn class="row no-hover-btn" unelevated no-caps>
-              <img src="../../assets/images/dropdown.png" />
-            </q-btn>
-            <q-separator spaced vertical inset />
-            <q-toggle v-model="toggle" color="primary" />
-          </q-card>
-        </q-card>
-      </div>
-      <!-- Customer Information Tabs -->
-      <CustomerInformationTabs />
+  <div class="lg:!block" :class="[showCustomerInfoMobile ? 'block' : 'hidden']">
+    <div
+      v-if="showCustomerInfoMobile"
+      @click="closeCustomerInfoMobile()"
+      class="flex items-center space-x-2 mb-3 text-gray-600 cursor-pointer"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="icon icon-tabler icon-tabler-arrow-narrow-left"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M5 12l14 0"></path>
+        <path d="M5 12l4 4"></path>
+        <path d="M5 12l4 -4"></path>
+      </svg>
+      <span>Back</span>
     </div>
+    <!-- Search Customer -->
+    <SearchCustomer />
+    <div v-if="newCustomer">
+      <div class="text-weight-medium">New Contact</div>
+      <q-tabs
+        v-model="tab"
+        dense
+        class="text-grey q-mt-md"
+        align="left"
+        active-color="primary"
+        indicator-color="primary"
+        narrow-indicator
+        no-caps
+        inset
+      >
+        <q-tab name="customer" label="Customer" />
+        <q-tab name="serviceDetail" label="Service Detail" />
+        <q-tab name="serviceRecord" label="Service Record" />
+      </q-tabs>
+      <q-separator size="2px" style="margin-top: -2px" />
+      <q-card class="q-py-md q-px-lg q-mt-md bg-grey-2" flat>
+        User Group
+        <q-card class="bg-white q-mt-sm row" flat>
+          <q-btn label="Name" class="row text-grey-8" unelevated no-caps>
+            <img src="../../assets/images/dropdown.png" class="dropdown-img" />
+            <q-menu class="q-ma-lg" style="width: 400px">
+              <div class="column"></div>
+            </q-menu>
+          </q-btn>
+          <q-separator spaced vertical inset />
+          <q-input
+            v-model="inputGroup"
+            class="col-8"
+            placeholder="Public Group - Only Managers"
+            dense
+            borderless
+          />
+          <q-btn class="row no-hover-btn" unelevated no-caps>
+            <img src="../../assets/images/dropdown.png" />
+          </q-btn>
+          <q-separator spaced vertical inset />
+          <q-toggle v-model="toggle" color="primary" />
+        </q-card>
+      </q-card>
+    </div>
+    <!-- Customer Information Tabs -->
+    <CustomerInformationTabs />
   </div>
 </template>
 
@@ -85,7 +104,6 @@ interface Manager {
   last_name: string;
   role_name: string;
 }
-
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 
@@ -100,7 +118,8 @@ const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
 const first = ref(false);
 
-const { getChats, getSelectedChat } = storeToRefs(messagingStore);
+const { getChats, getSelectedChat, showCustomerInfoMobile } =
+  storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -110,6 +129,10 @@ onMounted(async () => {
   firebaseToken.value = getFirebaseToken.value;
   snapshotByChats();
 });
+// closing customer information in mmobile vview
+const closeCustomerInfoMobile = () => {
+  messagingStore.setCustomerInfoMobile(false);
+};
 
 const snapshotByChats = async () => {
   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);

@@ -56,6 +56,7 @@ export interface IState {
   contactNumber: null | string;
   customerName: null | string;
   chatSnapshotGroup: any;
+  showCustomerInfoMobile: boolean;
 }
 
 export interface SendTextMessage {
