@@ -29,6 +29,7 @@ const useMessagingStore = defineStore("messaging", {
       customerName: null,
       chatSnapshotGroup: {},
       showCustomerInfoMobile: false,
+      showChatList: true,
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
@@ -39,13 +40,16 @@ const useMessagingStore = defineStore("messaging", {
     getCustomerName: (state) => state.customerName,
     getSelectedTab: (state) => state.selectedTab,
     isContactNumberExist: (state) => !!state.contactNumber,
+    getShowChatList: (state) => state.showChatList,
   },
   actions: {
     closeChat() {
       this.selectedChatIndex = -1;
       this.chatMessages = [];
+      this.selectedChat = {} as IChat;
       this.contactNumber = null;
       this.customerName = null;
+      this.showChatList = true;
     },
     setSelectedChatIndex(index: number) {
       this.selectedChatIndex = index;
@@ -61,7 +65,7 @@ const useMessagingStore = defineStore("messaging", {
         chats.chats.map((chat) => {
           if (chat.id === id) {
             const data = {
-              ...JSON.parse(chat.last_message || ""),
+              ...JSON.parse(chat.last_message || "{}"),
               ...lastMessage,
             };
             chat.last_message = JSON.stringify(data);
@@ -76,6 +80,9 @@ const useMessagingStore = defineStore("messaging", {
     },
     setSelectedChatByStatus(status: ChatTypes) {
       this.selectedChat.status = status;
+    },
+    setShowChatList(show: boolean) {
+      this.showChatList = show;
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
@@ -191,11 +198,7 @@ const useMessagingStore = defineStore("messaging", {
           collection(db, "messages", chatId, "members"),
           async (querySnapshot: any) => {
             for await (const change of querySnapshot.docChanges()) {
-              const chats: ChatGroup | undefined = this.chats.find(
-                (chat) => chat.status === this.selectedTab
-              );
-              const selectedChat = chats?.chats[this.selectedChatIndex];
-              if (selectedChat && selectedChat.id === chatId) {
+              if (this.getSelectedChat.id === chatId) {
                 const { content, status, type } = change.doc.data();
                 const dateCreated = new Date();
                 const direction =
@@ -209,17 +212,8 @@ const useMessagingStore = defineStore("messaging", {
                   type,
                 });
               } else {
-                // let status: any;
-                // this.chats.forEach((chats) => {
-                //   chats.chats.forEach((chat) => {
-                //     if (chat.id === chatId) {
-                //       status = chat.status;
-                //     }
-                //   });
-                // });
                 if (snapshoted) {
                   this.setChatsLastMessage(chatId, change.doc.data());
-                  // this.setChatsByStatus(status);
                 }
               }
             }

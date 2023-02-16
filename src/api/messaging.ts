@@ -56,6 +56,17 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     currPayload.waba_content.template = {
       name: templateName,
       language: lang,
+      components: [
+        {
+          type: "body",
+          parameters: [
+            {
+              type: "text",
+              text: messageBody,
+            },
+          ],
+        },
+      ],
     };
   } else {
     currPayload.waba_content.text = {

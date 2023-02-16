@@ -251,7 +251,8 @@ const chatToggleLabel: ChatToggleType = reactive({
 const data: CustomerData = reactive({
   customers: [],
 });
-const { getSelectedTab, getSelectedChat } = storeToRefs(messagingStore);
+const { getSelectedTab, getSelectedChat, getShowChatList } =
+  storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const chats = computed(
@@ -263,10 +264,21 @@ const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
 };
 
+const selectChatByCustomer = (customerID: string) => {
+  for (let index = 0; index < chats.value.length; index++) {
+    const tempChat = chats.value[index];
+    if (tempChat.customers_id === customerID) selectChat(index);
+  }
+};
+
+// watchEffect(() => {
+//   tab.value = getSelectedTab.value;
+// });
+defineExpose({ onChangeTab, selectChatByCustomer });
+
 watchEffect(() => {
-  tab.value = getSelectedTab.value;
+  openDrawer.value = getShowChatList.value;
 });
-defineExpose({ onChangeTab });
 
 const fetchCustomers = async () => {
   if (chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon) {
@@ -302,7 +314,9 @@ const getLastMessage = (lastMessage: LastMessage) => {
 const selectChat = (index: number) => {
   customerStore.$reset();
   // close drawer when mobile view
-  if (window.innerWidth <= 1024) openDrawer.value = false;
+  if (window.innerWidth <= 1024) {
+    messagingStore.setShowChatList(false);
+  }
 
   activeChat.value = index;
   const chat = chats.value[index];

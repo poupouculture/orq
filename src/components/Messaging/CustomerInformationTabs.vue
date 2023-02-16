@@ -39,7 +39,6 @@ import { computed, ref } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import ServiceRecord from "../Customer/ServiceRecord.vue";
-
 const enum CustomerInformationTabs {
   GENERAL = "general",
   OTHER = "other",
@@ -47,26 +46,30 @@ const enum CustomerInformationTabs {
 }
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
-
-const { getSelectedChat } = storeToRefs(messagingStore);
+const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
 const isContactNumberExist = computed(
   () => messagingStore.isContactNumberExist
 );
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
 );
-
 const saveCustomer = async (val: FormPayload) => {
+  let customer = null;
   if (customerStore.getCustomer.id) {
     // update
     await customerStore.updateCustomer(customerStore.getCustomer.id, val);
+    customer = customerStore.getCustomer;
   } else {
     // insert
-    const contactId = getSelectedChat.value.contacts_id;
-    const customer = await customerStore.addCustomer(val);
+    customer = await customerStore.addCustomer(val);
+  }
+
+  if (!customer?.contacts?.length) {
+    const selectedChat = getChats.value[getSelectedChatIndex.value];
+    const contactId = selectedChat.chats[0].contacts_id;
     await customerStore.addCustomerContact(customer.id, contactId);
   }
 
-  messagingStore.fetchChats(messagingStore.getSelectedTab);
+  messagingStore.fetchChats();
 };
 </script>

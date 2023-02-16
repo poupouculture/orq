@@ -57,6 +57,7 @@ export interface IState {
   customerName: null | string;
   chatSnapshotGroup: any;
   showCustomerInfoMobile: boolean;
+  showChatList: boolean;
 }
 
 export interface SendTextMessage {
@@ -79,9 +80,20 @@ export interface Language {
   code: string | undefined;
 }
 
+export interface ComponentParameter {
+  type: string;
+  text: string;
+}
+
+export interface TemplateComponent {
+  type: string;
+  parameters: ComponentParameter[];
+}
+
 export interface ChatPayloadWabaContentTemplate {
   name: string | undefined;
   language: Language;
+  components: TemplateComponent[];
 }
 
 export interface ChatPayloadWabaContent {
