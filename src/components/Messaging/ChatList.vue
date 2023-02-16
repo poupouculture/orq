@@ -265,9 +265,9 @@ const selectChatByCustomer = (customerID: string) => {
   }
 };
 
-// watchEffect(() => {
-//   tab.value = getSelectedTab.value;
-// });
+watchEffect(() => {
+  tab.value = getSelectedTab.value;
+});
 defineExpose({ onChangeTab, selectChatByCustomer });
 
 watchEffect(() => {
