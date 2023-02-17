@@ -28,6 +28,7 @@ const useMessagingStore = defineStore("messaging", {
       contactNumber: null,
       customerName: null,
       chatSnapshotGroup: {},
+      showCustomerInfoMobile: false,
       showChatList: true,
     } as unknown as IState),
   getters: {
@@ -186,6 +187,9 @@ const useMessagingStore = defineStore("messaging", {
     },
     setContactNumber(contactNumber: string) {
       this.contactNumber = contactNumber;
+    },
+    setCustomerInfoMobile(value: boolean) {
+      this.showCustomerInfoMobile = value;
     },
     onSnapshotMessage(chatId: string) {
       let snapshoted = false;

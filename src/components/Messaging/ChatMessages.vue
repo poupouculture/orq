@@ -3,16 +3,19 @@
     side="right"
     show-if-above
     bordered
-    :breakpoint="0"
-    :model-value="true"
     :width="450"
+    :breakpoint="0"
+    v-if="!showCustomerInfoMobile"
     class="bg-white q-pa-md"
   >
     <div v-if="getSelectedChat.id" class="h-full w-full flex flex-col">
       <header
         class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
       >
-        <div class="flex items-center space-x-3">
+        <div
+          class="flex items-center space-x-3"
+          @click="messagingStore.setCustomerInfoMobile(true)"
+        >
           <q-avatar class="rounded-avatar">
             <img src="https://cdn.quasar.dev/img/avatar.png" />
           </q-avatar>
@@ -142,7 +145,7 @@
           </div>
         </div>
       </main>
-      <footer class="q-pa-xs q-pb-md bg-white w-full px-2 pt-2.5">
+      <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
         <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
           <q-input
             v-model="message"
@@ -151,7 +154,7 @@
             borderless
             bg-color="grey-2"
             type="textarea"
-            input-class="px-4 py-4"
+            input-class="px-4 py-4 h-10 sm:h-auto"
             class="rounded-xl overflow-hidden"
             @keydown.enter.prevent="sendMessage"
           />
@@ -248,7 +251,7 @@ const props = defineProps({
     default: () => "",
   },
 });
-const emit = defineEmits(["newChatCreated"]);
+const emit = defineEmits(["newChatCreated", "closeChat"]);
 
 interface Manager {
   user_id: string;
@@ -263,8 +266,12 @@ const language: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
 const members: Ref<Array<Manager>> = ref([]);
 const isTemplate: Ref<boolean> = ref(false);
-const { getContactNumber, getCustomerName, getSelectedChat } =
-  storeToRefs(messagingStore);
+const {
+  getContactNumber,
+  getCustomerName,
+  getSelectedChat,
+  showCustomerInfoMobile,
+} = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const messages = computed<unknown[]>(() => {
@@ -296,6 +303,7 @@ watch(
   }
 );
 const closeChat = () => {
+  emit("closeChat");
   customerStore.$reset();
   messagingStore.closeChat();
 };
