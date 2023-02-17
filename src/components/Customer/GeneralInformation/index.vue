@@ -311,6 +311,7 @@ watch(getCustomer, () => {
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
+  customerForm.value?.resetValidation();
 });
 
 // Watch Contact number
