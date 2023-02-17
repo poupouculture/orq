@@ -70,6 +70,17 @@
             {{ groupedCompanies(props.row.companies) }}
           </q-td>
         </template>
+        <template #body-cell-label="props">
+          <q-td :props="props">
+            <div v-if="props.row.tags.length">
+              <div v-for="(tag, index) in props.row.tags" :key="index">
+                <q-chip color="primary" text-color="white"
+                  >{{ tag.tags_id.name }}
+                </q-chip>
+              </div>
+            </div>
+          </q-td>
+        </template>
         <template #body-cell-action="props">
           <q-td :props="props">
             <router-link
@@ -101,6 +112,7 @@ const headerColumns = [
     field: "name",
     sortable: true,
     classes: "text-black",
+    style: "max-width: 10%",
   },
   {
     name: "company",
@@ -124,6 +136,7 @@ const headerColumns = [
     label: "Label",
     field: "label",
     classes: "text-black",
+    style: "max-width: 20%",
   },
 
   {
