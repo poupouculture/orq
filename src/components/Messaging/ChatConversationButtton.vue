@@ -63,7 +63,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { Loading, Notify } from "quasar";
+import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
 
@@ -116,28 +116,35 @@ const assignUser = async (manager: Manager) => {
 
 const closeConversationLoading = ref(false);
 const closeConversation = async () => {
-  const chatId = getSelectedChat.value.id;
-  try {
-    closeConversationLoading.value = true;
-    await closeChat(chatId);
-    Notify.create({
-      message: "Conversation closed",
-      type: "positive",
-      position: "top",
-      color: "primary",
-    });
-    closeConversationLoading.value = false;
-    messagingStore.setSelectedTab(ChatTypes.CLOSED);
-  } catch (error: any) {
-    closeConversationLoading.value = false;
-    // if the status: invalid chat id (no associated member)
-    // It means chat is not available / deleted
-    Notify.create({
-      message: error.response.data,
-      type: "negative",
-      position: "top",
-    });
-  }
+  Dialog.create({
+    title: "Are you sure close this conversation?",
+    message: "This action cannot be undone",
+    cancel: true,
+    persistent: true,
+  }).onOk(async () => {
+    const chatId = getSelectedChat.value.id;
+    try {
+      closeConversationLoading.value = true;
+      await closeChat(chatId);
+      Notify.create({
+        message: "Conversation closed",
+        type: "positive",
+        position: "top",
+        color: "primary",
+      });
+      closeConversationLoading.value = false;
+      messagingStore.setSelectedTab(ChatTypes.CLOSED);
+    } catch (error: any) {
+      closeConversationLoading.value = false;
+      // if the status: invalid chat id (no associated member)
+      // It means chat is not available / deleted
+      Notify.create({
+        message: error.response.data,
+        type: "negative",
+        position: "top",
+      });
+    }
+  });
 };
 </script>
 
