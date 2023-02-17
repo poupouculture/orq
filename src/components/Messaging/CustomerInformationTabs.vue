@@ -69,6 +69,7 @@ const saveCustomer = async (val: FormPayload) => {
     const contactId = selectedChat.chats[0].contacts_id;
     await customerStore.addCustomerContact(customer.id, contactId);
   }
+
   messagingStore.fetchChats();
 };
 </script>
