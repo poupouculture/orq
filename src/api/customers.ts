@@ -10,12 +10,13 @@ export const getCustomers = async (payload: CustomerPayload) => {
   const fields =
     "id, first_name, last_name, gender, date_created, position, customer_code";
   const companies = "companies.companies_id.name_english";
+  const tags = "tags.tags_id.*";
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
 
   const customers = await api.get("/items/customers", {
     params: {
-      fields: `${fields},${companies}`,
+      fields: `${fields},${companies},${tags}`,
       sort: "-date_created",
       limit,
       offset,
