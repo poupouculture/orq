@@ -233,6 +233,11 @@ const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const showMessageTemplate: Ref<boolean> = ref(false);
+// dont remove this
+// const drawerOpen = computed({
+//   set: (val: boolean) => messagingStore.setCustomerInfoMobile(val),
+//   get: () => !showCustomerInfoMobile.value,
+// });
 const isTemplate: Ref<boolean> = ref(false);
 const {
   getContactNumber,

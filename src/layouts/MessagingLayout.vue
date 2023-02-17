@@ -1,6 +1,7 @@
 <template>
   <div style="background: white">
-    <q-layout view="lHh Lpr lFf">
+    <!-- LEFT sidebar fixed | CENTER sroll | RIGHT sidebar fixed  -->
+    <q-layout view="lHr LpR lFr">
       <Drawer
         ref="chatList"
         v-model="openDrawer"
