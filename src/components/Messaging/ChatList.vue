@@ -55,6 +55,7 @@
           </q-item>
         </q-virtual-scroll>
       </q-item-label>
+      aaaa{{ tab }}
       <q-tabs
         v-model="tab"
         dense
@@ -271,13 +272,13 @@ const selectChatByCustomer = (customerID: string) => {
   }
 };
 
-watchEffect(() => {
-  openDrawer.value = getShowChatList.value;
-});
 defineExpose({ onChangeTab, selectChatByCustomer });
 
 watchEffect(() => {
   openDrawer.value = getShowChatList.value;
+  // dont remove this, it hanppend to mutch times
+  // when take it or close conversation tab should change automatically
+  tab.value = getSelectedTab.value;
 });
 
 const fetchCustomers = async () => {
