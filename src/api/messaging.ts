@@ -7,7 +7,7 @@ import {
 } from "src/types/MessagingTypes";
 
 export const getChats = async (type: ChatTypes) => {
-  const { data } = await api.get(`//waba/chats/list/${type}`);
+  const { data } = await api.get(`/waba/chats/list/${type}`);
 
   return data;
 };
