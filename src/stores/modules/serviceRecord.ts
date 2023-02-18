@@ -47,11 +47,15 @@ const useServiceRecordStore = defineStore("serviceRecord", {
     },
     async getServiceRecords(id: string) {
       try {
+        this.setServiceRecord(null);
         const {
           data: { data: serviceRecords },
         } = await getServiceRecords(id);
-        this.serviceRecords = serviceRecords;
+        this.setServiceRecord(serviceRecords);
       } catch (error) {}
+    },
+    setServiceRecord(value: null | IServiceRecord[]) {
+      this.serviceRecords = value;
     },
   },
 });

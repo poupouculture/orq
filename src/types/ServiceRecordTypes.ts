@@ -10,10 +10,11 @@ export interface IServiceRecord {
   customer: ICustomer;
   employee: IEmployee;
   reference_number: number | string;
+  remarks: string;
   type: string;
   sort: string;
   status: string;
-  data_created: string;
+  date_created: string;
 }
 export interface IMeta {
   total_count: number | string;
@@ -29,7 +30,7 @@ export interface IPagination {
 export interface IState {
   items: string[];
   item: null;
-  serviceRecords: null | IServiceRecord;
+  serviceRecords: null | IServiceRecord[];
   meta: IMeta;
   pagination: IPagination;
 }
