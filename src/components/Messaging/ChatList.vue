@@ -55,7 +55,6 @@
           </q-item>
         </q-virtual-scroll>
       </q-item-label>
-      aaaa{{ tab }}
       <q-tabs
         v-model="tab"
         dense
