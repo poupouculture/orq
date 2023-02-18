@@ -52,6 +52,8 @@ npm run lint
 - use axios
 - use GraphQL in later stage for better performance and cleaner code
   - e.g. APOLLO
+- DERP: documentation:
+  https://docs.directus.io/reference/items.html
 
 ### Build the app for production
 ```bash
@@ -79,7 +81,7 @@ https://tailwindcss.com/docs/installation/using-postcss
 https://stackoverflow.com/questions/70034269/how-to-use-tailwind-css-with-quasar-framework
 ```
 
-## Quasar notes
+## Quasar notes: https://quasar.dev/
 main.js replaced by boot files in Quasar
 ```
 quasar new boot sentry --format ts
