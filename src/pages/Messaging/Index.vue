@@ -118,8 +118,7 @@ const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
 const first = ref(false);
 
-const { getChats, getSelectedChat, showCustomerInfoMobile } =
-  storeToRefs(messagingStore);
+const { getChats, showCustomerInfoMobile } = storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -141,13 +140,8 @@ const snapshotByChats = async () => {
       for await (const change of querySnapshot.docChanges()) {
         if (first.value) {
           const { status } = change.doc.data();
-          // delete from old chats
-          messagingStore.removeChatById(change.doc.id);
-          if (change.doc.id === getSelectedChat.value.id) {
-            messagingStore.setSelectedChatByStatus(status);
-          }
-          // messagingStore.setSelectedChatIndex(-1);
-          messagingStore.setChatsByStatus(status);
+          messagingStore.setChatsByStatus(status, change.doc.id);
+          messagingStore.setSelectedChatByStatus(status);
         }
       }
       first.value = true;
