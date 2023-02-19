@@ -234,7 +234,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted } from "vue";
+import { ref, computed, watch, nextTick, onMounted, onUpdated } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -396,13 +396,11 @@ const sendMessageTemplate = (name: string, msg: string, lang: string) => {
 };
 
 const initialName = (name: string) => {
-  console.log(name);
-
   const firstName = name.split(" ")[0];
   let initial = firstName.charAt(0).toUpperCase();
 
   if (name.split(" ").length !== 1) {
-    const lastName = name.split(" ")[0];
+    const lastName = name.split(" ")[1];
     initial += lastName.charAt(0).toUpperCase();
   }
 
@@ -414,7 +412,11 @@ const showActionChat = (index: number) => {
   messages.value[index].isShowAction = true;
 };
 
-onMounted(async () => {
+onMounted(() => {
+  members.value = JSON.parse(getSelectedChat.value.members);
+});
+
+onUpdated(() => {
   members.value = JSON.parse(getSelectedChat.value.members);
 });
 </script>
