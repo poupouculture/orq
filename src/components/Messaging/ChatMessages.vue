@@ -253,6 +253,7 @@ import { format, differenceInDays, isToday } from "date-fns";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 import Swal from "sweetalert2";
+import { debounce } from "src/utils/debounce";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -308,17 +309,6 @@ const messages = computed<unknown[]>(() => {
       };
     }) || []
   );
-  // const arr: Array<IMessage> = messagingStore.getChatMessages;
-  // const data = arr.map((item: IMessage, index: number) => {
-  //   const last = index - 1;
-  //   return {
-  //     content: item.content,
-  //     direction: item.direction,
-  //     status: item.status,
-  //     old_date_created: arr[last]?.date_created || null,
-  //     date_created: item.date_created,
-  //   };
-  // });
 });
 
 const scrollAreaRef = ref<HTMLDivElement>();
@@ -340,45 +330,43 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
-const sendMessage = async () => {
-  try {
-    if (message.value.length < 1) return;
-    if (messages.value.length > 0) {
-      // const chat = getChats.value[getSelectedChatIndex.value];
-      // const chatId = chat.id;
-      const chatId = props.currentChatId;
-
-      const contactNumber = getContactNumber.value;
-
-      await messagingStore.sendChatTextMessage({
-        chatId,
-        messageProduct: Product.WHATSAPP,
-        to: contactNumber as string,
-        type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
-        messageBody: message.value,
-        isTemplate: isTemplate.value,
-        templateName: templateName.value,
-        language: language.value,
+const [sendMessage] = debounce(
+  async () => {
+    try {
+      if (message.value.length < 1) return;
+      if (messages.value.length > 0) {
+        const chatId = props.currentChatId;
+        const contactNumber = getContactNumber.value;
+        await messagingStore.sendChatTextMessage({
+          chatId,
+          messageProduct: Product.WHATSAPP,
+          to: contactNumber as string,
+          type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
+          messageBody: message.value,
+          isTemplate: isTemplate.value,
+          templateName: templateName.value,
+          language: language.value,
+        });
+      } else {
+        startNewChat(getCustomer.value.id, message.value);
+        messagingStore.fetchChats();
+        messagingStore.setSelectedTab(ChatTypes.ONGOING);
+        emit("newChatCreated", ChatTypes.ONGOING);
+      }
+      message.value = "";
+      isTemplate.value = false;
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
       });
-
-      messagingStore.fetchChatMessagesByChatId(chatId, true);
-    } else {
-      startNewChat(getCustomer.value.id, message.value);
-      messagingStore.fetchChats();
-      messagingStore.setSelectedTab(ChatTypes.ONGOING);
-      emit("newChatCreated", ChatTypes.ONGOING);
+      console.log(error);
     }
-    message.value = "";
-    isTemplate.value = false;
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Something went wrong!",
-    });
-    console.log(error);
-  }
-};
+  },
+  500,
+  true
+);
 
 const activateChat = async () => {
   const chatId = getSelectedChat.value.id;

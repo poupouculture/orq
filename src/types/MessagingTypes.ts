@@ -40,6 +40,7 @@ export interface IChat {
   first_name: string;
   last_name: string;
   members?: string;
+  totalUnread?: number;
 }
 
 export interface ChatGroup {
