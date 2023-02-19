@@ -107,7 +107,10 @@
                   <div
                     class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
                   >
-                    <q-icon name="expand_more"></q-icon>
+                    <q-icon
+                      name="expand_more"
+                      @click="showActionChat(i)"
+                    ></q-icon>
                   </div>
                   <div class="mx-4">
                     {{ message.content }}
@@ -139,6 +142,16 @@
                       fill="#9A9AAF"
                     />
                   </svg>
+                </div>
+
+                <div
+                  class="w-full flex justify-end relative h-24 -mt-24"
+                  v-if="message.isShowAction"
+                >
+                  <div class="w-1/3 max-h-16 flex flex-col">
+                    <span class="bg-gray-200 px-2 cursor-pointer"> Reply </span>
+                    <span class="bg-gray-200 px-2 cursor-pointer"> Emot </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -289,6 +302,7 @@ const messages = computed<unknown[]>(() => {
       status: item.status,
       old_date_created: arr[last]?.date_created || null,
       date_created: item.date_created,
+      isShowAction: false,
     };
   });
 });
@@ -369,6 +383,11 @@ const sendMessageTemplate = (name: string, msg: string, lang: string) => {
 
 const initialFormat = (member: Manager) => {
   return member.first_name[0].toUpperCase() + member.last_name[0].toUpperCase();
+};
+
+const showActionChat = (index: number) => {
+  console.log("activate chat ", index);
+  messages.value[index].isShowAction = true;
 };
 
 onMounted(async () => {
