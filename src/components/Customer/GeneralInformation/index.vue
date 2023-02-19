@@ -18,7 +18,16 @@
           </div>
           <div class="col-10">
             <div class="field-holder">
-              <TagOptions v-model="tags" :customer="getCustomer" :mode="mode" />
+              <BaseMultiOptions
+                v-model="tags"
+                label="Labels"
+                filter-url="/items/tags"
+                :options="options.tags"
+                option-variable-name="tags"
+                :mode="mode"
+                @filter="filter"
+                @update:multi-options="updateMultiOptions"
+              />
             </div>
           </div>
         </div>
@@ -128,19 +137,30 @@
             />
           </div>
           <div class="col">
-            <CompanyOptions
+            <BaseMultiOptions
               v-model="companies"
-              :customer="getCustomer"
+              label="Companies"
+              filter-url="/items/companies"
+              :options="options.companies"
+              option-variable-name="companies"
+              name-label="name_english"
               :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
             />
           </div>
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <CustomerGroupOptions
+            <BaseMultiOptions
               v-model="customerGroups"
-              :customer="getCustomer"
+              label="Customer Groups"
+              filter-url="/items/customer_groups"
+              :options="options.customerGroups"
+              option-variable-name="customerGroups"
               :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
             />
           </div>
           <div class="col"></div>
@@ -190,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, reactive } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
@@ -199,14 +219,16 @@ import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
 import { useQuasar } from "quasar";
 import useMessagingStore from "src/stores/modules/messaging";
-import CustomerGroupOptions from "./Modules/CustomerGroupOptions.vue";
-import CompanyOptions from "./Modules/CompanyOptions.vue";
-import TagOptions from "./Modules/TagOptions.vue";
+import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import {
   transforCustomerGroupPayload,
   transformCompaniesPayload,
   transformTagPayload,
 } from "src/utils/transform-object";
+import { api } from "src/boot/axios";
+import type { Tag as ITag } from "src/types/TagTypes";
+import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
+import type { Company as ICompany } from "src/types/CompanyTypes";
 
 interface Option {
   value: string | number;
@@ -219,6 +241,7 @@ interface Gender {
 }
 
 type Position = Option;
+type ITagOptions = Option & ITag;
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
@@ -265,6 +288,12 @@ const customerGroups: Ref<Option[]> = ref([]);
 const tags: Ref<Option[]> = ref([]);
 const isActive = ref(true);
 
+const options: { [key: string]: any[] } = reactive({
+  tags: [] as ITagOptions[],
+  customerGroups: [] as ICustomerGroup[],
+  companies: [] as ICompany[],
+});
+
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const customerForm = ref(null);
@@ -290,7 +319,21 @@ onMounted(async () => {
       (item) => item.value === customer.position
     );
     gender.value = genderOptions.find((item) => item.value === customer.gender);
+
+    tags.value = customer.tags.map((data: any) => ({
+      label: data.tags_id.name,
+      value: data.tags_id.id,
+    }));
+    companies.value = customer.companies.map((data: any) => ({
+      label: data.companies_id.name_english,
+      value: data.companies_id.id,
+    }));
+    customerGroups.value = customer.customer_groups.map((data: any) => ({
+      label: data.customer_groups_id.name,
+      value: data.customer_groups_id.id,
+    }));
   }
+
   $q.loading.hide();
 });
 
@@ -318,6 +361,34 @@ watch(getCustomer, () => {
 watch(getContactNumber, (val: string) => {
   idNumber.value = val;
 });
+
+const filter = (val) => {
+  console.log(val);
+};
+
+const updateMultiOptions = async (val: {
+  data: any[];
+  filterUrl: string;
+  variableName: string;
+  nameLabel: string;
+}) => {
+  const { data: payload, filterUrl, variableName, nameLabel } = val;
+
+  const {
+    data: { data },
+  } = await api.get(filterUrl, {
+    params: {
+      fields: "*",
+      search: payload,
+    },
+  });
+  options[variableName] = data.map((item: any) => {
+    return {
+      value: item.id,
+      label: item[nameLabel],
+    };
+  });
+};
 
 const onSubmit = async () => {
   try {

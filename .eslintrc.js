@@ -55,6 +55,7 @@ module.exports = {
     process: "readonly",
     Capacitor: "readonly",
     chrome: "readonly",
+    NodeJS: true,
   },
 
   // add your custom rules here
