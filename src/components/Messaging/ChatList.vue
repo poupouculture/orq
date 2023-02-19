@@ -69,15 +69,40 @@
         <q-tab
           :name="ChatTypes.ONGOING"
           :label="`Ongoing ${countChats(ChatTypes.ONGOING)}`"
-        />
+        >
+          <q-badge
+            v-show="chatsTotalNum[ChatTypes.ONGOING]"
+            class="q-badge"
+            color="red"
+            floating
+            >{{ chatsTotalNum[ChatTypes.ONGOING] }}</q-badge
+          >
+        </q-tab>
         <q-tab
           :name="ChatTypes.PENDING"
           :label="`Waiting ${countChats(ChatTypes.PENDING)}`"
-        />
+        >
+          <q-badge
+            v-show="chatsTotalNum[ChatTypes.PENDING]"
+            class="q-badge"
+            color="red"
+            floating
+            >{{ chatsTotalNum[ChatTypes.PENDING] }}</q-badge
+          >
+        </q-tab>
+
         <q-tab
           :name="ChatTypes.CLOSED"
           :label="`Closed ${countChats(ChatTypes.CLOSED)}`"
-        />
+        >
+          <q-badge
+            v-show="chatsTotalNum[ChatTypes.CLOSED]"
+            class="q-badge"
+            color="red"
+            floating
+            >{{ chatsTotalNum[ChatTypes.CLOSED] }}</q-badge
+          >
+        </q-tab>
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" inset />
       <q-tab-panels
@@ -109,7 +134,7 @@
                     getDateFromLastMessage(JSON.parse(chat.last_message))
                   )
                 "
-                :totalUnread="0"
+                :totalUnread="chat.totalUnread"
                 class="contact-card"
                 @click="selectChat(parseInt(index))"
               />
@@ -147,6 +172,12 @@ interface LastMessage {
 
 interface CustomerData {
   customers: Array<ICustomer>;
+}
+
+interface newChatNum {
+  [ChatTypes.ONGOING]?: number;
+  [ChatTypes.PENDING]?: number;
+  [ChatTypes.CLOSED]?: number;
 }
 
 const ChatToggleLabel = {
@@ -207,6 +238,18 @@ const { getCustomer } = storeToRefs(customerStore);
 const chats = computed(
   () => props.chatList[tabs.value.indexOf(getSelectedTab.value)].chats
 );
+
+const chatsTotalNum = computed(() => {
+  const res: newChatNum = {};
+  props.chatList.forEach((chats) => {
+    let total = 0;
+    chats.chats.forEach((item) => {
+      total += item.totalUnread || 0;
+    });
+    res[chats.status] = total;
+  });
+  return res;
+});
 
 // Methods
 const onChangeTab = (val: ChatTypes) => {
@@ -271,10 +314,10 @@ const selectChat = (index: number) => {
   const chat = chats.value[index];
 
   emit("setChatId", chat.id);
+  console.log(chat);
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.setSelectedChat(chat);
-  // messagingStore.fetchChatMessagesByChatId(chat.id, true);
   messagingStore.fetchChatMessagesById(chat.id);
   messagingStore.fetchContactNumber(chat.contacts_id);
 
@@ -326,5 +369,10 @@ const startNewChat = async (user: ICustomer) => {
 }
 .fade-leave-active {
   position: absolute;
+}
+
+.q-badge {
+  top: -0.05rem;
+  right: -1rem;
 }
 </style>
