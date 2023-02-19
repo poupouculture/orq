@@ -146,12 +146,13 @@ const data = reactive({
 
 const fetchTemplates = async () => {
   loading.value = true;
+
   const {
     data: { data: applicationPrograms, meta },
   } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
-    status: "published",
+    // status: "published",
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;
