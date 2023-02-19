@@ -253,6 +253,7 @@ import { format, differenceInDays, isToday } from "date-fns";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 import Swal from "sweetalert2";
+import { Loading, Notify } from "quasar";
 import { debounce } from "src/utils/debounce";
 
 const messagingStore = useMessagingStore();
@@ -371,7 +372,15 @@ const [sendMessage] = debounce(
 const activateChat = async () => {
   const chatId = getSelectedChat.value.id;
   const userId: any | null = userInfoStore.getUserProfile;
+  Loading.show();
   await updateChatStatus(chatId, userId?.id);
+  Notify.create({
+    position: "top",
+    message: "The chat has been taken by you, now you can message the customer",
+    color: "primary",
+    type: "positive",
+  });
+  Loading.hide();
   emit("newChatCreated", ChatTypes.ONGOING);
 };
 
