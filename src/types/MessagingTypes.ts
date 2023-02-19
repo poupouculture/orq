@@ -15,10 +15,11 @@ export const enum MessageType {
 }
 
 export interface IMessage {
-  id?: number;
+  id: number;
   chat_id: string;
   status: string;
   date_created?: string;
+  date_updated?: string;
   type: string;
   content: string;
   channel?: string;
@@ -46,6 +47,10 @@ export interface ChatGroup {
   chats: IChat[];
 }
 
+export interface CachedChatMessages {
+  id: string;
+  messages: IMessage[];
+}
 export interface IState {
   chatMessages: Array<IMessage>;
   cacheMessages: Array<IMessage>;
@@ -58,6 +63,7 @@ export interface IState {
   chatSnapshotGroup: any;
   showCustomerInfoMobile: boolean;
   showChatList: boolean;
+  cachedChatMessages: CachedChatMessages[];
 }
 
 export interface SendTextMessage {

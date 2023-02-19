@@ -244,6 +244,7 @@ import {
   Direction,
   Product,
   MessageType,
+  CachedChatMessages,
 } from "../../types/MessagingTypes";
 import MessageTemplateDialog from "./MessageTemplateDialog.vue";
 import { startNewChat, updateChatStatus } from "src/api/messaging";
@@ -289,22 +290,38 @@ const {
   getCustomerName,
   getSelectedChat,
   showCustomerInfoMobile,
+  getCachedChatMessages,
 } = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
 const messages = computed<unknown[]>(() => {
-  const arr: Array<IMessage> = messagingStore.getChatMessages;
-  return arr.map((item: IMessage, index: number) => {
-    const last = index - 1;
-    return {
-      content: item.content,
-      direction: item.direction,
-      status: item.status,
-      old_date_created: arr[last]?.date_created || null,
-      date_created: item.date_created,
-      isShowAction: false,
-    };
-  });
+  const cachedMessages = getCachedChatMessages.value.find(
+    (item: CachedChatMessages) => item.id === getSelectedChat.value.id
+  );
+  return (
+    cachedMessages?.messages.map((item: IMessage, index: number) => {
+      const last = index - 1;
+      return {
+        content: item.content,
+        direction: item.direction,
+        status: item.status,
+        old_date_created: cachedMessages.messages[last]?.date_created || null,
+        date_created: item.date_created,
+        isShowAction: false,
+      };
+    }) || []
+  );
+  // const arr: Array<IMessage> = messagingStore.getChatMessages;
+  // const data = arr.map((item: IMessage, index: number) => {
+  //   const last = index - 1;
+  //   return {
+  //     content: item.content,
+  //     direction: item.direction,
+  //     status: item.status,
+  //     old_date_created: arr[last]?.date_created || null,
+  //     date_created: item.date_created,
+  //   };
+  // });
 });
 
 const scrollAreaRef = ref<HTMLDivElement>();
