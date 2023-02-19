@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watchEffect } from "vue";
+import { ref, reactive, computed, watchEffect, watch } from "vue";
 import type { Ref, PropType } from "vue";
 import { storeToRefs } from "pinia";
 import { format } from "date-fns";
@@ -183,6 +183,7 @@ const emit = defineEmits([
   "setChatId",
   "showCustomerDialog",
   "update:modelValue",
+  "search",
 ]);
 
 // States
@@ -227,6 +228,10 @@ watchEffect(() => {
   // dont remove this, it hanppend to mutch times
   // when take it or close conversation tab should change automatically
   tab.value = getSelectedTab.value;
+});
+
+watch(searchText, () => {
+  emit("search", searchText.value);
 });
 
 const fetchCustomers = async () => {

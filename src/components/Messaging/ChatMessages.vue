@@ -52,7 +52,7 @@
           v-for="(member, index) of members.slice(0, 3)"
           :key="index"
         >
-          {{ initialFormat(member) }}
+          {{ initialName(member.name) }}
         </div>
         <div
           class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
@@ -253,7 +253,6 @@ import { format, differenceInDays, isToday } from "date-fns";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 import Swal from "sweetalert2";
-import { getChatUsers } from "src/api/user";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -267,11 +266,9 @@ const props = defineProps({
 });
 const emit = defineEmits(["newChatCreated", "closeChat"]);
 
-interface Manager {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  role_name: string;
+interface Member {
+  id: string;
+  name: string;
 }
 
 const templateName: Ref<string> = ref("");
@@ -283,7 +280,7 @@ const showMessageTemplate: Ref<boolean> = ref(false);
 //   set: (val: boolean) => messagingStore.setCustomerInfoMobile(val),
 //   get: () => !showCustomerInfoMobile.value,
 // });
-const members: Ref<Array<Manager>> = ref([]);
+const members: Ref<Array<Member>> = ref([]);
 const isTemplate: Ref<boolean> = ref(false);
 const {
   getContactNumber,
@@ -398,8 +395,18 @@ const sendMessageTemplate = (name: string, msg: string, lang: string) => {
   sendMessage();
 };
 
-const initialFormat = (member: Manager) => {
-  return member.first_name[0].toUpperCase() + member.last_name[0].toUpperCase();
+const initialName = (name: string) => {
+  console.log(name);
+
+  const firstName = name.split(" ")[0];
+  let initial = firstName.charAt(0).toUpperCase();
+
+  if (name.split(" ").length !== 1) {
+    const lastName = name.split(" ")[0];
+    initial += lastName.charAt(0).toUpperCase();
+  }
+
+  return initial;
 };
 
 const showActionChat = (index: number) => {
@@ -408,8 +415,7 @@ const showActionChat = (index: number) => {
 };
 
 onMounted(async () => {
-  const { data } = await getChatUsers();
-  members.value = data;
+  members.value = JSON.parse(getSelectedChat.value.members);
 });
 </script>
 
