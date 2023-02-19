@@ -4,6 +4,7 @@ import {
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
+  CachedChatMessages,
 } from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
 import {
@@ -30,6 +31,7 @@ const useMessagingStore = defineStore("messaging", {
       chatSnapshotGroup: {},
       showCustomerInfoMobile: false,
       showChatList: true,
+      cachedChatMessages: [],
     } as unknown as IState),
   getters: {
     getChats: (state) => state.chats,
@@ -41,6 +43,7 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedTab: (state) => state.selectedTab,
     isContactNumberExist: (state) => !!state.contactNumber,
     getShowChatList: (state) => state.showChatList,
+    getCachedChatMessages: (state) => state.cachedChatMessages,
   },
   actions: {
     closeChat() {
@@ -61,19 +64,35 @@ const useMessagingStore = defineStore("messaging", {
       this.chatSnapshotGroup[id] = cancleFn;
     },
     setChatsLastMessage(id: string, lastMessage: any) {
-      this.chats = this.chats.map((chats) => {
-        chats.chats.map((chat) => {
-          if (chat.id === id) {
+      let temp: any;
+      this.chats.forEach((chats) => {
+        chats.chats.forEach((item, index) => {
+          if (item.id === id) {
+            temp = item;
             const data = {
-              ...JSON.parse(chat.last_message || "{}"),
+              ...JSON.parse(temp.last_message || "{}"),
               ...lastMessage,
             };
-            chat.last_message = JSON.stringify(data);
+            temp.last_message = JSON.stringify(data);
+            chats.chats.splice(index, 1);
+            chats?.chats.unshift(temp);
           }
-          return chat;
         });
-        return chats;
       });
+
+      // this.chats = this.chats.map((chats) => {
+      //   chats.chats.map((chat) => {
+      //     if (chat.id === id) {
+      //       const data = {
+      //         ...JSON.parse(chat.last_message || "{}"),
+      //         ...lastMessage,
+      //       };
+      //       chat.last_message = JSON.stringify(data);
+      //     }
+      //     return chat;
+      //   });
+      //   return chats;
+      // });
     },
     setSelectedChat(chat: IChat) {
       this.selectedChat = chat;
@@ -83,6 +102,26 @@ const useMessagingStore = defineStore("messaging", {
     },
     setShowChatList(show: boolean) {
       this.showChatList = show;
+    },
+    setCachedChatMessagesById(id: string, messages: IMessage[]) {
+      const cachedChatMessage = this.cachedChatMessages.find(
+        (item: CachedChatMessages) => item.id === id
+      );
+      if (cachedChatMessage) {
+        cachedChatMessage.messages = messages;
+      }
+    },
+    updateMessages(chatId: string, upload: any) {
+      const cachedChatMessage = this.cachedChatMessages.find(
+        (item: CachedChatMessages) => item.id === chatId
+      );
+      if (cachedChatMessage) {
+        // waiting for backend to fix
+        cachedChatMessage.messages.push({
+          ...cachedChatMessage.messages[0],
+          ...upload,
+        });
+      }
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
@@ -104,6 +143,17 @@ const useMessagingStore = defineStore("messaging", {
     async fetchChatsByStatus(status: ChatTypes) {
       const chats = await getChats(status);
       return chats;
+    },
+    async fetchChatMessagesById(chatId: string) {
+      const cachedChatMessage = this.cachedChatMessages.find(
+        (item: CachedChatMessages) => item.id === chatId
+      );
+      if (cachedChatMessage) {
+        // cachedChatMessage.messages = messages;
+      } else {
+        const messages = await getChatMessagesByChatId(chatId);
+        this.cachedChatMessages.push({ id: chatId, messages });
+      }
     },
     async fetchChatMessagesByChatId(chatId: string, refresh: boolean = false) {
       const cacheMessages: Array<IMessage> = this.cacheMessages;
@@ -148,6 +198,9 @@ const useMessagingStore = defineStore("messaging", {
       chatId: IMessage["chat_id"];
       dateCreated: IMessage["date_created"];
     }) {
+      if (chatId) {
+        return;
+      }
       const payload = {
         chat_id: chatId,
         status,
@@ -165,15 +218,28 @@ const useMessagingStore = defineStore("messaging", {
         this.cacheMessages.push(payload);
       }
     },
-    async setChatsByStatus(status: ChatTypes) {
-      const chatGroupIndex = this.chats.findIndex(
-        (group: ChatGroup) => group.status === status
-      );
-      if (chatGroupIndex >= 0) {
-        const chats = await getChats(status);
-        this.chats[chatGroupIndex].chats = chats;
-      }
+    async setChatsByStatus(status: string, chatId: string) {
+      let temp: any;
+      this.chats.forEach((chats) => {
+        chats.chats.forEach((item, index) => {
+          if (item.id === chatId) {
+            temp = item;
+            chats.chats.splice(index, 1);
+          }
+        });
+      });
+      const chats = this.chats.find((chats) => chats.status === status);
+      chats?.chats.unshift(temp);
     },
+    // async setChatsByStatus(status: ChatTypes) {
+    //   const chatGroupIndex = this.chats.findIndex(
+    //     (group: ChatGroup) => group.status === status
+    //   );
+    //   if (chatGroupIndex >= 0) {
+    //     const chats = await getChats(status);
+    //     this.chats[chatGroupIndex].chats = chats;
+    //   }
+    // },
     async sendChatTextMessage(payload: SendTextMessage) {
       const data = await sendChatTextMessage(payload);
       return data;
@@ -198,23 +264,26 @@ const useMessagingStore = defineStore("messaging", {
           collection(db, "messages", chatId, "members"),
           async (querySnapshot: any) => {
             for await (const change of querySnapshot.docChanges()) {
-              if (this.getSelectedChat.id === chatId) {
-                const { content, status, type } = change.doc.data();
-                const dateCreated = new Date();
+              if (snapshoted) {
+                const {
+                  content,
+                  status,
+                  type,
+                  last_message_id: id,
+                } = change.doc.data();
+                // const dateCreated = new Date();
                 const direction =
                   status === "sent" ? Direction.OUTGOING : Direction.INCOMING;
-                this.addMessageToCache({
-                  chatId,
-                  dateCreated: dateCreated.toString(),
-                  direction,
+                const paylod = {
+                  id,
+                  chat_id: chatId,
                   status,
+                  direction,
                   content,
                   type,
-                });
-              } else {
-                if (snapshoted) {
-                  this.setChatsLastMessage(chatId, change.doc.data());
-                }
+                };
+                this.setChatsLastMessage(chatId, paylod);
+                this.updateMessages(chatId, paylod);
               }
             }
             snapshoted = true;

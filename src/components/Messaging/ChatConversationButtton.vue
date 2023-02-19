@@ -46,7 +46,6 @@
     </q-btn>
     <q-btn
       :loading="closeConversationLoading"
-      v-if="userRole === Role.CS_MANAGER"
       color="primary"
       label="Close Conversation"
       no-caps
@@ -88,6 +87,7 @@ const { getSelectedChat } = storeToRefs(messagingStore);
 onMounted(async () => {
   const { data } = await getChatUsers();
   managers.value = data;
+
   userRole.value = userInfo.getUserRoleName;
 });
 

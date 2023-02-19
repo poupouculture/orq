@@ -90,26 +90,31 @@
           v-for="(tab_, tabIndex) in tabs"
           :key="tabIndex"
           :name="tab_"
+          class="overflow-x-hidden"
         >
-          <div v-for="(chat, index) in chats" :key="index">
-            <ContactCard
-              :active="chat.id === getSelectedChat.id"
-              :name="
-                chat?.customers_id
-                  ? TrimWord(`${chat.first_name} ${chat.last_name}`)
-                  : 'Visitor'
-              "
-              :message="TrimWord(getLastMessage(JSON.parse(chat.last_message)))"
-              :time="
-                dateFormat(
-                  getDateFromLastMessage(JSON.parse(chat.last_message))
-                )
-              "
-              :totalUnread="0"
-              class="contact-card"
-              @click="selectChat(parseInt(index))"
-            />
-          </div>
+          <TransitionGroup name="fade">
+            <div v-for="(chat, index) in chats" :key="chat.id">
+              <ContactCard
+                :active="chat.id === getSelectedChat.id"
+                :name="
+                  chat?.customers_id
+                    ? TrimWord(`${chat.first_name} ${chat.last_name}`)
+                    : 'Visitor'
+                "
+                :message="
+                  TrimWord(getLastMessage(JSON.parse(chat.last_message)))
+                "
+                :time="
+                  dateFormat(
+                    getDateFromLastMessage(JSON.parse(chat.last_message))
+                  )
+                "
+                :totalUnread="0"
+                class="contact-card"
+                @click="selectChat(parseInt(index))"
+              />
+            </div>
+          </TransitionGroup>
         </q-tab-panel>
       </q-tab-panels>
     </q-list>
@@ -215,13 +220,13 @@ const selectChatByCustomer = (customerID: string) => {
   }
 };
 
-watchEffect(() => {
-  openDrawer.value = getShowChatList.value;
-});
 defineExpose({ onChangeTab, selectChatByCustomer });
 
 watchEffect(() => {
   openDrawer.value = getShowChatList.value;
+  // dont remove this, it hanppend to mutch times
+  // when take it or close conversation tab should change automatically
+  tab.value = getSelectedTab.value;
 });
 
 const fetchCustomers = async () => {
@@ -269,7 +274,8 @@ const selectChat = (index: number) => {
 
   messagingStore.setSelectedChatIndex(index);
   messagingStore.setSelectedChat(chat);
-  messagingStore.fetchChatMessagesByChatId(chat.id, true);
+  // messagingStore.fetchChatMessagesByChatId(chat.id, true);
+  messagingStore.fetchChatMessagesById(chat.id);
   messagingStore.fetchContactNumber(chat.contacts_id);
 
   if (chat.first_name) {
@@ -306,5 +312,19 @@ const startNewChat = async (user: ICustomer) => {
 }
 .contact-card:hover {
   cursor: pointer;
+}
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translate(50px, 0);
+}
+.fade-leave-active {
+  position: absolute;
 }
 </style>
