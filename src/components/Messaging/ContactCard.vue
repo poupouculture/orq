@@ -23,18 +23,16 @@
       <div class="col-4 self-start q-py-xs">
         <div class="column items-end">
           <div class="text-grey-5">{{ time }}</div>
-          <q-avatar
-            v-if="totalUnread"
-            size="sm"
-            color="accent"
-            text-color="white"
-          >
+          <q-badge class="flex-1" color="red" v-show="totalUnread">
+            {{ totalUnread }}
+          </q-badge>
+          <!-- <q-avatar v-if="true" size="sm" color="accent" text-color="white">
             <div class="text-white">{{ totalUnread }}</div>
-          </q-avatar>
+          </q-avatar> -->
         </div>
       </div>
-    </div></q-card
-  >
+    </div>
+  </q-card>
 </template>
 
 <script setup>
