@@ -324,7 +324,7 @@ const getLastMessage = (lastMessage: LastMessage) => {
 
 const selectChat = (index: number) => {
   if (activeChat.value === index) {
-    return;
+    return false;
   }
 
   customerStore.$reset();
