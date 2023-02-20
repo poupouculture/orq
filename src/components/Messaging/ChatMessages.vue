@@ -278,6 +278,7 @@ const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
+const loading: Ref<boolean> = ref(false);
 // dont remove this
 // const drawerOpen = computed({
 //   set: (val: boolean) => messagingStore.setCustomerInfoMobile(val),
@@ -332,6 +333,7 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
+
 // const [sendMessage] = debounce(
 //   async () => {
 //     try {
@@ -373,6 +375,8 @@ const closeChat = () => {
 
 const sendMessage = async () => {
   try {
+    if (loading.value) return;
+    loading.value = true;
     if (message.value.length < 1) return;
     if (messages.value.length > 0) {
       const chatId = props.currentChatId;
@@ -404,6 +408,7 @@ const sendMessage = async () => {
     });
     console.log(error);
   }
+  loading.value = false;
 };
 
 const activateChat = async () => {
