@@ -34,6 +34,7 @@
             :isSimple="true"
             v-model:selected="selectedTemplate"
             @useTemplate="useTemplate"
+            @changePage="changePage"
           />
         </div>
 
@@ -155,7 +156,7 @@ const fetchTemplates = async () => {
     status: "published",
   });
   data.applicationPrograms = applicationPrograms;
-  data.totalCount = meta?.total_count;
+  data.totalCount = meta?.filter_count;
   loading.value = false;
 };
 
@@ -164,6 +165,8 @@ watch([rowsPerPage, page], () => {
 });
 
 onMounted(() => {
+  data.page = 1;
+  page.value = 1;
   fetchTemplates();
 });
 
@@ -232,5 +235,10 @@ const useTemplate = (val: any) => {
       customVariables.value = Array(customerVariableCounted).fill("");
     }
   }
+};
+
+const changePage = (val: number) => {
+  data.page = val;
+  fetchTemplates();
 };
 </script>
