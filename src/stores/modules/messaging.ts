@@ -69,6 +69,10 @@ const useMessagingStore = defineStore("messaging", {
         chats.chats.forEach((item, index) => {
           if (item.id === id) {
             temp = item;
+            // selectedChat should not show totalUnread
+            if (this.selectedChat.id !== id) {
+              temp.totalUnread = temp.totalUnread ? temp.totalUnread + 1 : 1;
+            }
             const data = {
               ...JSON.parse(temp.last_message || "{}"),
               ...lastMessage,
@@ -79,22 +83,9 @@ const useMessagingStore = defineStore("messaging", {
           }
         });
       });
-
-      // this.chats = this.chats.map((chats) => {
-      //   chats.chats.map((chat) => {
-      //     if (chat.id === id) {
-      //       const data = {
-      //         ...JSON.parse(chat.last_message || "{}"),
-      //         ...lastMessage,
-      //       };
-      //       chat.last_message = JSON.stringify(data);
-      //     }
-      //     return chat;
-      //   });
-      //   return chats;
-      // });
     },
     setSelectedChat(chat: IChat) {
+      chat.totalUnread = 0; // reset totalUnread
       this.selectedChat = chat;
     },
     setSelectedChatByStatus(status: ChatTypes) {

@@ -52,7 +52,7 @@
           v-for="(member, index) of members.slice(0, 3)"
           :key="index"
         >
-          {{ initialFormat(member) }}
+          {{ initialName(member.name) }}
         </div>
         <div
           class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
@@ -107,7 +107,10 @@
                   <div
                     class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
                   >
-                    <q-icon name="expand_more"></q-icon>
+                    <q-icon
+                      name="expand_more"
+                      @click="showActionChat(i)"
+                    ></q-icon>
                   </div>
                   <div class="mx-4">
                     {{ message.content }}
@@ -139,6 +142,16 @@
                       fill="#9A9AAF"
                     />
                   </svg>
+                </div>
+
+                <div
+                  class="w-full flex justify-end relative h-24 -mt-24"
+                  v-if="message.isShowAction"
+                >
+                  <div class="w-1/3 max-h-16 flex flex-col">
+                    <span class="bg-gray-200 px-2 cursor-pointer"> Reply </span>
+                    <span class="bg-gray-200 px-2 cursor-pointer"> Emot </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -221,7 +234,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted } from "vue";
+import { ref, computed, watch, nextTick, onMounted, onUpdated } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -241,7 +254,7 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 import Swal from "sweetalert2";
 import { Loading, Notify } from "quasar";
-import { getChatUsers } from "src/api/user";
+import { debounce } from "src/utils/debounce";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -255,23 +268,22 @@ const props = defineProps({
 });
 const emit = defineEmits(["newChatCreated", "closeChat"]);
 
-interface Manager {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  role_name: string;
+interface Member {
+  id: string;
+  name: string;
 }
 
 const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
+const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 // dont remove this
 // const drawerOpen = computed({
 //   set: (val: boolean) => messagingStore.setCustomerInfoMobile(val),
 //   get: () => !showCustomerInfoMobile.value,
 // });
-const members: Ref<Array<Manager>> = ref([]);
+const members: Ref<Array<Member>> = ref([]);
 const isTemplate: Ref<boolean> = ref(false);
 const {
   getContactNumber,
@@ -295,20 +307,10 @@ const messages = computed<unknown[]>(() => {
         status: item.status,
         old_date_created: cachedMessages.messages[last]?.date_created || null,
         date_created: item.date_created,
+        isShowAction: false,
       };
     }) || []
   );
-  // const arr: Array<IMessage> = messagingStore.getChatMessages;
-  // const data = arr.map((item: IMessage, index: number) => {
-  //   const last = index - 1;
-  //   return {
-  //     content: item.content,
-  //     direction: item.direction,
-  //     status: item.status,
-  //     old_date_created: arr[last]?.date_created || null,
-  //     date_created: item.date_created,
-  //   };
-  // });
 });
 
 const scrollAreaRef = ref<HTMLDivElement>();
@@ -330,45 +332,44 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
-const sendMessage = async () => {
-  try {
-    if (message.value.length < 1) return;
-    if (messages.value.length > 0) {
-      // const chat = getChats.value[getSelectedChatIndex.value];
-      // const chatId = chat.id;
-      const chatId = props.currentChatId;
-
-      const contactNumber = getContactNumber.value;
-
-      await messagingStore.sendChatTextMessage({
-        chatId,
-        messageProduct: Product.WHATSAPP,
-        to: contactNumber as string,
-        type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
-        messageBody: message.value,
-        isTemplate: isTemplate.value,
-        templateName: templateName.value,
-        language: language.value,
+const [sendMessage] = debounce(
+  async () => {
+    try {
+      if (message.value.length < 1) return;
+      if (messages.value.length > 0) {
+        const chatId = props.currentChatId;
+        const contactNumber = getContactNumber.value;
+        await messagingStore.sendChatTextMessage({
+          chatId,
+          messageProduct: Product.WHATSAPP,
+          to: contactNumber as string,
+          type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
+          messageBody: message.value,
+          isTemplate: isTemplate.value,
+          templateName: templateName.value,
+          language: language.value,
+          isIncludedComponent: isIncludeComponent.value,
+        });
+      } else {
+        startNewChat(getCustomer.value.id, message.value);
+        messagingStore.fetchChats();
+        messagingStore.setSelectedTab(ChatTypes.ONGOING);
+        emit("newChatCreated", ChatTypes.ONGOING);
+      }
+      message.value = "";
+      isTemplate.value = false;
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
       });
-
-      messagingStore.fetchChatMessagesByChatId(chatId, true);
-    } else {
-      startNewChat(getCustomer.value.id, message.value);
-      messagingStore.fetchChats();
-      messagingStore.setSelectedTab(ChatTypes.ONGOING);
-      emit("newChatCreated", ChatTypes.ONGOING);
+      console.log(error);
     }
-    message.value = "";
-    isTemplate.value = false;
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Something went wrong!",
-    });
-    console.log(error);
-  }
-};
+  },
+  500,
+  true
+);
 
 const activateChat = async () => {
   const chatId = getSelectedChat.value.id;
@@ -385,21 +386,43 @@ const activateChat = async () => {
   emit("newChatCreated", ChatTypes.ONGOING);
 };
 
-const sendMessageTemplate = (name: string, msg: string, lang: string) => {
+const sendMessageTemplate = (
+  name: string,
+  msg: string,
+  lang: string,
+  isIncComponent: boolean
+) => {
   templateName.value = name;
   message.value = msg;
   language.value = lang;
   isTemplate.value = true;
+  isIncludeComponent.value = isIncComponent;
   sendMessage();
 };
 
-const initialFormat = (member: Manager) => {
-  return member.first_name[0].toUpperCase() + member.last_name[0].toUpperCase();
+const initialName = (name: string) => {
+  const firstName = name.split(" ")[0];
+  let initial = firstName.charAt(0).toUpperCase();
+
+  if (name.split(" ").length !== 1) {
+    const lastName = name.split(" ")[1];
+    initial += lastName.charAt(0).toUpperCase();
+  }
+
+  return initial;
 };
 
-onMounted(async () => {
-  const { data } = await getChatUsers();
-  members.value = data;
+const showActionChat = (index: number) => {
+  console.log("activate chat ", index);
+  messages.value[index].isShowAction = true;
+};
+
+onMounted(() => {
+  members.value = JSON.parse(getSelectedChat.value.members);
+});
+
+onUpdated(() => {
+  members.value = JSON.parse(getSelectedChat.value.members);
 });
 </script>
 

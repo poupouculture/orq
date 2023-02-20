@@ -40,6 +40,7 @@ export interface IChat {
   first_name: string;
   last_name: string;
   members?: string;
+  totalUnread?: number;
 }
 
 export interface ChatGroup {
@@ -75,6 +76,7 @@ export interface SendTextMessage {
   isTemplate?: boolean;
   templateName?: string;
   language?: string;
+  isIncludedComponent?: boolean;
 }
 
 export interface ChatPayloadWabaContentText {
@@ -99,7 +101,7 @@ export interface TemplateComponent {
 export interface ChatPayloadWabaContentTemplate {
   name: string | undefined;
   language: Language;
-  components: TemplateComponent[];
+  components?: TemplateComponent[];
 }
 
 export interface ChatPayloadWabaContent {

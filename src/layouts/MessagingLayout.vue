@@ -6,9 +6,10 @@
         ref="chatList"
         v-model="openDrawer"
         v-if="!loading"
-        :chat-list="chats"
+        :chat-list="formattedChats"
         @set-chat-id="setChatID"
         @show-customer-dialog="setShowCustomerDialog"
+        @search="handleSearch"
       />
       <q-page-container>
         <CustomerDialog
@@ -60,6 +61,7 @@ onMounted(async () => {
 });
 
 const chats = computed(() => messagingStore.getChats);
+const formattedChats = ref(chats);
 
 const fetchChats = async () => {
   messagingStore.fetchChats();
@@ -95,6 +97,41 @@ const chooseCustomer = async (user: ICustomer) => {
       text: "Something went wrong!",
     });
     console.log(e);
+  }
+};
+
+const handleSearch = async (search: string) => {
+  if (search !== "") {
+    const onGoingChats = formattedChats.value[0];
+    const pendingChats = formattedChats.value[1];
+    const closedChats = formattedChats.value[2];
+
+    onGoingChats.chats = onGoingChats.chats.filter((chat) => {
+      const chatName = chat?.customers_id
+        ? `${chat.first_name.toLowerCase()} ${chat.last_name.toLowerCase()}`
+        : "visitor".toLowerCase();
+
+      return chatName.includes(search);
+    });
+
+    pendingChats.chats = pendingChats.chats.filter((chat) => {
+      const chatName = chat?.customers_id
+        ? `${chat.first_name.toLowerCase()} ${chat.last_name.toLowerCase()}`
+        : "visitor";
+      return chatName.includes(search.toLowerCase());
+    });
+
+    closedChats.chats = closedChats.chats.filter((chat) => {
+      const chatName = chat?.customers_id
+        ? `${chat.first_name.toLowerCase()} ${chat.last_name.toLowerCase()}`
+        : "visitor";
+      return chatName.includes(search.toLowerCase());
+    });
+
+    formattedChats.value = [onGoingChats, pendingChats, closedChats];
+  } else {
+    await fetchChats();
+    formattedChats.value = chats.value;
   }
 };
 </script>

@@ -204,6 +204,7 @@ import {
   actionType as at,
   formattedActionType as fat,
 } from "../../constants/messageTemplate.js";
+import { codes, names } from "../../constants/languages.js";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
@@ -216,7 +217,8 @@ const props = defineProps({
 });
 
 const name = ref(null);
-const languageOptions = ["English", "Chineese"];
+const languageCodes = codes;
+const languageOptions = names;
 const headerOptions = ["Text", "Media"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const actions = ref(Array(2).fill(null));
@@ -238,6 +240,11 @@ const loading = ref(true);
 onMounted(() => {
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
+
+    if (tempData?.json?.components) {
+      tempData.components = tempData?.json?.components;
+    }
+
     const headerComponent = tempData?.components?.find(
       (c) => c.type === "HEADER"
     );
@@ -250,11 +257,12 @@ onMounted(() => {
     );
 
     name.value = tempData.name;
-    language.value =
-      tempData.language === "en_US" ? "English" : tempData.language;
+    language.value = languageCodes.includes(tempData.language)
+      ? languageOptions[languageCodes.indexOf(tempData.language)]
+      : tempData.language;
 
     header.value = headerComponent?.format;
-    if (header.value.toUpperCase() === "TEXT") {
+    if (header.value?.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent?.text;
     } else {
       media.value = headerComponent?.text;
@@ -308,6 +316,9 @@ onMounted(() => {
     delivered.value = tempData.messages_sent;
     read.value = tempData.messages_opened;
     replied.value = tempData.top_block_reason;
+
+    console.log(tempData);
+    console.log(tempData.json);
   }
 
   loading.value = false;
@@ -369,35 +380,53 @@ const submitGeneralInformation = () => {
     }
   }
 
+  const formattedValueForEmit = (type) => {
+    if (type === "language") {
+      return languageOptions.includes(language.value)
+        ? languageCodes[languageOptions.indexOf(language.value)]
+        : language.value;
+    }
+    if (type === "components") {
+      return [
+        {
+          type: "HEADER",
+          format: header.value.toUpperCase(),
+          text: header.value === "Text" ? headerMessage.value : media.value,
+        },
+        {
+          type: "BODY",
+          text: bodyMessage.value,
+        },
+        {
+          type: "FOOTER",
+          text: footerMessage.value,
+        },
+        {
+          type: "BUTTONS",
+          value: {
+            category: actionCategory.value,
+            buttons: buttonValues,
+          },
+        },
+      ];
+    }
+
+    return "";
+  };
+
   emit("submitGeneralInformation", {
     name: name.value,
-    language: language.value,
+    language: formattedValueForEmit("language"),
     status: status.value,
-    components: [
-      {
-        type: "HEADER",
-        format: header.value.toUpperCase(),
-        text: header.value === "Text" ? headerMessage.value : media.value,
-      },
-      {
-        type: "BODY",
-        text: bodyMessage.value,
-      },
-      {
-        type: "FOOTER",
-        text: footerMessage.value,
-      },
-      {
-        type: "BUTTONS",
-        value: {
-          category: actionCategory.value,
-          buttons: buttonValues,
-        },
-      },
-    ],
+    components: formattedValueForEmit("components"),
     messages_sent: delivered.value,
     messages_opened: read.value,
     top_block_reason: replied.value,
+    json: {
+      name: name.value,
+      language: formattedValueForEmit("language"),
+      components: formattedValueForEmit("components"),
+    },
     created_by: userInfo.userProfile.id,
   });
 };
