@@ -17,7 +17,7 @@ export const getMessageTemplates = async ({
     meta: "*",
   };
 
-  if (status !== "*") params["filter[status][_eq]"] = status;
+  if (status !== "*") params["filter[is_approved][_eq]"] = true;
 
   const templates = await api.get(`/items/message_templates`, {
     params,

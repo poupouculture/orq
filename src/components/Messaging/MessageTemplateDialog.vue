@@ -152,7 +152,7 @@ const fetchTemplates = async () => {
   } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
-    // status: "published",
+    status: "published",
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;
@@ -197,26 +197,29 @@ const listNumbers = (str: string) => {
 };
 
 const useTemplate = (val: any) => {
+  customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
 
   usedTemplate.value = val;
+
+  if (usedTemplate.value?.json?.components) {
+    usedTemplate.value.components = usedTemplate.value?.json?.components;
+    val.components = usedTemplate.value?.json?.components;
+  }
   if (val.components) {
     const headerComponent = val.components.find(
       (c: any) => c?.type === "HEADER"
     );
-    header.value = headerComponent.value?.format;
-    if (header.value.toUpperCase() === "TEXT") {
+    header.value = headerComponent.format;
+    console.log("used template", headerComponent);
+    if (header.value?.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent.value?.text;
     } else {
       media.value = headerComponent.value?.text;
     }
-  }
 
-  if (val.json?.components) {
-    const bodyComponent = val.json.components.find(
-      (c: any) => c?.type === "BODY"
-    );
+    const bodyComponent = val.components.find((c: any) => c?.type === "BODY");
     bodyMessage.value = bodyComponent.text;
     const customerVariableCounted = listNumbers(bodyMessage.value).length;
     if (customerVariableCounted > 0) {
