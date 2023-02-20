@@ -80,10 +80,10 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.total_count;
   loading.value = false;
 };
-// const changePage = (val) => {
-//   data.page = val;
-//   fetchApplicationPrograms();
-// };
+const changePage = (val) => {
+  data.page = val;
+  fetchApplicationPrograms();
+};
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
     data.status = "archive";
