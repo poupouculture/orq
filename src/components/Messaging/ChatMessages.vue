@@ -276,6 +276,7 @@ interface Member {
 const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
+const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 // dont remove this
 // const drawerOpen = computed({
@@ -347,6 +348,7 @@ const [sendMessage] = debounce(
           isTemplate: isTemplate.value,
           templateName: templateName.value,
           language: language.value,
+          isIncludedComponent: isIncludeComponent.value,
         });
       } else {
         startNewChat(getCustomer.value.id, message.value);
@@ -384,11 +386,17 @@ const activateChat = async () => {
   emit("newChatCreated", ChatTypes.ONGOING);
 };
 
-const sendMessageTemplate = (name: string, msg: string, lang: string) => {
+const sendMessageTemplate = (
+  name: string,
+  msg: string,
+  lang: string,
+  isIncComponent: boolean
+) => {
   templateName.value = name;
   message.value = msg;
   language.value = lang;
   isTemplate.value = true;
+  isIncludeComponent.value = isIncComponent;
   sendMessage();
 };
 
