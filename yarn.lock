@@ -2047,7 +2047,7 @@ esbuild-darwin-64@0.14.51:
 
 esbuild-darwin-arm64@0.14.51:
   version "0.14.51"
-  resolved "https://registry.npmjs.org/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.51.tgz"
+  resolved "https://registry.yarnpkg.com/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.51.tgz#d77b4366a71d84e530ba019d540b538b295d494a"
   integrity sha512-juYD0QnSKwAMfzwKdIF6YbueXzS6N7y4GXPDeDkApz/1RzlT42mvX9jgNmyOlWKN7YzQAYbcUEJmZJYQGdf2ow==
 
 esbuild-freebsd-64@0.14.51:

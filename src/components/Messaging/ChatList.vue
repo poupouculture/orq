@@ -2,7 +2,7 @@
   <q-drawer v-model="openDrawer" class="bg-grey-2" show-if-above bordered>
     <q-list class="pb-14">
       <q-item-label header>
-        <img class="q-mb-lg" src="../../assets/images/logo-invert.png" />
+        <img class="q-mb-lg" src="~assets/images/logo-invert.png" />
         <q-input
           v-model="searchText"
           placeholder="Search Chats..."
@@ -55,6 +55,7 @@
           </q-item>
         </q-virtual-scroll>
       </q-item-label>
+
       <q-tabs
         v-model="tab"
         dense
@@ -68,40 +69,45 @@
       >
         <q-tab
           :name="ChatTypes.ONGOING"
+          icon="cached"
           :label="`Ongoing ${countChats(ChatTypes.ONGOING)}`"
         >
           <q-badge
             v-show="chatsTotalNum[ChatTypes.ONGOING]"
-            class="q-badge"
-            color="red"
+            color="primary"
+            align="top"
             floating
-            >{{ chatsTotalNum[ChatTypes.ONGOING] }}</q-badge
           >
+            {{ chatsTotalNum[ChatTypes.ONGOING] }}
+          </q-badge>
         </q-tab>
         <q-tab
           :name="ChatTypes.PENDING"
           :label="`Waiting ${countChats(ChatTypes.PENDING)}`"
+          icon="schedule"
         >
           <q-badge
             v-show="chatsTotalNum[ChatTypes.PENDING]"
-            class="q-badge"
-            color="red"
+            color="warning"
+            align="top"
             floating
-            >{{ chatsTotalNum[ChatTypes.PENDING] }}</q-badge
           >
+            {{ chatsTotalNum[ChatTypes.PENDING] }}
+          </q-badge>
         </q-tab>
-
         <q-tab
           :name="ChatTypes.CLOSED"
           :label="`Closed ${countChats(ChatTypes.CLOSED)}`"
+          icon="cancel"
         >
           <q-badge
             v-show="chatsTotalNum[ChatTypes.CLOSED]"
-            class="q-badge"
             color="red"
+            align="top"
             floating
-            >{{ chatsTotalNum[ChatTypes.CLOSED] }}</q-badge
           >
+            {{ chatsTotalNum[ChatTypes.CLOSED] }}
+          </q-badge>
         </q-tab>
       </q-tabs>
       <q-separator size="2px" style="margin-top: -2px" inset />
@@ -117,7 +123,7 @@
           :name="tab_"
           class="overflow-x-hidden"
         >
-          <TransitionGroup name="fade">
+          <TransitionGroup name="fade" v-if="chats.length > 0">
             <div v-for="(chat, index) in chats" :key="chat.id">
               <ContactCard
                 :active="chat.id === getSelectedChat.id"
@@ -140,6 +146,14 @@
               />
             </div>
           </TransitionGroup>
+
+          <div
+            v-else
+            class="h-[427px] flex justify-center items-center gap-2 flex-col"
+          >
+            <q-icon size="4rem" name="inbox" color="grey" />
+            <p class="text-h6 text-grey">No Chat Availables</p>
+          </div>
         </q-tab-panel>
       </q-tab-panels>
     </q-list>
