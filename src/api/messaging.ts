@@ -27,6 +27,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     isTemplate,
     templateName,
     language,
+    isIncludedComponent,
   } = payload;
 
   const currPayload: ChatPayload = {
@@ -47,21 +48,29 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     const lang: Language = {
       code: language,
     };
-    currPayload.waba_content.template = {
-      name: templateName,
-      language: lang,
-      components: [
-        {
-          type: "body",
-          parameters: [
-            {
-              type: "text",
-              text: messageBody,
-            },
-          ],
-        },
-      ],
-    };
+
+    if (isIncludedComponent) {
+      currPayload.waba_content.template = {
+        name: templateName,
+        language: lang,
+        components: [
+          {
+            type: "body",
+            parameters: [
+              {
+                type: "text",
+                text: messageBody,
+              },
+            ],
+          },
+        ],
+      };
+    } else {
+      currPayload.waba_content.template = {
+        name: templateName,
+        language: lang,
+      };
+    }
   } else {
     currPayload.waba_content.text = {
       preview_url: false,

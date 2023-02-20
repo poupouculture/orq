@@ -182,7 +182,13 @@ const send = () => {
     );
   });
 
-  emit("send", templateName.value, bodyMessage.value, language.value);
+  emit(
+    "send",
+    templateName.value,
+    bodyMessage.value,
+    language.value,
+    customVariables.value?.length > 0
+  );
   emit("hide");
 };
 
