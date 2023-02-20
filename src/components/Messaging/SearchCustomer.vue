@@ -1,6 +1,9 @@
 <template>
   <div class="bg-[#F2F3F7] pb-3 pt-2 px-6 w-full rounded-md flex flex-col">
-    <div class="flex items-center flex-nowrap space-x-2 mb-2">
+    <div
+      class="flex items-center flex-nowrap space-x-2 mb-2 relative"
+      v-if="openInfo"
+    >
       <img :src="image" class="w-32" />
       <p class="sm:text-left text-sm text-[#6d6d74]">
         Please make sure that the customer information is filled for future auto
@@ -8,6 +11,26 @@
         <br />
         If the customer profile already exists, then search below.
       </p>
+      <div
+        class="absolute -right-2 top-3 cursor-pointer"
+        @click="openInfo = false"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M18 6l-12 12"></path>
+          <path d="M6 6l12 12"></path>
+        </svg>
+      </div>
     </div>
     <div>Customer</div>
     <div class="rounded flex items-start px-6 py-2 bg-white mt-3 w-full">
@@ -103,6 +126,7 @@ interface IOption {
 }
 const query: Ref<string> = ref("");
 const customers: Ref<any> = ref("");
+const openInfo: Ref<boolean> = ref(true);
 const customer: Ref<any> = ref(null);
 const openCustomerFilter: Ref<boolean> = ref(false);
 const openSearchResult: Ref<boolean> = ref(false);
