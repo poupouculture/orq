@@ -31,12 +31,15 @@ export default function () {
 
   Router.beforeEach(async (to, from, next) => {
     const userStore = useUserInfoStore();
-    const userProfile = userStore.getUserProfile;
-    if (to.path === "/login" && userProfile) {
+    const userInfo = userStore.userInfo;
+    if (to.path === "/login" && userInfo?.access_token) {
       return next("/");
     }
 
-    if (to.matched.some((record) => record.meta.requiresAuth) && !userProfile) {
+    if (
+      to.matched.some((record) => record.meta.requiresAuth) &&
+      !userInfo?.access_token
+    ) {
       // need to return, because it throw the warn and will be error if in production
       return next("/login");
     } else {
