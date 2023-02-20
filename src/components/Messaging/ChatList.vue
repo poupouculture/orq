@@ -123,7 +123,7 @@
           :name="tab_"
           class="overflow-x-hidden"
         >
-          <TransitionGroup name="fade">
+          <TransitionGroup name="fade" v-if="chats.length > 0">
             <div v-for="(chat, index) in chats" :key="chat.id">
               <ContactCard
                 :active="chat.id === getSelectedChat.id"
@@ -146,6 +146,14 @@
               />
             </div>
           </TransitionGroup>
+
+          <div
+            v-else
+            class="h-[427px] flex justify-center items-center gap-2 flex-col"
+          >
+            <q-icon size="4rem" name="inbox" color="grey" />
+            <p class="text-h6 text-grey">No Chat Availables</p>
+          </div>
         </q-tab-panel>
       </q-tab-panels>
     </q-list>
