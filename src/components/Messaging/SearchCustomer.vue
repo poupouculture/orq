@@ -1,5 +1,14 @@
 <template>
-  <div class="bg-[#F2F3F7] py-3 px-6 w-full rounded-md flex flex-col">
+  <div class="bg-[#F2F3F7] pb-3 pt-2 px-6 w-full rounded-md flex flex-col">
+    <div class="flex items-center flex-nowrap space-x-2 mb-2">
+      <img :src="image" class="w-32" />
+      <p class="sm:text-left text-sm text-[#6d6d74]">
+        Please make sure that the customer information is filled for future auto
+        loading of the customer information.
+        <br />
+        If the customer profile already exists, then search below.
+      </p>
+    </div>
     <div>Customer</div>
     <div class="rounded flex items-start px-6 py-2 bg-white mt-3 w-full">
       <div class="flex items-center gap-x-2 border-r pr-3 cursor-pointer">
@@ -29,29 +38,52 @@
           </q-list>
         </q-menu>
       </div>
-      <div class="flex-1">
+      <div class="flex-1 relative">
         <input
           type="text"
           class="bg-transparent focus:outline-none pl-3 w-full"
           placeholder="Search ..."
           v-model="query"
-          @keyup.enter="searchHandler()"
+          @input="searchHandler()"
         />
-        <q-menu v-model="openSearchResult" :offset="[0, 10]" auto-close>
-          <q-list class="w-full">
-            <q-item
-              clickable
-              v-for="(customer, i) in customers"
-              :key="i"
-              @click="selectCustomer(customer)"
-            >
-              <q-item-section>
-                {{ customer.first_name }} {{ customer.last_name }} -
-                {{ customer.customer_code }}
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
+        <div
+          class="absolute -right-3 top-0.5 cursor-pointer"
+          v-if="openSearchResult"
+          @click="openSearchResult = false"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M18 6l-12 12"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </div>
+        <div class="absolute">
+          <q-menu :model-value="openSearchResult" :offset="[0, 10]" persistent>
+            <q-list class="w-full">
+              <q-item
+                clickable
+                v-for="(customer, i) in customers"
+                :key="i"
+                @click="selectCustomer(customer)"
+              >
+                <q-item-section>
+                  {{ customer.first_name }} {{ customer.last_name }} -
+                  {{ customer.customer_code }}
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
       </div>
     </div>
   </div>
@@ -59,9 +91,10 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import type { Ref } from "vue";
-import { Loading, Notify } from "quasar";
+import { debounce, Loading, Notify } from "quasar";
 import { searchCustomers } from "src/api/customers";
 import useCustomerStore from "src/stores/modules/customer";
+import image from "src/assets/images/messaging-customer.png";
 
 const customerStore = useCustomerStore();
 interface IOption {
@@ -91,14 +124,17 @@ const selectCustomer = (data: any) => {
   }
 };
 // Search Handler
-const searchHandler = async () => {
-  if (!query.value.length) return;
+const searchHandler = debounce(async function () {
   Loading.show();
   try {
-    const key = `filter[${selectedOption.value.key}][_contains]`;
+    let filter;
+    if (query.value.length) {
+      const key = `filter[${selectedOption.value.key}][_contains]`;
+      filter = { [key]: query.value };
+    }
     const { data } = await searchCustomers({
       fields: "*",
-      [key]: query.value,
+      ...filter,
     });
     if (data.data.length > 0) {
       openSearchResult.value = true;
@@ -111,7 +147,7 @@ const searchHandler = async () => {
     }
   } catch (error) {}
   Loading.hide();
-};
+}, 300);
 const filterOption = reactive<IOption[]>([
   {
     label: "First Name",
