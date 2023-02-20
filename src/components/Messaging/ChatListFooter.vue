@@ -96,7 +96,7 @@
         </div>
       </div>
       <div class="mt-6">
-        <div class="text-sm text-gray-500">About</div>
+        <div class="text-sm text-gray-500">Status</div>
         <div class="text-lg text-gray-700">
           {{ getUserProfile.status }}
         </div>
