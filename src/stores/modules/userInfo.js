@@ -37,7 +37,7 @@ const useUserInfoStore = defineStore("userInfo", {
         const user = data.data.data;
         this.userInfo = user;
         LocalStorage.set("userinfo", JSON.stringify(user));
-        await this.getProfile();
+        this.getProfile();
         Notify.create({
           message: "Successful login.",
           color: "blue-9",
