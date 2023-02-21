@@ -1,38 +1,26 @@
 <template>
-  <q-card
-    class="q-px-md q-py-sm contact-card"
-    :class="{ active: active, inactive: !active }"
+  <div
+    :class="{ 'bg-primary': active }"
+    class="flex w-full contact-card q-pa-sm"
   >
-    <div class="row items-center justify-between">
-      <div class="col-8">
-        <div class="row items-center">
-          <q-avatar class="rounded-avatar">
-            <img src="https://cdn.quasar.dev/img/avatar.png" />
-          </q-avatar>
-          <div class="col-7 q-ml-md">
-            <div
-              class="text-h6"
-              :class="{ 'text-white': active, 'text-dark': !active }"
-            >
-              {{ name }}
-            </div>
-            <div class="text-grey-5">{{ message }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-4 self-start q-py-xs">
-        <div class="column items-end">
-          <div class="text-grey-5">{{ time }}</div>
-          <q-badge class="flex-1" color="red" v-show="totalUnread">
-            {{ totalUnread }}
-          </q-badge>
-          <!-- <q-avatar v-if="true" size="sm" color="accent" text-color="white">
-            <div class="text-white">{{ totalUnread }}</div>
-          </q-avatar> -->
-        </div>
-      </div>
-    </div>
-  </q-card>
+    <q-avatar class="rounded-avatar q-mr-sm">
+      <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+    </q-avatar>
+    <q-item-section>
+      <q-item-label :class="{ 'text-white': active }" class="text-h6 truncate">
+        {{ name }}
+      </q-item-label>
+      <q-item-label caption lines="1" :class="{ 'text-white': active }">
+        {{ message }}
+      </q-item-label>
+    </q-item-section>
+    <q-item-section side top class="justify-between q-pb-sm">
+      <q-item-label caption :class="{ 'text-white': active }">
+        {{ time }}
+      </q-item-label>
+      <q-badge v-show="totalUnread" rounded color="red" :label="totalUnread" />
+    </q-item-section>
+  </div>
 </template>
 
 <script setup>
@@ -66,12 +54,5 @@ defineProps({
 }
 .contact-card {
   border-radius: 10px;
-}
-.active {
-  background: $primary;
-}
-.inactive {
-  background: none;
-  box-shadow: none;
 }
 </style>
