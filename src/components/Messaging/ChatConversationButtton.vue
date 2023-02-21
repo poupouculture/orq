@@ -127,7 +127,7 @@ const closeConversation = async () => {
     try {
       Loading.show();
       closeConversationLoading.value = true;
-      await closeChat(chatId);
+      closeChat(chatId);
       Notify.create({
         message: "Conversation closed",
         type: "positive",
