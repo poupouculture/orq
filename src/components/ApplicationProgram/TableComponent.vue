@@ -212,6 +212,7 @@ onMounted(() => {
   if (propsTable.isSimple) {
     headerColumns.value = headerColumns.value.filter(
       (h) =>
+        h.name !== "is_approved" &&
         h.name !== "top_block_reason" &&
         h.name !== "date_created" &&
         h.name !== "user_created"
