@@ -171,9 +171,9 @@
           />
           <div class="row justify-end">
             <q-btn
-              flat
+              :flat="!isOverOneDay"
               round
-              color="grey"
+              :color="isOverOneDay ? 'primary' : 'grey'"
               icon="insert_comment"
               size="md"
               class="q-mt-md"
@@ -200,7 +200,9 @@
                 color="primary"
                 label="Send"
                 class="dark-btn"
+                :disable="isOverOneDay"
                 @click="sendMessage"
+                :loading="sendLoading"
               />
             </div>
           </div>
@@ -276,14 +278,10 @@ const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
-const loading: Ref<boolean> = ref(false);
-// dont remove this
-// const drawerOpen = computed({
-//   set: (val: boolean) => messagingStore.setCustomerInfoMobile(val),
-//   get: () => !showCustomerInfoMobile.value,
-// });
+const isOverOneDay: Ref<boolean> = ref(true);
 const members: Ref<Array<Member>> = ref([]);
 const isTemplate: Ref<boolean> = ref(false);
+const sendLoading: Ref<boolean> = ref(false);
 const {
   getContactNumber,
   getCustomerName,
@@ -320,12 +318,22 @@ watch(messages, async () => {
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 });
 
-watch(
-  () => getSelectedChat.value.id,
-  () => {
-    message.value = "";
+watch(getSelectedChat, (val: any) => {
+  checkSessionInOneDay(val);
+  message.value = "";
+});
+const checkSessionInOneDay = (val: any) => {
+  const lastMessage = JSON.parse(val.last_message);
+  const differenceDate: number = differenceInDays(
+    new Date(lastMessage.date_created),
+    new Date()
+  );
+  if (differenceDate < 0) {
+    isOverOneDay.value = true;
+  } else {
+    isOverOneDay.value = false;
   }
-);
+};
 const closeChat = () => {
   emit("closeChat");
   customerStore.$reset();
@@ -372,9 +380,10 @@ const closeChat = () => {
 // );
 
 const sendMessage = async () => {
+  isOverOneDay.value = false;
   try {
-    if (loading.value) return;
-    loading.value = true;
+    if (sendLoading.value) return;
+    sendLoading.value = true;
     if (message.value.length < 1) return;
     if (messages.value.length > 0) {
       const chatId = props.currentChatId;
@@ -396,9 +405,11 @@ const sendMessage = async () => {
       messagingStore.setSelectedTab(ChatTypes.ONGOING);
       emit("newChatCreated", ChatTypes.ONGOING);
     }
+    sendLoading.value = false;
     message.value = "";
     isTemplate.value = false;
   } catch (error) {
+    sendLoading.value = false;
     Swal.fire({
       icon: "error",
       title: "Oops...",
@@ -406,7 +417,6 @@ const sendMessage = async () => {
     });
     console.log(error);
   }
-  loading.value = false;
 };
 
 const activateChat = async () => {
