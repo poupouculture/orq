@@ -21,6 +21,21 @@
         />
 
         <div class="label flex flex-col">
+          <p class="text-xl">Is Email</p>
+          <p class="text-gray-400">Is this email template</p>
+        </div>
+
+        <div class="w-2/12 mt-2 mb-4">
+          <InputSelect
+            :options="isEmailOptions"
+            :default="isEmail"
+            :value="isEmail"
+            @input="updateIsEmail"
+            v-if="!loading"
+          />
+        </div>
+
+        <div class="label flex flex-col">
           <p class="text-xl">Languages</p>
           <p class="text-gray-400">Select your message language</p>
         </div>
@@ -94,6 +109,20 @@
             type="text"
             class="w-full h-10 block border rounded-lg pl-4"
             v-model="footerMessage"
+          />
+        </div>
+
+        <div class="label flex flex-col">
+          <p class="text-xl">Approved</p>
+          <p class="text-gray-400">Is this template approved</p>
+        </div>
+
+        <div class="mt-2 mb-4">
+          <input
+            type="text"
+            class="w-2/12 h-10 block border rounded-lg pl-4"
+            :value="isApproved"
+            disabled
           />
         </div>
 
@@ -219,16 +248,19 @@ const props = defineProps({
 const name = ref(null);
 const languageCodes = codes;
 const languageOptions = names;
+const isEmailOptions = ["Yes", "No"];
 const headerOptions = ["Text", "Media"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const actions = ref(Array(2).fill(null));
 
+const isEmail = ref("No");
 const language = ref("English");
 const header = ref(null);
 const headerMessage = ref("");
 const media = ref(null);
 const bodyMessage = ref("");
 const footerMessage = ref("");
+const isApproved = ref("No");
 const actionCategory = ref("None");
 const replies = ref(["", ""]);
 const status = ref("Draft");
@@ -257,6 +289,7 @@ onMounted(() => {
     );
 
     name.value = tempData.name;
+    isEmail.value = tempData.is_email_template ? "Yes" : "No";
     language.value = languageCodes.includes(tempData.language)
       ? languageOptions[languageCodes.indexOf(tempData.language)]
       : tempData.language;
@@ -271,6 +304,7 @@ onMounted(() => {
     bodyMessage.value =
       bodyComponent?.text === undefined ? "" : bodyComponent?.text;
     footerMessage.value = footerComponent?.text;
+    isApproved.value = tempData.is_approved ? "Yes" : "No";
 
     updateActionCategory(buttonsComponent?.value?.category);
 
@@ -316,13 +350,14 @@ onMounted(() => {
     delivered.value = tempData.messages_sent;
     read.value = tempData.messages_opened;
     replied.value = tempData.top_block_reason;
-
-    console.log(tempData);
-    console.log(tempData.json);
   }
 
   loading.value = false;
 });
+
+const updateIsEmail = (value) => {
+  isEmail.value = value;
+};
 
 const updateLanguage = (value) => {
   language.value = value;
@@ -416,6 +451,7 @@ const submitGeneralInformation = () => {
 
   emit("submitGeneralInformation", {
     name: name.value,
+    is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
     components: formattedValueForEmit("components"),

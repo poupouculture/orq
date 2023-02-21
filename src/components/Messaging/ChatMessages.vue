@@ -95,6 +95,14 @@
                   : 'justify-start',
               ]"
             >
+              <div
+                class="w-1/12 flex items-center px-2 text-lg text-gray-400 order-last"
+              >
+                <q-icon
+                  name="fa-solid fa-face-smile"
+                  class="cursor-pointer"
+                ></q-icon>
+              </div>
               <div class="flex flex-col max-w-[60%] mb-2">
                 <div
                   class="rounded-md pb-3 whitespace-pre-wrap block break-words w-full"
@@ -142,16 +150,6 @@
                       fill="#9A9AAF"
                     />
                   </svg>
-                </div>
-
-                <div
-                  class="w-full flex justify-end relative h-24 -mt-24"
-                  v-if="message.isShowAction"
-                >
-                  <div class="w-1/3 max-h-16 flex flex-col">
-                    <span class="bg-gray-200 px-2 cursor-pointer"> Reply </span>
-                    <span class="bg-gray-200 px-2 cursor-pointer"> Emot </span>
-                  </div>
                 </div>
               </div>
             </div>

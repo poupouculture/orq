@@ -29,6 +29,16 @@
         </span>
       </q-td>
     </template>
+    <template #body-cell-is_approved="props">
+      <q-td :props="props">
+        {{ props.row.is_approved ? "Yes" : "No" }}
+      </q-td>
+    </template>
+    <template #body-cell-is_email_template="props">
+      <q-td :props="props">
+        {{ props.row.is_email_template ? "Yes" : "No" }}
+      </q-td>
+    </template>
     <template #body-cell-language="props">
       <q-td :props="props">
         {{ props.row.language }}
@@ -121,6 +131,22 @@ const headerColumns = ref([
     classes: "text-black",
   },
   {
+    name: "is_approved",
+    align: "center",
+    label: "Approved",
+    field: "is_approved",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "is_email_template",
+    align: "center",
+    label: "Is Email",
+    field: "is_email_template",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
     name: "language",
     align: "center",
     label: "Language",
@@ -186,6 +212,7 @@ onMounted(() => {
   if (propsTable.isSimple) {
     headerColumns.value = headerColumns.value.filter(
       (h) =>
+        h.name !== "is_approved" &&
         h.name !== "top_block_reason" &&
         h.name !== "date_created" &&
         h.name !== "user_created"
