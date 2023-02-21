@@ -12,6 +12,7 @@
   >
     <q-tab name="general" label="General Information" />
     <q-tab name="other" label="Other Information" />
+    <q-tab name="contact" label="Contact Information" />
     <q-tab name="service_record" label="Service Record" />
   </q-tabs>
   <q-separator size="2px" style="margin-top: -2px" />
@@ -25,6 +26,11 @@
         @submit="saveCustomer"
       />
     </q-tab-panel>
+    <q-tab-panel name="contact">
+      <div class="contact-info">
+        <ContactInfo />
+      </div>
+    </q-tab-panel>
     <q-tab-panel name="service_record">
       <ServiceRecord />
     </q-tab-panel>
@@ -32,13 +38,14 @@
 </template>
 <script setup lang="ts">
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
+import ServiceRecord from "../Customer/ServiceRecord.vue";
+import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
 import { computed, ref } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import ServiceRecord from "../Customer/ServiceRecord.vue";
 const enum CustomerInformationTabs {
   GENERAL = "general",
   OTHER = "other",

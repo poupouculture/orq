@@ -448,8 +448,12 @@
                 :key="index"
               >
                 <contact-phone-card
-                  :phone-number="contact.contacts_id.phone_number"
-                  :remarks="`This is ${contact.contacts_id.remarks} number`"
+                  :phone-number="contact.contacts_id.number"
+                  :remarks="`This is ${
+                    contact.contacts_id.remarks
+                      ? contact.contacts_id.remarks
+                      : customerStore.customer.first_name
+                  }'s number`"
                   @edit="phonedialog = true"
                 />
               </div>
@@ -512,9 +516,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import "./ContactInfo.scss";
-import "vue3-tel-input/dist/vue3-tel-input.css";
 import ContactPhoneCard from "../Customer/ContactPhoneCard.vue";
 import { useRoute } from "vue-router";
 import useCustomerStore from "src/stores/modules/customer";
@@ -552,6 +555,10 @@ const addPhone = async () => {
   const result = await customerStore.addContact(customerId, params);
   console.log(result);
 };
+
+onMounted(() => {
+  console.log(customerStore.customer.contacts[0].number);
+});
 </script>
 
 <style lang="sass" scoped>
