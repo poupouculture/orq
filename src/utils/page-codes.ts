@@ -13,18 +13,18 @@ export const pageCodes = [
   },
   {
     id: "F06",
-    icon: "people",
+    icon: "text_snippet",
   },
   {
     id: "F07",
-    icon: "rocket_launch",
+    icon: "business_center",
   },
   {
     id: "F08",
-    icon: "rocket_launch",
+    icon: "inventory_2",
   },
   {
     id: "F09",
-    icon: "rocket_launch",
+    icon: "today",
   },
 ];

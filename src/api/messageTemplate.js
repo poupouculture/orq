@@ -23,8 +23,6 @@ export const getMessageTemplates = async ({
     params,
   });
 
-  console.log("template", templates);
-
   return templates;
 };
 

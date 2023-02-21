@@ -80,6 +80,7 @@ interface Manager {
 
 const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
+
 const userRole: Ref<string> = ref("");
 const managers: Ref<Array<Manager>> = ref([]);
 const { getSelectedChat } = storeToRefs(messagingStore);
@@ -124,8 +125,9 @@ const closeConversation = async () => {
   }).onOk(async () => {
     const chatId = getSelectedChat.value.id;
     try {
+      Loading.show();
       closeConversationLoading.value = true;
-      await closeChat(chatId);
+      closeChat(chatId);
       Notify.create({
         message: "Conversation closed",
         type: "positive",
@@ -134,6 +136,8 @@ const closeConversation = async () => {
       });
       closeConversationLoading.value = false;
       messagingStore.setSelectedTab(ChatTypes.CLOSED);
+
+      Loading.hide();
     } catch (error: any) {
       closeConversationLoading.value = false;
       // if the status: invalid chat id (no associated member)

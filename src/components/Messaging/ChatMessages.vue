@@ -256,7 +256,7 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
 import Swal from "sweetalert2";
 import { Loading, Notify } from "quasar";
-import { debounce } from "src/utils/debounce";
+// import { debounce } from "src/utils/debounce";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -341,31 +341,71 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
-const [sendMessage] = debounce(async () => {
-  sendLoading.value = true;
+
+// const [sendMessage] = debounce(
+//   async () => {
+//     try {
+//       if (message.value.length < 1) return;
+//       if (messages.value.length > 0) {
+//         const chatId = props.currentChatId;
+//         const contactNumber = getContactNumber.value;
+//         await messagingStore.sendChatTextMessage({
+//           chatId,
+//           messageProduct: Product.WHATSAPP,
+//           to: contactNumber as string,
+//           type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
+//           messageBody: message.value,
+//           isTemplate: isTemplate.value,
+//           templateName: templateName.value,
+//           language: language.value,
+//           isIncludedComponent: isIncludeComponent.value,
+//         });
+//       } else {
+//         startNewChat(getCustomer.value.id, message.value);
+//         messagingStore.fetchChats();
+//         messagingStore.setSelectedTab(ChatTypes.ONGOING);
+//         emit("newChatCreated", ChatTypes.ONGOING);
+//       }
+//       message.value = "";
+//       isTemplate.value = false;
+//     } catch (error) {
+//       Swal.fire({
+//         icon: "error",
+//         title: "Oops...",
+//         text: "Something went wrong!",
+//       });
+//       console.log(error);
+//     }
+//   },
+//   500,
+//   true
+// );
+
+const sendMessage = async () => {
+  isOverOneDay.value = false;
   try {
-    if (message.value.length > 0) {
-      if (messages.value.length > 0) {
-        isOverOneDay.value = false;
-        const chatId = props.currentChatId;
-        const contactNumber = getContactNumber.value;
-        await messagingStore.sendChatTextMessage({
-          chatId,
-          messageProduct: Product.WHATSAPP,
-          to: contactNumber as string,
-          type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
-          messageBody: message.value,
-          isTemplate: isTemplate.value,
-          templateName: templateName.value,
-          language: language.value,
-          isIncludedComponent: isIncludeComponent.value,
-        });
-      } else {
-        startNewChat(getCustomer.value.id, message.value);
-        messagingStore.fetchChats();
-        messagingStore.setSelectedTab(ChatTypes.ONGOING);
-        emit("newChatCreated", ChatTypes.ONGOING);
-      }
+    if (sendLoading.value) return;
+    sendLoading.value = true;
+    if (message.value.length < 1) return;
+    if (messages.value.length > 0) {
+      const chatId = props.currentChatId;
+      const contactNumber = getContactNumber.value;
+      await messagingStore.sendChatTextMessage({
+        chatId,
+        messageProduct: Product.WHATSAPP,
+        to: contactNumber as string,
+        type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
+        messageBody: message.value,
+        isTemplate: isTemplate.value,
+        templateName: templateName.value,
+        language: language.value,
+        isIncludedComponent: isIncludeComponent.value,
+      });
+    } else {
+      startNewChat(getCustomer.value.id, message.value);
+      messagingStore.fetchChats();
+      messagingStore.setSelectedTab(ChatTypes.ONGOING);
+      emit("newChatCreated", ChatTypes.ONGOING);
     }
     sendLoading.value = false;
     message.value = "";
@@ -379,7 +419,7 @@ const [sendMessage] = debounce(async () => {
     });
     console.log(error);
   }
-}, 200);
+};
 
 const activateChat = async () => {
   const chatId = getSelectedChat.value.id;
