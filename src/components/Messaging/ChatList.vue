@@ -123,8 +123,12 @@
           :name="tab_"
           class="overflow-x-hidden"
         >
-          <TransitionGroup name="fade" v-if="chats.length > 0">
-            <div v-for="(chat, index) in chats" :key="chat.id">
+          <TransitionGroup name="fade" v-if="chats.length > 0" tag="div">
+            <q-item
+              v-for="(chat, index) in chats"
+              :key="index"
+              class="cursor-pointer q-px-none"
+            >
               <ContactCard
                 :active="chat.id === getSelectedChat.id"
                 :name="
@@ -144,7 +148,29 @@
                 class="contact-card"
                 @click="selectChat(parseInt(index))"
               />
-            </div>
+            </q-item>
+
+            <!-- <div v-for="(chat, index) in chats" :key="chat.id">
+              <ContactCard
+                :active="chat.id === getSelectedChat.id"
+                :name="
+                  chat?.customers_id
+                    ? TrimWord(`${chat.first_name} ${chat.last_name}`)
+                    : 'Visitor'
+                "
+                :message="
+                  TrimWord(getLastMessage(JSON.parse(chat.last_message)))
+                "
+                :time="
+                  dateFormat(
+                    getDateFromLastMessage(JSON.parse(chat.last_message))
+                  )
+                "
+                :totalUnread="chat.totalUnread"
+                class="contact-card"
+                @click="selectChat(parseInt(index))"
+              />
+            </div> -->
           </TransitionGroup>
 
           <div
