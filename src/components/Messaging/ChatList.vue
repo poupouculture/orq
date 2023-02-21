@@ -6,8 +6,8 @@
     show-if-above
     bordered
   >
-    <div class="flex flex-col gap-3">
-      <q-list class="pb-14">
+    <div class="h-full">
+      <q-list class="pb-14 h-full flex flex-col flex-flow-col">
         <q-item-label header>
           <img class="q-mb-lg" src="~assets/images/logo-invert.png" />
           <q-input
@@ -129,12 +129,7 @@
             :key="tabIndex"
             :name="tab_"
           >
-            <TransitionGroup
-              name="fade"
-              v-if="chats.length > 0"
-              tag="div"
-              class="h-[427px]"
-            >
+            <TransitionGroup name="fade" v-if="chats.length > 0" tag="div">
               <q-item
                 v-for="(chat, index) in chats"
                 :key="index"
@@ -151,10 +146,7 @@
               </q-item>
             </TransitionGroup>
 
-            <div
-              v-else
-              class="h-[427px] flex justify-center items-center gap-2 flex-col"
-            >
+            <div v-else class="flex justify-center items-center gap-2 flex-col">
               <q-icon size="4rem" name="inbox" color="grey" />
               <p class="text-h6 text-grey">No Chat Availables</p>
             </div>
@@ -394,6 +386,9 @@ const startNewChat = async (user: ICustomer) => {
   @media screen and (min-width: 1024px) {
     width: 300px !important;
   }
+}
+.flex-flow-col {
+  flex-flow: column;
 }
 .contact-card:hover {
   cursor: pointer;
