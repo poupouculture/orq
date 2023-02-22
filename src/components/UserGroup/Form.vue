@@ -28,7 +28,7 @@
         </div>
         <!-- Customer -->
         <h6 class="border-b border-[#D9D9D9]">Customers</h6>
-        <div class="flex justify-end items mt-2.5 space-x-3">
+        <div class="flex justify-end items mt-2.5 space-x-3 mb-3">
           <p class="text-[#9A9AAF]">{{ selectedCustomer.length }} Items</p>
           <div
             @click="toggleCustomerOverlay()"
@@ -37,9 +37,54 @@
             <q-icon name="add" class="text-white" size="1.2rem" />
           </div>
         </div>
+        <!-- customer list -->
+        <div v-if="selectedCustomer.length">
+          <TransitionGroup name="fade-scale" tag="ul" appear class="relative">
+            <li
+              class="border rounded-md py-2 px-4 mb-2"
+              v-for="(customer, i) in selectedCustomer"
+              :key="customer.id"
+            >
+              <div class="flex items-center justify-between">
+                <span
+                  >{{ customer.first_name }} {{ customer.last_name }}
+                  {{
+                    (customer.companies.length &&
+                      `/ ${customer.companies[0].companies_id.name_english}`) ||
+                    ""
+                  }}
+                  /
+                  {{ customer.position }}</span
+                >
+                <svg
+                  @click="deleteCustomer(i)"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="text-[#9A9AAF] cursor-pointer"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M4 7l16 0"></path>
+                  <path d="M10 11l0 6"></path>
+                  <path d="M14 11l0 6"></path>
+                  <path
+                    d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"
+                  ></path>
+                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                </svg>
+              </div>
+            </li>
+          </TransitionGroup>
+        </div>
         <!-- User Groups -->
-        <h6 class="border-b border-[#D9D9D9]">User Group</h6>
-        <div class="flex justify-end items mt-2.5 space-x-3">
+        <h6 class="border-b border-[#D9D9D9] pt-2">User Group</h6>
+        <div class="flex justify-end items mt-2.5 space-x-3 mb-3">
           <p class="text-[#9A9AAF]">{{ selectedUserGroup.length }} Items</p>
           <div
             @click="toggleUserGroupOverlay()"
@@ -47,6 +92,42 @@
           >
             <q-icon name="add" class="text-white" size="1.2rem" />
           </div>
+        </div>
+        <!-- User Group List -->
+        <div v-if="selectedUserGroup.length">
+          <TransitionGroup name="fade-scale" tag="ul" appear class="relative">
+            <div
+              class="border rounded-md py-2 px-4 mb-2"
+              v-for="(user, i) in selectedUserGroup"
+              :key="user.id"
+            >
+              <div class="flex items-center justify-between">
+                <span> {{ user.name }} / {{ user.type }} </span>
+                <svg
+                  @click="deleteUserGroup(i)"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="text-[#9A9AAF] cursor-pointer"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M4 7l16 0"></path>
+                  <path d="M10 11l0 6"></path>
+                  <path d="M14 11l0 6"></path>
+                  <path
+                    d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"
+                  ></path>
+                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                </svg>
+              </div>
+            </div>
+          </TransitionGroup>
         </div>
         <!-- Button Action -->
         <div class="row q-mb-lg q-gutter-xl q-mt-lg">
@@ -117,13 +198,20 @@ const customerGroupStore = useCustomerGroupStore();
 const data = computed(() => customerGroupStore.item);
 const router = useRouter();
 const returnDialog = ref(false);
-const selectedCustomer = ref([]);
-const selectedUserGroup = ref([]);
-const openAddCustomer = ref(false);
-const openAddUserGroup = ref(false);
-const customersData = ref([]);
-const userGroupData = ref([]);
 const statusOptions = ["published", "draft"];
+// User Group state
+const openAddUserGroup = ref(false);
+const selectedUserGroup = ref([]);
+const addedUserGroup = ref([]);
+const deletedUserGroup = ref([]);
+const userGroupData = ref([]);
+// Customer state
+const openAddCustomer = ref(false);
+const selectedCustomer = ref([]);
+const addedCustomer = ref([]);
+const deletedCustomer = ref([]);
+const customersData = ref([]);
+
 const form = reactive({
   name: "",
   status: "",
@@ -139,6 +227,22 @@ onMounted(() => {
     );
   }
 });
+const deleteUserGroup = (index) => {
+  const userGroupId = selectedUserGroup.value[index].id;
+  deletedUserGroup.value.push(userGroupId);
+  selectedUserGroup.value.splice(index, 1);
+  addedUserGroup.value = addedUserGroup.value.filter(
+    (data) => data.id !== userGroupId
+  );
+};
+const deleteCustomer = (index) => {
+  const customerId = selectedCustomer.value[index].id;
+  deletedCustomer.value.push(customerId);
+  selectedCustomer.value.splice(index, 1);
+  addedCustomer.value = addedCustomer.value.filter(
+    (data) => data.id !== customerId
+  );
+};
 const toggleCustomerOverlay = async () => {
   if (!openAddCustomer.value) {
     await fetchCustomers();
@@ -165,33 +269,39 @@ const submit = async () => {
   try {
     let msg;
     if (props.id) {
-      const filterCustomer = selectedCustomer.value.filter(
-        (customer) =>
-          !data.value.customers.map((c) => c.customers_id).includes(customer)
-      );
-      const filterUserGroup = selectedUserGroup.value.filter(
-        (userGroup) =>
-          !data.value.user_groups
-            .map((us) => us.user_groups_id)
-            .includes(userGroup)
-      );
       await updateCustomerGroup(props.id, {
         ...form,
         user_groups: {
-          create: filterUserGroup.map((usergroup) => ({
+          create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
             user_groups_id: {
-              id: usergroup,
+              id: userGroup.id,
             },
           })),
+          delete:
+            (deletedUserGroup.value.length &&
+              data.value.user_groups
+                .filter((userGroup) =>
+                  deletedUserGroup.value.includes(userGroup.user_groups_id.id)
+                )
+                .map((data) => data.id)) ||
+            [],
         },
         customers: {
-          create: filterCustomer.map((customer) => ({
+          create: addedCustomer.value.map((customer) => ({
             customer_groups_id: props.id,
             customers_id: {
-              id: customer,
+              id: customer.id,
             },
           })),
+          delete:
+            (deletedCustomer.value.length &&
+              data.value.customers
+                .filter((customer) =>
+                  deletedCustomer.value.includes(customer.customers_id.id)
+                )
+                .map((data) => data.id)) ||
+            [],
         },
       });
       msg = "Customer Group successfully updated!";
@@ -201,7 +311,9 @@ const submit = async () => {
         user_groups: {
           create: userGroupCreate(),
         },
-        customers: customerCreate(),
+        customers: {
+          create: customerCreate(),
+        },
       });
       msg = "Customer Group successfully created!";
     }
@@ -216,10 +328,19 @@ const submit = async () => {
   form.loading = false;
 };
 const submitAddCustomer = async (val) => {
-  if (val.length) val.forEach((val) => selectedCustomer.value.push(val));
+  if (val.length)
+    val.forEach((val) => {
+      addedCustomer.value.push(val);
+      selectedCustomer.value.push(val);
+    });
 };
 const submitAddUserGroup = async (val) => {
-  if (val.length) val.forEach((val) => selectedUserGroup.value.push(val));
+  if (val.length) {
+    val.forEach((val) => {
+      addedUserGroup.value.push(val);
+      selectedUserGroup.value.push(val);
+    });
+  }
 };
 const fetchUserGroups = async () => {
   Loading.show();
@@ -274,7 +395,7 @@ const customerCreate = () => {
   return selectedCustomer.value.map((customer) => {
     return {
       customer_groups_id: "+",
-      customers_id: customer,
+      customers_id: customer.id,
     };
   });
 };
@@ -282,7 +403,7 @@ const userGroupCreate = () => {
   return selectedUserGroup.value.map((userGroup) => {
     return {
       customer_groups_id: "+",
-      user_groups_id: userGroup,
+      user_groups_id: userGroup.id,
     };
   });
 };
