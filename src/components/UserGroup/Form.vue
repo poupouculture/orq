@@ -68,8 +68,8 @@
       </div>
     </div>
   </q-form>
-  <!-- Overlay Add Customer -->
-  <AddCustomerOverlay
+  <!-- Add Customer -->
+  <AddCustomer
     @submit="(val) => submitAddCustomer(val)"
     :data="customersData"
     @close="openAddCustomer = false"
@@ -98,14 +98,14 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { required } from "src/utils/validation-rules.ts";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
-import AddUserGroupOverlay from "src/components/UserGroup/AddUserGroupOverlay.vue";
-import AddCustomerOverlay from "src/components/UserGroup/AddCustomerOverlay.vue";
+import AddUserGroupOverlay from "src/components/UserGroup/AddUserGroup.vue";
+import AddCustomer from "src/components/UserGroup/AddCustomer.vue";
 import {
   addCustomerGroup,
   updateCustomerGroup,
   getAllCustomerEdit,
 } from "src/api/customerGroup";
-import { Notify } from "quasar";
+import { Loading, Notify } from "quasar";
 import { getUserGroups, getAllUserGroupEdit } from "src/api/userGroup";
 import { getCustomers } from "src/api/customers";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
@@ -205,20 +205,24 @@ const submit = async () => {
       });
       msg = "Customer Group successfully created!";
     }
-    Notify.create(msg);
+    Notify.create({
+      message: msg,
+      type: "positive",
+      color: "primary",
+      position: "top",
+    });
     router.replace({ name: "customergroups" });
   } catch (error) {}
   form.loading = false;
 };
 const submitAddCustomer = async (val) => {
-  toggleCustomerOverlay();
   if (val.length) val.forEach((val) => selectedCustomer.value.push(val));
 };
 const submitAddUserGroup = async (val) => {
-  toggleUserGroupOverlay();
   if (val.length) val.forEach((val) => selectedUserGroup.value.push(val));
 };
 const fetchUserGroups = async () => {
+  Loading.show();
   if (props.id) {
     const {
       data: { data: userGroups, meta },
@@ -239,8 +243,10 @@ const fetchUserGroups = async () => {
     userGroupData.value = userGroups;
     pagination.totalCount = meta?.total_count;
   }
+  Loading.hide();
 };
 const fetchCustomers = async () => {
+  Loading.show();
   if (props.id) {
     const {
       data: { data: customers, meta },
@@ -261,6 +267,7 @@ const fetchCustomers = async () => {
     customersData.value = customers;
     pagination.totalCount = meta?.total_count;
   }
+  Loading.hide();
 };
 
 const customerCreate = () => {

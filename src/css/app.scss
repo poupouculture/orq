@@ -2,3 +2,18 @@
 body {
   background-color: #f5f5f5;
 }
+.right-to-left-enter-active {
+  @apply duration-200 ease-out;
+}
+.right-to-left-leave-active {
+  @apply duration-200 ease-in;
+}
+.right-to-left-enter-from,
+.right-to-left-leave-from {
+  @apply transform translate-x-0;
+}
+
+.right-to-left-enter-from,
+.right-to-left-leave-to {
+  @apply transform translate-x-full;
+}
