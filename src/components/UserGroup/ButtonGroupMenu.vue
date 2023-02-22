@@ -23,13 +23,14 @@
       @cancel="deleteDialog = false"
       @submit-delete="submitDelete"
     />
-    <AddCustomerOverlay
-      v-if="openAddCustomer"
+
+    <AddCustomer
       @submit="(val) => submitAddCustomer(val)"
       @close="openAddCustomer = false"
       :data="customersData"
       @changePage="changePage"
       :pagination="pagination"
+      v-if="openAddCustomer"
     />
   </div>
 </template>
@@ -37,7 +38,7 @@
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { ref, reactive } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
-import AddCustomerOverlay from "./AddCustomerOverlay.vue";
+import AddCustomer from "./AddCustomer.vue";
 import { getCustomersFilter } from "src/api/customerGroup";
 import { Loading } from "quasar";
 
@@ -84,7 +85,6 @@ const fetchCustomers = async () => {
 };
 
 const submitAddCustomer = async (val) => {
-  toggleAddCustomer();
   if (val && val.length) {
     customerGroupStore.addCustomer({
       id: props.id,

@@ -113,8 +113,8 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { required } from "src/utils/validation-rules.ts";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
-import AddCustomerGroupOverlay from "src/components/InternalGroup/AddCustomerGroupOverlay.vue";
-import AddUserOverlay from "src/components/InternalGroup/AddUserOverlay.vue";
+import AddCustomerGroupOverlay from "src/components/InternalGroup/AddCustomerGroup.vue";
+import AddUserOverlay from "src/components/InternalGroup/AddUser.vue";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
 import { getUsersFilter } from "src/api/InternalGroup";
 import { getUsers } from "src/api/user";
@@ -209,12 +209,11 @@ const submit = async () => {
   }
 };
 const submitAddCustomerGroup = async (val) => {
-  toggleCustomerGroupOverlay();
   selectedCustomerGroup.value = val;
 };
 const submitAddUser = async (val) => {
-  toggleUserOverlay();
   selectedUser.value = val;
+  // toggleUserOverlay();
 };
 const fetchCustomerGroups = async () => {
   if (props.id) {
