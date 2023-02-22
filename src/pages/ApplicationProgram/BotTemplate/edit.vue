@@ -2,6 +2,7 @@
   <BaseLayout
     :applicationProgram="applicationProgram"
     @submitGeneralInformation="submit"
+    formType="bots"
     v-if="!loading"
   />
 </template>
@@ -9,11 +10,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import BaseLayout from "../../components/ApplicationProgram/BaseLayout.vue";
-import {
-  getMessageTemplate,
-  updateMessageTemplate,
-} from "../../api/messageTemplate";
+import BaseLayout from "src/components/ApplicationProgram/BaseLayout.vue";
+import { getBotTemplate, updateBotTemplate } from "src/api/botTemplate";
 
 const router = useRouter();
 const route = useRoute();
@@ -22,13 +20,13 @@ const applicationProgram = ref(null);
 
 onMounted(async () => {
   const id = route.params.id;
-  applicationProgram.value = await getMessageTemplate(id);
+  applicationProgram.value = await getBotTemplate(id);
   loading.value = false;
 });
 
 const submit = async (payload) => {
-  await updateMessageTemplate(route.params.id, payload);
-  router.push("/application-program");
+  await updateBotTemplate(route.params.id, payload);
+  router.push("/application-programs/chatbots");
 };
 </script>
 

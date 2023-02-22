@@ -1,0 +1,169 @@
+.main-container {
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: "Archivo";
+}
+.header-text {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  color: #111827;
+  margin-left: 5px;
+  margin-bottom: 10px;
+}
+.Editheading {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 21px;
+  display: flex;
+  color: #9a9aaf;
+  text-align: center;
+}
+.firstrowholder {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.editholder {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.tablehover :hover {
+  background-color: red;
+}
+
+.btnstyle {
+  width: 94px;
+  height: 30px;
+  margin-right: 10px;
+  margin-top: -10px;
+}
+
+.btnstyles {
+  width: 105px;
+  padding: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.indi {
+  width: 225px;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.holder {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.secondrow {
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.button {
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
+.indis {
+  width: 470px;
+  margin-right: 20px;
+  margin-top: -12.5px;
+  margin-bottom: 20px;
+}
+
+.btnhld {
+  margin-top: 20px;
+}
+
+.cardholder {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+  color: #363636;
+}
+
+.mh {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.innerheade {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+  color: #363636;
+  margin-right: 40px;
+}
+.subrow {
+  margin-left: 15px;
+}
+.headingtext {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 15px;
+
+  color: #2e2e3a;
+}
+.subheadingtext {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 28px;
+  /* or 233% */
+
+  color: #9a9aaf;
+}
+
+.eachradio {
+  margin-right: 100px;
+}
+
+.InvoiceLower {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.Filename {
+  text-align: center;
+  margin-top: 5px;
+}
+.edit-button {
+  cursor: pointer;
+}
+.q-btn--rounded {
+  border-radius: 6px;
+}
+::v-deep .q-field__native,
+.q-field__prefix,
+.q-field__suffix,
+.q-field__input {
+  color: black;
+}
