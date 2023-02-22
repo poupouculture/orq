@@ -35,22 +35,27 @@
           />
         </div>
       </header>
-      <div class="w-full text-gray-400">Members</div>
-      <div class="w-full flex p-2">
-        <q-avatar size="40px" class="bg-gray-200">
-          <span class="text-sm">{{ initialName }}</span>
-        </q-avatar>
-        <div
-          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
-          v-if="members.length > 3"
-        >
-          {{ members.length - 3 }} +
-        </div>
-      </div>
 
-      <ChatConversationButton
-        v-if="getSelectedChat.status !== ChatTypes.CLOSED"
-      />
+      <div class="w-full flex flex-col gap-3 py-3">
+        <p class="text-gray-400">Members</p>
+        <div class="flex">
+          <q-avatar
+            class="bg-gray-200 overlapping flex justify-center items-center"
+            size="40px"
+            v-for="(member, index) of members.slice(0, 3)"
+            :key="index"
+          >
+            <span class="text-sm">{{ initialName(member.name) }}</span>
+          </q-avatar>
+          <q-avatar v-if="members.length > 3" size="40px" class="bg-gray-200">
+            <span class="text-sm">{{ members.length - 3 }} +</span>
+          </q-avatar>
+        </div>
+
+        <ChatConversationButton
+          v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+        />
+      </div>
       <main class="flex-1 relative z-10 w-full h-full">
         <div
           class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
@@ -291,18 +296,6 @@ const messages = computed<unknown[]>(() => {
   );
 });
 
-const initialName = computed(() => {
-  const name = members.value[0].name;
-  const firstName = name.split(" ")[0];
-  let initial = firstName.charAt(0).toLocaleUpperCase();
-
-  if (name.split(" ").length !== 1) {
-    const lastName = name.split(" ")[1];
-    initial += lastName.charAt(0).toUpperCase();
-  }
-  return initial;
-});
-
 // Watch
 watch(messages, async () => {
   // scroll to end bottom
@@ -404,19 +397,17 @@ const sendMessageTemplate = (
   sendMessage();
 };
 
-// const initialName = (name: string) => {
-//   const getName = members.value[0].name;
-//   console.log(getName);
-//   const firstName = name.split(" ")[0];
-//   let initial = firstName.charAt(0).toUpperCase();
+const initialName = (name: string) => {
+  const firstName = name.split(" ")[0];
+  let initial = firstName.charAt(0).toUpperCase();
 
-//   if (name.split(" ").length !== 1) {
-//     const lastName = name.split(" ")[1];
-//     initial += lastName.charAt(0).toUpperCase();
-//   }
+  if (name.split(" ").length !== 1) {
+    const lastName = name.split(" ")[1];
+    initial += lastName.charAt(0).toUpperCase();
+  }
 
-//   return initial;
-// };
+  return initial;
+};
 
 const showActionChat = (index: number) => {
   console.log("activate chat ", index);
@@ -465,5 +456,9 @@ onUpdated(() => {
 }
 .scrollbar {
   scrollbar-color: rgba(15, 23, 42, 0.1) transparent;
+}
+.overlapping {
+  border: 2px solid white;
+  position: absolute;
 }
 </style>

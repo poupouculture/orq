@@ -1,5 +1,5 @@
 <template>
-  <div v-if="getSelectedChat.id" class="row justify-end q-gutter-sm pb-2">
+  <div v-if="getSelectedChat.id" class="flex justify-end gap-3">
     <q-btn
       outline
       color="primary"
