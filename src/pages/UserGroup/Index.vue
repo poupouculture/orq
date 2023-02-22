@@ -59,10 +59,10 @@
         <!-- Customers -->
         <div
           class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
-          v-for="({ customers_id }, i) in group.customers.filter(
+          v-for="{ customers_id } in group.customers.filter(
             (item) => item.customers_id !== null
           )"
-          :key="i"
+          :key="customers_id.id"
         >
           <div class="flex items-center w-10/12 flex-nowrap overflow-x-hidden">
             <!-- for while set image default -->

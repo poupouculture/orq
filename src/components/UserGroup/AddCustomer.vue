@@ -9,7 +9,7 @@
               <q-checkbox
                 size="xs"
                 v-model="selectAllCustomer"
-                :val="data.map((d) => d.id)"
+                :val="data"
                 class="text-[#9A9AAF]"
               />
             </th>
@@ -32,7 +32,7 @@
               <q-checkbox
                 size="xs"
                 v-model="selectedCustomer"
-                :val="customer.id"
+                :val="customer"
                 class="text-[#9A9AAF]"
               />
             </td>
@@ -102,7 +102,7 @@ const selectAllCustomer = computed({
     const selected = [];
     if (value) {
       data.value.forEach(function (customer) {
-        selected.push(customer.id);
+        selected.push(customer);
       });
     }
     selectedCustomer.value = selected;
