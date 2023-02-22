@@ -38,6 +38,7 @@
         :totalCount="data.totalCount"
         :page="data.page"
         :rowsPerPage="data.rowsPerPage"
+        formType="bots"
         v-model:selected="selected"
         @changePage="changePage"
         v-if="!loading"

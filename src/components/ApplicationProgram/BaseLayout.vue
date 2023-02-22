@@ -3,7 +3,7 @@
     <p class="header-text text-2xl">
       <router-link
         :to="`/application-programs/${
-          formType === 'bots' ? 'chatbots' : 'message-templates'
+          props.formType === 'bots' ? 'chatbots' : 'message-templates'
         }`"
         style="text-decoration: none; color: inherit"
       >
@@ -12,7 +12,7 @@
           Application program /
         </span>
       </router-link>
-      {{ formType === "bots" ? "Chatbots" : "Message Templates" }}
+      {{ props.formType === "bots" ? "Chatbots" : "Message Templates" }}
     </p>
     <div class="w-full flex bg-[#fdfdfd] rounded-lg">
       <div class="w-2/3 flex flex-col p-6 border-r">

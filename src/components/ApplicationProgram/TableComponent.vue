@@ -72,7 +72,9 @@
     <template #body-cell-action="props">
       <q-td :props="props">
         <router-link
-          :to="`/application-programs/message-templates/${props.row.id}`"
+          :to="`/application-programs/${
+            propsTable.formType === 'bots' ? 'chatbots' : 'message-templates'
+          }/${props.row.id}`"
           style="text-decoration: none; color: inherit"
           v-if="!propsTable.isSimple"
         >
@@ -108,6 +110,11 @@ const propsTable = defineProps({
   isSimple: {
     type: Boolean,
     default: () => false,
+  },
+  formType: {
+    type: String,
+    required: false,
+    default: () => "message",
   },
 });
 
