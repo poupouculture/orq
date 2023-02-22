@@ -1,11 +1,7 @@
 <template>
   <div class="main-container">
     <p class="header-text">
-      <span class="text-gray-400">
-        <q-icon name="fa-solid fa-arrow-left" />
-        Application program /
-      </span>
-      Message Templates
+      <span class="text-gray-400"> Application program </span>
     </p>
     <div class="row justify-between">
       <q-input placeholder="Search" outlined dense>

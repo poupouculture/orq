@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-10">
+  <div class="pt-10 min-h-screen">
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
       <q-icon name="keyboard_backspace" />
@@ -56,13 +56,13 @@
           </div>
           <ButtonGroupMenu class="w-2/12 grow-0 justify-end" :id="group.id" />
         </div>
-        <!-- customers -->
+        <!-- Customers -->
         <div
           class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
-          v-for="({ customers_id }, i) in group.customers.filter(
+          v-for="{ customers_id } in group.customers.filter(
             (item) => item.customers_id !== null
           )"
-          :key="i"
+          :key="customers_id.id"
         >
           <div class="flex items-center w-10/12 flex-nowrap overflow-x-hidden">
             <!-- for while set image default -->
@@ -93,13 +93,14 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center justify-center mt-20">
-      <BasePagination
-        :max="totalPage()"
-        :max-pages="10"
-        @update-model="changePage"
-      />
-    </div>
+  </div>
+  <div class="flex items-center justify-center mt-5">
+    <BasePagination
+      :max="totalPage()"
+      :max-pages="10"
+      @update-model="changePage"
+      v-model="pagination.page"
+    />
   </div>
 </template>
 

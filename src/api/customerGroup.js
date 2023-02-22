@@ -15,12 +15,13 @@ export const getCustomerGroups = async (
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const url =
     id !== null ? "/items/customer_groups/" + id : "/items/customer_groups";
+  const companies = "customers.customers_id.companies.companies_id.*";
+  const userGroups = "user_groups.*, user_groups.user_groups_id.*";
   const customerGroups = await api.get(url, {
     params: {
       limit,
       offset,
-      fields:
-        "id, name, status, customer.id, customers.customers_id.*, user_groups.*",
+      fields: `id, name, status, customers.id, customers.customers_id.*, ${userGroups}, ${companies}`,
       meta: "*",
     },
   });
@@ -40,7 +41,7 @@ export const getAllCustomerEdit = async (payload) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const customer = await api.get("/items/customers", {
     params: {
-      "filter[id][_nin]": customers.join(),
+      "filter[id][_nin]": customers.map((c) => c.id).join(),
       fields: `${fields},${companies}`,
       sort: "-date_created",
       limit,

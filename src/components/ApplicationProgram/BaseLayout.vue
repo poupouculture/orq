@@ -1,11 +1,18 @@
 <template>
   <div class="main-container">
-    <p class="header-text">
-      <span class="text-gray-400">
-        <q-icon name="fa-solid fa-arrow-left" />
-        Application program /
-      </span>
-      Message Templates
+    <p class="header-text text-2xl">
+      <router-link
+        :to="`/application-programs/${
+          props.formType === 'bots' ? 'chatbots' : 'message-templates'
+        }`"
+        style="text-decoration: none; color: inherit"
+      >
+        <span class="text-gray-400 cursor-pointer">
+          <q-icon name="fa-solid fa-arrow-left" />
+          Application program /
+        </span>
+      </router-link>
+      {{ props.formType === "bots" ? "Chatbots" : "Message Templates" }}
     </p>
     <div class="w-full flex bg-[#fdfdfd] rounded-lg">
       <div class="w-2/3 flex flex-col p-6 border-r">
@@ -185,7 +192,9 @@
 
         <div class="row justify-between mt-4">
           <router-link
-            :to="`/application-programs/message-templates`"
+            :to="`/application-programs/${
+              formType === 'bots' ? 'chatbots' : 'message-templates'
+            }`"
             style="text-decoration: none; color: inherit"
           >
             <p
@@ -242,6 +251,11 @@ const props = defineProps({
   applicationProgram: {
     type: Object,
     required: false,
+  },
+  formType: {
+    type: String,
+    required: false,
+    default: () => "message",
   },
 });
 
