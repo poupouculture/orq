@@ -338,6 +338,10 @@ const getLastMessage = (lastMessage: LastMessage) => {
 };
 
 const selectChat = (index: number) => {
+  if (activeChat.value === index) {
+    return false;
+  }
+
   customerStore.$reset();
   // close drawer when mobile view
   if (window.innerWidth <= 1024) {
