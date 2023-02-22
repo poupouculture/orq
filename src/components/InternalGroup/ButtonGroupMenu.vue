@@ -42,7 +42,7 @@ import { ref, reactive } from "vue";
 import { getUsersFilter } from "src/api/InternalGroup";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
 import { Loading } from "quasar";
-import AddUserOverlay from "./AddUserOverlay.vue";
+import AddUserOverlay from "./AddUser.vue";
 
 const props = defineProps({
   id: [String, Number],

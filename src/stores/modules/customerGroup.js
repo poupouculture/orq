@@ -47,6 +47,9 @@ const useCustomerGroupStore = defineStore("customerGroup", {
         Loading.hide();
         Notify.create({
           message: "Customer successfully added!",
+          position: "top",
+          type: "positive",
+          color: "primary",
         });
         this.getAll();
       } catch (error) {}
@@ -54,10 +57,15 @@ const useCustomerGroupStore = defineStore("customerGroup", {
     },
     async delete(id) {
       try {
+        Loading.show();
         await deleteCustomerGroup(id);
         this.items = this.items.filter((item) => item.id !== id);
+        Loading.hide();
         Notify.create({
           message: "Customer Group successfully deleted!",
+          position: "top",
+          type: "positive",
+          color: "primary",
         });
         this.getAll();
       } catch (error) {
@@ -73,6 +81,9 @@ const useCustomerGroupStore = defineStore("customerGroup", {
         Loading.hide();
         Notify.create({
           message: "Customer successfully deleted!",
+          position: "top",
+          type: "positive",
+          color: "primary",
         });
         this.getAll();
       } catch (error) {
