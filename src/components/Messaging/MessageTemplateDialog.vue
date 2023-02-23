@@ -5,7 +5,7 @@
         'min-height: 85%; ' +
         (isPreview ? 'min-width: 55%;' : 'min-width: 85%;')
       "
-      class="q-pa-lg flex flex-col justify-between"
+      class="q-pa-lg flex justify-between"
     >
       <div class="w-full" v-if="usedTemplate === null">
         <q-card-section>
@@ -103,21 +103,22 @@
       </div>
 
       <div class="w-full flex justify-end gap-2 px-4">
-        <button
-          :class="{
-            'px-4 py-2 bg-primary text-white rounded-md': isPreview,
-            'btn-dotted': !isPreview,
-          }"
-          @click="hide"
-        >
-          {{ isPreview ? "Close" : "Return" }}
+        <button class="btn-dotted" @click="hide" v-if="!isPreview">
+          Close
         </button>
         <button
           class="px-4 py-2 bg-primary text-white rounded-md"
           @click="send"
-          v-if="!isPreview"
+          v-if="usedTemplate !== null && !isPreview"
         >
           Send
+        </button>
+        <button
+          class="px-4 py-2 bg-primary text-white rounded-md"
+          @click="useTemplate(usedTemplate)"
+          v-if="isPreview"
+        >
+          Continue
         </button>
       </div>
     </q-card>
@@ -190,9 +191,11 @@ onMounted(() => {
 });
 
 const hide = () => {
-  usedTemplate.value = null;
+  if (usedTemplate.value === null) {
+    emit("hide");
+  }
   isPreview.value = false;
-  emit("hide");
+  usedTemplate.value = null;
 };
 
 const send = () => {
