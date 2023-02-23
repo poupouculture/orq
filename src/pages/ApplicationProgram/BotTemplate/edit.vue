@@ -30,4 +30,4 @@ const submit = async (payload) => {
 };
 </script>
 
-<style scoped src="./style.scss" />
+<style scoped src="../style.scss" />

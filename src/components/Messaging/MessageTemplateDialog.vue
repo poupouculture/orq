@@ -1,7 +1,10 @@
 <template>
   <q-dialog :modelValue="modelValue" @hide="hide">
     <q-card
-      style="min-width: 85%; min-height: 85%"
+      :style="
+        'min-height: 85%; ' +
+        (isPreview ? 'min-width: 55%;' : 'min-width: 85%;')
+      "
       class="q-pa-lg flex flex-col justify-between"
     >
       <div class="w-full" v-if="usedTemplate === null">
@@ -34,6 +37,7 @@
             :isSimple="true"
             v-model:selected="selectedTemplate"
             @useTemplate="useTemplate"
+            @previewTemplate="previewTemplate"
             @changePage="changePage"
           />
         </div>
@@ -41,7 +45,7 @@
         <q-card-actions align="right"> </q-card-actions>
       </div>
       <div class="w-full flex" v-else>
-        <div class="w-7/12 flex flex-col border-r pr-2">
+        <div class="w-7/12 flex flex-col border-r pr-2" v-if="!isPreview">
           <p class="font-semibold">Add Sample Content</p>
           <p class="mt-4">
             To help us understand what kind of message you want to send, you
@@ -77,8 +81,13 @@
             :placeholder="'Enter content for {{' + (index + 1) + '}}'"
           />
         </div>
-        <div class="w-1/3 p-6 flex flex-col">
-          <span class="text-xl">Preview</span>
+        <div
+          class="p-6 flex flex-col"
+          :class="{ 'w-8/12 m-auto': isPreview, 'w-1/3': !isPreview }"
+        >
+          <span class="text-xl"
+            >Preview {{ isPreview ? "Message Template" : "" }}</span
+          >
           <Preview
             :header="header"
             :headerMessage="headerMessage"
@@ -94,10 +103,19 @@
       </div>
 
       <div class="w-full flex justify-end gap-2 px-4">
-        <button class="btn-dotted" @click="hide">Return</button>
+        <button
+          :class="{
+            'px-4 py-2 bg-primary text-white rounded-md': isPreview,
+            'btn-dotted': !isPreview,
+          }"
+          @click="hide"
+        >
+          {{ isPreview ? "Close" : "Return" }}
+        </button>
         <button
           class="px-4 py-2 bg-primary text-white rounded-md"
           @click="send"
+          v-if="!isPreview"
         >
           Send
         </button>
@@ -137,6 +155,7 @@ const actionCategory = ref("None");
 const replies = ref(["", ""]);
 const actions = ref(Array(2).fill(null));
 const customVariables = ref([]);
+const isPreview = ref(false);
 
 const data = reactive({
   applicationPrograms: [],
@@ -172,6 +191,7 @@ onMounted(() => {
 
 const hide = () => {
   usedTemplate.value = null;
+  isPreview.value = false;
   emit("hide");
 };
 
@@ -205,13 +225,24 @@ const listNumbers = (str: string) => {
   return numbers;
 };
 
+const previewTemplate = (val: any) => {
+  usedTemplate.value = val;
+  isPreview.value = true;
+
+  applyTemplateComponent(val);
+};
+
 const useTemplate = (val: any) => {
   customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
 
   usedTemplate.value = val;
+  isPreview.value = false;
+  applyTemplateComponent(val);
+};
 
+const applyTemplateComponent = (val: any) => {
   if (usedTemplate.value?.json?.components) {
     usedTemplate.value.components = usedTemplate.value?.json?.components;
     val.components = usedTemplate.value?.json?.components;
