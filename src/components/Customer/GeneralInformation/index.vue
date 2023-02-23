@@ -217,7 +217,6 @@ import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
-import { useQuasar } from "quasar";
 import useMessagingStore from "src/stores/modules/messaging";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import {
@@ -262,7 +261,6 @@ const props = defineProps({
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const { getContactNumber } = storeToRefs(messagingStore);
-const $q = useQuasar();
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
@@ -300,12 +298,6 @@ const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(async () => {
-  $q.loading.show({
-    message: "Please wait...",
-    boxClass: "bg-grey-2 text-grey-9",
-    spinnerColor: "primary",
-  });
-
   const customer = customerStore.getCustomer;
 
   if (customer) {
@@ -324,17 +316,9 @@ onMounted(async () => {
       label: data.tags_id.name,
       value: data.tags_id.id,
     }));
-    companies.value = customer.companies.map((data: any) => ({
-      label: data.companies_id.name_english,
-      value: data.companies_id.id,
-    }));
-    customerGroups.value = customer.customer_groups.map((data: any) => ({
-      label: data.customer_groups_id.name,
-      value: data.customer_groups_id.id,
-    }));
+    companies.value = mappingCompanies();
+    customerGroups.value = mappingCustomerGroups();
   }
-
-  $q.loading.hide();
 });
 
 watch(getCustomer, () => {
@@ -354,6 +338,12 @@ watch(getCustomer, () => {
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
+  tags.value = getCustomer.value.tags.map((data: any) => ({
+    label: data.tags_id.name,
+    value: data.tags_id.id,
+  }));
+  companies.value = mappingCompanies();
+  customerGroups.value = mappingCustomerGroups();
   customerForm.value?.resetValidation();
 });
 
@@ -421,6 +411,23 @@ const onSubmit = async () => {
 
 const submitDelete = () => {
   deleteDialog.value = false;
+};
+
+const mappingCompanies = () => {
+  return getCustomer.value.companies
+    .filter((data: any) => data.companies_id !== null)
+    .map((data: any) => ({
+      label: data.companies_id.name_english,
+      value: data.companies_id.id,
+    }));
+};
+const mappingCustomerGroups = () => {
+  return getCustomer.value.customer_groups
+    .filter((data: any) => data.customer_groups_id !== null)
+    .map((data: any) => ({
+      label: data.customer_groups_id.name,
+      value: data.customer_groups_id.id,
+    }));
 };
 </script>
 
