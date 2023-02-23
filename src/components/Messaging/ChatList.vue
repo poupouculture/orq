@@ -1,163 +1,160 @@
 <template>
-  <q-drawer v-model="openDrawer" class="bg-grey-2" show-if-above bordered>
-    <q-list class="pb-14">
-      <q-item-label header>
-        <img class="q-mb-lg" src="~assets/images/logo-invert.png" />
-        <q-input
-          v-model="searchText"
-          placeholder="Search Chats..."
-          outlined
-          dense
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-          <template v-slot:append>
-            <q-icon name="reorder" class="cursor-pointer" />
-          </template>
-        </q-input>
-        <q-btn
-          unelevated
-          color="primary"
-          class="full-width q-mt-md"
-          :label="chatToggleLabel.state.label"
-          :icon="chatToggleLabel.state.icon"
-          @click="fetchCustomers"
-          dense
-        >
-        </q-btn>
-        <q-virtual-scroll
-          v-if="chatToggleLabel.state.icon === ChatToggleLabel.HIDE.icon"
-          style="max-height: 300px"
-          :items="data.customers"
-          separator
-          v-slot="{ item, index }"
-          class="q-mt-sm"
-        >
-          <q-item :key="index" class="q-pa-sm" dense>
-            <q-item-section>
-              <q-item-label class="row justify-between">
-                <div>
-                  <q-avatar class="rounded-avatar q-mr-sm" size="md">
-                    <img src="https://cdn.quasar.dev/img/avatar.png" />
-                  </q-avatar>
-                  {{ TrimWord(`${item.first_name} ${item.last_name}`) }}
-                </div>
-                <q-btn
-                  round
-                  color="primary"
-                  size="sm"
-                  icon="add"
-                  @click="startNewChat(item)"
-                />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-virtual-scroll>
-      </q-item-label>
-
-      <q-tabs
-        v-model="tab"
-        dense
-        class="text-grey q-mt-md"
-        active-color="primary"
-        indicator-color="primary"
-        align="justify"
-        narrow-indicator
-        no-caps
-        @update:model-value="onChangeTab"
-      >
-        <q-tab
-          :name="ChatTypes.ONGOING"
-          icon="cached"
-          :label="`Ongoing ${countChats(ChatTypes.ONGOING)}`"
-        >
-          <q-badge
-            v-show="chatsTotalNum[ChatTypes.ONGOING]"
+  <q-drawer
+    v-model="openDrawer"
+    class="bg-grey-2 w-full overflow-hidden"
+    side="left"
+    show-if-above
+    bordered
+  >
+    <div class="h-full">
+      <q-list class="pb-14 h-full flex flex-col flex-flow-col">
+        <q-item-label header>
+          <img class="q-mb-lg" src="~assets/images/logo-invert.png" />
+          <q-input
+            v-model="searchText"
+            placeholder="Search Chats..."
+            outlined
+            dense
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+            <template v-slot:append>
+              <q-icon name="reorder" class="cursor-pointer" />
+            </template>
+          </q-input>
+          <q-btn
+            unelevated
             color="primary"
-            align="top"
-            floating
+            class="full-width q-mt-md"
+            :label="chatToggleLabel.state.label"
+            :icon="chatToggleLabel.state.icon"
+            @click="fetchCustomers"
+            dense
           >
-            {{ chatsTotalNum[ChatTypes.ONGOING] }}
-          </q-badge>
-        </q-tab>
-        <q-tab
-          :name="ChatTypes.PENDING"
-          :label="`Waiting ${countChats(ChatTypes.PENDING)}`"
-          icon="schedule"
-        >
-          <q-badge
-            v-show="chatsTotalNum[ChatTypes.PENDING]"
-            color="warning"
-            align="top"
-            floating
+          </q-btn>
+          <q-virtual-scroll
+            v-if="chatToggleLabel.state.icon === ChatToggleLabel.HIDE.icon"
+            style="max-height: 300px"
+            :items="data.customers"
+            separator
+            v-slot="{ item, index }"
+            class="q-mt-sm"
           >
-            {{ chatsTotalNum[ChatTypes.PENDING] }}
-          </q-badge>
-        </q-tab>
-        <q-tab
-          :name="ChatTypes.CLOSED"
-          :label="`Closed ${countChats(ChatTypes.CLOSED)}`"
-          icon="cancel"
-        >
-          <q-badge
-            v-show="chatsTotalNum[ChatTypes.CLOSED]"
-            color="red"
-            align="top"
-            floating
-          >
-            {{ chatsTotalNum[ChatTypes.CLOSED] }}
-          </q-badge>
-        </q-tab>
-      </q-tabs>
-      <q-separator size="2px" style="margin-top: -2px" inset />
-      <q-tab-panels
-        v-if="props.chatList"
-        v-model="tab"
-        animated
-        class="q-mt-md transparent"
-      >
-        <q-tab-panel
-          v-for="(tab_, tabIndex) in tabs"
-          :key="tabIndex"
-          :name="tab_"
-          class="overflow-x-hidden"
-        >
-          <TransitionGroup name="fade" v-if="chats.length > 0">
-            <div v-for="(chat, index) in chats" :key="chat.id">
-              <ContactCard
-                :active="chat.id === getSelectedChat.id"
-                :name="
-                  chat?.customers_id
-                    ? TrimWord(`${chat.first_name} ${chat.last_name}`)
-                    : 'Visitor'
-                "
-                :message="
-                  TrimWord(getLastMessage(JSON.parse(chat.last_message)))
-                "
-                :time="
-                  dateFormat(
-                    getDateFromLastMessage(JSON.parse(chat.last_message))
-                  )
-                "
-                :totalUnread="chat.totalUnread"
-                class="contact-card"
-                @click="selectChat(parseInt(index))"
-              />
-            </div>
-          </TransitionGroup>
+            <q-item :key="index" class="q-pa-sm" dense>
+              <q-item-section>
+                <q-item-label class="row justify-between">
+                  <div>
+                    <q-avatar class="rounded-avatar q-mr-sm" size="md">
+                      <img src="https://cdn.quasar.dev/img/avatar.png" />
+                    </q-avatar>
+                    {{ TrimWord(`${item.first_name} ${item.last_name}`) }}
+                  </div>
+                  <q-btn
+                    round
+                    color="primary"
+                    size="sm"
+                    icon="add"
+                    @click="startNewChat(item)"
+                  />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-virtual-scroll>
+        </q-item-label>
 
-          <div
-            v-else
-            class="h-[427px] flex justify-center items-center gap-2 flex-col"
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey q-mt-md"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+          no-caps
+          @update:model-value="onChangeTab"
+        >
+          <q-tab
+            :name="ChatTypes.ONGOING"
+            icon="cached"
+            :label="`Ongoing ${countChats(ChatTypes.ONGOING)}`"
           >
-            <q-icon size="4rem" name="inbox" color="grey" />
-            <p class="text-h6 text-grey">No Chat Availables</p>
-          </div>
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-list>
-    <ChatListFooter />
+            <q-badge
+              v-show="chatsTotalNum[ChatTypes.ONGOING]"
+              color="primary"
+              align="top"
+              floating
+            >
+              {{ chatsTotalNum[ChatTypes.ONGOING] }}
+            </q-badge>
+          </q-tab>
+          <q-tab
+            :name="ChatTypes.PENDING"
+            :label="`Waiting ${countChats(ChatTypes.PENDING)}`"
+            icon="schedule"
+          >
+            <q-badge
+              v-show="chatsTotalNum[ChatTypes.PENDING]"
+              color="warning"
+              align="top"
+              floating
+            >
+              {{ chatsTotalNum[ChatTypes.PENDING] }}
+            </q-badge>
+          </q-tab>
+          <q-tab
+            :name="ChatTypes.CLOSED"
+            :label="`Closed ${countChats(ChatTypes.CLOSED)}`"
+            icon="cancel"
+          >
+            <q-badge
+              v-show="chatsTotalNum[ChatTypes.CLOSED]"
+              color="red"
+              align="top"
+              floating
+            >
+              {{ chatsTotalNum[ChatTypes.CLOSED] }}
+            </q-badge>
+          </q-tab>
+        </q-tabs>
+        <q-separator size="2px" style="margin-top: -2px" inset />
+        <q-tab-panels
+          v-if="props.chatList"
+          v-model="tab"
+          animated
+          class="q-mt-md transparent"
+        >
+          <q-tab-panel
+            v-for="(tab_, tabIndex) in tabs"
+            :key="tabIndex"
+            :name="tab_"
+          >
+            <TransitionGroup name="fade" v-if="chats.length > 0" tag="div">
+              <q-item
+                v-for="(chat, index) in chats"
+                :key="index"
+                class="cursor-pointer q-px-none"
+              >
+                <ContactCard
+                  :active="chat.id === getSelectedChat.id"
+                  :name="chat.name"
+                  :message="chat.message"
+                  :time="chat.time"
+                  :totalUnread="chat.totalUnread"
+                  @click="selectChat(index)"
+                />
+              </q-item>
+            </TransitionGroup>
+
+            <div v-else class="flex justify-center items-center gap-2 flex-col">
+              <q-icon size="4rem" name="inbox" color="grey" />
+              <p class="text-h6 text-grey">No Chat Availables</p>
+            </div>
+          </q-tab-panel>
+        </q-tab-panels>
+        <ChatListFooter />
+      </q-list>
+    </div>
   </q-drawer>
 </template>
 
@@ -182,6 +179,12 @@ interface LastMessage {
   content: string;
   direction: Direction;
   date_created: string;
+}
+
+interface Chat {
+  customers_id: number;
+  first_name: string;
+  last_name: string;
 }
 
 interface CustomerData {
@@ -250,9 +253,18 @@ const { getSelectedTab, getSelectedChat, getShowChatList } =
   storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
-const chats = computed(
-  () => props.chatList[tabs.value.indexOf(getSelectedTab.value)].chats
-);
+const chats = computed<Chat[]>(() => {
+  return props.chatList[tabs.value.indexOf(getSelectedTab.value)].chats.map(
+    (chat: Chat | any) => {
+      return {
+        ...chat,
+        name: getName(chat),
+        message: getLastMessage(JSON.parse(chat.last_message)),
+        time: getDateFromLastMessage(chat.last_message),
+      };
+    }
+  );
+});
 
 const chatsTotalNum = computed(() => {
   const res: newChatNum = {};
@@ -267,6 +279,11 @@ const chatsTotalNum = computed(() => {
 });
 
 // Methods
+const getName = (chat: Chat) => {
+  if (chat.customers_id) {
+    return TrimWord(`${chat.first_name} ${chat.last_name}`);
+  } else return "Visitor";
+};
 const onChangeTab = (val: ChatTypes) => {
   messagingStore.setSelectedTab(val);
 };
@@ -310,19 +327,21 @@ const countChats = (status: ChatTypes) => {
   return props.chatList[tabs.value.indexOf(status)].chats.length;
 };
 
-const dateFormat = (date: string) => {
-  return format(new Date(date), "hh:mm aa");
-};
+const getDateFromLastMessage = (message: string) => {
+  const parseMessage = JSON.parse(message);
 
-const getDateFromLastMessage = (lastMessage: LastMessage) => {
-  return lastMessage?.date_created;
+  return format(new Date(parseMessage.date_created), "hh:mm aa");
 };
 
 const getLastMessage = (lastMessage: LastMessage) => {
-  return lastMessage?.content;
+  return TrimWord(lastMessage.content);
 };
 
 const selectChat = (index: number) => {
+  if (activeChat.value === index) {
+    return false;
+  }
+
   customerStore.$reset();
   // close drawer when mobile view
   if (window.innerWidth <= 1024) {
@@ -372,6 +391,9 @@ const startNewChat = async (user: ICustomer) => {
     width: 300px !important;
   }
 }
+.flex-flow-col {
+  flex-flow: column;
+}
 .contact-card:hover {
   cursor: pointer;
 }
@@ -393,5 +415,9 @@ const startNewChat = async (user: ICustomer) => {
 .q-badge {
   top: -0.05rem;
   right: -1rem;
+}
+
+:deep(.q-panel) {
+  scrollbar-color: rgba(15, 23, 42, 0.1) transparent;
 }
 </style>

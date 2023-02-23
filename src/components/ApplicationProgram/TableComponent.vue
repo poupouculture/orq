@@ -29,6 +29,16 @@
         </span>
       </q-td>
     </template>
+    <template #body-cell-is_approved="props">
+      <q-td :props="props">
+        {{ props.row.is_approved ? "Yes" : "No" }}
+      </q-td>
+    </template>
+    <template #body-cell-is_email_template="props">
+      <q-td :props="props">
+        {{ props.row.is_email_template ? "Yes" : "No" }}
+      </q-td>
+    </template>
     <template #body-cell-language="props">
       <q-td :props="props">
         {{ props.row.language }}
@@ -62,7 +72,9 @@
     <template #body-cell-action="props">
       <q-td :props="props">
         <router-link
-          :to="`/application-programs/message-templates/${props.row.id}`"
+          :to="`/application-programs/${
+            propsTable.formType === 'bots' ? 'chatbots' : 'message-templates'
+          }/${props.row.id}`"
           style="text-decoration: none; color: inherit"
           v-if="!propsTable.isSimple"
         >
@@ -99,6 +111,11 @@ const propsTable = defineProps({
     type: Boolean,
     default: () => false,
   },
+  formType: {
+    type: String,
+    required: false,
+    default: () => "message",
+  },
 });
 
 const emit = defineEmits(["changePage", "useTemplate"]);
@@ -117,6 +134,22 @@ const headerColumns = ref([
     align: "center",
     label: "Status",
     field: "status",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "is_approved",
+    align: "center",
+    label: "Approved",
+    field: "is_approved",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "is_email_template",
+    align: "center",
+    label: "Is Email",
+    field: "is_email_template",
     sortable: true,
     classes: "text-black",
   },
@@ -186,6 +219,7 @@ onMounted(() => {
   if (propsTable.isSimple) {
     headerColumns.value = headerColumns.value.filter(
       (h) =>
+        h.name !== "is_approved" &&
         h.name !== "top_block_reason" &&
         h.name !== "date_created" &&
         h.name !== "user_created"

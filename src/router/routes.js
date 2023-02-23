@@ -35,10 +35,6 @@ const routes = [
         component: () => import("pages/ApplicationProgram/index.vue"),
       },
       {
-        path: "application-programs/create",
-        component: () => import("pages/ApplicationProgram/create.vue"),
-      },
-      {
         path: "application-programs/message-templates",
         component: () =>
           import("pages/ApplicationProgram/MessageTemplate/index.vue"),
@@ -52,6 +48,21 @@ const routes = [
         path: "application-programs/message-templates/:id",
         component: () =>
           import("pages/ApplicationProgram/MessageTemplate/edit.vue"),
+      },
+      {
+        path: "application-programs/chatbots",
+        component: () =>
+          import("pages/ApplicationProgram/BotTemplate/index.vue"),
+      },
+      {
+        path: "application-programs/chatbots/create",
+        component: () =>
+          import("pages/ApplicationProgram/BotTemplate/create.vue"),
+      },
+      {
+        path: "application-programs/chatbots/:id",
+        component: () =>
+          import("pages/ApplicationProgram/BotTemplate/edit.vue"),
       },
       {
         path: "document-builders",
