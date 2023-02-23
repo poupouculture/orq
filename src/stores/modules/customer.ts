@@ -6,7 +6,7 @@ import {
   addCustomer,
   updateCustomer,
 } from "../../api/customers";
-import { IState, FormPayload } from "src/types/CustomerTypes";
+import { IState, FormPayload, ICustomer } from "src/types/CustomerTypes";
 import { getUser } from "src/api/user";
 import { Loading, Notify } from "quasar";
 
@@ -42,7 +42,14 @@ const useCustomerStore = defineStore("customer", {
       const {
         data: { data: customer },
       } = await getCustomer(id);
-      this.customer = customer;
+      this.customer = [customer].map((item: ICustomer) => ({
+        ...item,
+        customer_groups: item.customer_groups.filter(
+          (data: any) => data.customer_groups_id
+        ),
+        tags: item.tags.filter((data: any) => data.tags_id),
+        companies: item.companies.filter((data: any) => data.companies_id),
+      }))[0] as ICustomer;
     },
     async fetchUser(id: string) {
       const {

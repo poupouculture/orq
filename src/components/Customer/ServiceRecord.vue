@@ -31,6 +31,9 @@ const getData = async () => {
       responseCode.value = 404;
       serviceRecordStore.setServiceRecord([]);
     }
+  } else {
+    responseCode.value = 404;
+    serviceRecordStore.setServiceRecord([]);
   }
 };
 onMounted(async () => {
