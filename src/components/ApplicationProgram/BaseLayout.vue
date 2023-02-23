@@ -47,7 +47,7 @@
           <p class="text-gray-400">Select your message language</p>
         </div>
 
-        <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
+        <div class="w-full md:w-8/12 lg:w-6/12 mt-2 mb-4">
           <InputSelect
             :options="languageOptions"
             :default="language"
