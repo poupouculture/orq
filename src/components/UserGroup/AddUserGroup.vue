@@ -9,7 +9,7 @@
               <q-checkbox
                 size="xs"
                 v-model="selectAllUser"
-                :val="data.map((d) => d.id)"
+                :val="data"
                 class="text-[#9A9AAF]"
               />
             </th>
@@ -31,7 +31,7 @@
               <q-checkbox
                 size="xs"
                 v-model="selectedUser"
-                :val="group.id"
+                :val="group"
                 class="text-[#9A9AAF]"
               />
             </td>
@@ -78,7 +78,7 @@ const selectAllUser = computed({
     const selected = [];
     if (value) {
       data.value.forEach(function (user) {
-        selected.push(user.id);
+        selected.push(user);
       });
     }
     selectedUser.value = selected;

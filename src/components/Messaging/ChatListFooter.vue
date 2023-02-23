@@ -91,14 +91,20 @@
       />
       <div class="mt-6">
         <div class="text-sm text-gray-500">Name</div>
-        <div class="text-lg text-gray-700">
+        <div class="text-base text-gray-700">
           {{ getUserProfile.first_name }} {{ getUserProfile.last_name }}
         </div>
       </div>
       <div class="mt-6">
         <div class="text-sm text-gray-500">Status</div>
         <div class="text-lg text-gray-700">
-          {{ getUserProfile.status }}
+          <q-select
+            borderless
+            dense
+            v-model="status"
+            :options="statusOptions"
+            class="text-base"
+          />
         </div>
       </div>
     </div>
@@ -115,6 +121,8 @@ const userStore = useUserInfoStore();
 const showInfo = ref(false);
 const { getUserProfile } = storeToRefs(userStore);
 
+const statusOptions = ["Busy", "Unavailable", "Offline"];
+const status = ref("Busy");
 const toggleInfo = () => {
   showInfo.value = !showInfo.value;
 };

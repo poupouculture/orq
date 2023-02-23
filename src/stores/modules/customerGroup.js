@@ -78,6 +78,7 @@ const useCustomerGroupStore = defineStore("customerGroup", {
       Loading.show();
       try {
         await deleteCustomer(id, customerId);
+        await this.getAll();
         Loading.hide();
         Notify.create({
           message: "Customer successfully deleted!",
@@ -85,7 +86,6 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           type: "positive",
           color: "primary",
         });
-        this.getAll();
       } catch (error) {
         Notify.create({
           message: error,

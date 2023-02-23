@@ -6,7 +6,7 @@
     :width="450"
     :breakpoint="0"
     v-if="!showCustomerInfoMobile"
-    class="bg-white q-pa-md"
+    class="bg-white q-pa-md overflow-hidden"
   >
     <div v-if="getSelectedChat.id" class="h-full w-full flex flex-col">
       <header
@@ -26,47 +26,39 @@
         </div>
         <!-- Close button -->
         <div v-if="getContactNumber" class="cursor-pointer">
-          <svg
-            @click="closeChat()"
-            xmlns="http://www.w3.org/2000/svg"
-            class="text-gray-600 cursor-pointer"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M18 6l-12 12"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
+          <q-btn
+            @click="closeChat"
+            style="color: #64748b"
+            flat
+            round
+            icon="close"
+          />
         </div>
       </header>
-      <div class="w-full text-gray-400">Members</div>
-      <div class="w-full flex p-2">
-        <div
-          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
-          v-for="(member, index) of members.slice(0, 3)"
-          :key="index"
-        >
-          {{ initialName(member.name) }}
+
+      <div class="w-full flex flex-col gap-3 py-3">
+        <p class="text-gray-400">Members</p>
+        <div class="flex">
+          <q-avatar
+            class="bg-gray-200 overlapping flex justify-center items-center"
+            size="40px"
+            v-for="(member, index) of members.slice(0, 3)"
+            :key="index"
+          >
+            <span class="text-sm">{{ initialName(member.name) }}</span>
+          </q-avatar>
+          <q-avatar v-if="members.length > 3" size="40px" class="bg-gray-200">
+            <span class="text-sm">{{ members.length - 3 }} +</span>
+          </q-avatar>
         </div>
-        <div
-          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
-          v-if="members.length > 3"
-        >
-          {{ members.length - 3 }} +
-        </div>
+
+        <ChatConversationButton
+          v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+        />
       </div>
-      <chat-conversation-buttton
-        v-if="getSelectedChat.status !== ChatTypes.CLOSED"
-      />
       <main class="flex-1 relative z-10 w-full h-full">
         <div
-          class="absolute top-0 h-full overflow-y-auto w-full z-50 pt-3 px-2"
+          class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
           ref="scrollAreaRef"
         >
           <div v-for="(message, i) in messages" :key="i">
@@ -98,10 +90,7 @@
               <div
                 class="w-1/12 flex items-center px-2 text-lg text-gray-400 order-last"
               >
-                <q-icon
-                  name="fa-solid fa-face-smile"
-                  class="cursor-pointer"
-                ></q-icon>
+                <q-icon name="fa-solid fa-face-smile" class="cursor-pointer" />
               </div>
               <div class="flex flex-col max-w-[60%] mb-2">
                 <div
@@ -115,10 +104,7 @@
                   <div
                     class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
                   >
-                    <q-icon
-                      name="expand_more"
-                      @click="showActionChat(i)"
-                    ></q-icon>
+                    <q-icon name="expand_more" @click="showActionChat(i)" />
                   </div>
                   <div class="mx-4">
                     {{ message.content }}
@@ -179,14 +165,6 @@
               class="q-mt-md"
               @click="showMessageTemplate = true"
             />
-            <!-- <q-btn
-              flat
-              round
-              color="grey"
-              icon="mic"
-              size="md"
-              class="q-mt-md"
-            /> -->
             <q-btn
               flat
               round
@@ -218,12 +196,19 @@
               class="w-4/12 bg-primary text-white p-2 rounded-md shadow-md"
               @click="activateChat"
             >
-              <q-icon name="message"></q-icon>
+              <q-icon name="message" />
               Take it
             </button>
           </div>
         </div>
       </footer>
+    </div>
+
+    <div v-else class="flex flex-col justify-center items-center h-full">
+      <img class="" src="~assets/images/startchat.png" />
+      <p class="text-[#9A9AAF] font-medium text-base">
+        Choose a contact to start your conversation
+      </p>
     </div>
   </q-drawer>
   <MessageTemplateDialog
@@ -251,10 +236,9 @@ import { startNewChat, updateChatStatus } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { format, differenceInDays, isToday } from "date-fns";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import ChatConversationButtton from "src/components/Messaging/ChatConversationButtton.vue";
+import ChatConversationButton from "src/components/Messaging/ChatConversationButton.vue";
 import Swal from "sweetalert2";
 import { Loading, Notify } from "quasar";
-// import { debounce } from "src/utils/debounce";
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
@@ -282,6 +266,7 @@ const isOverOneDay: Ref<boolean> = ref(true);
 const members: Ref<Array<Member>> = ref([]);
 const isTemplate: Ref<boolean> = ref(false);
 const sendLoading: Ref<boolean> = ref(false);
+const scrollAreaRef = ref<HTMLDivElement>();
 const {
   getContactNumber,
   getCustomerName,
@@ -291,6 +276,7 @@ const {
 } = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
 
+// Computed
 const messages = computed<unknown[]>(() => {
   const cachedMessages = getCachedChatMessages.value.find(
     (item: CachedChatMessages) => item.id === getSelectedChat.value.id
@@ -310,7 +296,7 @@ const messages = computed<unknown[]>(() => {
   );
 });
 
-const scrollAreaRef = ref<HTMLDivElement>();
+// Watch
 watch(messages, async () => {
   // scroll to end bottom
   await nextTick();
@@ -322,6 +308,8 @@ watch(getSelectedChat, (val: any) => {
   checkSessionInOneDay(val);
   message.value = "";
 });
+
+// Method
 const checkSessionInOneDay = (val: any) => {
   const lastMessage = JSON.parse(val.last_message);
   const differenceDate: number = differenceInDays(
@@ -339,45 +327,6 @@ const closeChat = () => {
   customerStore.$reset();
   messagingStore.closeChat();
 };
-
-// const [sendMessage] = debounce(
-//   async () => {
-//     try {
-//       if (message.value.length < 1) return;
-//       if (messages.value.length > 0) {
-//         const chatId = props.currentChatId;
-//         const contactNumber = getContactNumber.value;
-//         await messagingStore.sendChatTextMessage({
-//           chatId,
-//           messageProduct: Product.WHATSAPP,
-//           to: contactNumber as string,
-//           type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
-//           messageBody: message.value,
-//           isTemplate: isTemplate.value,
-//           templateName: templateName.value,
-//           language: language.value,
-//           isIncludedComponent: isIncludeComponent.value,
-//         });
-//       } else {
-//         startNewChat(getCustomer.value.id, message.value);
-//         messagingStore.fetchChats();
-//         messagingStore.setSelectedTab(ChatTypes.ONGOING);
-//         emit("newChatCreated", ChatTypes.ONGOING);
-//       }
-//       message.value = "";
-//       isTemplate.value = false;
-//     } catch (error) {
-//       Swal.fire({
-//         icon: "error",
-//         title: "Oops...",
-//         text: "Something went wrong!",
-//       });
-//       console.log(error);
-//     }
-//   },
-//   500,
-//   true
-// );
 
 const sendMessage = async () => {
   isOverOneDay.value = false;
@@ -504,5 +453,12 @@ onUpdated(() => {
 }
 .rounded-avatar {
   border-radius: 50% !important;
+}
+.scrollbar {
+  scrollbar-color: rgba(15, 23, 42, 0.1) transparent;
+}
+.overlapping {
+  border: 2px solid white;
+  position: absolute;
 }
 </style>
