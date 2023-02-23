@@ -427,16 +427,19 @@ const initialName = (name: string) => {
 };
 
 const showActionChat = (index: number) => {
-  console.log("activate chat ", index);
-  const rec = document
-    ?.getElementById(`chat-action-${index}`)
-    ?.getBoundingClientRect();
+  if (activeAction.value !== null && activeAction.value?.index === index) {
+    activeAction.value = null;
+  } else {
+    const rec = document
+      ?.getElementById(`chat-action-${index}`)
+      ?.getBoundingClientRect();
 
-  activeAction.value = {
-    index,
-    top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
-    left: rec?.left - 1040,
-  };
+    activeAction.value = {
+      index,
+      top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
+      left: rec?.left - 1040,
+    };
+  }
 };
 
 const handleScroll = () => {
@@ -450,6 +453,7 @@ onMounted(() => {
 
 onUpdated(() => {
   members.value = JSON.parse(getSelectedChat.value.members);
+  scrollAreaRef.value.addEventListener("scroll", handleScroll);
 });
 </script>
 
