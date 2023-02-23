@@ -32,7 +32,7 @@
           <p class="text-gray-400">Is this email template</p>
         </div>
 
-        <div class="w-2/12 mt-2 mb-4">
+        <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
           <InputSelect
             :options="isEmailOptions"
             :default="isEmail"
@@ -47,7 +47,7 @@
           <p class="text-gray-400">Select your message language</p>
         </div>
 
-        <div class="w-2/12 mt-2 mb-4">
+        <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
           <InputSelect
             :options="languageOptions"
             :default="language"
@@ -66,7 +66,7 @@
         </div>
 
         <div class="flex mt-2 mb-4 gap-4">
-          <div class="w-2/12">
+          <div class="w-full md:w-4/12 lg:w-3/12">
             <InputSelect
               :options="headerOptions"
               :default="header"
@@ -127,7 +127,7 @@
         <div class="mt-2 mb-4">
           <input
             type="text"
-            class="w-2/12 h-10 block border rounded-lg pl-4"
+            class="w-full md:w-4/12 lg:w-3/12 h-10 block border rounded-lg pl-4"
             :value="isApproved"
             disabled
           />
@@ -141,7 +141,7 @@
           </p>
         </div>
 
-        <div class="w-3/12 mt-2 mb-4">
+        <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
           <InputSelect
             :options="actionCategoryOptions"
             :default="actionCategory"
