@@ -91,7 +91,7 @@ const changePage = (val) => {
 };
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
-    data.status = "archive";
+    data.status = "archived";
     await updateMessageTemplate(data.id, data);
   });
 };
