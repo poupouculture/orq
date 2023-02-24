@@ -9,7 +9,9 @@
         <div class="flex flex-col justify-center items-center">
           <p class="text-primary pb-5 font-bold text-2xl">404 error</p>
           <p class="text-[#111827] pb-4 font-bold text-5xl">Page not found</p>
-          <span class="text-[#6B7280] text-base font-normal">
+          <span
+            class="text-[#6B7280] text-center text-xs lg:text-base font-normal"
+          >
             Sorry, we couldn't find the page you're looking for.
           </span>
           <q-btn to="/" flat rounded class="mt-5" color="primary">
