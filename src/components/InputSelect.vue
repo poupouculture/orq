@@ -4,7 +4,7 @@
 <!-- eslint-disable no-mixed-spaces-and-tabs -->
 <template>
   <div
-    :style="isBorder && { height: `10px` }"
+    :style="isBorder && { minHeight: `10px` }"
     class="custom-select"
     :class="icon ? `custom-select-icon` : `custom-select`"
     :tabindex="tabindex"
@@ -156,7 +156,7 @@ const filterOptions = () => {
   width: 100%;
   text-align: left;
   outline: none;
-  height: 40px;
+  min-height: 40px;
   line-height: 40px;
 }
 
