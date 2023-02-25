@@ -6,7 +6,11 @@
     </q-drawer>
     <q-page-container>
       <q-page padding>
-        <router-view />
+        <RouterView v-slot="{ Component }">
+          <Transition name="slide-fade" mode="out-in">
+            <component :is="Component" />
+          </Transition>
+        </RouterView>
       </q-page>
     </q-page-container>
     <q-drawer
