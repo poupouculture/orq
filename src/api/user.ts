@@ -25,12 +25,10 @@ export const getUsers = async ({ limit = 10, page = 1 }) => {
 
 export const getUser = async (id: string) => {
   const fields = "*";
-  const companies = "companies.companies_id.*";
-  const contacts = "contacts.contacts_id.*";
+  // const companies = "companies.companies_id.*";
+  // const contacts = "contacts.contacts_id.*";
 
-  const customer = await api.get(
-    `/users/${id}?fields=${fields},${companies},${contacts}`
-  );
+  const customer = await api.get(`/users/${id}?fields=${fields}`);
   return customer;
 };
 

@@ -29,14 +29,14 @@
       </div>
     </div>
     <div class="main-content flex">
-      <div class="w-3/12 pr-4">
+      <div class="w-5/12 lg:w-3/12 pr-4">
         <SubmenuFilter
           :menus="subfilters"
           v-if="!loading"
           @changeChildMenu="setChildMenu"
         />
       </div>
-      <div class="w-9/12 grid grid-rows-2 grid-cols-3 gap-2">
+      <div class="w-7/12 lg:w-9/12 grid grid-cols-1 lg:grid-cols-3 gap-2">
         <div
           class="w-full flex flex-col bg-white rounded-lg hover:cursor-pointer"
           v-for="(menu, index) of childMenus"
@@ -67,17 +67,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="w-9/12">
-        <TableComponent
-          :applicationPrograms="data.applicationPrograms"
-          :totalCount="data.totalCount"
-          :page="data.page"
-          :rowsPerPage="data.rowsPerPage"
-          v-model:selected="selected"
-          @changePage="changePage"
-          v-if="!loading"
-        />
-      </div> -->
     </div>
   </div>
 </template>
@@ -90,8 +79,6 @@ import {
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import useUserInfoStore from "../../stores/modules/userInfo";
-// import { pageCodes } from "../../utils/page-codes";
-// import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import SubmenuFilter from "src/components/ApplicationProgram/SubmenuFilter.vue";
 
 const router = useRouter();

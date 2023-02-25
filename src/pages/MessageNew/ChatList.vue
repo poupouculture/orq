@@ -1,0 +1,77 @@
+<template>
+  <div>
+    <TransitionGroup name="fade">
+      <q-item
+        v-for="item in list"
+        :key="item.id"
+        class="cursor-pointer q-px-none"
+        @click.passive="() => selectChat(item)"
+      >
+        <ContactCard :data="item" />
+      </q-item>
+    </TransitionGroup>
+    <div
+      v-show="!list.length"
+      class="flex justify-center items-center gap-2 flex-col"
+    >
+      <q-icon size="4rem" name="inbox" color="grey" />
+      <p class="text-h6 text-grey">No Chat Availables</p>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { ChatTypes } from "src/constants/ChatKeyword";
+import ContactCard from "src/pages/MessageNew/ContactCard.vue";
+import useMessagingStore from "./messagenew";
+import useCustomerStore from "src/stores/modules/customer";
+import { IChat } from "./Message";
+
+const props = defineProps({
+  type: { type: String, default: ChatTypes.PENDING },
+  filterText: { type: String, default: "" },
+});
+
+const messagingStore = useMessagingStore();
+const customerStore = useCustomerStore();
+
+const { chatsList } = storeToRefs(messagingStore);
+const list = computed(() =>
+  chatsList.value.filter((chat) => {
+    const chatName = chat?.customers_id
+      ? `${chat.first_name?.toLowerCase()} ${chat.last_name?.toLowerCase()}`
+      : "visitor".toLowerCase();
+    return chat.status === props.type && chatName.includes(props.filterText);
+  })
+);
+
+const selectChat = (chat: IChat) => {
+  customerStore.$reset();
+  if (window.innerWidth <= 1024) {
+    messagingStore.setLeftDrawerOpen(false);
+  }
+  messagingStore.onSelectChat(chat.id);
+  if (chat.customers_id) {
+    customerStore.fetchCustomer(chat.customers_id);
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translate(50px, 0);
+}
+.fade-leave-active {
+  position: absolute;
+}
+</style>

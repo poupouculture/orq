@@ -104,7 +104,11 @@
                   <div
                     class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
                   >
-                    <q-icon name="expand_more" @click="showActionChat(i)" />
+                    <q-icon
+                      name="expand_more"
+                      :id="`chat-action-${i}`"
+                      @click="showActionChat(i)"
+                    />
                   </div>
                   <div class="mx-4">
                     {{ message.content }}
@@ -139,6 +143,13 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div
+            v-if="activeAction !== null"
+            class="px-4 py-2 absolute rounded-lg shadow-md top-0 bg-gray-200"
+            :style="`margin-left: ${activeAction.left}px; margin-top: ${activeAction.top}px`"
+          >
+            Reply
           </div>
         </div>
       </main>
@@ -257,6 +268,12 @@ interface Member {
   name: string;
 }
 
+interface ActionChat {
+  index: number;
+  top: number | undefined;
+  left: number | undefined;
+}
+
 const templateName: Ref<string> = ref("");
 const message: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -267,6 +284,7 @@ const members: Ref<Array<Member>> = ref([]);
 const isTemplate: Ref<boolean> = ref(false);
 const sendLoading: Ref<boolean> = ref(false);
 const scrollAreaRef = ref<HTMLDivElement>();
+const activeAction: Ref<ActionChat> = ref(null);
 const {
   getContactNumber,
   getCustomerName,
@@ -290,7 +308,6 @@ const messages = computed<unknown[]>(() => {
         status: item.status,
         old_date_created: cachedMessages.messages[last]?.date_created || null,
         date_created: item.date_created,
-        isShowAction: false,
       };
     }) || []
   );
@@ -410,16 +427,33 @@ const initialName = (name: string) => {
 };
 
 const showActionChat = (index: number) => {
-  console.log("activate chat ", index);
-  messages.value[index].isShowAction = true;
+  if (activeAction.value !== null && activeAction.value?.index === index) {
+    activeAction.value = null;
+  } else {
+    const rec = document
+      ?.getElementById(`chat-action-${index}`)
+      ?.getBoundingClientRect();
+
+    activeAction.value = {
+      index,
+      top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
+      left: rec?.left - 1040,
+    };
+  }
+};
+
+const handleScroll = () => {
+  activeAction.value = null;
 };
 
 onMounted(() => {
   members.value = JSON.parse(getSelectedChat.value.members);
+  scrollAreaRef.value.addEventListener("scroll", handleScroll);
 });
 
 onUpdated(() => {
   members.value = JSON.parse(getSelectedChat.value.members);
+  scrollAreaRef.value.addEventListener("scroll", handleScroll);
 });
 </script>
 

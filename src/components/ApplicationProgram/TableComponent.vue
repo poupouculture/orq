@@ -16,12 +16,20 @@
       </q-th>
     </q-tr>
     <template #body-cell-name="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.name }}
       </q-td>
     </template>
     <template #body-cell-status="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         <span
           class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200"
         >
@@ -30,42 +38,74 @@
       </q-td>
     </template>
     <template #body-cell-is_approved="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.is_approved ? "Yes" : "No" }}
       </q-td>
     </template>
     <template #body-cell-is_email_template="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.is_email_template ? "Yes" : "No" }}
       </q-td>
     </template>
     <template #body-cell-language="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.language }}
       </q-td>
     </template>
     <template #body-cell-delivered="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.delivered ? props.row.delivered : 0 }}
       </q-td>
     </template>
     <template #body-cell-read="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.messages_opened ? props.row.messages_opened : 0 }}
       </q-td>
     </template>
     <template #body-cell-replied="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.top_block_reason ? props.row.top_block_reason : 0 }}
       </q-td>
     </template>
     <template #body-cell-created_by="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.user_created }}
       </q-td>
     </template>
     <template #body-cell-created_on="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.date_created }}
       </q-td>
     </template>
@@ -80,7 +120,7 @@
         >
           <p class="edit-button">Edit</p>
         </router-link>
-        <button @click="useTemplate(props.row)" v-else>Use</button>
+        <button @click="previewTemplate(props.row)" v-else>Preview</button>
       </q-td>
     </template>
   </BaseTable>
@@ -118,7 +158,7 @@ const propsTable = defineProps({
   },
 });
 
-const emit = defineEmits(["changePage", "useTemplate"]);
+const emit = defineEmits(["changePage", "useTemplate", "previewTemplate"]);
 
 const headerColumns = ref([
   {
@@ -215,14 +255,20 @@ const useTemplate = (val) => {
   emit("useTemplate", val);
 };
 
+const previewTemplate = (val) => {
+  emit("previewTemplate", val);
+};
+
 onMounted(() => {
   if (propsTable.isSimple) {
     headerColumns.value = headerColumns.value.filter(
       (h) =>
         h.name !== "is_approved" &&
-        h.name !== "top_block_reason" &&
         h.name !== "date_created" &&
-        h.name !== "user_created"
+        h.name !== "user_created" &&
+        h.name !== "top_block_reason" &&
+        h.name !== "messages_sent" &&
+        h.name !== "messages_opened"
     );
   }
 });

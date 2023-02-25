@@ -1,10 +1,15 @@
 <template>
   <div class="main-container">
     <p class="header-text">
-      <span class="text-gray-400">
-        <q-icon name="fa-solid fa-arrow-left" />
-        Application program /
-      </span>
+      <router-link
+        :to="`/application-programs/`"
+        style="text-decoration: none; color: inherit"
+      >
+        <span class="text-gray-400">
+          <q-icon name="fa-solid fa-arrow-left" />
+          Application program /
+        </span>
+      </router-link>
       Chatbots
     </p>
     <div class="row justify-between">
@@ -84,9 +89,9 @@ const changePage = (val) => {
 };
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
-    data.status = "archive";
+    data.status = "archived";
     await updateBotTemplate(data.id, data);
   });
 };
 </script>
-<style scoped src="./style.scss" />
+<style scoped src="../style.scss" />
