@@ -1,12 +1,12 @@
 const routes = [
   {
     path: "/login",
-    component: () => import("../../src/pages/Login.vue"),
+    component: () => import("pages/Login.vue"),
     children: [
       {
         path: "",
         name: "login",
-        component: () => import("../../src/pages/Login.vue"),
+        component: () => import("pages/Login.vue"),
       },
     ],
   },
@@ -152,22 +152,13 @@ const routes = [
         name: "customergroups-internal-group.edit",
         component: () => import("pages/UserGroup/InternalGroup/Edit.vue"),
       },
+      {
+        path: "privacy",
+        name: "privacy",
+        component: () => import("pages/Privacy.vue"),
+      },
     ],
   },
-  // {
-  //   path: "/messaging",
-  //   component: () => import("layouts/MessagingLayout.vue"),
-  //   meta: {
-  //     requiresAuth: true,
-  //   },
-  //   children: [
-  //     {
-  //       path: "",
-  //       name: "messaging",
-  //       component: () => import("pages/Messaging/Index.vue"),
-  //     },
-  //   ],
-  // },
   {
     path: "/messaging",
     component: () => import("pages/MessageNew/MessagingLayoutnew.vue"),

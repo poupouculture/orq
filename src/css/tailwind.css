@@ -7,3 +7,17 @@
     @apply py-2 px-4 text-[#4B44F6] bg-white font-semibold rounded-md focus:outline-none focus:ring-0 border border-dotted border-[#4B44F6] cursor-pointer;
   }
 }
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active { 
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
+}
