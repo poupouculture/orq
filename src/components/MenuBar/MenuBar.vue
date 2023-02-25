@@ -6,22 +6,23 @@
       @click="toggleDrawer()"
       size="sm"
     />
-    <img src="../../assets/images/pluscomp.png" class="plus-img" />
-    <img src="../../assets/images/messages.png" class="message-img" /><img
-      src="../../assets/images/notification.png"
-      class="notification-img"
-    />
-    <q-btn unelevated class="row items-center avatar-btn">
+    <div class="flex gap-5 px-3">
+      <img src="~assets/images/pluscomp.svg" />
+      <img src="~assets/images/messages.svg" />
+      <img src="~assets/images/notification.svg" />
+    </div>
+
+    <q-btn unelevated :ripple="false" class="row items-center avatar-btn">
       <q-avatar size="md">
-        <img src="../../assets/images/profileavatar.png" />
+        <img src="~assets/images/profileavatar.png" />
       </q-avatar>
-      <img src="../../assets/images/dropdownreal.png" class="dropdown-img" />
+      <img src="~assets/images/dropdownreal.png" class="dropdown-img" />
       <q-menu class="q-ma-lg" style="width: 400px">
         <div class="column">
           <div class="row q-pa-md items-center">
             <div class="q-mr-md">
               <q-avatar size="md">
-                <img src="../../assets/images/profileavatar.png" />
+                <img src="~assets/images/profileavatar.png" />
               </q-avatar>
             </div>
             <div>
@@ -37,11 +38,35 @@
           <div>
             <q-list>
               <q-item clickable v-close-popup>
-                <q-item-section
-                  ><span
-                    ><q-icon name="assignment" class="q-mr-sm" /> Personal
-                    Information</span
-                  ></q-item-section
+                <q-item-section avatar>
+                  <q-icon name="assignment" />
+                </q-item-section>
+                <q-item-section>Personal Information</q-item-section>
+              </q-item>
+              <q-item
+                to="/privacy"
+                active-class="primary"
+                clickable
+                v-close-popup
+              >
+                <q-item-section avatar>
+                  <q-icon name="assignment" />
+                </q-item-section>
+                <q-item-section>Privacy</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section avatar>
+                  <q-icon name="business" />
+                </q-item-section>
+                <q-item-section>About WABA</q-item-section>
+              </q-item>
+              <!-- <q-item clickable v-close-popup>
+                <q-item-section>
+                  <span>
+                    <q-icon name="assignment" class="q-mr-sm" /> Personal
+                    Information
+                  </span>
+                  </q-item-section
                 >
               </q-item>
               <q-item clickable v-close-popup>
@@ -57,15 +82,14 @@
                     ><q-icon name="business" class="q-mr-sm" /> About WABA</span
                   ></q-item-section
                 >
-              </q-item>
+              </q-item> -->
               <q-separator />
+
               <q-item clickable v-close-popup @click="logout">
-                <q-item-section
-                  ><span
-                    ><q-icon name="logout" class="q-mr-sm" @click="logout" />
-                    Sign Out</span
-                  ></q-item-section
-                >
+                <q-item-section avatar>
+                  <q-icon name="logout" class="q-mr-sm" />
+                </q-item-section>
+                <q-item-section>Sign Out</q-item-section>
               </q-item>
             </q-list>
           </div>
@@ -88,11 +112,15 @@ const props = defineProps({
 const emits = defineEmits(["update:modelValue"]);
 const router = useRouter();
 const userInfo = useUserInfoStore();
+
+// Computed
 const user = computed(() => userInfo.getUserProfile);
 const drawer = computed({
   set: (value) => emits("update:modelValue", value),
   get: () => props.modelValue,
 });
+
+// Methods
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
