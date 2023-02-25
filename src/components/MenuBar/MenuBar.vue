@@ -63,29 +63,7 @@
                 </q-item-section>
                 <q-item-section>About WABA</q-item-section>
               </q-item>
-              <!-- <q-item clickable v-close-popup>
-                <q-item-section>
-                  <span>
-                    <q-icon name="assignment" class="q-mr-sm" /> Personal
-                    Information
-                  </span>
-                  </q-item-section
-                >
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section
-                  ><span
-                    ><q-icon name="assignment" class="q-mr-sm" /> Privacy</span
-                  ></q-item-section
-                >
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section
-                  ><span
-                    ><q-icon name="business" class="q-mr-sm" /> About WABA</span
-                  ></q-item-section
-                >
-              </q-item> -->
+
               <q-separator />
 
               <q-item clickable v-close-popup @click="logout">
