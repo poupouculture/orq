@@ -145,9 +145,9 @@
         />
         <div class="row justify-end">
           <q-btn
-            :flat="!isOverOneDay"
+            :flat="!isChatExpired"
             round
-            :color="isOverOneDay ? 'primary' : 'grey'"
+            :color="isChatExpired ? 'primary' : 'grey'"
             icon="insert_comment"
             size="md"
             class="q-mt-md"
@@ -166,7 +166,7 @@
               color="primary"
               label="Send"
               class="dark-btn"
-              :disable="isOverOneDay"
+              :disable="isChatExpired"
               @click="sendMessage"
               :loading="sendLoading"
             />
@@ -237,7 +237,7 @@ interface Message {
 const scrollAreaRef = ref<HTMLDivElement>();
 const message: Ref<string> = ref("");
 const sendLoading: Ref<boolean> = ref(false);
-const isOverOneDay: Ref<boolean> = ref(true);
+const isChatExpired: Ref<boolean> = ref(true);
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -310,12 +310,15 @@ watch(
   () => getSelectedChat.value,
   (val) => {
     const lastMessage = JSON.parse(val?.last_message);
+    console.log(lastMessage);
     const differenceDate: number = differenceInDays(
       new Date(lastMessage.date_created),
       new Date()
     );
+    console.log(differenceDate);
 
-    isOverOneDay.value = differenceDate < 0;
+    isChatExpired.value = differenceDate < 0;
+    console.log(isChatExpired.value);
     message.value = "";
   }
 );
@@ -326,7 +329,7 @@ const setCustomerInfoMobile = () => {
 };
 
 const sendMessage = async () => {
-  isOverOneDay.value = false;
+  isChatExpired.value = false;
   try {
     if (sendLoading.value || message.value.length < 1) return;
     sendLoading.value = true;
