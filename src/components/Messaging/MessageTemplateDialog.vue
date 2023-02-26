@@ -1,11 +1,12 @@
 <template>
-  <q-dialog :modelValue="modelValue" @hide="hide">
+  <q-dialog :modelValue="modelValue" @hide="hideModal">
     <q-card
       :style="
         'min-height: 85%; ' +
         (isPreview ? 'min-width: 55%;' : 'min-width: 85%;')
       "
       class="q-pa-lg flex justify-between"
+      :class="{ 'flex-col': usedTemplate !== null }"
     >
       <div class="w-full" v-if="usedTemplate === null">
         <q-card-section>
@@ -196,6 +197,11 @@ const hide = () => {
   }
   isPreview.value = false;
   usedTemplate.value = null;
+};
+
+const hideModal = () => {
+  usedTemplate.value = null;
+  hide();
 };
 
 const send = () => {
