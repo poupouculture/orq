@@ -60,10 +60,6 @@ const time = computed<string>(() => {
   const dateCreated = parseMessage?.date_created;
   return dateCreated && format(new Date(dateCreated), "hh:mm aa");
 });
-
-// const selectChat = () => {
-//   messagingStore.setSelectedChatId(props.data.id);
-// };
 </script>
 
 <style scoped lang="scss">

@@ -209,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from "vue";
+import { computed, ref, watch, nextTick, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { format, differenceInDays, isToday } from "date-fns";
@@ -285,11 +285,24 @@ const messages = computed<Message[]>(() => {
 
 // Watch
 watch(messages, async () => {
-  // scroll to end bottom
+  scrollToBottom();
+});
+
+watch(getSelectedChat.value, (val) => {
+  const lastMessage = JSON.parse(val?.last_message);
+  const differenceDate: number = differenceInDays(
+    new Date(lastMessage.date_created),
+    new Date()
+  );
+  isChatExpired.value = differenceDate < 0;
+  message.value = "";
+});
+
+const scrollToBottom = async () => {
   await nextTick();
   if (!scrollAreaRef.value) return;
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
-});
+};
 
 const closeChat = async () => {
   messagingStore.setLeftDrawerOpen(true);
@@ -306,23 +319,6 @@ const initialName = (name: string) => {
   }
   return initial;
 };
-
-watch(
-  () => getSelectedChat.value,
-  (val) => {
-    const lastMessage = JSON.parse(val?.last_message);
-    console.log(lastMessage);
-    const differenceDate: number = differenceInDays(
-      new Date(lastMessage.date_created),
-      new Date()
-    );
-    console.log(differenceDate);
-
-    isChatExpired.value = differenceDate < 0;
-    console.log(isChatExpired.value);
-    message.value = "";
-  }
-);
 
 const setCustomerInfoMobile = () => {
   messagingStore.setCustomerInfoMobile(true);
@@ -397,4 +393,8 @@ const sendMessageTemplate = (
   isIncludeComponent.value = isIncComponent;
   sendMessage();
 };
+
+onMounted(() => {
+  scrollToBottom();
+});
 </script>

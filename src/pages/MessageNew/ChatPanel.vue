@@ -264,26 +264,12 @@ const snapshotMessage = (chatId: string) => {
       async (querySnapshot: any) => {
         for (const change of querySnapshot.docChanges()) {
           if (snapshoted) {
-            const {
-              content,
-              status,
-              type,
-              last_message_id: id,
-            } = change.doc.data();
-            // const dateCreated = new Date();
+            const data = change.doc.data();
             const direction =
-              status === MessageType.SENT
+              data.status === MessageType.SENT
                 ? Direction.OUTGOING
                 : Direction.INCOMING;
-            const paylod = {
-              id,
-              chat_id: chatId,
-              status,
-              direction,
-              content,
-              type,
-            };
-            messagingStore.setChatsLastMessage(chatId, paylod);
+            messagingStore.setChatsLastMessage(chatId, { ...data, direction });
           }
         }
         snapshoted = true;

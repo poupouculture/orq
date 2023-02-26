@@ -7,8 +7,6 @@ import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
-  // getContact,
-  // CachedChatMessages,
 } from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -66,11 +64,7 @@ const useMessagingStore = defineStore("messaging", {
         }
         chat.last_message = JSON.stringify(lastmessage);
         this.chatsList.unshift(chat);
-        // update message mybe we can optimization it
-        this.cachedChatMessages[chatId]?.push({
-          ...lastmessage,
-          date_created: new Date() + "",
-        });
+        this.cachedChatMessages[chatId]?.push(lastmessage);
       }
     },
     setCustomerInfoMobile(value: boolean) {

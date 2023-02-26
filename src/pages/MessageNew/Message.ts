@@ -74,4 +74,5 @@ export interface LastMessage {
   content: string;
   type: string;
   totalUnread?: number;
+  date_created: string;
 }
