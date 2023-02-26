@@ -33,9 +33,9 @@
             <!-- <OtherInformation /> -->
           </q-tab-panel>
 
-          <q-tab-panel name="Contact-Information">
+          <q-tab-panel name="contact">
             <div class="contact-info">
-              <!-- <ContactInfo /> -->
+              <ContactInfo />
             </div>
           </q-tab-panel>
 
@@ -57,7 +57,7 @@
 
 <script setup>
 import { ref } from "vue";
-// import ContactInfo from "../ContactInfo/ContactInfo.vue";
+import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import ServiceRecord from "./ServiceRecord.vue";
 // import OtherInformation from "../OtherInformation/OtherInformation.vue";
