@@ -59,22 +59,32 @@ const useMessagingStore = defineStore("messaging", {
       this.chatSnapshotMessage[chatId] = cancleFn;
     },
     setChatsLastMessage(chatId: string, lastmessage: LastMessage) {
-      const index = this.chatsList.findIndex(
-        (chat: IChat) => chat.id === chatId
-      );
-      if (index !== -1) {
-        const [chat] = this.chatsList.splice(index, 1);
-        if (lastmessage.status === MessageStatus.RECEIVE) {
-          if (this.selectedChatId !== chatId) {
-            chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
-          } else {
-            chat.totalUnread = 0;
+      try {
+        const index = this.chatsList.findIndex(
+          (chat: IChat) => chat.id === chatId
+        );
+        if (index !== -1) {
+          const [chat] = this.chatsList.splice(index, 1);
+          const oldLastMessage = JSON.parse(chat.last_message);
+          if (oldLastMessage.id === lastmessage.id) {
+            return;
           }
-        }
+          if (chat.last_message)
+            if (lastmessage.status === MessageStatus.RECEIVE) {
+              // only receivede message should plus totalUnread;
+              if (this.selectedChatId !== chatId) {
+                chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
+              } else {
+                chat.totalUnread = 0;
+              }
+            }
 
-        chat.last_message = JSON.stringify(lastmessage);
-        this.chatsList.unshift(chat);
-        this.cachedChatMessages[chatId]?.push(lastmessage);
+          chat.last_message = JSON.stringify(lastmessage);
+          this.chatsList.unshift(chat);
+          this.cachedChatMessages[chatId]?.push(lastmessage);
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
     setCustomerInfoMobile(value: boolean) {
