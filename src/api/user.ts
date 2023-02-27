@@ -44,8 +44,8 @@ export const getUser = async (id: string) => {
  * @returns
  */
 export const getChatUsers = async () => {
-  const managers = await api.post(`/waba/load-cs-manager-users`, {});
-  return managers;
+  const users = await api.post(`/waba/load-waba-users`, {});
+  return users;
 };
 
 /**

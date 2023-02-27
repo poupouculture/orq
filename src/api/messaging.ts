@@ -88,10 +88,9 @@ export const getContact = async (contactId: string) => {
   return data;
 };
 
-export const startNewChat = async (customerId: string, textMessage: string) => {
+export const startNewChat = async (customerId: string) => {
   const { data } = await api.post(`/waba/create-chat`, {
     customer_id: customerId,
-    text_message: textMessage,
   });
 
   return data;

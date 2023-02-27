@@ -18,11 +18,11 @@
       >
         <q-list separator>
           <q-item
-            v-for="(manager, index) in managers"
+            v-for="(user, index) in users"
             :key="index"
             clickable
             v-close-popup
-            @click="assignUser(manager)"
+            @click="assignUser(user)"
           >
             <q-item-section>
               <div class="row items-center">
@@ -31,10 +31,10 @@
                 </q-avatar>
                 <div class="q-ml-md">
                   <div class="text-weight-bold">
-                    {{ manager.first_name }} {{ manager.last_name }}
+                    {{ user.first_name }} {{ user.last_name }}
                   </div>
                   <div class="text-weight-light">
-                    {{ manager.role_name }}
+                    {{ user.role_name }}
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@ const enum Role {
   CS_MANAGER = "CS-Manager",
 }
 
-interface Manager {
+interface User {
   user_id: string;
   first_name: string;
   last_name: string;
@@ -82,24 +82,24 @@ const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
 
 const userRole: Ref<string> = ref("");
-const managers: Ref<Array<Manager>> = ref([]);
+const users: Ref<Array<User>> = ref([]);
 const { getSelectedChat } = storeToRefs(messagingStore);
 
 onMounted(async () => {
   const { data } = await getChatUsers();
-  managers.value = data;
+  users.value = data;
 
   userRole.value = userInfo.getUserRoleName;
 });
 
-const assignUser = async (manager: Manager) => {
+const assignUser = async (user: User) => {
   const chatId = getSelectedChat.value.id;
-  const userId = manager.user_id;
+  const userId = user.user_id;
   try {
     Loading.show();
     await assignUserHelper(chatId, userId);
     Notify.create({
-      message: `Successful assigned to ${manager.first_name} ${manager.last_name}`,
+      message: `Successful assigned to ${user.first_name} ${user.last_name}`,
       position: "top",
       type: "positive",
       color: "blue-9",
