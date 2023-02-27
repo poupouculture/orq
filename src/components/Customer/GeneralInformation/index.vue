@@ -9,6 +9,17 @@
       @submit="onSubmit"
     >
       <div class="q-pa-md">
+        <div
+          class="row q-mb-lg ml-auto flex justify-end"
+          v-if="mode === 'show' && (!!getCustomer.id || getContactNumber)"
+        >
+          <q-btn
+            @click="mode = 'edit'"
+            color="primary"
+            label="Edit"
+            class="dark-btn"
+          />
+        </div>
         <div class="row q-mb-lg">
           <div class="col-2">
             <img
@@ -244,7 +255,10 @@ type ITagOptions = Option & ITag;
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
-  mode: String,
+  mode: {
+    type: String,
+    default: "show",
+  },
   showActive: {
     type: Boolean,
     default: true,
@@ -258,6 +272,7 @@ const props = defineProps({
     default: true,
   },
 });
+const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 // const messagingStore = useMessagingStore();
 // const { getContactNumber } = storeToRefs(messagingStore);
@@ -322,6 +337,7 @@ onMounted(async () => {
 });
 
 watch(getCustomer, () => {
+  mode.value = "show";
   firstName.value = getCustomer.value.first_name;
   lastName.value = getCustomer.value.last_name;
   idNumber.value = getCustomer.value.id_number;

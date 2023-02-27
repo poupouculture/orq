@@ -59,6 +59,7 @@ export interface IState {
   cachedChatMessages: CachedChatMessages;
   selectedTab: ChatTypes;
   chatSnapshotMessage: ChatSnapshotMessage;
+  contactNumber: string;
 }
 
 export interface SendTextMessage {

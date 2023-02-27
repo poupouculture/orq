@@ -12,6 +12,7 @@ import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
+  getContact,
 } from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -25,6 +26,7 @@ const useMessagingStore = defineStore("messaging", {
       selectedTab: ChatTypes.PENDING,
       chatSnapshotMessage: {},
       cachedChatMessages: {},
+      contactNumber: null,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -58,17 +60,28 @@ const useMessagingStore = defineStore("messaging", {
     setChatSnapshotMessage(chatId: string, cancleFn: () => void) {
       this.chatSnapshotMessage[chatId] = cancleFn;
     },
+    setContactNumber(contactNumber: string) {
+      this.contactNumber = contactNumber;
+    },
     setChatsLastMessage(chatId: string, lastmessage: LastMessage) {
       try {
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
         if (index !== -1) {
-          const [chat] = this.chatsList.splice(index, 1);
-          const oldLastMessage = JSON.parse(chat.last_message);
-          if (oldLastMessage.id === lastmessage.id) {
-            return;
+          const cachedMessage = this.cachedChatMessages[chatId];
+          if (cachedMessage?.length) {
+            const [lastCachedMessage] = cachedMessage.slice(-1);
+            console.log(lastmessage, lastCachedMessage);
+
+            if (
+              lastmessage.last_message_id &&
+              lastmessage.last_message_id <= lastCachedMessage.id
+            ) {
+              return;
+            }
           }
+          const [chat] = this.chatsList.splice(index, 1);
           if (chat.last_message)
             if (lastmessage.status === MessageStatus.RECEIVE) {
               // only receivede message should plus totalUnread;
@@ -143,6 +156,11 @@ const useMessagingStore = defineStore("messaging", {
       if (!this.cachedChatMessages[chatId]) {
         this.fetchChatMessagesById(chatId);
       }
+    },
+
+    async fetchContactNumber(contactId: string) {
+      const { data } = await getContact(contactId);
+      this.setContactNumber(data.number);
     },
   },
 });
