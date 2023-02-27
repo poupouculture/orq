@@ -7,6 +7,7 @@ import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
+  getContact,
   // getContact,
   // CachedChatMessages,
 } from "src/api/messaging";
@@ -18,6 +19,7 @@ const useMessagingStore = defineStore("messaging", {
       leftDrawerOpen: true,
       rightDrawerOpen: true,
       messageLoading: false,
+      contactNumber: null,
       showCustomerInfoMobile: false,
       selectedTab: ChatTypes.PENDING,
       chatSnapshotMessage: {},
@@ -27,6 +29,8 @@ const useMessagingStore = defineStore("messaging", {
     getChatsList: (state) => state.chatsList,
     getSelectedChatId: (state) => state.selectedChatId,
     getChatSnapshotMessage: (state) => state.chatSnapshotMessage,
+    getContactNumber: (state) => state.contactNumber,
+    isContactNumberExist: (state) => !!state.contactNumber,
     getSelectedChat: (state) => {
       return state.chatsList.find(
         (chat) => chat.id === state.selectedChatId
@@ -72,6 +76,13 @@ const useMessagingStore = defineStore("messaging", {
           date_created: new Date() + "",
         });
       }
+    },
+    async fetchContactNumber(contactId: string) {
+      const { data } = await getContact(contactId);
+      this.setContactNumber(data.number);
+    },
+    setContactNumber(contactNumber: string) {
+      this.contactNumber = contactNumber;
     },
     setCustomerInfoMobile(value: boolean) {
       this.showCustomerInfoMobile = value;

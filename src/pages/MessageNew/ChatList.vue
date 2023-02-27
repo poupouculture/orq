@@ -53,6 +53,7 @@ const selectChat = (chat: IChat) => {
     messagingStore.setLeftDrawerOpen(false);
   }
   messagingStore.onSelectChat(chat.id);
+  messagingStore.fetchContactNumber(chat.contacts_id);
   if (chat.customers_id) {
     customerStore.fetchCustomer(chat.customers_id);
   }

@@ -19,7 +19,7 @@
   <q-tab-panels v-model="customerInformationTab" animated>
     <q-tab-panel name="general" class="pannel-each">
       <GeneralInformation
-        :mode="isContactNumberExist ? '' : 'show'"
+        mode="show"
         :show-active="false"
         :show-return-button="false"
         :show-delete-button="false"
@@ -41,9 +41,9 @@ import GeneralInformation from "src/components/Customer/GeneralInformation/index
 import ServiceRecord from "../Customer/ServiceRecord.vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import useMessagingStore from "src/stores/modules/messaging";
+import useMessagingStore from "src/pages/MessageNew/messagenew";
 import { FormPayload } from "src/types/CustomerTypes";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 const enum CustomerInformationTabs {
@@ -54,9 +54,6 @@ const enum CustomerInformationTabs {
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
-const isContactNumberExist = computed(
-  () => messagingStore.isContactNumberExist
-);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
 );

@@ -4,7 +4,6 @@ import {
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
-  CachedChatMessages,
 } from "../../api/messaging";
 import { ChatTypes } from "../../constants/ChatKeyword";
 import {
@@ -14,6 +13,7 @@ import {
   Direction,
   ChatGroup,
   IChat,
+  CachedChatMessages,
 } from "../../types/MessagingTypes";
 import { db, collection, onSnapshot } from "src/boot/firebase";
 

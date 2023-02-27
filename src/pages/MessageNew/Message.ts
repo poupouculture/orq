@@ -51,6 +51,7 @@ export interface IState {
   showCustomerInfoMobile: boolean;
   cachedChatMessages: CachedChatMessages;
   selectedTab: ChatTypes;
+  contactNumber: null | string;
   chatSnapshotMessage: ChatSnapshotMessage;
 }
 
