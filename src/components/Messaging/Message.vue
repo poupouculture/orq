@@ -212,15 +212,14 @@
 import { computed, ref, watch, nextTick, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import Swal from "sweetalert2";
 import { format, differenceInDays, isToday } from "date-fns";
-import useMessagingStore from "./messagenew";
+import useMessagingStore from "src/stores/modules/messaging";
 import { getChatName } from "src/utils/trim-word";
 import { updateChatStatus, startNewChat } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import ChatConversationButton from "src/components/Messaging/ChatConversationButton.vue";
-import { Direction } from "./Message";
-import { Product, MessageType } from "src/types/MessagingTypes";
-import Swal from "sweetalert2";
+import ChatConversationButton from "./ChatConversationButton.vue";
+import { Direction, Product, MessageType } from "src/types/MessagingTypes";
 import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
@@ -284,7 +283,7 @@ const messages = computed<Message[]>(() => {
 });
 
 // Watch
-watch(messages, async () => {
+watch(messages, () => {
   scrollToBottom();
 });
 
@@ -292,13 +291,15 @@ watch(
   () => getSelectedChat.value,
   (val) => {
     const lastMessage = JSON.parse(val?.last_message);
-    const differenceDate: number = differenceInDays(
-      new Date(lastMessage.date_created),
-      new Date()
-    );
+    if (lastMessage.date_created) {
+      const differenceDate: number = differenceInDays(
+        new Date(lastMessage.date_created),
+        new Date()
+      );
 
-    isChatExpired.value = differenceDate < 0;
-    message.value = "";
+      isChatExpired.value = differenceDate < 0;
+      message.value = "";
+    }
   }
 );
 
@@ -356,7 +357,7 @@ const sendMessage = async () => {
       }
     } else {
       // what this part for ???
-      startNewChat(getCustomer.value.id, message.value);
+      startNewChat(getCustomer.value.id);
       messagingStore.fetchChats();
       messagingStore.setSelectedTab(ChatTypes.ONGOING);
       // emit("newChatCreated", ChatTypes.ONGOING);

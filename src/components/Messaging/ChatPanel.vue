@@ -113,11 +113,11 @@ import {
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import useMessagingStore from "./messagenew";
-import ChatList from "src/pages/MessageNew/ChatList.vue";
-import ChatListFooter from "src/components/Messaging/ChatListFooter.vue";
+import useMessagingStore from "src/stores/modules/messaging";
+import ChatList from "./ChatList.vue";
+import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, Direction } from "./Message";
+import { IChat, Direction, MessageStatus } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
@@ -129,10 +129,7 @@ import {
   auth,
   signInWithCustomToken,
 } from "src/boot/firebase";
-enum MessageType {
-  RECEIVE = "received",
-  SENT = "sent",
-}
+
 const ChatToggleLabel = {
   SHOW: {
     label: "Create new chat",
@@ -222,7 +219,7 @@ const fetchCustomers = async () => {
 
 const chooseCustomer = async (user: any) => {
   customerStore.$reset();
-  const [data] = await startNewChat(user.id, "Hi");
+  const [data] = await startNewChat(user.id);
   messagingStore.updateChatsList(data);
   messagingStore.onSelectChat(data.id);
   if (data.customers_id) {
@@ -266,10 +263,15 @@ const snapshotMessage = (chatId: string) => {
           if (snapshoted) {
             const data = change.doc.data();
             const direction =
-              data.status === MessageType.SENT
+              data.status === MessageStatus.SENT
                 ? Direction.OUTGOING
                 : Direction.INCOMING;
-            messagingStore.setChatsLastMessage(chatId, { ...data, direction });
+            if (data.date_created) {
+              messagingStore.setChatsLastMessage(chatId, {
+                ...data,
+                direction,
+              });
+            }
           }
         }
         snapshoted = true;

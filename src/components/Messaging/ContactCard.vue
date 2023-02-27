@@ -18,33 +18,47 @@
       <q-item-label caption :class="{ 'text-white': active }">
         {{ time }}
       </q-item-label>
-      <q-badge v-show="totalUnread" rounded color="red" :label="totalUnread" />
+      <q-badge
+        v-show="props.data.totalUnread"
+        rounded
+        color="red"
+        :label="props.data.totalUnread"
+      />
     </q-item-section>
   </div>
 </template>
 
-<script setup>
-defineProps({
-  active: {
-    type: Boolean,
-    default: false,
-  },
-  name: {
-    type: String,
-    default: "",
-  },
-  message: {
-    type: String,
-    default: "",
-  },
-  time: {
-    type: String,
-    default: "",
-  },
-  totalUnread: {
-    type: Number,
-    default: 0,
-  },
+<script setup lang="ts">
+import { computed } from "vue";
+import { format } from "date-fns";
+import { storeToRefs } from "pinia";
+import { getChatName } from "src/utils/trim-word";
+import { IChat } from "src/types/MessagingTypes";
+import useMessagingStore from "src/stores/modules/messaging";
+
+export interface Props {
+  data?: IChat;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  data: () => ({} as IChat),
+});
+const messagingStore = useMessagingStore();
+const { selectedChatId } = storeToRefs(messagingStore);
+
+const active = computed<boolean>(() => props.data.id === selectedChatId.value);
+const name = computed<string>(() => getChatName(props.data));
+
+const message = computed<string>(() => {
+  const { last_message: lastMessage } = props.data;
+  return JSON.parse(lastMessage)?.content;
+});
+
+const time = computed<string>(() => {
+  const { last_message: lastMessage } = props.data;
+  const parseMessage = JSON.parse(lastMessage);
+  const dateCreated = parseMessage?.date_created;
+  return dateCreated && format(new Date(dateCreated), "hh:mm aa");
 });
 </script>
 

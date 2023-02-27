@@ -1,4 +1,5 @@
 <template>
+  {{ customerInformationTab }}
   <q-tabs
     v-model="customerInformationTab"
     dense
@@ -54,8 +55,8 @@ const enum CustomerInformationTabs {
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
-const isContactNumberExist = computed(
-  () => messagingStore.isContactNumberExist
+const isContactNumberExist = computed(() =>
+  getSelectedChat?.value?.name?.replace(/[^\d]/g, "")
 );
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL

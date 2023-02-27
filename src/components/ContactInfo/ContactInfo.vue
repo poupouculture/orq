@@ -561,12 +561,4 @@ onMounted(() => {
 });
 </script>
 
-<style lang="sass" scoped>
-
-.row>div.col-3
-  padding: 10px 15px
-  background: white
-  border-right: 1px solid rgba(86,61,124,.2)
-.row + .row
-  margin-top: 1rem
-</style>
+<style lang="sass" scoped></style>
