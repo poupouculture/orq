@@ -59,6 +59,7 @@ import {
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
+import { Notify } from "quasar";
 
 const router = useRouter();
 
@@ -94,6 +95,15 @@ const archiveSelected = () => {
     data.status = "archived";
     await updateMessageTemplate(data.id, data);
   });
+
+  Notify.create({
+    message: `Selected Template has been archived`,
+    position: "top",
+    type: "positive",
+    color: "blue-9",
+  });
+
+  selected.value = [];
 };
 </script>
 <style scoped src="../style.scss" />

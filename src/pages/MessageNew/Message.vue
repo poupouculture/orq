@@ -142,12 +142,13 @@
           input-class="px-4 py-4 h-10 sm:h-auto"
           class="rounded-xl overflow-hidden"
           @keydown.enter.prevent="sendMessage"
+          :disable="isChatExpired"
         />
         <div class="row justify-end">
           <q-btn
-            :flat="!isOverOneDay"
+            :flat="!isChatExpired"
             round
-            :color="isOverOneDay ? 'primary' : 'grey'"
+            :color="isChatExpired ? 'primary' : 'grey'"
             icon="insert_comment"
             size="md"
             class="q-mt-md"
@@ -166,7 +167,7 @@
               color="primary"
               label="Send"
               class="dark-btn"
-              :disable="isOverOneDay"
+              :disable="isChatExpired"
               @click="sendMessage"
               :loading="sendLoading"
             />
@@ -208,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from "vue";
+import { computed, ref, watch, nextTick, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { format, differenceInDays, isToday } from "date-fns";
@@ -237,7 +238,7 @@ interface Message {
 const scrollAreaRef = ref<HTMLDivElement>();
 const message: Ref<string> = ref("");
 const sendLoading: Ref<boolean> = ref(false);
-const isOverOneDay: Ref<boolean> = ref(true);
+const isChatExpired: Ref<boolean> = ref(true);
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -284,11 +285,24 @@ const messages = computed<Message[]>(() => {
 
 // Watch
 watch(messages, async () => {
-  // scroll to end bottom
+  scrollToBottom();
+});
+
+watch(getSelectedChat.value, (val) => {
+  const lastMessage = JSON.parse(val?.last_message);
+  const differenceDate: number = differenceInDays(
+    new Date(lastMessage.date_created),
+    new Date()
+  );
+  isChatExpired.value = differenceDate < 0;
+  message.value = "";
+});
+
+const scrollToBottom = async () => {
   await nextTick();
   if (!scrollAreaRef.value) return;
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
-});
+};
 
 const closeChat = async () => {
   messagingStore.setLeftDrawerOpen(true);
@@ -306,27 +320,13 @@ const initialName = (name: string) => {
   return initial;
 };
 
-watch(
-  () => getSelectedChat.value,
-  (val) => {
-    const lastMessage = JSON.parse(val?.last_message);
-    const differenceDate: number = differenceInDays(
-      new Date(lastMessage.date_created),
-      new Date()
-    );
-
-    isOverOneDay.value = differenceDate < 0;
-    message.value = "";
-  }
-);
-
 const setCustomerInfoMobile = () => {
   messagingStore.setCustomerInfoMobile(true);
   messagingStore.setRightDrawerOpen(false);
 };
 
 const sendMessage = async () => {
-  isOverOneDay.value = false;
+  isChatExpired.value = false;
   try {
     if (sendLoading.value || message.value.length < 1) return;
     sendLoading.value = true;
@@ -393,4 +393,8 @@ const sendMessageTemplate = (
   isIncludeComponent.value = isIncComponent;
   sendMessage();
 };
+
+onMounted(() => {
+  scrollToBottom();
+});
 </script>

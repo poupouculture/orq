@@ -44,7 +44,6 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   };
 
   if (isTemplate) {
-    currPayload.template_content = messageBody;
     const lang: Language = {
       code: language,
     };
@@ -66,6 +65,9 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
         ],
       };
     } else {
+      // It was outside of the conditional
+      currPayload.template_content = messageBody;
+
       currPayload.waba_content.template = {
         name: templateName,
         language: lang,
@@ -88,10 +90,9 @@ export const getContact = async (contactId: string) => {
   return data;
 };
 
-export const startNewChat = async (customerId: string, textMessage: string) => {
+export const startNewChat = async (customerId: string) => {
   const { data } = await api.post(`/waba/create-chat`, {
     customer_id: customerId,
-    text_message: textMessage,
   });
 
   return data;

@@ -170,6 +170,14 @@ const headerColumns = ref([
     classes: "text-black",
   },
   {
+    name: "category",
+    align: "left",
+    label: "Category",
+    field: "category",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
     name: "status",
     align: "center",
     label: "Status",
@@ -269,6 +277,11 @@ onMounted(() => {
         h.name !== "top_block_reason" &&
         h.name !== "messages_sent" &&
         h.name !== "messages_opened"
+    );
+  }
+  if (propsTable.formType !== "bots") {
+    headerColumns.value = headerColumns.value.filter(
+      (h) => h.name !== "category"
     );
   }
 });
