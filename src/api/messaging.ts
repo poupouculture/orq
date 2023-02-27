@@ -44,7 +44,6 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   };
 
   if (isTemplate) {
-    currPayload.template_content = messageBody;
     const lang: Language = {
       code: language,
     };
@@ -66,6 +65,9 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
         ],
       };
     } else {
+      // It was outside of the conditional
+      currPayload.template_content = messageBody;
+
       currPayload.waba_content.template = {
         name: templateName,
         language: lang,

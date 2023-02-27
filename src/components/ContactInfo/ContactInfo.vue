@@ -308,7 +308,7 @@
 
     <div class="sub-hold">
       <div class="row">
-        <div class="col-3">
+        <div class="w-full md:w-3/12">
           <div class="row-main">
             <div>
               <div
@@ -422,7 +422,7 @@
             </div>
           </div>
         </div>
-        <div class="col-8" style="margin-left: 10px">
+        <div class="w-full md:w-8/12 mt-4" style="margin-left: 10px">
           <div>
             <div class="row justify-between">
               <q-input outlined v-model="text" dense>
