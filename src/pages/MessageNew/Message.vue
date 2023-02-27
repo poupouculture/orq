@@ -288,15 +288,19 @@ watch(messages, async () => {
   scrollToBottom();
 });
 
-watch(getSelectedChat.value, (val) => {
-  const lastMessage = JSON.parse(val?.last_message);
-  const differenceDate: number = differenceInDays(
-    new Date(lastMessage.date_created),
-    new Date()
-  );
-  isChatExpired.value = differenceDate < 0;
-  message.value = "";
-});
+watch(
+  () => getSelectedChat.value,
+  (val) => {
+    const lastMessage = JSON.parse(val?.last_message);
+    const differenceDate: number = differenceInDays(
+      new Date(lastMessage.date_created),
+      new Date()
+    );
+
+    isChatExpired.value = differenceDate < 0;
+    message.value = "";
+  }
+);
 
 const scrollToBottom = async () => {
   await nextTick();
@@ -331,7 +335,7 @@ const sendMessage = async () => {
     if (sendLoading.value || message.value.length < 1) return;
     sendLoading.value = true;
     if (messages.value.length > 0) {
-      await messagingStore.sendChatTextMessage({
+      const data = await messagingStore.sendChatTextMessage({
         chatId: getSelectedChatId.value,
         messageProduct: Product.WHATSAPP,
         to: chatNumber.value,
@@ -342,6 +346,14 @@ const sendMessage = async () => {
         language: language.value,
         isIncludedComponent: isIncludeComponent.value,
       });
+
+      if (!data.status) {
+        Notify.create({
+          position: "top",
+          message: data.message,
+          color: "purple",
+        });
+      }
     } else {
       // what this part for ???
       startNewChat(getCustomer.value.id, message.value);
