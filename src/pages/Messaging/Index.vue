@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -83,14 +83,6 @@ import { getChatUsers } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import {
-  db,
-  collection,
-  onSnapshot,
-  auth,
-  signInWithCustomToken,
-} from "src/boot/firebase";
-import { ChatGroup, IChat } from "src/types/MessagingTypes";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -116,9 +108,8 @@ const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
-const first = ref(false);
 
-const { getChats, showCustomerInfoMobile } = storeToRefs(messagingStore);
+const { showCustomerInfoMobile } = storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -126,37 +117,11 @@ onMounted(async () => {
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
   firebaseToken.value = getFirebaseToken.value;
-  snapshotByChats();
 });
 // closing customer information in mmobile vview
 const closeCustomerInfoMobile = () => {
   messagingStore.setCustomerInfoMobile(false);
 };
-
-const snapshotByChats = async () => {
-  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-  if (loggedInUser) {
-    onSnapshot(collection(db, "chats"), async (querySnapshot: any) => {
-      for await (const change of querySnapshot.docChanges()) {
-        if (first.value) {
-          const { status } = change.doc.data();
-          messagingStore.setChatsByStatus(status, change.doc.id);
-          messagingStore.setSelectedChatByStatus(status);
-        }
-      }
-      first.value = true;
-    });
-  }
-};
-
-watchEffect(() => {
-  getChats.value.forEach((item: ChatGroup) => {
-    item.chats.forEach((chat: IChat) => {
-      // add snapshot for every chat
-      messagingStore.onSnapshotMessage(chat.id);
-    });
-  });
-});
 </script>
 
 <style scoped>
