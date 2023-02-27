@@ -1,4 +1,4 @@
-import { IChat } from "src/pages/MessageNew/Message";
+import { IChat } from "src/types/MessagingTypes";
 
 const trimWord = (word: string, maxLength: number = 15) => {
   if (word.length > maxLength) {
