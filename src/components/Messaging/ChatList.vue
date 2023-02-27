@@ -37,7 +37,7 @@ const props = defineProps({
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 
-const { chatsList, getSelectedChatId } = storeToRefs(messagingStore);
+const { chatsList } = storeToRefs(messagingStore);
 const list = computed(() =>
   chatsList.value.filter((chat) => {
     const chatName = chat?.customers_id
@@ -51,12 +51,10 @@ const selectChat = (chat: IChat) => {
   if (window.innerWidth <= 1024) {
     messagingStore.setLeftDrawerOpen(false);
   }
-  if (getSelectedChatId.value !== chat.id) {
-    customerStore.$reset();
-    messagingStore.onSelectChat(chat.id);
-    if (chat.customers_id) {
-      customerStore.fetchCustomer(chat.customers_id);
-    }
+  customerStore.$reset();
+  messagingStore.onSelectChat(chat.id);
+  if (chat.customers_id) {
+    customerStore.fetchCustomer(chat.customers_id);
   }
 };
 </script>
