@@ -9,6 +9,17 @@
       @submit="onSubmit"
     >
       <div class="q-pa-md">
+        <div
+          class="row q-mb-lg ml-auto flex justify-end"
+          v-if="mode === 'show' && (!!getCustomer.id || getContactNumber)"
+        >
+          <q-btn
+            @click="mode = 'edit'"
+            color="primary"
+            label="Edit"
+            class="dark-btn"
+          />
+        </div>
         <div class="row q-mb-lg">
           <div class="col-2">
             <img
@@ -217,7 +228,7 @@ import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
-import useMessagingStore from "src/stores/modules/messaging";
+// import useMessagingStore from "src/stores/modules/messaging";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import {
   transforCustomerGroupPayload,
@@ -244,7 +255,10 @@ type ITagOptions = Option & ITag;
 
 const emit = defineEmits(["submit"]);
 const props = defineProps({
-  mode: String,
+  mode: {
+    type: String,
+    default: "show",
+  },
   showActive: {
     type: Boolean,
     default: true,
@@ -258,9 +272,10 @@ const props = defineProps({
     default: true,
   },
 });
+const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
-const messagingStore = useMessagingStore();
-const { getContactNumber } = storeToRefs(messagingStore);
+// const messagingStore = useMessagingStore();
+// const { getContactNumber } = storeToRefs(messagingStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
@@ -322,6 +337,7 @@ onMounted(async () => {
 });
 
 watch(getCustomer, () => {
+  mode.value = "show";
   firstName.value = getCustomer.value.first_name;
   lastName.value = getCustomer.value.last_name;
   idNumber.value = getCustomer.value.id_number;
@@ -348,9 +364,9 @@ watch(getCustomer, () => {
 });
 
 // Watch Contact number
-watch(getContactNumber, (val: string) => {
-  idNumber.value = val;
-});
+// watch(getContactNumber, (val: string) => {
+//   idNumber.value = val;
+// });
 
 const filter = (val) => {
   console.log(val);

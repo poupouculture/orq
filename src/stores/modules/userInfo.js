@@ -89,6 +89,7 @@ const useUserInfoStore = defineStore("userInfo", {
           return data;
         }
       } catch (err) {
+        this.$reset();
         this.router.push("/login");
       }
     },

@@ -72,7 +72,7 @@
   </q-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { getCustomersWithContacts } from "src/api/customers";
 import BaseTable from "src/components/BaseTable.vue";

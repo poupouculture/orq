@@ -29,12 +29,10 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import ChatPanel from "src/pages/MessageNew/ChatPanel.vue";
-import Message from "src/pages/MessageNew/Message.vue";
-import useMessagingStore from "./messagenew";
-
+import ChatPanel from "./ChatPanel.vue";
+import Message from "./Message.vue";
+import useMessagingStore from "src/stores/modules/messaging";
 const messagingStore = useMessagingStore();
-
 const { rightDrawerOpen, leftDrawerOpen } = storeToRefs(messagingStore);
 </script>
 
