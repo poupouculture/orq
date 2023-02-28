@@ -97,7 +97,13 @@ const assignUser = async (user: User) => {
   const userId = user.user_id;
   try {
     Loading.show();
-    await assignUserHelper(chatId, userId);
+    const { data } = await assignUserHelper(chatId, userId);
+    const members = data.map((item: any) => ({
+      id: item.id,
+      name: `${item.first_name} ${item.last_name}`,
+    }));
+    // update message members
+    messagingStore.setMessageMembers(JSON.stringify(members));
     Notify.create({
       message: `Successful assigned to ${user.first_name} ${user.last_name}`,
       position: "top",

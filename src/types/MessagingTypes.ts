@@ -54,8 +54,7 @@ export interface IState {
   selectedChatId: string;
   leftDrawerOpen: boolean;
   rightDrawerOpen: boolean;
-  messageLoading: boolean;
-  showCustomerInfoMobile: boolean;
+  // showCustomerInfoMobile: boolean;
   cachedChatMessages: CachedChatMessages;
   selectedTab: ChatTypes;
   chatSnapshotMessage: ChatSnapshotMessage;

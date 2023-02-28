@@ -49,6 +49,7 @@ const list = computed(() =>
 
 const selectChat = (chat: IChat) => {
   if (window.innerWidth <= 1024) {
+    // messagingStore.setCustomerInfoMobile(false);
     messagingStore.setLeftDrawerOpen(false);
   }
   customerStore.$reset();

@@ -56,9 +56,9 @@ export const getChatUsers = async () => {
  * @returns
  */
 export const assignUser = async (chatId: string, userId: string) => {
-  const result = await api.post(`/waba/assign-chat-user`, {
+  const { data } = await api.post(`/waba/assign-chat-user`, {
     chat_id: chatId,
     user_id: userId,
   });
-  return result;
+  return data;
 };

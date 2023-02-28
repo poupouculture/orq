@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:!block" :class="[showCustomerInfoMobile ? 'block' : 'hidden']">
+  <div class="lg:!block">
     <div
       v-if="showCustomerInfoMobile"
       @click="closeCustomerInfoMobile()"
@@ -102,14 +102,13 @@ const userInfoStore = useUserInfoStore();
 const userInfo = useUserInfoStore();
 const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
-
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
+const showCustomerInfoMobile: Ref<boolean> = ref(false);
 
-const { showCustomerInfoMobile } = storeToRefs(messagingStore);
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -117,10 +116,10 @@ onMounted(async () => {
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
   firebaseToken.value = getFirebaseToken.value;
+  showCustomerInfoMobile.value = window.innerWidth < 1023;
 });
-// closing customer information in mmobile vview
 const closeCustomerInfoMobile = () => {
-  messagingStore.setCustomerInfoMobile(false);
+  messagingStore.setRightDrawerOpen(true);
 };
 </script>
 

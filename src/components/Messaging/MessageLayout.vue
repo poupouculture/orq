@@ -1,25 +1,31 @@
 <template>
   <q-layout class="message-layout" view="lHr lpR lFr">
-    <q-drawer show-if-above bordered :model-value="leftDrawerOpen" side="left">
+    <q-drawer
+      show-if-above
+      bordered
+      :model-value="leftDrawerOpen"
+      side="left"
+      :width="leftDrawerWidth"
+      @update:model-value="toggleLeftDrawer"
+    >
       <!-- left side -->
       <ChatPanel />
     </q-drawer>
     <q-page-container>
-      <q-page padding>
-        <RouterView v-slot="{ Component }">
-          <Transition name="slide-fade" mode="out-in">
-            <component :is="Component" />
-          </Transition>
-        </RouterView>
-      </q-page>
+      <RouterView v-slot="{ Component }">
+        <Transition name="slide-fade" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
     </q-page-container>
     <q-drawer
-      class="bg-white q-pa-md right-drawer"
       :model-value="rightDrawerOpen"
+      class="bg-white q-pa-md"
       side="right"
-      behavior="desktop"
+      :breakpoint="560"
       bordered
-      :width="450"
+      :width="rightDrawerWidth"
+      @update:model-value="toggleRightDrawer"
     >
       <!-- drawer content -->
       <Message />
@@ -28,29 +34,54 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { storeToRefs } from "pinia";
 import ChatPanel from "./ChatPanel.vue";
 import Message from "./Message.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 const messagingStore = useMessagingStore();
+const leftDrawerWidth = ref(300);
+const rightDrawerWidth = ref(450);
 const { rightDrawerOpen, leftDrawerOpen } = storeToRefs(messagingStore);
+const toggleLeftDrawer = (val: boolean) => {
+  messagingStore.setLeftDrawerOpen(val);
+};
+const toggleRightDrawer = (val: boolean) => {
+  messagingStore.setRightDrawerOpen(val);
+};
+const resetLeftWidth = () => {
+  if (window.innerWidth > 1023) {
+    leftDrawerWidth.value = 300;
+    rightDrawerWidth.value = 450;
+  } else {
+    leftDrawerWidth.value = rightDrawerWidth.value = window.innerWidth - 1;
+  }
+};
+resetLeftWidth();
+
+onMounted(() => {
+  window.addEventListener("resize", resetLeftWidth);
+});
+onBeforeUnmount(() => {
+  removeEventListener("resize", resetLeftWidth);
+});
 </script>
 
 <style lang="scss" scoped>
-.message-layout {
-  :deep(.q-drawer--left) {
-    position: fixed;
-    width: 100% !important;
-    @media screen and (min-width: 1024px) {
-      width: 300px !important;
-    }
-  }
-  :deep(.q-drawer--right) {
-    position: fixed;
-    width: 100% !important;
-    @media screen and (min-width: 1024px) {
-      width: 450px !important;
-    }
-  }
-}
+// .message-layout {
+//   :deep(.q-drawer--left) {
+//     position: fixed;
+//     width: 100% !important;
+//     @media screen and (min-width: 1024px) {
+//       width: 300px !important;
+//     }
+//   }
+//   :deep(.q-drawer--right) {
+//     position: fixed;
+//     width: 100% !important;
+//     @media screen and (min-width: 1024px) {
+//       width: 450px !important;
+//     }
+//   }
+// }
 </style>
