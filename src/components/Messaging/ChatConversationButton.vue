@@ -27,7 +27,7 @@
             <q-item-section>
               <div class="row items-center">
                 <q-avatar size="md">
-                  <!-- <img src="../../assets/images/profileavatar.png" /> -->
+                  <img src="../../assets/images/profileavatar.png" />
                 </q-avatar>
                 <div class="q-ml-md">
                   <div class="text-weight-bold">
@@ -142,6 +142,7 @@ const closeConversation = async () => {
       closeConversationLoading.value = false;
       // if the status: invalid chat id (no associated member)
       // It means chat is not available / deleted
+      Loading.hide();
       Notify.create({
         message: error.response.data,
         type: "negative",

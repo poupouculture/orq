@@ -161,7 +161,7 @@ const routes = [
   },
   {
     path: "/messaging",
-    component: () => import("pages/MessageNew/MessagingLayoutnew.vue"),
+    component: () => import("components/Messaging/MessageLayout.vue"),
     meta: {
       requiresAuth: true,
     },

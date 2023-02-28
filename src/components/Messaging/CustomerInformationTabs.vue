@@ -1,4 +1,5 @@
 <template>
+  {{ customerInformationTab }}
   <q-tabs
     v-model="customerInformationTab"
     dense

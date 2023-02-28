@@ -33,17 +33,17 @@ export default function () {
     const userStore = useUserInfoStore();
     const userInfo = userStore.userInfo;
     if (to.path === "/login" && userInfo?.access_token) {
-      next("/");
+      return next("/");
     }
 
     if (
       to.matched.some((record) => record.meta.requiresAuth) &&
       !userInfo?.access_token
     ) {
-      // need to , because it throw the warn and will be error if in production
-      next("/login");
+      // need to return, because it throw the warn and will be error if in production
+      return next("/login");
     } else {
-      next();
+      return next();
     }
   });
 

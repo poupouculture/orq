@@ -212,15 +212,14 @@
 import { computed, ref, watch, nextTick, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import Swal from "sweetalert2";
 import { format, differenceInDays, isToday } from "date-fns";
-import useMessagingStore from "./messagenew";
+import useMessagingStore from "src/stores/modules/messaging";
 import { getChatName } from "src/utils/trim-word";
 import { updateChatStatus, startNewChat } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import ChatConversationButton from "src/components/Messaging/ChatConversationButton.vue";
-import { Direction } from "./Message";
-import { Product, MessageType } from "src/types/MessagingTypes";
-import Swal from "sweetalert2";
+import ChatConversationButton from "./ChatConversationButton.vue";
+import { Direction, Product, MessageType } from "src/types/MessagingTypes";
 import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
@@ -284,19 +283,25 @@ const messages = computed<Message[]>(() => {
 });
 
 // Watch
-watch(messages, async () => {
+watch(messages, () => {
   scrollToBottom();
 });
 
-watch(getSelectedChat.value, (val) => {
-  const lastMessage = JSON.parse(val?.last_message);
-  const differenceDate: number = differenceInDays(
-    new Date(lastMessage.date_created),
-    new Date()
-  );
-  isChatExpired.value = differenceDate < 0;
-  message.value = "";
-});
+watch(
+  () => getSelectedChat.value,
+  (val) => {
+    const lastMessage = JSON.parse(val?.last_message);
+    if (lastMessage.date_created) {
+      const differenceDate: number = differenceInDays(
+        new Date(lastMessage.date_created),
+        new Date()
+      );
+
+      isChatExpired.value = differenceDate < 0;
+      message.value = "";
+    }
+  }
+);
 
 const scrollToBottom = async () => {
   await nextTick();
@@ -331,7 +336,7 @@ const sendMessage = async () => {
     if (sendLoading.value || message.value.length < 1) return;
     sendLoading.value = true;
     if (messages.value.length > 0) {
-      await messagingStore.sendChatTextMessage({
+      const data = await messagingStore.sendChatTextMessage({
         chatId: getSelectedChatId.value,
         messageProduct: Product.WHATSAPP,
         to: chatNumber.value,
@@ -342,9 +347,17 @@ const sendMessage = async () => {
         language: language.value,
         isIncludedComponent: isIncludeComponent.value,
       });
+
+      if (!data.status) {
+        Notify.create({
+          position: "top",
+          message: data.message,
+          color: "purple",
+        });
+      }
     } else {
       // what this part for ???
-      startNewChat(getCustomer.value.id, message.value);
+      startNewChat(getCustomer.value.id);
       messagingStore.fetchChats();
       messagingStore.setSelectedTab(ChatTypes.ONGOING);
       // emit("newChatCreated", ChatTypes.ONGOING);

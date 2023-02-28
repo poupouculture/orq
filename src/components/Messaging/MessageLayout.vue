@@ -28,9 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import ChatPanel from "src/pages/MessageNew/ChatPanel.vue";
-import Message from "src/pages/MessageNew/Message.vue";
-import useMessagingStore from "./messagenew";
+import ChatPanel from "./ChatPanel.vue";
+import Message from "./Message.vue";
+import useMessagingStore from "src/stores/modules/messaging";
 import { computed } from "vue";
 
 const messagingStore = useMessagingStore();

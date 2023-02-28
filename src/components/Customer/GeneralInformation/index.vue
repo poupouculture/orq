@@ -369,7 +369,7 @@ watch(getContactNumber, (val: string) => {
   idNumber.value = val;
 });
 
-const filter = (val) => {
+const filter = (val: string) => {
   console.log(val);
 };
 
