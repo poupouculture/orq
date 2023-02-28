@@ -3,7 +3,10 @@
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
-      <div class="flex items-center space-x-3" @click="setCustomerInfoMobile">
+      <div
+        class="flex items-center space-x-3"
+        @click="showCustomerInfoInMobile"
+      >
         <q-avatar class="rounded-avatar">
           <img src="https://cdn.quasar.dev/img/avatar.png" />
         </q-avatar>
@@ -189,11 +192,6 @@
         </div>
       </div>
     </footer>
-    <q-inner-loading
-      :showing="messageLoading"
-      label="Please wait..."
-      color="primary"
-    />
   </div>
   <div v-else class="flex flex-col justify-center items-center h-full">
     <img class="" src="~assets/images/startchat.png" />
@@ -249,12 +247,8 @@ const userInfoStore = useUserInfoStore();
 const customerStore = useCustomerStore();
 const { getCustomer } = storeToRefs(customerStore);
 
-const {
-  getSelectedChat,
-  getSelectedChatId,
-  messageLoading,
-  cachedChatMessages,
-} = storeToRefs(messagingStore);
+const { getSelectedChat, getSelectedChatId, cachedChatMessages } =
+  storeToRefs(messagingStore);
 
 const name = computed<string>(() => {
   return getChatName(getSelectedChat.value);
@@ -325,9 +319,10 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const setCustomerInfoMobile = () => {
-  messagingStore.setCustomerInfoMobile(true);
-  messagingStore.setRightDrawerOpen(false);
+const showCustomerInfoInMobile = () => {
+  if (window.innerWidth < 1024) {
+    messagingStore.setRightDrawerOpen(false);
+  }
 };
 
 const sendMessage = async () => {

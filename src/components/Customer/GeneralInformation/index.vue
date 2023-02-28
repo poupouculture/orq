@@ -228,7 +228,7 @@ import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
-// import useMessagingStore from "src/stores/modules/messaging";
+import useMessagingStore from "src/stores/modules/messaging";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import {
   transforCustomerGroupPayload,
@@ -274,8 +274,8 @@ const props = defineProps({
 });
 const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
-// const messagingStore = useMessagingStore();
-// const { getContactNumber } = storeToRefs(messagingStore);
+const messagingStore = useMessagingStore();
+const { getContactNumber } = storeToRefs(messagingStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
