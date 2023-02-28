@@ -152,11 +152,6 @@ const routes = [
         name: "customergroups-internal-group.edit",
         component: () => import("pages/UserGroup/InternalGroup/Edit.vue"),
       },
-      {
-        path: "privacy",
-        name: "privacy",
-        component: () => import("pages/Privacy.vue"),
-      },
     ],
   },
   {
