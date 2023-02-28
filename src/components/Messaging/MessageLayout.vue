@@ -68,20 +68,9 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-// .message-layout {
-//   :deep(.q-drawer--left) {
-//     position: fixed;
-//     width: 100% !important;
-//     @media screen and (min-width: 1024px) {
-//       width: 300px !important;
-//     }
-//   }
-//   :deep(.q-drawer--right) {
-//     position: fixed;
-//     width: 100% !important;
-//     @media screen and (min-width: 1024px) {
-//       width: 450px !important;
-//     }
-//   }
-// }
+.message-layout {
+  :deep(.q-drawer) {
+    position: fixed;
+  }
+}
 </style>
