@@ -17,7 +17,7 @@ import {
 } from "../../types/MessagingTypes";
 import { db, collection, onSnapshot } from "src/boot/firebase";
 
-const useMessagingStore = defineStore("messaging", {
+const useMessagingStore = defineStore("OldMessaging", {
   state: () =>
     ({
       chats: [],

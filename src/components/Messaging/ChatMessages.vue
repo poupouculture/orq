@@ -285,11 +285,13 @@ const isTemplate: Ref<boolean> = ref(false);
 const sendLoading: Ref<boolean> = ref(false);
 const scrollAreaRef = ref<HTMLDivElement>();
 const activeAction: Ref<ActionChat> = ref(null);
+const showCustomerInfoMobile = computed(
+  () => messagingStore.showCustomerInfoMobile
+);
 const {
   getContactNumber,
   getCustomerName,
   getSelectedChat,
-  showCustomerInfoMobile,
   getCachedChatMessages,
 } = storeToRefs(messagingStore);
 const { getCustomer } = storeToRefs(customerStore);
