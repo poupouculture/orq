@@ -48,7 +48,7 @@
         class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
         ref="scrollAreaRef"
       >
-        <div v-for="message in messages" :key="message.id">
+        <div v-for="(message, i) in messages" :key="message.id">
           <div
             v-if="
               message.old_date_created == null ||
@@ -91,7 +91,11 @@
                 <div
                   class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
                 >
-                  <!-- <q-icon name="expand_more" @click="showActionChat(i)" /> -->
+                  <q-icon
+                    name="expand_more"
+                    :id="`chat-action-${i}`"
+                    @click="showActionChat(i)"
+                  />
                 </div>
                 <div class="mx-4">
                   {{ message.content }}
@@ -126,6 +130,13 @@
               </div>
             </div>
           </div>
+        </div>
+        <div
+          v-if="activeAction !== null"
+          class="px-4 py-2 absolute rounded-lg shadow-md top-0 bg-gray-200"
+          :style="`margin-left: ${activeAction.left}px; margin-top: ${activeAction.top}px`"
+        >
+          Reply
         </div>
       </div>
     </main>
@@ -209,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onMounted } from "vue";
+import { computed, ref, watch, nextTick, onMounted, onUpdated } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { format, differenceInDays, isToday } from "date-fns";
@@ -235,6 +246,12 @@ interface Message {
   date_created: string;
 }
 
+interface ActionChat {
+  index: number;
+  top: number | undefined;
+  left: number | undefined;
+}
+
 const scrollAreaRef = ref<HTMLDivElement>();
 const message: Ref<string> = ref("");
 const sendLoading: Ref<boolean> = ref(false);
@@ -244,6 +261,7 @@ const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
+const activeAction: Ref<ActionChat | null> = ref(null);
 
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
@@ -406,7 +424,34 @@ const sendMessageTemplate = (
   sendMessage();
 };
 
+const showActionChat = (index: number) => {
+  if (activeAction.value !== null && activeAction.value?.index === index) {
+    activeAction.value = null;
+  } else {
+    const rec = document
+      ?.getElementById(`chat-action-${index}`)
+      ?.getBoundingClientRect();
+
+    console.log(rec);
+
+    activeAction.value = {
+      index,
+      top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
+      left: rec?.left - 1040,
+    };
+  }
+};
+
+const handleScroll = () => {
+  activeAction.value = null;
+};
+
 onMounted(() => {
   scrollToBottom();
+  scrollAreaRef.value.addEventListener("scroll", handleScroll);
+});
+
+onUpdated(() => {
+  scrollAreaRef.value.addEventListener("scroll", handleScroll);
 });
 </script>

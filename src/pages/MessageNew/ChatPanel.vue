@@ -165,7 +165,7 @@ const Tabs = reactive([
   },
 ]);
 type ChatToggleType = {
-  state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
+  state: typeof ChatToggleLabel[keyof typeof ChatToggleLabel];
 };
 const seachText = ref("");
 const firebaseToken: Ref<string> = ref("");
