@@ -208,7 +208,7 @@ const ChatToggleLabel = {
   },
 } as const;
 type ChatToggleType = {
-  state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
+  state: typeof ChatToggleLabel[keyof typeof ChatToggleLabel];
 };
 
 // Stores
