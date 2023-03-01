@@ -155,7 +155,7 @@
           type="textarea"
           input-class="px-4 py-4 h-10 sm:h-auto"
           class="rounded-xl overflow-hidden"
-          @keydown.enter.prevent="sendMessage"
+          @keypress.enter.prevent="sendMessage"
           :disable="isChatExpired"
         />
         <div class="row justify-end">
