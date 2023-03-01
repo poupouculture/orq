@@ -162,6 +162,7 @@ const Tabs = reactive([
   },
 ]);
 type ChatToggleType = {
+  // eslint-disable-next-line prettier/prettier
   state: typeof ChatToggleLabel[keyof typeof ChatToggleLabel];
 };
 const seachText = ref("");

@@ -159,7 +159,7 @@
           type="textarea"
           input-class="px-4 py-4 h-10 sm:h-auto"
           class="rounded-xl overflow-hidden"
-          @keydown.enter.prevent="sendMessage"
+          @keypress.enter.prevent="sendMessage"
           :disable="isChatExpired"
         />
         <div class="row justify-end">
@@ -394,20 +394,25 @@ const sendMessage = async () => {
 };
 
 const activateChat = async () => {
-  const chatId = getSelectedChat.value.id;
-  const userId: any | null = userInfoStore.getUserProfile;
-  Loading.show();
-  await updateChatStatus(chatId, userId?.id);
-  Notify.create({
-    position: "top",
-    message: "The chat has been taken by you, now you can message the customer",
-    color: "primary",
-    type: "positive",
-  });
-  Loading.hide();
-  messagingStore.setSelectedTab(ChatTypes.ONGOING);
-  messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
-  // emit("newChatCreated", ChatTypes.ONGOING);
+  try {
+    const chatId = getSelectedChat.value.id;
+    const userId: any | null = userInfoStore.getUserProfile;
+    Loading.show();
+    await updateChatStatus(chatId, userId?.id);
+    Notify.create({
+      position: "top",
+      message:
+        "The chat has been taken by you, now you can message the customer",
+      color: "primary",
+      type: "positive",
+    });
+    Loading.hide();
+    messagingStore.setSelectedTab(ChatTypes.ONGOING);
+    messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
+    // emit("newChatCreated", ChatTypes.ONGOING);
+  } catch (e) {
+    Loading.hide();
+  }
 };
 
 const sendMessageTemplate = (

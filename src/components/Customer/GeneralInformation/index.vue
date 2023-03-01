@@ -11,7 +11,7 @@
       <div class="q-pa-md">
         <div
           class="row q-mb-lg ml-auto flex justify-end"
-          v-if="mode === 'show' && (!!getCustomer.id || getContactNumber)"
+          v-if="mode === 'show' && getSelectedChatId"
         >
           <q-btn
             @click="mode = 'edit'"
@@ -275,7 +275,7 @@ const props = defineProps({
 const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
-const { getContactNumber } = storeToRefs(messagingStore);
+const { getSelectedChatId } = storeToRefs(messagingStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },

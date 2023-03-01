@@ -90,7 +90,14 @@ const useUserInfoStore = defineStore("userInfo", {
         }
       } catch (err) {
         this.$reset();
+        LocalStorage.clear();
         this.router.push("/login");
+        Notify.create({
+          message: "login timeout",
+          type: "positive",
+          position: "top",
+          color: "primary",
+        });
       }
     },
     setUserInfo(params) {
