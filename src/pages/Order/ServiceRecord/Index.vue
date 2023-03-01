@@ -43,6 +43,7 @@
       :loading="loading"
       @changePage="changePage"
       :disableSelect="true"
+      :hide-pagination="true"
     >
       <template v-slot:index="props">
         <q-td :props="props">
@@ -101,18 +102,6 @@
           ></q-td
         >
       </template>
-
-      <template v-slot:bottom-row>
-        <div class="placeholder h-24"></div>
-      </template>
-
-      <template v-slot:bottom>
-        <Pagination
-          :total="97"
-          :current="pagination.page"
-          :size="pagination.rowsPerPage"
-        />
-      </template>
     </BaseTable>
     <AddServiceReference
       v-if="showAddServiceReference"
@@ -123,7 +112,6 @@
 </template>
 <script setup>
 import MessageBox from "src/components/MessageBox.vue";
-import Pagination from "src/components/Pagination.vue";
 import useServiceRecordStore from "src/stores/modules/serviceRecord";
 import whatsapp from "src/assets/images/whatsapp.png";
 import instagram from "src/assets/images/instagram.png";
@@ -198,8 +186,10 @@ const show = ref(true),
   rows = computed(() => serviceRecordStore.getItems),
   loading = ref(false),
   pagination = ref({
+    sortBy: "desc",
+    descending: false,
     page: 1,
-    rowsPerPage: 6,
+    rowsPerPage: 10,
     totalCount: 0,
   });
 
@@ -218,17 +208,24 @@ const getChannelImages = (type) => {
 };
 onMounted(async () => {
   loading.value = true;
-  await serviceRecordStore.getAll();
+  await serviceRecordStore.getAll({
+    rowsPerPage: pagination.value.rowsPerPage,
+    page: pagination.value.page,
+  });
   loading.value = false;
 });
 const onSubmit = async () => {
   loading.value = true;
-  await serviceRecordStore.getAll();
+  await serviceRecordStore.getAll({
+    rowsPerPage: pagination.value.rowsPerPage,
+    page: pagination.value.page,
+  });
   loading.value = false;
 };
-const changePage = async () => {
+const changePage = async (page) => {
+  pagination.value.page = page;
   await serviceRecordStore.getAll({
-    limit: pagination.value.rowsPerPage,
+    rowsPerPage: pagination.value.rowsPerPage,
     page: pagination.value.page,
   });
 };

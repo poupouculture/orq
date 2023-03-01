@@ -12,7 +12,7 @@
         <span>Service Record</span>
       </RouterLink>
       <span>/</span>
-      <span>#1</span>
+      <span>#{{ item.reference_number }}</span>
     </div>
     <div class="px-8 py-4 bg-white rounded-2xl">
       <ServiceRecordList />
@@ -22,13 +22,18 @@
 <script setup>
 import ServiceRecordList from "src/components/ServiceReference/ServiceRecordList.vue";
 import useServiceRecordStore from "src/stores/modules/serviceRecord";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { Loading } from "quasar";
 
 const serviceRecordStore = useServiceRecordStore();
+const item = computed(() => serviceRecordStore.getItem);
 const route = useRoute();
 
 onMounted(async () => {
+  Loading.show();
+  await serviceRecordStore.getServiceReference(route.params.id);
   await serviceRecordStore.getServiceRecords(route.params.id);
+  Loading.hide();
 });
 </script>
