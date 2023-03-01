@@ -7,6 +7,8 @@ export const enum Direction {
 export const enum MessageType {
   TEXT = "text",
   TEMPLATE = "template",
+  IMAGE = "image",
+  AUDIO = "audio",
 }
 
 export const enum MessageStatus {
@@ -16,6 +18,13 @@ export const enum MessageStatus {
 
 export const enum Product {
   WHATSAPP = "whatsapp",
+}
+
+export interface Member {
+  id: string;
+  name: string;
+  first_name?: string;
+  last_name?: string;
 }
 export interface IChat {
   id: string;
@@ -128,4 +137,13 @@ export interface ChatPayload {
   keyword: string;
   template_content?: string;
   waba_content: ChatPayloadWabaContent;
+}
+
+export interface Message {
+  id: number;
+  content: any;
+  direction?: string;
+  status: string;
+  old_date_created: string | null;
+  date_created: string;
 }
