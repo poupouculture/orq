@@ -1,5 +1,9 @@
 <template>
-  <div v-if="getSelectedChat?.id" class="h-full w-full flex flex-col">
+  <div
+    v-if="getSelectedChat?.id"
+    class="h-full w-full flex flex-col"
+    id="parentChatList"
+  >
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
@@ -428,12 +432,14 @@ const showActionChat = (index: number) => {
       ?.getElementById(`chat-action-${index}`)
       ?.getBoundingClientRect();
 
-    console.log(rec);
+    const rec2 = document
+      ?.getElementById(`parentChatList`)
+      ?.getBoundingClientRect();
 
     activeAction.value = {
       index,
       top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
-      left: rec?.left - 1040,
+      left: rec?.left - rec2?.left - 30,
     };
   }
 };

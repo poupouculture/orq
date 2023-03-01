@@ -3,37 +3,13 @@
     <p class="header-text">
       <span class="text-gray-400"> Application program </span>
     </p>
-    <div class="row justify-between">
-      <q-input placeholder="Search" outlined dense>
-        <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-      </q-input>
-      <div>
-        <q-btn
-          icon="add"
-          no-caps
-          rounded
-          color="primary"
-          label="Add"
-          class="q-mr-sm"
-          @click="router.push('/application-programs/create')"
-        />
-        <q-btn
-          icon="archive"
-          no-caps
-          rounded
-          label="Archive"
-          @click="archiveSelected"
-        />
-      </div>
-    </div>
     <div class="main-content flex">
       <div class="w-5/12 lg:w-3/12 pr-4">
         <SubmenuFilter
           :menus="subfilters"
           v-if="!loading"
           @changeChildMenu="setChildMenu"
+          @setActiveMenu="setActiveMenu"
         />
       </div>
       <div class="w-7/12 lg:w-9/12 grid grid-cols-1 lg:grid-cols-3 gap-2">
@@ -72,10 +48,7 @@
 </template>
 
 <script setup>
-import {
-  getMessageTemplates,
-  updateMessageTemplate,
-} from "src/api/messageTemplate";
+import { getMessageTemplates } from "src/api/messageTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import useUserInfoStore from "../../stores/modules/userInfo";
@@ -85,7 +58,6 @@ const router = useRouter();
 const userInfo = useUserInfoStore();
 
 const loading = ref(true);
-const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
   totalCount: 0,
@@ -113,19 +85,13 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.total_count;
   loading.value = false;
 };
-// const changePage = (val) => {
-//   data.page = val;
-//   fetchApplicationPrograms();
-// };
-const archiveSelected = () => {
-  selected.value.forEach(async (data) => {
-    data.status = "archive";
-    await updateMessageTemplate(data.id, data);
-  });
-};
 
 const setChildMenu = (value) => {
   childMenus.value = value;
+};
+
+const setActiveMenu = (value) => {
+  console.log("active", value);
 };
 </script>
 <style scoped src="./style.scss" />

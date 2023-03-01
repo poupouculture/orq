@@ -38,6 +38,10 @@ const setActiveMenu = (value) => {
   activeMenu.value = value;
   childMenus.value = formattedMenus.value[value];
   emit("changeChildMenu", childMenus.value);
+  emit(
+    "setActiveMenu",
+    props.menus.filter((menu) => menu.group_by === value)
+  );
 };
 
 const groupBy = function (xs, key) {
