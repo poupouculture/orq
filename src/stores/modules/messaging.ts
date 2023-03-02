@@ -2,9 +2,8 @@ import { defineStore } from "pinia";
 import {
   IState,
   IChat,
-  LastMessage,
+  Message,
   SendTextMessage,
-  MessageStatus,
 } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import {
@@ -65,31 +64,33 @@ const useMessagingStore = defineStore("messaging", {
     setMessageMembers(members: string) {
       this.getSelectedChat.members = members;
     },
-    setChatsLastMessage(chatId: string, lastmessage: LastMessage) {
+    setChatsLastMessage(chatId: string, lastmessage: Message) {
       try {
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
+        const cachedMessage = this.cachedChatMessages[chatId].find(
+          (item) => item.id === lastmessage.last_message_id
+        );
+        if (cachedMessage) return;
         if (index !== -1) {
-          const cachedMessage = this.cachedChatMessages[chatId];
-          if (cachedMessage?.length) {
-            const [lastCachedMessage] = cachedMessage.slice(-1);
-            if (
-              lastmessage.last_message_id &&
-              lastmessage.last_message_id <= lastCachedMessage.id
-            ) {
-              return;
-            }
-          }
+          // const cachedMessage = this.cachedChatMessages[chatId];
+          // if (cachedMessage?.length) {
+          //   const [lastCachedMessage] = cachedMessage.slice(-1);
+          //   if (
+          //     lastmessage.last_message_id &&
+          //     lastmessage.last_message_id <= lastCachedMessage.id
+          //   ) {
+          //     return;
+          //   }
+          // }
           const [chat] = this.chatsList.splice(index, 1);
           if (chat.last_message)
-            if (lastmessage.status === MessageStatus.RECEIVE) {
+            if (this.selectedChatId !== chatId) {
               // only receivede message should plus totalUnread;
-              if (this.selectedChatId !== chatId) {
-                chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
-              } else {
-                chat.totalUnread = 0;
-              }
+              chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
+            } else {
+              chat.totalUnread = 0;
             }
 
           chat.last_message = JSON.stringify(lastmessage);
@@ -137,7 +138,14 @@ const useMessagingStore = defineStore("messaging", {
         const cachedChatMessage = this.cachedChatMessages[chatId];
         if (!cachedChatMessage) {
           const messages = await getChatMessagesByChatId(chatId);
-          this.cachedChatMessages[chatId] = messages;
+          this.cachedChatMessages[chatId] = messages.map((item: any) => ({
+            id: item.id,
+            content: item.content,
+            status: item.status,
+            type: item.type,
+            direction: item.direction,
+            date_created: item.date_created,
+          }));
         }
         Loading.hide();
       } catch (e) {

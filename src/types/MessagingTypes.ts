@@ -38,20 +38,40 @@ export interface IChat {
   status: ChatTypes;
   totalUnread?: number;
 }
-export interface IMessage {
+// export interface IMessage {
+//   id: number;
+//   chat_id: string;
+//   status: string;
+//   date_created: string;
+//   date_updated?: string;
+//   type: string;
+//   content: string;
+//   channel?: string;
+//   direction?: Direction;
+// }
+
+export enum SendMessageStatus {
+  DEFAULT = "",
+  PENDING = "pending",
+  FAILURE = "failure",
+  SUCCESS = "success",
+}
+
+export interface Message {
   id: number;
-  chat_id: string;
-  status: string;
+  content: any;
+  direction?: string;
+  status: MessageStatus;
+  old_date_created?: string | null;
   date_created: string;
-  date_updated?: string;
-  type: string;
-  content: string;
-  channel?: string;
-  direction?: Direction;
+  type?: MessageType;
+  sendMessageStatus?: SendMessageStatus;
+  totalUnread?: number;
+  last_message_id?: number;
 }
 
 export interface CachedChatMessages {
-  [key: string]: IMessage[];
+  [key: string]: Message[];
 }
 
 export interface ChatSnapshotMessage {
@@ -84,7 +104,7 @@ export interface SendTextMessage {
 
 export interface LastMessage {
   id: number;
-  chat_id: string;
+  // chat_id: string;
   status: MessageStatus;
   direction: Direction;
   content: string;
@@ -94,9 +114,9 @@ export interface LastMessage {
   last_message_id?: number;
 }
 
-export interface IChatMessageCacheItem extends IMessage {
-  chatId: string;
-}
+// export interface IChatMessageCacheItem extends IMessage {
+//   chatId: string;
+// }
 
 export interface ChatPayloadWabaContentText {
   preview_url: boolean;
@@ -137,13 +157,4 @@ export interface ChatPayload {
   keyword: string;
   template_content?: string;
   waba_content: ChatPayloadWabaContent;
-}
-
-export interface Message {
-  id: number;
-  content: any;
-  direction?: string;
-  status: string;
-  old_date_created: string | null;
-  date_created: string;
 }
