@@ -81,7 +81,7 @@
     </q-tabs>
     <q-separator class="mt-2" size="2px" inset />
     <!-- chatlist part -->
-    <q-tab-panels class="h-full" v-model="selectedTab" animated>
+    <q-tab-panels class="h-full" v-model="selectedTab" animated swipeable>
       <q-tab-panel
         class="overflow-x-hidden"
         v-for="tab in Tabs"

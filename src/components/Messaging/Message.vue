@@ -343,8 +343,8 @@ const scrollToBottom = async () => {
 };
 
 const closeChat = async () => {
+  messagingStore.setSelectedChatId("");
   messagingStore.setLeftDrawerOpen(true);
-  messagingStore.setRightDrawerOpen(false);
 };
 
 const initialName = (name: string) => {

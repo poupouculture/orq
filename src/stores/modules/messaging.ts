@@ -19,8 +19,8 @@ const useMessagingStore = defineStore("messaging", {
       chatsList: [],
       selectedChatId: "",
       leftDrawerOpen: true,
-      rightDrawerOpen: false,
-      // showCustomerInfoMobile: false,
+      rightDrawerOpen: true,
+      showCustomerInfoMobile: false,
       selectedTab: ChatTypes.PENDING,
       chatSnapshotMessage: {},
       cachedChatMessages: {},
@@ -30,6 +30,7 @@ const useMessagingStore = defineStore("messaging", {
     getChatsList: (state) => state.chatsList,
     getSelectedChatId: (state) => state.selectedChatId,
     getChatSnapshotMessage: (state) => state.chatSnapshotMessage,
+    getContactNumber: (state) => state.contactNumber,
     getSelectedChat: (state) => {
       return state.chatsList.find(
         (chat: IChat) => chat.id === state.selectedChatId
@@ -101,9 +102,9 @@ const useMessagingStore = defineStore("messaging", {
         console.log(error);
       }
     },
-    // setCustomerInfoMobile(value: boolean) {
-    //   this.showCustomerInfoMobile = value;
-    // },
+    setCustomerInfoMobile(value: boolean) {
+      this.showCustomerInfoMobile = value;
+    },
     cleanTotalUnread() {
       const chat = this.chatsList.find(
         (chat: IChat) => chat.id === this.selectedChatId
