@@ -85,8 +85,6 @@ function recStop() {
         (window.URL || window.webkitURL).createObjectURL(blob),
         "时长:" + duration + "ms"
       );
-      rec.value.close(); // 释放录音资源，当然可以不释放，后面可以连续调用start；但不释放时系统或浏览器会一直提示在录音，最佳操作是录完就close掉
-      rec.value = null;
 
       // 已经拿到blob文件对象想干嘛就干嘛：立即播放、上传
 
@@ -104,6 +102,11 @@ function recStop() {
       rec.value = null;
     }
   );
+}
+
+function recClose() {
+  rec.value.close(); // 释放录音资源，当然可以不释放，后面可以连续调用start；但不释放时系统或浏览器会一直提示在录音，最佳操作是录完就close掉
+  rec.value = null;
 }
 recOpen();
 
@@ -134,4 +137,5 @@ export default {
   recOpen,
   recStart,
   recStop,
+  recClose,
 };
