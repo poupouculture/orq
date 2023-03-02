@@ -2,11 +2,25 @@ import { api } from "src/boot/axios";
 import { IUserTransform } from "src/types/TransformObjectType";
 import { userCreate } from "src/utils/transform-object";
 
-export const getInternalGroups = async ({ limit = 10, page = 1 }) => {
+export const searchInternalGroups = async (query: string) => {
+  const data = await api.get("/items/user_groups", {
+    params: {
+      search: query,
+    },
+  });
+  return data;
+};
+
+export const getInternalGroups = async ({
+  limit = 10,
+  page = 1,
+  search = undefined,
+}) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const internalGroups = await api.get("/items/user_groups", {
     params: {
       limit,
+      search,
       offset,
       fields:
         "id, name, status, users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name",

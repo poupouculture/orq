@@ -23,13 +23,14 @@ const useInternalGroupStore = defineStore("internalGroup", {
     getInternalGroups: (state) => state.items,
   },
   actions: {
-    async getAll(rowsPerPage = 4, page = 1) {
+    async getAll({ rowsPerPage = 4, page = 1, search = undefined }) {
       try {
         const {
           data: { data: internalGroups, meta },
         } = await getInternalGroups({
           limit: rowsPerPage,
           page,
+          search,
         });
         this.items = internalGroups.filter((item) => item !== null);
         this.meta = {

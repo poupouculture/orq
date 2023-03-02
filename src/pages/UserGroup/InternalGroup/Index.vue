@@ -13,13 +13,29 @@
           bg-color="transparent"
           outlined
           dense
+          :debounce="600"
           class="border-gray-400"
+          v-model="query"
+          @update:model-value="searchHandler()"
         >
           <template v-slot:prepend>
             <q-icon name="search" class="text-gray-400" />
           </template>
           <template v-slot:append>
-            <q-icon name="filter_list" class="text-gray-400" />
+            <q-circular-progress
+              v-if="searchLoading"
+              indeterminate
+              rounded
+              size="18px"
+              color="gray-1"
+            />
+            <q-icon
+              v-else-if="query"
+              name="close"
+              class="text-gray-400 cursor-pointer"
+              @click="resetSearch()"
+            />
+            <q-icon v-else name="filter_list" class="text-gray-400" />
           </template>
         </q-input>
       </div>
@@ -37,78 +53,94 @@
       <q-circular-progress indeterminate rounded size="30px" color="primary" />
     </div>
     <div v-else>
-      <div class="grid lg:grid-cols-4 gap-4">
-        <!-- Projects -->
-        <div
-          class="flex flex-col gap-y-2"
-          v-for="group in internalGroup"
-          :key="group.id"
-        >
+      <template v-if="internalGroup.length">
+        <div class="grid lg:grid-cols-4 gap-4">
+          <!-- Projects -->
           <div
-            class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
+            class="flex flex-col gap-y-2"
+            v-for="group in internalGroup"
+            :key="group.id"
           >
             <div
-              class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
+              class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
             >
-              <div
-                class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
-              >
-                {{ group.name }}
-              </div>
-              <div class="truncate">
-                <div class="truncate">{{ group.name }}</div>
-                <p class="text-gray-400">{{ group.users.length }} Members</p>
-              </div>
-            </div>
-            <ButtonGroupMenu class="w-2/12 grow-0 justify-end" :id="group.id" />
-          </div>
-          <!-- customers -->
-          <div
-            class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
-            v-for="({ directus_users_id }, i) in group.users.filter(
-              (item) => item.directus_users_id !== null
-            )"
-            :key="i"
-          >
-            <template v-if="directus_users_id">
               <div
                 class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
               >
-                <!-- for while set image default -->
-                <img
-                  :src="
-                    directus_users_id.avatar ||
-                    'http://localhost:9000/src/assets/images/profileavatar.png'
-                  "
-                  class="w-10 h-10 rounded-full mx-3"
-                />
+                <div
+                  class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
+                >
+                  {{ group.name }}
+                </div>
                 <div class="truncate">
-                  <div class="relative truncate">
-                    {{ directus_users_id.first_name }}
-                    {{ directus_users_id.last_name }}
-                  </div>
-                  <div class="text-gray-400 cursor-pointer truncate">
-                    {{ directus_users_id.role?.name }}
-                  </div>
+                  <div class="truncate">{{ group.name }}</div>
+                  <p class="text-gray-400">{{ group.users.length }} Members</p>
                 </div>
               </div>
-              <div class="flex items-center">
-                <ButtonUserMenu
-                  :id="group.id"
-                  :user-id="directus_users_id.id"
-                />
-              </div>
-            </template>
+              <ButtonGroupMenu
+                class="w-2/12 grow-0 justify-end"
+                :id="group.id"
+              />
+            </div>
+            <!-- customers -->
+            <div
+              class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
+              v-for="({ directus_users_id }, i) in group.users.filter(
+                (item) => item.directus_users_id !== null
+              )"
+              :key="i"
+            >
+              <template v-if="directus_users_id">
+                <div
+                  class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
+                >
+                  <!-- for while set image default -->
+                  <img
+                    :src="
+                      directus_users_id.avatar ||
+                      'http://localhost:9000/src/assets/images/profileavatar.png'
+                    "
+                    class="w-10 h-10 rounded-full mx-3"
+                  />
+                  <div class="truncate">
+                    <div class="relative truncate">
+                      {{ directus_users_id.first_name }}
+                      {{ directus_users_id.last_name }}
+                    </div>
+                    <div class="text-gray-400 cursor-pointer truncate">
+                      {{ directus_users_id.role?.name }}
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <ButtonUserMenu
+                    :id="group.id"
+                    :user-id="directus_users_id.id"
+                  />
+                </div>
+              </template>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="flex items-center justify-center mt-20">
-        <BasePagination
-          :max="totalPage()"
-          :max-pages="10"
-          @update-model="changePage"
-          v-model="pagination.page"
-        />
+        <div class="flex items-center justify-center mt-20">
+          <BasePagination
+            :max="totalPage()"
+            :max-pages="10"
+            @update-model="changePage"
+            v-model="pagination.page"
+          />
+        </div>
+      </template>
+      <div v-else class="text-center text-gray-700">
+        <div class="text-lg">No data found</div>
+        <template v-if="query">
+          <div class="text-gray-500 mb-2">
+            Adjust or clear search filters to see results.
+          </div>
+          <q-btn @click="resetSearch()" color="primary" size="sm"
+            >Clear filter</q-btn
+          >
+        </template>
       </div>
     </div>
   </div>
@@ -121,6 +153,8 @@ import useInternalGroupStore from "src/stores/modules/internalGroup";
 import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
 
 const internalGroupStore = useInternalGroupStore();
+const query = ref("");
+const searchLoading = ref(false);
 const loading = ref(false);
 const internalGroup = computed(() => internalGroupStore.items);
 const meta = computed(() => internalGroupStore.meta);
@@ -130,17 +164,44 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 4,
 });
+
+const searchHandler = async () => {
+  searchLoading.value = true;
+  try {
+    await internalGroupStore.getAll({
+      rowsPerPage: 4,
+      page: 1,
+      search: query.value.length ? query.value : undefined,
+    });
+    searchLoading.value = false;
+  } catch (error) {
+    searchLoading.value = false;
+  }
+};
+
+const resetSearch = () => {
+  query.value = "";
+  searchHandler();
+};
+
 const totalPage = () => {
-  return Math.ceil(meta.value.total_count / pagination.rowsPerPage);
+  return Math.ceil(meta.value.filter_count / pagination.rowsPerPage);
 };
 const changePage = (val) => {
   pagination.page = val;
-  internalGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+  internalGroupStore.getAll({
+    rowsPerPage: pagination.rowsPerPage,
+    page: pagination.page,
+    search: query.value.length ? query.value : undefined,
+  });
   internalGroupStore.setMeta({ ...pagination });
 };
 onMounted(async () => {
   loading.value = true;
-  await internalGroupStore.getAll(pagination.rowsPerPage, pagination.page);
+  await internalGroupStore.getAll({
+    rowsPerPage: pagination.rowsPerPage,
+    page: pagination.page,
+  });
   loading.value = false;
 });
 </script>
