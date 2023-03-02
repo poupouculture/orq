@@ -199,7 +199,7 @@
             icon="mic"
             size="md"
             class="q-mt-md active:bg-primary"
-            @mousedown="Recorder.play"
+            @mousedown="Recorder.recStart"
             @mouseup="Recorder.recStop"
           />
 
@@ -242,7 +242,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onMounted, onUpdated } from "vue";
+import {
+  computed,
+  ref,
+  watch,
+  nextTick,
+  onMounted,
+  onUpdated,
+  onBeforeUnmount,
+} from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
@@ -516,5 +524,9 @@ onMounted(() => {
 
 onUpdated(() => {
   scrollAreaRef.value.addEventListener("scroll", handleScroll);
+});
+
+onBeforeUnmount(() => {
+  Recorder.recClose();
 });
 </script>
