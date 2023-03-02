@@ -16,17 +16,22 @@ export const getInternalGroups = async ({ limit = 10, page = 1 }) => {
   return internalGroups;
 };
 
-export const getInternalGroup = async (id: number | string) => {
+export const getInternalGroup = async (id: string) => {
+  const users =
+    "users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name. users.user_groups_id.*";
+  const customerGroups = "customer_groups.*, customer_groups.*.*";
   const internalGroups = await api.get("/items/user_groups/" + id, {
     params: {
-      fields:
-        "id, name, status, type, users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name. users.user_groups_id.*, customer_groups.*",
+      fields: `id, name, status, type, ${customerGroups}, ${users}`,
     },
   });
   return internalGroups;
 };
 
-export const getUsersFilter = async ({ limit = 10, page = 1 }, id: string) => {
+export const getUsersFilter = async (
+  { limit = 10, page = 1 },
+  ids: string[]
+) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const fields = `id, first_name, last_name, gender, date_created, position, role.name`;
 
@@ -34,8 +39,7 @@ export const getUsersFilter = async ({ limit = 10, page = 1 }, id: string) => {
     params: {
       limit,
       offset,
-      "filter[_and][0][$FOLLOW(user_groups_directus_users,directus_users_id)][_none][user_groups_id][_eq]":
-        id,
+      "filter[_and][0][id][_nin]": ids.join(),
       "filter[_or][0][role][name][_in]": "CS,CS-Manager",
       fields,
       meta: "*",

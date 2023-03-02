@@ -38,7 +38,7 @@
 </template>
 <script setup>
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { getUsersFilter } from "src/api/InternalGroup";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
 import { Loading } from "quasar";
@@ -51,6 +51,9 @@ const deleteDialog = ref(false);
 const openAddUser = ref(false);
 const usersData = ref([]);
 const internalGroupStore = useInternalGroupStore();
+const item = computed(() =>
+  internalGroupStore.items.find((item) => item.id === props.id)
+);
 
 const toggleAddUser = async () => {
   if (!openAddUser.value) {
@@ -64,21 +67,23 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 10,
   totalCount: 0,
+  filterCount: 0,
 });
 const fetchUsers = async () => {
   Loading.show();
   const {
-    data: { data: customers, meta },
+    data: { data: users, meta },
   } = await getUsersFilter(
     {
       limit: pagination.rowsPerPage,
       page: pagination.page,
     },
-    props.id
+    item.value.users.map((user) => user.directus_users_id.id)
   );
   Loading.hide();
-  usersData.value = customers;
+  usersData.value = users;
   pagination.totalCount = meta?.total_count;
+  pagination.filterCount = meta?.filter_count;
 };
 
 const submitAddUser = async (val) => {
@@ -86,7 +91,7 @@ const submitAddUser = async (val) => {
   if (val && val.length) {
     internalGroupStore.addUsers({
       id: props.id,
-      users: val,
+      users: val.map((item) => item.id),
     });
   }
 };

@@ -9,7 +9,7 @@
               <q-checkbox
                 size="xs"
                 v-model="selectAllUser"
-                :val="data.map((d) => d.id)"
+                :val="data"
                 class="text-[#9A9AAF]"
               />
             </th>
@@ -29,7 +29,7 @@
               <q-checkbox
                 size="xs"
                 v-model="selectedUser"
-                :val="user.id"
+                :val="user"
                 class="text-[#9A9AAF]"
               />
             </td>
@@ -61,6 +61,7 @@
         @update-model="changePage"
         :max="totalPage()"
         :max-pages="10"
+        v-model="pagination.page"
       />
     </div>
   </RightToLeft>
@@ -73,12 +74,11 @@ import RightToLeft from "src/components/Overlay/RightToLeft.vue";
 const props = defineProps({
   data: Array,
   pagination: Object,
-  selectedData: Array,
 });
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
 const emits = defineEmits(["submit", "changePage", "close"]);
-const selectedUser = ref(props.selectedData || []);
+const selectedUser = ref([]);
 
 const selectAllUser = computed({
   get: () =>
@@ -87,7 +87,7 @@ const selectAllUser = computed({
     const selected = [];
     if (value) {
       data.value.forEach(function (user) {
-        selected.push(user.id);
+        selected.push(user);
       });
     }
     selectedUser.value = selected;
@@ -97,12 +97,12 @@ const selectAllUser = computed({
 const getPaginationLabel = () => {
   const max = pagination.value.page * pagination.value.rowsPerPage;
   const maxIndex =
-    pagination.value.totalCount < max ? pagination.value.totalCount : max;
+    pagination.value.filterCount < max ? pagination.value.filterCount : max;
   const minIndex =
     pagination.value.rowsPerPage * (pagination.value.page - 1) + 1;
 
   return `Showing ${minIndex} to ${maxIndex} of
-  ${pagination.value.totalCount} results`;
+  ${pagination.value.filterCount} results`;
 };
 
 const submit = () => {
@@ -115,6 +115,6 @@ const changePage = (val) => {
   emits("changePage", val);
 };
 const totalPage = () => {
-  return Math.ceil(pagination.value.totalCount / pagination.value.rowsPerPage);
+  return Math.ceil(pagination.value.filterCount / pagination.value.rowsPerPage);
 };
 </script>

@@ -24,24 +24,34 @@ const useInternalGroupStore = defineStore("internalGroup", {
   },
   actions: {
     async getAll(rowsPerPage = 4, page = 1) {
-      const {
-        data: { data: internalGroups, meta },
-      } = await getInternalGroups({
-        limit: rowsPerPage,
-        page,
-      });
-      this.items = internalGroups;
-      this.meta = {
-        ...this.meta,
-        total_count: meta?.total_count,
-        filter_count: meta?.filter_count,
-      };
+      try {
+        const {
+          data: { data: internalGroups, meta },
+        } = await getInternalGroups({
+          limit: rowsPerPage,
+          page,
+        });
+        this.items = internalGroups.filter((item) => item !== null);
+        this.meta = {
+          ...this.meta,
+          total_count: meta?.total_count,
+          filter_count: meta?.filter_count,
+        };
+        return;
+      } catch (error) {
+        console.log(error);
+      }
     },
     async get(id) {
       const {
         data: { data: internalGroups },
       } = await getInternalGroup(id);
-      this.item = internalGroups;
+      this.item = {
+        ...internalGroups,
+        customer_groups: internalGroups.customer_groups.filter(
+          (item) => item.customer_groups_id
+        ),
+      };
     },
     async delete(id) {
       Loading.show();
@@ -51,6 +61,9 @@ const useInternalGroupStore = defineStore("internalGroup", {
         Loading.hide();
         Notify.create({
           message: "User Group successfully deleted!",
+          type: "positive",
+          color: "primary",
+          position: "top",
         });
         this.getAll(this.meta.rowsPerPage, this.meta.page);
       } catch (error) {
@@ -67,6 +80,9 @@ const useInternalGroupStore = defineStore("internalGroup", {
         Loading.hide();
         Notify.create({
           message: "User successfully added!",
+          type: "positive",
+          color: "primary",
+          position: "top",
         });
         this.getAll();
       } catch (error) {}
@@ -78,6 +94,9 @@ const useInternalGroupStore = defineStore("internalGroup", {
         await deleteUserFromInternalGroup(payload);
         Notify.create({
           message: "User successfully deleted!",
+          type: "positive",
+          color: "primary",
+          position: "top",
         });
         Loading.hide();
         this.getAll(this.meta.rowsPerPage, this.meta.page);

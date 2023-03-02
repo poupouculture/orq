@@ -65,12 +65,11 @@ import RightToLeft from "src/components/Overlay/RightToLeft.vue";
 const props = defineProps({
   data: Array,
   pagination: Object,
-  selectedData: Array,
 });
 const emits = defineEmits(["submit", "changePage", "close"]);
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
-const selectedUser = ref(props.selectedData || []);
+const selectedUser = ref([]);
 const selectAllUser = computed({
   get: () =>
     data.value.length ? selectedUser.value.length === data.value.length : false,
