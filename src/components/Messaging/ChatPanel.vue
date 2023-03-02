@@ -10,17 +10,16 @@
         <template v-slot:append>
           <q-icon name="reorder" class="cursor-pointer" />
         </template>
+        <template v-slot:after>
+          <q-btn
+            unelevated
+            color="primary"
+            :icon="chatToggleLabel.state.icon"
+            @click="fetchCustomers"
+          >
+          </q-btn>
+        </template>
       </q-input>
-      <q-btn
-        unelevated
-        color="primary"
-        class="full-width q-mt-md"
-        :label="chatToggleLabel.state.label"
-        :icon="chatToggleLabel.state.icon"
-        @click="fetchCustomers"
-        dense
-      >
-      </q-btn>
       <!-- what is this piece for ???  -->
       <!-- <q-virtual-scroll
         v-if="chatToggleLabel.state.icon === ChatToggleLabel.HIDE.icon"
