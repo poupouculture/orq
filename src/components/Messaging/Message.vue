@@ -199,7 +199,7 @@
             icon="mic"
             size="md"
             class="q-mt-md active:bg-primary"
-            @mousedown="Recorder.play"
+            @mousedown="Recorder.recStart"
             @mouseup="Recorder.recStop"
           />
 

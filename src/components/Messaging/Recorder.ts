@@ -105,15 +105,7 @@ function recStop() {
     }
   );
 }
-
-function play() {
-  if (rec.value) {
-    recStart();
-    // recOpen();
-  } else {
-    recOpen(recStart);
-  }
-}
+recOpen();
 
 // 我们可以选择性的弹一个对话框：为了防止移动端浏览器存在第三种情况：用户忽略，并且（或者国产系统UC系）浏览器没有任何回调
 /* 伪代码：
@@ -142,5 +134,4 @@ export default {
   recOpen,
   recStart,
   recStop,
-  play,
 };
