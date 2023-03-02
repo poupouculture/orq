@@ -87,12 +87,11 @@ import RightToLeft from "src/components/Overlay/RightToLeft.vue";
 const props = defineProps({
   data: Array,
   pagination: Object,
-  selectedData: Array,
 });
 const emits = defineEmits(["submit", "changePage", "close"]);
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
-const selectedCustomer = ref(props.selectedData || []);
+const selectedCustomer = ref([]);
 const selectAllCustomer = computed({
   get: () =>
     data.value.length

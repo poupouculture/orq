@@ -118,7 +118,9 @@ onMounted(async () => {
   firebaseToken.value = getFirebaseToken.value;
   showCustomerInfoMobile.value = window.innerWidth < 1023;
 });
+// closing customer information in mobile view
 const closeCustomerInfoMobile = () => {
+  messagingStore.setCustomerInfoMobile(false);
   messagingStore.setRightDrawerOpen(true);
 };
 </script>

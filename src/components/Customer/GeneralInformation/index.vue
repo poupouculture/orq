@@ -221,7 +221,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, reactive } from "vue";
+import { onMounted, ref, watch, reactive, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
@@ -275,6 +275,7 @@ const props = defineProps({
 const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const getContactNumber = computed(() => messagingStore.getContactNumber);
 const { getSelectedChatId } = storeToRefs(messagingStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
@@ -364,11 +365,12 @@ watch(getCustomer, () => {
 });
 
 // Watch Contact number
-// watch(getContactNumber, (val: string) => {
-//   idNumber.value = val;
-// });
+watch(getContactNumber, (val: string) => {
+  customerForm.value?.resetValidation();
+  idNumber.value = val;
+});
 
-const filter = (val) => {
+const filter = (val: string) => {
   console.log(val);
 };
 
