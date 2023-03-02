@@ -1,110 +1,105 @@
 <template>
-  <div
-    class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end overflow-y-hidden"
-    @click="close()"
-  >
-    <div
-      class="w-full lg:w-8/12 h-full bg-white px-6 lg:px-12 py-6 lg:py-8 overflow-y-scroll"
-      @click.stop
-    >
-      <q-form ref="formInput">
-        <div class="row q-gutter-xl">
-          <div class="col">
-            <p class="label-style mb-1">
-              Company name <span class="text-red-600">*</span>
-            </p>
-            <q-input
-              v-model="form.company_name"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style mb-1">
-              Customer <span class="text-red-600">*</span>
-            </p>
-            <q-select
-              v-model="form.customer"
-              :options="customerOptionsFilter"
-              use-input
-              :rules="[(val) => required(val)]"
-              @filter="filterCustomer"
-              :input-debounce="700"
-              outlined
-              lazy-rules
-              dense
-              map-options
-            />
+  <right-to-left @submit="submit" @close="close">
+    <template #header-search>
+      <div></div>
+    </template>
+    <q-form ref="formInput" class="px-2">
+      <div class="row q-gutter-xl">
+        <div class="col">
+          <p class="label-style mb-1">
+            Company name <span class="text-red-600">*</span>
+          </p>
+          <q-input
+            v-model="form.company_name"
+            :rules="[(val) => required(val)]"
+            outlined
+            lazy-rules
+            dense
+          />
+        </div>
+        <div class="col">
+          <p class="label-style mb-1">
+            Customer <span class="text-red-600">*</span>
+          </p>
+          <q-select
+            v-model="form.customer"
+            :options="customerOptionsFilter"
+            use-input
+            :rules="[(val) => required(val)]"
+            @filter="filterCustomer"
+            :input-debounce="700"
+            outlined
+            lazy-rules
+            dense
+            map-options
+          />
+        </div>
+      </div>
+      <div class="row q-gutter-xl">
+        <div class="col">
+          <p class="label-style mb-1">
+            Agent <span class="text-red-600">*</span>
+          </p>
+          <q-select
+            v-model="form.employee"
+            :options="agentOptionsFilter"
+            use-input
+            :rules="[(val) => required(val)]"
+            @filter="filterAgent"
+            :input-debounce="700"
+            outlined
+            lazy-rules
+            dense
+            map-options
+          />
+        </div>
+        <div class="col">
+          <p class="label-style mb-1">
+            Channel <span class="text-red-600">*</span>
+          </p>
+          <q-select
+            v-model="form.channel"
+            :options="channelOptions"
+            :rules="[(val) => required(val)]"
+            outlined
+            lazy-rules
+            dense
+          />
+        </div>
+      </div>
+      <div class="row q-gutter-xl">
+        <div class="col-5">
+          <p class="label-style mb-1">
+            Session number <span class="text-red-600">*</span>
+          </p>
+          <q-input
+            v-model="form.reference_number"
+            :rules="[(val) => required(val)]"
+            outlined
+            lazy-rules
+            dense
+          />
+        </div>
+      </div>
+      <!-- Button Action -->
+      <div class="row q-mb-lg q-gutter-xl q-mt-lg">
+        <div class="col flex">
+          <div class="btn-dotted" @click="close()">
+            <p>Return</p>
           </div>
         </div>
-        <div class="row q-gutter-xl">
-          <div class="col">
-            <p class="label-style mb-1">
-              Agent <span class="text-red-600">*</span>
-            </p>
-            <q-select
-              v-model="form.employee"
-              :options="agentOptionsFilter"
-              use-input
-              :rules="[(val) => required(val)]"
-              @filter="filterAgent"
-              :input-debounce="700"
-              outlined
-              lazy-rules
-              dense
-              map-options
-            />
-          </div>
-          <div class="col">
-            <p class="label-style mb-1">
-              Channel <span class="text-red-600">*</span>
-            </p>
-            <q-select
-              v-model="form.channel"
-              :options="channelOptions"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              dense
-            />
-          </div>
+        <div class="col flex justify-end">
+          <q-btn
+            :loading="form.loading"
+            color="primary"
+            label="Save"
+            class="dark-btn"
+            @click="submit()"
+          />
         </div>
-        <div class="row q-gutter-xl">
-          <div class="col-5">
-            <p class="label-style mb-1">
-              Session number <span class="text-red-600">*</span>
-            </p>
-            <q-input
-              v-model="form.reference_number"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              dense
-            />
-          </div>
-        </div>
-        <!-- Button Action -->
-        <div class="row q-mb-lg q-gutter-xl q-mt-lg">
-          <div class="col flex">
-            <div class="btn-dotted" @click="close()">
-              <p>Return</p>
-            </div>
-          </div>
-          <div class="col flex justify-end">
-            <q-btn
-              :loading="form.loading"
-              color="primary"
-              label="Save"
-              class="dark-btn"
-              @click="onSubmit()"
-            />
-          </div>
-        </div>
-      </q-form>
-    </div>
-  </div>
+      </div>
+    </q-form>
+  </right-to-left>
 </template>
 <script setup>
 import { reactive, ref } from "vue";
@@ -112,6 +107,7 @@ import { required } from "src/utils/validation-rules.ts";
 import { api } from "src/boot/axios";
 import { addServiceReference } from "src/api/serviceRecord";
 import { Loading, Notify } from "quasar";
+import RightToLeft from "../Overlay/RightToLeft.vue";
 
 const formInput = ref();
 // would be separate to utility file
@@ -129,7 +125,7 @@ const form = reactive({
   loading: false,
 });
 const emits = defineEmits(["close", "submit"]);
-const onSubmit = async () => {
+const submit = async () => {
   const validate = await formInput.value.validate();
   if (!validate) return;
   Loading.show();

@@ -1,5 +1,4 @@
 <template>
-  {{ customerInformationTab }}
   <q-tabs
     v-model="customerInformationTab"
     dense
@@ -42,7 +41,7 @@ import GeneralInformation from "src/components/Customer/GeneralInformation/index
 import ServiceRecord from "../Customer/ServiceRecord.vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import useMessagingStore from "src/pages/MessageNew/messagenew";
+import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
 import { ref } from "vue";
 import type { Ref } from "vue";

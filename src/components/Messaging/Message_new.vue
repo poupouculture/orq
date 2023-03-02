@@ -37,7 +37,7 @@
         v-for="(member, index) of members.slice(0, 3)"
         :key="index"
       >
-        {{ initialName(member?.name) }}
+        {{ initialName(member.name) }}
       </div>
       <div
         class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
@@ -55,90 +55,38 @@
         class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
         ref="scrollAreaRef"
       >
-        <div v-for="(message, i) in messages" :key="message.id">
-          <div
-            v-if="
-              message.old_date_created == null ||
-              differenceInDays(
-                new Date(message.date_created),
-                new Date(message.old_date_created)
-              ) > 0
+        <q-infinite-scroll @load="loadMessage" reverse>
+          <template v-slot:loading>
+            <div class="row justify-center q-my-md">
+              <q-spinner color="primary" name="dots" size="40px" />
+            </div>
+          </template>
+          <q-chat-message
+            v-for="item in messages"
+            :key="item.id"
+            :sent="item.direction === Direction.OUTGOING"
+            text-color="white"
+            :bg-color="
+              item.direction === Direction.OUTGOING ? 'primary' : 'grey-1'
             "
-            class="text-center py-4 text-[#9A9AAF] date"
           >
-            {{
-              isToday(new Date(message.date_created))
-                ? "Today"
-                : format(new Date(message.date_created), "eee, d MMM")
-            }}
-          </div>
-          <!-- Chat Items -->
-          <div
-            class="flex"
-            :class="[
-              message.direction === Direction.OUTGOING
-                ? 'justify-end'
-                : 'justify-start',
-            ]"
-          >
-            <div
-              class="w-1/12 flex items-center px-2 text-lg text-gray-400 order-last"
+            <template #default
+              ><span>{{ item.content }}</span></template
             >
-              <q-icon name="fa-solid fa-face-smile" class="cursor-pointer" />
-            </div>
-            <div class="flex flex-col max-w-[60%] mb-2">
-              <div
-                class="rounded-md pb-3 whitespace-pre-wrap block break-words w-full"
-                :class="[
-                  message.direction === Direction.OUTGOING
-                    ? 'bg-primary text-white rounded-br-none'
-                    : 'bg-[#E8E7FB] text-[#2E2E3A] rounded-tl-none',
-                ]"
-              >
-                <div
-                  class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
-                >
-                  <q-icon
-                    name="expand_more"
-                    :id="`chat-action-${i}`"
-                    @click="showActionChat(i)"
-                  />
-                </div>
-                <div class="mx-4">
-                  <!-- {{ message.content }} -->
-                  <MessageItem :content="message.content" />
-                </div>
-              </div>
-              <!-- Time and Check icon (read) -->
-              <div class="flex items-center ml-auto mr-0.5 mt-1 space-x-1">
-                <small class="text-[#9A9AAF]" style="font-size: 10px">
-                  {{ format(new Date(message.date_created), "p") }}
-                </small>
-                <svg
-                  v-if="message.direction === Direction.OUTGOING"
-                  width="14"
-                  height="10"
-                  viewBox="0 0 12 8"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M10.5089 0.194653C10.7861 0.348235 10.8635 0.683145 10.6816 0.942697L6.95684 6.25975C6.77503 6.5193 6.40288 6.60522 6.12569 6.45164L5.48095 6.12457C5.20376 5.97099 4.75241 5.47943 4.93422 5.21988C5.11603 4.96033 5.53234 4.97345 5.80953 5.12703L6.26716 5.22527L9.67779 0.386541C9.8596 0.12699 10.2318 0.0410714 10.5089 0.194653Z"
-                    fill="#9A9AAF"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.71166 0.194816C7.98888 0.348392 8.0662 0.683303 7.88436 0.94286L4.15952 6.25992C3.97768 6.51948 3.60557 6.60539 3.32836 6.45181L1.20508 5.19434C0.927862 5.04076 0.52147 4.75956 0.703307 4.5C0.885144 4.24044 1.24807 4.34642 1.52529 4.5L3.46984 5.22544L6.8805 0.386705C7.06234 0.127149 7.43445 0.0412397 7.71166 0.194816Z"
-                    fill="#9A9AAF"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
+            <template v-slot:stamp>{{
+              format(new Date(item.date_created), "p")
+            }}</template>
+            <template v-slot:avatar>
+              <img
+                class="q-message-avatar"
+                :class="`q-message-avatar--${
+                  item.direction === Direction.OUTGOING ? 'sent' : 'received'
+                }`"
+                src="https://cdn.quasar.dev/img/avatar4.jpg"
+              />
+            </template>
+          </q-chat-message>
+        </q-infinite-scroll>
         <div
           v-if="activeAction !== null"
           class="px-4 py-2 absolute rounded-lg shadow-md top-0 bg-gray-200"
@@ -181,24 +129,16 @@
             size="md"
             class="q-mt-md"
           />
-          <q-btn
-            flat
-            round
-            color="grey"
-            icon="mic"
-            size="md"
-            class="q-mt-md"
-            @mousedown="recStart"
-            @mouseup="recStop"
-          />
-          <q-btn
-            color="primary"
-            label="Send"
-            class="dark-btn q-mt-md"
-            :disable="isChatExpired"
-            @click="sendMessage"
-            :loading="sendLoading"
-          />
+          <div class="row justify-end q-mt-md">
+            <q-btn
+              color="primary"
+              label="Send"
+              class="dark-btn"
+              :disable="isChatExpired"
+              @click="sendMessage"
+              :loading="sendLoading"
+            />
+          </div>
         </div>
       </div>
       <div v-else>
@@ -235,7 +175,8 @@ import { computed, ref, watch, nextTick, onMounted, onUpdated } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, differenceInDays, isToday } from "date-fns";
+// import { format, differenceInDays, isToday } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 import useMessagingStore from "src/stores/modules/messaging";
 import { getChatName } from "src/utils/trim-word";
 import { updateChatStatus, startNewChat } from "src/api/messaging";
@@ -246,20 +187,21 @@ import {
   Product,
   MessageType,
   Member,
-  Message,
 } from "src/types/MessagingTypes";
+// import { Direction, Product, MessageType } from "src/types/MessagingTypes";
 import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import MessageItem from "./MessageItem.vue";
-// 引入js库
-import Recorder from "recorder-core";
-// 引入需要使用到的音频格式编码引擎的js文件
-import "recorder-core/src/engine/mp3";
-import "recorder-core/src/engine/mp3-engine";
-// 如果要绘制音频波形图，需要引入
-import "recorder-core/src/extensions/waveview";
+
+interface Message {
+  id: number;
+  content: string;
+  direction?: string;
+  status: string;
+  old_date_created: string | null;
+  date_created: string;
+}
 
 interface ActionChat {
   index: number;
@@ -303,11 +245,7 @@ const messages = computed<Message[]>(() => {
   return (
     cachedMessage?.map((message, index) => ({
       id: message.id,
-      content: {
-        type: message.type,
-        text: message.content,
-      },
-      // content: message.content,
+      content: message.content,
       direction: message.direction,
       status: message.status,
       old_date_created: cachedMessage[index - 1]?.date_created || null,
@@ -344,8 +282,8 @@ const scrollToBottom = async () => {
 };
 
 const closeChat = async () => {
-  messagingStore.setSelectedChatId("");
   messagingStore.setLeftDrawerOpen(true);
+  messagingStore.setRightDrawerOpen(false);
 };
 
 const initialName = (name: string) => {
@@ -447,95 +385,41 @@ const sendMessageTemplate = (
   sendMessage();
 };
 
-const showActionChat = (index: number) => {
-  if (activeAction.value !== null && activeAction.value?.index === index) {
-    activeAction.value = null;
-  } else {
-    const rec = document
-      ?.getElementById(`chat-action-${index}`)
-      ?.getBoundingClientRect();
+// const showActionChat = (index: number) => {
+//   if (activeAction.value !== null && activeAction.value?.index === index) {
+//     activeAction.value = null;
+//   } else {
+//     const rec = document
+//       ?.getElementById(`chat-action-${index}`)
+//       ?.getBoundingClientRect();
 
-    const rec2 = document
-      ?.getElementById(`parentChatList`)
-      ?.getBoundingClientRect();
+//     const rec2 = document
+//       ?.getElementById(`parentChatList`)
+//       ?.getBoundingClientRect();
 
-    activeAction.value = {
-      index,
-      top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
-      left: rec?.left - rec2?.left - 30,
-    };
-  }
-};
+//     activeAction.value = {
+//       index,
+//       top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
+//       left: rec?.left - rec2?.left - 30,
+//     };
+//   }
+// };
 
-const handleScroll = () => {
-  activeAction.value = null;
+// const handleScroll = () => {
+//   activeAction.value = null;
+// };
+
+const loadMessage = (index: number, done: () => void) => {
+  console.log(index, done);
+  // done();
 };
 
 onMounted(() => {
   scrollToBottom();
-  scrollAreaRef.value.addEventListener("scroll", handleScroll);
+  // scrollAreaRef.value.addEventListener("scroll", handleScroll);
 });
 
 onUpdated(() => {
-  scrollAreaRef.value.addEventListener("scroll", handleScroll);
+  // scrollAreaRef.value.addEventListener("scroll", handleScroll);
 });
-
-const recorder: any = ref();
-const recOpen = () => {
-  recorder.value = Recorder({
-    type: "mp3", // wav格式, 需要使用的type类型，需提前把格式支持文件加载进来
-    bitRate: 36, // 比特率kbps，越大音质越好
-    sampleRate: 18000, // 采样率hz，每秒音波震动次数，越大细节越丰富
-    onProcess: function (
-      buffers: any,
-      powerLevel: any,
-      duration: any,
-      sampleRate: any
-    ) {
-      console.log(buffers, powerLevel, duration, sampleRate);
-      // buffers, // [[Int16,...],...]：缓冲的PCM数据，为从开始录音到现在的所有pcm片段，每次回调可能增加0-n个不定量的pcm片段
-      // powerLevel, // 输入的音频波动值0-100
-      // duration, // 录音持续时间ms
-      // sampleRate, // 录音使用的采样率
-      // 利用waveview扩展实时绘制波形
-      // This.wave.input(buffers[buffers.length - 1], powerLevel, sampleRate);
-    }, // 录音实时回调，大约1秒调用12次回调
-  });
-  recorder.value.open(
-    function () {
-      console.log("打开成功：");
-      // 渲染音频波形图
-      // This.wave = Recorder.WaveView({ elem: ".ctrlProcessWave" });
-    },
-    function (msg: string, isUserNotAllow: boolean) {
-      // 浏览器不支持录音、用户拒绝麦克风权限、或者非安全环境（非https、file等
-      console.log((isUserNotAllow ? "UserNotAllow，" : "") + "无法录音:" + msg);
-      recorder.value.close();
-    }
-  );
-};
-recOpen();
-
-const recStart = () => {
-  if (!recorder.value || !Recorder.IsOpen()) {
-    console.log("未打开录音");
-  }
-  recorder.value.start();
-};
-
-const recStop = () => {
-  if (!(recorder.value && Recorder.IsOpen())) {
-    console.log("未打开录音");
-    return;
-  }
-
-  recorder.value.stop(
-    function (blob: any, duration: number) {
-      console.log(blob, duration);
-    },
-    function (error: Error) {
-      console.log(error);
-    }
-  );
-};
 </script>

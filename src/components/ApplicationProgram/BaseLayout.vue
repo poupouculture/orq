@@ -465,7 +465,7 @@ const submitGeneralInformation = () => {
 
   emit("submitGeneralInformation", {
     name: name.value,
-    category: "Conversation",
+    category: "conversation",
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,

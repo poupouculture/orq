@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:!block" :class="[showCustomerInfoMobile ? 'block' : 'hidden']">
+  <div class="lg:!block">
     <div
       v-if="showCustomerInfoMobile"
       @click="closeCustomerInfoMobile()"
@@ -75,10 +75,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import useMessagingStore from "src/pages/MessageNew/messagenew";
+import useMessagingStore from "src/stores/modules/messaging";
 import { getChatUsers } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
@@ -102,15 +102,13 @@ const userInfoStore = useUserInfoStore();
 const userInfo = useUserInfoStore();
 const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
-
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
-const showCustomerInfoMobile = computed(
-  () => messagingStore.showCustomerInfoMobile
-);
+const showCustomerInfoMobile: Ref<boolean> = ref(false);
+
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
@@ -118,6 +116,7 @@ onMounted(async () => {
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
   firebaseToken.value = getFirebaseToken.value;
+  showCustomerInfoMobile.value = window.innerWidth < 1023;
 });
 // closing customer information in mobile view
 const closeCustomerInfoMobile = () => {

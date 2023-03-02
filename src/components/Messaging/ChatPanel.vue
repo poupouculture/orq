@@ -162,7 +162,8 @@ const Tabs = reactive([
   },
 ]);
 type ChatToggleType = {
-  state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
+  // eslint-disable-next-line prettier/prettier
+  state: typeof ChatToggleLabel[keyof typeof ChatToggleLabel];
 };
 const seachText = ref("");
 const firebaseToken: Ref<string> = ref("");

@@ -7,6 +7,7 @@
     :loading="loading"
     v-model:selected="selected"
     flat
+    :hide-pagination="hidePagination"
   >
     <template v-slot:header-selection v-if="disableSelect"> </template>
     <template v-slot:body-selection v-if="disableSelect"></template>
@@ -64,6 +65,10 @@ const props = defineProps({
     default: true,
   },
   disableSelect: {
+    type: Boolean,
+    default: false,
+  },
+  hidePagination: {
     type: Boolean,
     default: false,
   },

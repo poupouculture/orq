@@ -47,7 +47,8 @@
                 <q-item-section>Personal Information</q-item-section>
               </q-item>
               <q-item
-                to="/privacy"
+                href="https://synque.io/privacy"
+                target="_blank"
                 active-class="primary"
                 clickable
                 v-close-popup

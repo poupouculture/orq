@@ -7,13 +7,13 @@ import {
   MessageStatus,
 } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
-
 import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
 } from "src/api/messaging";
+import { Loading } from "quasar";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
@@ -21,7 +21,6 @@ const useMessagingStore = defineStore("messaging", {
       selectedChatId: "",
       leftDrawerOpen: true,
       rightDrawerOpen: true,
-      messageLoading: false,
       showCustomerInfoMobile: false,
       selectedTab: ChatTypes.PENDING,
       chatSnapshotMessage: {},
@@ -32,6 +31,7 @@ const useMessagingStore = defineStore("messaging", {
     getChatsList: (state) => state.chatsList,
     getSelectedChatId: (state) => state.selectedChatId,
     getChatSnapshotMessage: (state) => state.chatSnapshotMessage,
+    getContactNumber: (state) => state.contactNumber,
     getSelectedChat: (state) => {
       return state.chatsList.find(
         (chat: IChat) => chat.id === state.selectedChatId
@@ -63,6 +63,9 @@ const useMessagingStore = defineStore("messaging", {
     setContactNumber(contactNumber: string) {
       this.contactNumber = contactNumber;
     },
+    setMessageMembers(members: string) {
+      this.getSelectedChat.members = members;
+    },
     setChatsLastMessage(chatId: string, lastmessage: LastMessage) {
       try {
         const index = this.chatsList.findIndex(
@@ -72,8 +75,6 @@ const useMessagingStore = defineStore("messaging", {
           const cachedMessage = this.cachedChatMessages[chatId];
           if (cachedMessage?.length) {
             const [lastCachedMessage] = cachedMessage.slice(-1);
-            console.log(lastmessage, lastCachedMessage);
-
             if (
               lastmessage.last_message_id &&
               lastmessage.last_message_id <= lastCachedMessage.id
@@ -133,15 +134,15 @@ const useMessagingStore = defineStore("messaging", {
 
     async fetchChatMessagesById(chatId: string) {
       try {
-        this.messageLoading = true;
+        Loading.show();
         const cachedChatMessage = this.cachedChatMessages[chatId];
         if (!cachedChatMessage) {
           const messages = await getChatMessagesByChatId(chatId);
           this.cachedChatMessages[chatId] = messages;
         }
-        this.messageLoading = false;
+        Loading.hide();
       } catch (e) {
-        this.messageLoading = false;
+        Loading.hide();
       }
     },
 

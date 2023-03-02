@@ -22,9 +22,11 @@ const useServiceRecordStore = defineStore("serviceRecord", {
     } as unknown as IState),
   getters: {
     getItems: (state) => state.items,
+    getItem: (state) => state.item,
   },
   actions: {
-    async getAll(rowsPerPage = 10, page = 1) {
+    async getAll({ rowsPerPage = 10, page = 1 }) {
+      console.log(rowsPerPage, page);
       try {
         const {
           data: { data: serviceRecords, meta },
@@ -43,6 +45,12 @@ const useServiceRecordStore = defineStore("serviceRecord", {
           total_count: meta?.total_count,
           filter_count: meta?.filter_count,
         };
+      } catch (error) {}
+    },
+    async getServiceReference(id: string) {
+      try {
+        const { data } = await getServiceReferences({}, id);
+        this.item = data.data;
       } catch (error) {}
     },
     async getServiceRecords(id: string) {

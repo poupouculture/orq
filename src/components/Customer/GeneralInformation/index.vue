@@ -11,7 +11,7 @@
       <div class="q-pa-md">
         <div
           class="row q-mb-lg ml-auto flex justify-end"
-          v-if="mode === 'show' && (!!getCustomer.id || getContactNumber)"
+          v-if="mode === 'show' && getSelectedChatId"
         >
           <q-btn
             @click="mode = 'edit'"
@@ -228,7 +228,7 @@ import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
-import useMessagingStore from "src/pages/MessageNew/messagenew";
+import useMessagingStore from "src/stores/modules/messaging";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import {
   transforCustomerGroupPayload,
@@ -276,6 +276,7 @@ const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const getContactNumber = computed(() => messagingStore.getContactNumber);
+const { getSelectedChatId } = storeToRefs(messagingStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
