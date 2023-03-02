@@ -263,14 +263,11 @@ const snapshotMessage = (chatId: string) => {
         for (const change of querySnapshot.docChanges()) {
           if (snapshoted) {
             const data = change.doc.data();
-            const direction =
-              data.status === MessageStatus.SENT
-                ? Direction.OUTGOING
-                : Direction.INCOMING;
+            if (data.status === MessageStatus.SENT) return;
             if (data.date_created) {
               messagingStore.setChatsLastMessage(chatId, {
                 ...data,
-                direction,
+                direction: Direction.INCOMING,
               });
             }
           }

@@ -106,7 +106,10 @@
                 </div>
                 <div class="mx-4">
                   <!-- {{ message.content }} -->
-                  <MessageItem :content="message.content" />
+                  <MessageItem
+                    :content="message.content"
+                    :sendMessageStatus="message.sendMessageStatus"
+                  />
                 </div>
               </div>
               <!-- Time and Check icon (read) -->
@@ -197,7 +200,6 @@
             class="dark-btn q-mt-md"
             :disable="isChatExpired"
             @click="sendMessage"
-            :loading="sendLoading"
           />
         </div>
       </div>
@@ -247,6 +249,8 @@ import {
   MessageType,
   Member,
   Message,
+  MessageStatus,
+  SendMessageStatus,
 } from "src/types/MessagingTypes";
 import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
@@ -269,7 +273,7 @@ interface ActionChat {
 
 const scrollAreaRef = ref<HTMLDivElement>();
 const message: Ref<string> = ref("");
-const sendLoading: Ref<boolean> = ref(false);
+// const sendLoading: Ref<boolean> = ref(false);
 const isChatExpired: Ref<boolean> = ref(true);
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
@@ -277,6 +281,7 @@ const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const activeAction: Ref<ActionChat | null> = ref(null);
+// const newMessage: Ref<Message> = ref(null);
 
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
@@ -301,18 +306,12 @@ const members = computed<Member[]>(() =>
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   return (
-    cachedMessage?.map((message, index) => ({
-      id: message.id,
-      content: {
-        type: message.type,
-        text: message.content,
-      },
-      // content: message.content,
-      direction: message.direction,
-      status: message.status,
-      old_date_created: cachedMessage[index - 1]?.date_created || null,
-      date_created: message.date_created,
-    })) || []
+    cachedMessage?.map((message, index) => {
+      return {
+        ...message,
+        old_date_created: cachedMessage[index - 1]?.date_created || null,
+      };
+    }) || []
   );
 });
 
@@ -366,29 +365,55 @@ const showCustomerInfoInMobile = () => {
 };
 
 const sendMessage = async () => {
+  // need opimise
+  if (!message.value.length) return;
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const tempId = Date.now();
+  const newMessage = {
+    id: tempId,
+    content: message.value,
+    status: MessageStatus.SENT,
+    type: MessageType.TEXT,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  };
+  cachedMessage.push(newMessage);
+  message.value = "";
   isChatExpired.value = false;
   try {
-    if (sendLoading.value || message.value.length < 1) return;
-    sendLoading.value = true;
     if (messages.value.length > 0) {
-      const data = await messagingStore.sendChatTextMessage({
+      const { data, status } = await messagingStore.sendChatTextMessage({
         chatId: getSelectedChatId.value,
         messageProduct: Product.WHATSAPP,
         to: chatNumber.value,
         type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
-        messageBody: message.value,
+        messageBody: newMessage.content,
         isTemplate: isTemplate.value,
         templateName: templateName.value,
         language: language.value,
         isIncludedComponent: isIncludeComponent.value,
       });
-
-      if (!data.status) {
+      const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+      const addMessage: any = cachedMessage.find((item) => item.id === tempId);
+      if (!status) {
+        addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
         Notify.create({
           position: "top",
           message: data.message,
           color: "purple",
         });
+      } else {
+        addMessage.id = data.derp_chats_messages_id;
+        addMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
+        // may need date_created backend
+        let lastmessage: any = getSelectedChat.value.last_message;
+        if (lastmessage) {
+          lastmessage = JSON.parse(lastmessage);
+          lastmessage.content = newMessage.content;
+          lastmessage.date_created = new Date().toUTCString();
+          getSelectedChat.value.last_message = JSON.stringify(lastmessage);
+        }
       }
     } else {
       // what this part for ???
@@ -397,11 +422,11 @@ const sendMessage = async () => {
       messagingStore.setSelectedTab(ChatTypes.ONGOING);
       // emit("newChatCreated", ChatTypes.ONGOING);
     }
-    sendLoading.value = false;
-    message.value = "";
     isTemplate.value = false;
   } catch (error) {
-    sendLoading.value = false;
+    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+    const addMessage: any = cachedMessage.find((item) => item.id === tempId);
+    addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     Swal.fire({
       icon: "error",
       title: "Oops...",
