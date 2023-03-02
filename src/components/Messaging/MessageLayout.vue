@@ -9,6 +9,8 @@
     >
       <!-- left side -->
       <ChatPanel />
+      <!-- draggable -->
+      <SpliteLine @update="update" />
     </q-drawer>
     <q-page-container>
       <RouterView v-slot="{ Component }">
@@ -37,7 +39,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import ChatPanel from "./ChatPanel.vue";
 import Message from "./Message.vue";
 import useMessagingStore from "src/stores/modules/messaging";
-
+import SpliteLine from "src/components/SpliteLine/SpliteLine.vue";
 const messagingStore = useMessagingStore();
 const leftDrawerWidth = ref(300);
 const rightDrawerWidth = ref(450);
@@ -58,6 +60,9 @@ const resetLeftWidth = () => {
   }
 };
 resetLeftWidth();
+const update = (val: number) => {
+  leftDrawerWidth.value -= val;
+};
 
 onMounted(() => {
   window.addEventListener("resize", resetLeftWidth);
