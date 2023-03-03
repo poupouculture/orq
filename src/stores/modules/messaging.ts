@@ -71,10 +71,7 @@ const useMessagingStore = defineStore("messaging", {
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
-        const cachedMessage = this.cachedChatMessages[chatId]?.find(
-          (item) => item.id === lastmessage.last_message_id
-        );
-        if (cachedMessage) return;
+
         if (index !== -1) {
           // const cachedMessage = this.cachedChatMessages[chatId];
           // if (cachedMessage?.length) {
@@ -87,19 +84,21 @@ const useMessagingStore = defineStore("messaging", {
           //   }
           // }
           const [chat] = this.chatsList.splice(index, 1);
-          if (chat.last_message) {
-            if (lastmessage.status === MessageStatus.RECEIVE) {
-              if (this.selectedChatId !== chatId) {
-                // only receivede message should plus totalUnread;
-                chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
-              } else {
-                chat.totalUnread = 0;
-              }
+          if (lastmessage.status === MessageStatus.RECEIVE) {
+            if (this.selectedChatId !== chatId) {
+              // only receivede message should plus totalUnread;
+              chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
+            } else {
+              chat.totalUnread = 0;
             }
-            chat.last_message = JSON.stringify(lastmessage);
-            this.chatsList.unshift(chat);
-            this.cachedChatMessages[chatId]?.push(lastmessage);
           }
+          chat.last_message = JSON.stringify(lastmessage);
+          this.chatsList.unshift(chat);
+          const cachedMessage = this.cachedChatMessages[chatId]?.find(
+            (item) => item.id === lastmessage.last_message_id
+          );
+          if (cachedMessage) return;
+          this.cachedChatMessages[chatId]?.push(lastmessage);
         }
       } catch (error) {
         console.log(error);
