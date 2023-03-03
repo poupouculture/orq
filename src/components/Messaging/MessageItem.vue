@@ -14,7 +14,11 @@
       size="1rem"
     />
     <span v-if="content?.type === MessageType.IMAGE">
-      <q-icon class="text-4xl" name="image" />
+      <q-img
+        :src="content.url"
+        spinner-color="white"
+        style="width: 200px; max-height: 300px"
+      />
     </span>
     <span v-else-if="content?.type === MessageType.AUDIO">
       <q-icon class="text-4xl" name="mic" />
@@ -25,17 +29,13 @@
 
 <script setup lang="ts">
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
-interface ContentType {
-  type: string;
-  text: string;
-}
 interface Props {
-  content: ContentType | null;
+  content: any;
   sendMessageStatus?: SendMessageStatus;
 }
 
 withDefaults(defineProps<Props>(), {
-  content: () => ({} as ContentType),
+  content: () => ({}),
   sendMessageStatus: SendMessageStatus.DEFAULT,
 });
 </script>

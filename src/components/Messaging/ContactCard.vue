@@ -33,7 +33,7 @@ import { computed } from "vue";
 import { format } from "date-fns";
 import { storeToRefs } from "pinia";
 import { getChatName } from "src/utils/trim-word";
-import { IChat } from "src/types/MessagingTypes";
+import { IChat, MessageType } from "src/types/MessagingTypes";
 import useMessagingStore from "src/stores/modules/messaging";
 
 export interface Props {
@@ -50,8 +50,21 @@ const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const name = computed<string>(() => getChatName(props.data));
 
 const message = computed<string>(() => {
-  const { last_message: lastMessage } = props.data;
-  return JSON.parse(lastMessage)?.content;
+  let { last_message: lastMessage } = props.data;
+  if (!lastMessage) return;
+  lastMessage = JSON.parse(lastMessage);
+
+  switch (lastMessage?.content?.type) {
+    case MessageType.IMAGE:
+      return "[pic]";
+    case MessageType.AUDIO:
+      return "[audio]";
+    case MessageType.TEXT:
+      return lastMessage?.content?.text;
+    default:
+      return lastMessage?.content?.file_name;
+  }
+  // return JSON.parse(lastMessage)?.content;
 });
 
 const time = computed<string>(() => {
