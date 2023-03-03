@@ -323,13 +323,6 @@ const messages = computed<Message[]>(() => {
     cachedMessage?.map((message, index) => {
       return {
         ...message,
-        content:
-          typeof message.content === "object"
-            ? message.content
-            : {
-                text: message.content,
-                type: message.type,
-              },
         old_date_created: cachedMessage[index - 1]?.date_created || null,
       };
     }) || []
