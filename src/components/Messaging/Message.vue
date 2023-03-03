@@ -187,9 +187,9 @@
           >
             <q-uploader
               ref="uplader"
+              accept=".gif, .jpg, .jpeg, .png, image/*"
               class="hidden invisible"
-              url="http://localhost:4444/upload"
-              style="max-width: 300px"
+              @added="upload"
             />
           </q-btn>
           <q-btn
@@ -257,7 +257,7 @@ import Swal from "sweetalert2";
 import { format, differenceInDays, isToday } from "date-fns";
 import useMessagingStore from "src/stores/modules/messaging";
 import { getChatName } from "src/utils/trim-word";
-import { updateChatStatus, startNewChat } from "src/api/messaging";
+import { updateChatStatus, startNewChat, uploadImage } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
 import {
@@ -275,7 +275,6 @@ import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialo
 import useCustomerStore from "src/stores/modules/customer";
 import MessageItem from "./MessageItem.vue";
 import Recorder from "./Recorder";
-console.log(Recorder);
 
 interface ActionChat {
   index: number;
@@ -508,6 +507,14 @@ const showActionChat = (index: number) => {
 
 const handleScroll = () => {
   activeAction.value = null;
+};
+
+const upload = ([file]: any) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append("caption", "Fred");
+  bodyFormData.append("file", file);
+  uploadImage(getSelectedChatId.value, bodyFormData);
+  uplader.value.reset();
 };
 
 onMounted(() => {
