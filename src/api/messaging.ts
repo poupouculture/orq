@@ -118,3 +118,10 @@ export const closeChat = async (id: string) => {
 
   return data;
 };
+
+export const uploadImage = async (chatId: string, payload: any) => {
+  const { data } = await api.post(`/waba/media-message/${chatId}`, payload, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  console.log("发送", data);
+};

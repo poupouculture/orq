@@ -14,10 +14,10 @@
       size="1rem"
     />
     <span v-if="content?.type === MessageType.IMAGE">
-      <q-img
-        :src="content.url"
-        spinner-color="white"
-        style="width: 200px; max-height: 300px"
+      <!-- {{ content.url }} -->
+      <AuthImage
+        :imgUrl="content.url + '&fit=inside&width=128&height=128'"
+        :authToken="`Bearer ${getUserInfo.access_token}`"
       />
     </span>
     <span v-else-if="content?.type === MessageType.AUDIO">
@@ -28,11 +28,14 @@
 </template>
 
 <script setup lang="ts">
+import useUserInfoStore from "stores/modules/userInfo";
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
+import AuthImage from "src/components/AuthImage/AuthImage.vue";
 interface Props {
   content: any;
   sendMessageStatus?: SendMessageStatus;
 }
+const { getUserInfo } = useUserInfoStore();
 
 withDefaults(defineProps<Props>(), {
   content: () => ({}),
