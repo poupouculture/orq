@@ -133,16 +133,16 @@ module.exports = configure(function () {
     animations: [],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#property-sourcefiles
-    // sourceFiles: {
-    //   rootComponent: 'src/App.vue',
-    //   router: 'src/router/index',
-    //   store: 'src/store/index',
-    //   registerServiceWorker: 'src-pwa/register-service-worker',
-    //   serviceWorker: 'src-pwa/custom-service-worker',
-    //   pwaManifestFile: 'src-pwa/manifest.json',
-    //   electronMain: 'src-electron/electron-main',
-    //   electronPreload: 'src-electron/electron-preload'
-    // },
+    sourceFiles: {
+      // rootComponent: 'src/App.vue',
+      // router: 'src/router/index',
+      // store: 'src/store/index',
+      // registerServiceWorker: 'src-pwa/register-service-worker',
+      // serviceWorker: 'src-pwa/custom-service-worker',
+      // pwaManifestFile: 'src-pwa/manifest.json',
+      electronMain: "src-electron/electron-main",
+      electronPreload: "src-electron/electron-preload",
+    },
 
     // https://v2.quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
@@ -196,7 +196,7 @@ module.exports = configure(function () {
 
       inspectPort: 5858,
 
-      bundler: "packager", // 'packager' or 'builder'
+      bundler: "builder", // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -210,9 +210,18 @@ module.exports = configure(function () {
       },
 
       builder: {
-        // https://www.electron.build/configuration/configuration
-
-        appId: "waba-quasar",
+        appId: "com.electron.myelectronapp",
+        win: {
+          target: [
+            {
+              target: "nsis",
+              arch: ["x64", "ia32"],
+            },
+          ],
+        },
+        mac: {
+          target: "dmg",
+        },
       },
     },
 
