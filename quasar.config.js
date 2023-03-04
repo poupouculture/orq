@@ -210,9 +210,18 @@ module.exports = configure(function () {
       },
 
       builder: {
-        // https://www.electron.build/configuration/configuration
-
-        appId: "waba-quasar",
+        appId: "com.electron.myelectronapp",
+        win: {
+          target: [
+            {
+              target: "nsis",
+              arch: ["x64", "ia32"],
+            },
+          ],
+        },
+        mac: {
+          target: "dmg",
+        },
       },
     },
 
