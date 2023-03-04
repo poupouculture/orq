@@ -5,6 +5,7 @@ import {
   addCustomerContact,
   addCustomer,
   updateCustomer,
+  deleteCustomer,
 } from "../../api/customers";
 import { IState, FormPayload, ICustomer } from "src/types/CustomerTypes";
 import { getUser } from "src/api/user";
@@ -38,6 +39,32 @@ const useCustomerStore = defineStore("customer", {
     getCustomer: (state) => state.customer,
   },
   actions: {
+    async deleteCustomer(ids: string[]) {
+      Loading.show();
+      try {
+        const {
+          data: { data },
+        } = await deleteCustomer(ids);
+        Notify.create({
+          message: "Successful to delete customer",
+          position: "top",
+          color: "primary",
+          type: "positive",
+        });
+        Loading.hide();
+        return data;
+      } catch (err: any) {
+        console.log(err);
+        Notify.create({
+          message: `Error: ${
+            err.response.data?.errors[0]?.message || "Fail to updated"
+          }`,
+          position: "top",
+          type: "negative",
+        });
+        Loading.hide();
+      }
+    },
     async fetchCustomer(id: string) {
       const {
         data: { data: customer },

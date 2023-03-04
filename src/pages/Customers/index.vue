@@ -17,7 +17,14 @@
           class="q-mr-sm"
           @click="router.push('/customers/create')"
         />
-        <q-btn icon="delete" no-caps rounded label="Trash" />
+        <q-btn
+          icon="delete"
+          no-caps
+          rounded
+          label="Trash"
+          :disabled="!selected.length"
+          @click="deleteCustomerDialog = true"
+        />
       </div>
     </div>
     <div class="main-content">
@@ -29,6 +36,7 @@
         :columns="headerColumns"
         :loading="loading"
         @changePage="changePage"
+        v-model:selected="selected"
       >
         <q-tr :props="props">
           <q-th
@@ -93,6 +101,11 @@
         </template>
       </BaseTable>
     </div>
+    <DeleteDialog
+      v-model="deleteCustomerDialog"
+      @cancel="deleteCustomerDialog = false"
+      @submitDelete="handleDelete()"
+    />
   </div>
 </template>
 
@@ -101,8 +114,11 @@ import { ref, reactive, onMounted } from "vue";
 import { getCustomers } from "../../api/customers";
 import { useRouter } from "vue-router";
 import BaseTable from "src/components/BaseTable.vue";
+import useCustomerStore from "src/stores/modules/customer";
+import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 
 const router = useRouter();
+const customerStore = useCustomerStore();
 
 const headerColumns = [
   {
@@ -149,6 +165,14 @@ const headerColumns = [
 ];
 
 const loading = ref(true);
+const selected = ref([]);
+const deleteCustomerDialog = ref(false);
+const handleDelete = async () => {
+  deleteCustomerDialog.value = false;
+  await customerStore.deleteCustomer(selected.value.map((item) => item.id));
+  selected.value = [];
+  await fetchCustomers();
+};
 const data = reactive({
   customers: [],
   totalCount: 0,
