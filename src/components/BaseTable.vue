@@ -40,6 +40,10 @@
 import { reactive, ref, computed } from "vue";
 
 const props = defineProps({
+  selected: {
+    type: Array,
+    default: () => [],
+  },
   rows: {
     type: Array,
     default: () => [],
@@ -73,9 +77,12 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["changePage"]);
+const emit = defineEmits(["changePage", "update:selected"]);
 const page = ref(props.page);
-const selected = ref([]);
+const selected = computed({
+  set: (value) => emit("update:selected", value),
+  get: () => props.selected,
+});
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
