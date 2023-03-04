@@ -391,7 +391,7 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
   };
-  cachedMessage.push(newMessage);
+  if (!isTemplate.value) cachedMessage.push(newMessage);
   message.value = "";
   isChatExpired.value = false;
   try {

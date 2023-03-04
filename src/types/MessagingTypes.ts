@@ -141,6 +141,7 @@ export interface ChatPayloadWabaContentTemplate {
   name: string | undefined;
   language: Language;
   components?: TemplateComponent[];
+  text: string;
 }
 
 export interface ChatPayloadWabaContent {

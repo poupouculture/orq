@@ -23,6 +23,9 @@
     <span v-else-if="content?.type === MessageType.AUDIO">
       <q-icon class="text-4xl" name="mic" />
     </span>
+    <span v-else-if="content?.type === MessageType.TEMPLATE">
+      {{ messageTemplate(content) }}
+    </span>
     <span v-else>{{ content?.text ?? content }}</span>
   </div>
 </template>
@@ -31,11 +34,23 @@
 import useUserInfoStore from "stores/modules/userInfo";
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
 import AuthImage from "src/components/AuthImage/AuthImage.vue";
+
 interface Props {
   content: any;
   sendMessageStatus?: SendMessageStatus;
 }
 const { getUserInfo } = useUserInfoStore();
+
+const messageTemplate = (content: any) => {
+  if (content?.template?.components) {
+    const component = content?.template?.components?.find(
+      (component) => component?.type === "body"
+    );
+    if (component) return component?.parameters[0].text;
+  }
+
+  return content?.template?.text;
+};
 
 withDefaults(defineProps<Props>(), {
   content: () => ({}),

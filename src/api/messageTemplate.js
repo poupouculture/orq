@@ -35,6 +35,24 @@ export const getMessageTemplate = async (id) => {
   return applicationProgram;
 };
 
+export const getMessageTemplateByName = async (name = "hello_world") => {
+  const params = {
+    fields: `*`,
+    sort: `-date_created`,
+    limit: 1,
+    offset: 1,
+    meta: "*",
+  };
+
+  params["filter[name][_eq]"] = name;
+
+  const templates = await api.get(`/items/message_templates`, {
+    params,
+  });
+
+  return templates;
+};
+
 export const addMessageTemplate = async (payload) => {
   const applicationProgram = await api.post(
     "/items/message_templates",
