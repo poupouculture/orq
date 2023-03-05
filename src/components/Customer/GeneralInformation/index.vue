@@ -189,13 +189,13 @@
           </div>
           <div class="col">
             <div class="btn-hold">
-              <div
+              <!-- <div
                 v-if="showDeleteButton"
                 class="btn-cls"
                 @click="deleteDialog = true"
               >
                 <p>Delete</p>
-              </div>
+              </div> -->
               <q-btn
                 color="primary"
                 label="Save"
@@ -215,7 +215,7 @@
     <ReturnDialog
       v-model="returnDialog"
       @cancel="returnDialog = false"
-      @keepEditing="returnDialog = false"
+      @submit="discardChanges()"
     />
   </div>
 </template>
@@ -239,6 +239,7 @@ import { api } from "src/boot/axios";
 import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
+import { useRouter } from "vue-router";
 
 interface Option {
   value: string | number;
@@ -254,6 +255,7 @@ type Position = Option;
 type ITagOptions = Option & ITag;
 
 const emit = defineEmits(["submit"]);
+const router = useRouter();
 const props = defineProps({
   mode: {
     type: String,
@@ -425,6 +427,11 @@ const onSubmit = async () => {
   } catch (err) {
     console.log(err);
   }
+};
+
+const discardChanges = () => {
+  returnDialog.value = false;
+  router.go(-1);
 };
 
 const submitDelete = () => {

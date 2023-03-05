@@ -3,6 +3,7 @@
     selection="multiple"
     :rows="rows"
     :columns="columns"
+    :row-key="rowKey"
     v-model:pagination="pagination"
     :loading="loading"
     v-model:selected="selected"
@@ -48,6 +49,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  rowKey: String,
   totalCount: {
     type: Number,
     default: 0,
