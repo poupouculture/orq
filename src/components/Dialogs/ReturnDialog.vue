@@ -3,9 +3,10 @@
     :modelValue="props.modelValue"
     title="Unsave Changes"
     :description="description"
-    submit-label="Keep Editing"
     cancel-label="Discard Changes"
-    @submit="keepEditing"
+    submit-label="Keep Editing"
+    @submit="cancel"
+    @cancel="submit"
   />
 </template>
 
@@ -19,11 +20,14 @@ const props = defineProps({
     default: true,
   },
 });
-const emit = defineEmits(["keepEditing"]);
+const emit = defineEmits(["submit", "cancel"]);
 
 const description = ref("Are you sure want to leave this page?");
 
-const keepEditing = () => {
-  emit("keepEditing");
+const submit = () => {
+  emit("submit");
+};
+const cancel = () => {
+  emit("cancel");
 };
 </script>

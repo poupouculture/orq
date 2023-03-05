@@ -198,9 +198,11 @@
             color="grey"
             icon="mic"
             size="md"
-            class="q-mt-md active:bg-primary"
-            @mousedown="Recorder.recStart"
-            @mouseup="Recorder.recStop"
+            class="q-mt-md active:bg-primary mic-recorder"
+            @touchstart.prevent="recStart"
+            @touchend.prevent="recStop"
+            @mousedown="recStart"
+            @mouseup="recStop"
           />
 
           <q-btn
@@ -255,9 +257,12 @@ import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
 import { format, differenceInDays, isToday } from "date-fns";
+import Recorder from "recorder-core";
+import "recorder-core/src/engine/mp3";
+import "recorder-core/src/engine/mp3-engine";
 import useMessagingStore from "src/stores/modules/messaging";
 import { getChatName } from "src/utils/trim-word";
-import { updateChatStatus, startNewChat, uploadImage } from "src/api/messaging";
+import { updateChatStatus, startNewChat, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
 import {
@@ -274,7 +279,6 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import MessageItem from "./MessageItem.vue";
-import Recorder from "./Recorder";
 
 interface ActionChat {
   index: number;
@@ -293,6 +297,8 @@ const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const activeAction: Ref<ActionChat | null> = ref(null);
 const uplader: any = ref(null);
+const rec: any = ref(null);
+const audioData = ref();
 // const newMessage: Ref<Message> = ref(null);
 // const { recOpen, recStart, recStop } = recorder();
 // recOpen();
@@ -336,8 +342,8 @@ watch(messages, () => {
 watch(
   () => getSelectedChat.value,
   (val) => {
-    const lastMessage = JSON.parse(val?.last_message);
-    if (lastMessage.date_created) {
+    const lastMessage = val?.last_message;
+    if (lastMessage?.date_created) {
       const differenceDate: number = differenceInDays(
         new Date(lastMessage.date_created),
         new Date()
@@ -345,6 +351,8 @@ watch(
 
       isChatExpired.value = differenceDate < 0;
       message.value = "";
+    } else {
+      isChatExpired.value = false;
     }
   }
 );
@@ -378,7 +386,6 @@ const showCustomerInfoInMobile = () => {
 };
 
 const sendMessage = async () => {
-  // need opimise
   if (!message.value.length) return;
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const tempId = Date.now();
@@ -391,7 +398,7 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
   };
-  if (isTemplate.value !== true) cachedMessage.push(newMessage);
+  cachedMessage.push(newMessage);
   message.value = "";
   isChatExpired.value = false;
   try {
@@ -417,29 +424,20 @@ const sendMessage = async () => {
           color: "purple",
         });
       } else {
-        addMessage.id = data.derp_chats_messages_id;
+        addMessage.id = data.derp_chats_messages_id ?? data;
         addMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
-        // may need date_created backend
-        let lastmessage: any = getSelectedChat.value.last_message;
-        if (lastmessage) {
-          lastmessage = JSON.parse(lastmessage);
-          lastmessage.content = newMessage.content;
-          lastmessage.date_created = new Date().toUTCString();
-          getSelectedChat.value.last_message = JSON.stringify(lastmessage);
-        }
       }
     } else {
-      // what this part for ???
       startNewChat(getCustomer.value.id);
       messagingStore.fetchChats();
       messagingStore.setSelectedTab(ChatTypes.ONGOING);
-      // emit("newChatCreated", ChatTypes.ONGOING);
     }
     isTemplate.value = false;
   } catch (error) {
     const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
     const addMessage: any = cachedMessage.find((item) => item.id === tempId);
     addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
+    isTemplate.value = false;
     Swal.fire({
       icon: "error",
       title: "Oops...",
@@ -509,11 +507,108 @@ const handleScroll = () => {
   activeAction.value = null;
 };
 
+const sendMedia = async (blob: Blob) => {
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const tempId = Date.now();
+  const newMessage = {
+    id: tempId,
+    content: {
+      url: audioData.value,
+      type: MessageType.AUDIO,
+    },
+    status: MessageStatus.SENT,
+    type: MessageType.AUDIO,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  };
+  cachedMessage.push(newMessage);
+
+  const bodyFormData = new FormData();
+  bodyFormData.append("caption", "test.mp3");
+  bodyFormData.append("file", blob);
+  await uploadMedia(getSelectedChatId.value, bodyFormData);
+  const cm: any = cachedMessage.find((item) => item.id === tempId);
+  cm.sendMessageStatus = SendMessageStatus.DEFAULT;
+  console.log(1213);
+};
+
+const recOpen = function (success?: () => void) {
+  rec.value = Recorder({
+    type: "mp3",
+    sampleRate: 16000,
+    bitRate: 16,
+    onProcess: function () // buffers: Buffer,
+    // powerLevel: number,
+    // bufferDuration: number,
+    // bufferSampleRate: number,
+    // newBufferIdx: Buffer,
+    // asyncEnd: any
+    {
+      console.log(
+        "录制过程"
+        // buffers,
+        // powerLevel,
+        // bufferDuration,
+        // bufferSampleRate,
+        // newBufferIdx,
+        // asyncEnd
+      );
+    },
+  });
+
+  rec.value.open(
+    function () {
+      success && success();
+    },
+    function (msg: string, isUserNotAllow: string) {
+      Notify.create({
+        message: isUserNotAllow
+          ? "Please turn on the recording permission of the browser"
+          : msg,
+        type: "negative",
+        color: "purple",
+      });
+    }
+  );
+};
+
+/** start recorder **/
+function recStart() {
+  rec.value.start();
+}
+
+/** stop recorder **/
+function recStop() {
+  rec.value.stop(
+    function (blob: Blob, duration: number) {
+      console.log(
+        blob,
+        (window.URL || window.webkitURL).createObjectURL(blob),
+        "时长:" + duration + "ms"
+      );
+      audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
+      sendMedia(blob);
+    },
+    function (msg: string) {
+      console.log("recording error:" + msg);
+      rec.value.close();
+      rec.value = null;
+    }
+  );
+}
+/** close recorder **/
+function recClose() {
+  rec.value.close();
+  rec.value = null;
+}
+recOpen();
+
 const upload = ([file]: any) => {
   const bodyFormData = new FormData();
   bodyFormData.append("caption", "Fred");
   bodyFormData.append("file", file);
-  uploadImage(getSelectedChatId.value, bodyFormData);
+  uploadMedia(getSelectedChatId.value, bodyFormData);
   uplader.value.reset();
 };
 
@@ -527,6 +622,13 @@ onUpdated(() => {
 });
 
 onBeforeUnmount(() => {
-  Recorder.recClose();
+  recClose();
 });
 </script>
+
+<style scoped>
+.mic-recorder {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none;
+}
+</style>

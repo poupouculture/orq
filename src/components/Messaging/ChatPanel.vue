@@ -267,6 +267,11 @@ const snapshotMessage = (chatId: string) => {
             if (data.date_created) {
               messagingStore.setChatsLastMessage(chatId, {
                 ...data,
+                id: data.last_message_id,
+                content:
+                  typeof data.content === "string"
+                    ? JSON.parse(data.content)
+                    : data.content,
                 direction:
                   data.status === MessageStatus.SENT
                     ? Direction.OUTGOING

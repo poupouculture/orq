@@ -92,12 +92,12 @@ const useUserInfoStore = defineStore("userInfo", {
         this.$reset();
         LocalStorage.clear();
         this.router.push("/login");
-        Notify.create({
-          message: "login timeout",
-          type: "positive",
-          position: "top",
-          color: "primary",
-        });
+        // Notify.create({
+        //   message: "login timeout",
+        //   type: "positive",
+        //   position: "top",
+        //   color: "primary",
+        // });
       }
     },
     setUserInfo(params) {

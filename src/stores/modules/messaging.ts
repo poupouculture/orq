@@ -73,29 +73,18 @@ const useMessagingStore = defineStore("messaging", {
         );
 
         if (index !== -1) {
-          // const cachedMessage = this.cachedChatMessages[chatId];
-          // if (cachedMessage?.length) {
-          //   const [lastCachedMessage] = cachedMessage.slice(-1);
-          //   if (
-          //     lastmessage.last_message_id &&
-          //     lastmessage.last_message_id <= lastCachedMessage.id
-          //   ) {
-          //     return;
-          //   }
-          // }
           const [chat] = this.chatsList.splice(index, 1);
           if (lastmessage.status === MessageStatus.RECEIVE) {
             if (this.selectedChatId !== chatId) {
-              // only receivede message should plus totalUnread;
               chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
             } else {
               chat.totalUnread = 0;
             }
           }
-          chat.last_message = JSON.stringify(lastmessage);
+          chat.last_message = lastmessage;
           this.chatsList.unshift(chat);
           const cachedMessage = this.cachedChatMessages[chatId]?.find(
-            (item) => item.id === lastmessage.last_message_id
+            (item) => item.id === lastmessage.id
           );
           if (cachedMessage) return;
           this.cachedChatMessages[chatId]?.push(lastmessage);
@@ -132,7 +121,11 @@ const useMessagingStore = defineStore("messaging", {
       const ongoing = await ongoingPromise;
       const waiting = await waitingPromise;
       const closed = await closedPromise;
-      this.chatsList = [...ongoing, ...waiting, ...closed];
+      const chatsList = [...ongoing, ...waiting, ...closed];
+      this.chatsList = chatsList.map((item) => {
+        item.last_message = JSON.parse(item.last_message);
+        return item;
+      });
     },
 
     async fetchChatMessagesById(chatId: string) {
