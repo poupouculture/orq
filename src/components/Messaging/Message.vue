@@ -198,7 +198,9 @@
             color="grey"
             icon="mic"
             size="md"
-            class="q-mt-md active:bg-primary"
+            class="q-mt-md active:bg-primary mic-recorder"
+            @touchstart.prevent="recStart"
+            @touchend.prevent="recStop"
             @mousedown="recStart"
             @mouseup="recStop"
           />
@@ -623,3 +625,10 @@ onBeforeUnmount(() => {
   recClose();
 });
 </script>
+
+<style scoped>
+.mic-recorder {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none;
+}
+</style>
