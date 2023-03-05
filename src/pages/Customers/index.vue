@@ -2,9 +2,31 @@
   <div class="main-container">
     <p class="header-text">Customers</p>
     <div class="row justify-between">
-      <q-input placeholder="Search" outlined dense>
+      <q-input
+        placeholder="Search"
+        outlined
+        dense
+        v-model="search.query"
+        :debounce="500"
+        @update:model-value="searchHandler()"
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
+        </template>
+        <template v-slot:append>
+          <q-circular-progress
+            v-if="search.loading"
+            indeterminate
+            rounded
+            size="18px"
+            color="gray-1"
+          />
+          <q-icon
+            v-else-if="search.query"
+            name="close"
+            class="text-gray-400 cursor-pointer"
+            @click="resetSearch()"
+          />
         </template>
       </q-input>
       <div>
@@ -30,7 +52,7 @@
     <div class="main-content">
       <BaseTable
         :rows="data.customers"
-        :total-count="data.totalCount"
+        :total-count="search.query ? data.filterCount : data.totalCount"
         :page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
@@ -108,10 +130,9 @@
     />
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-import { getCustomers } from "../../api/customers";
+import { getCustomers } from "src/api/customers";
 import { useRouter } from "vue-router";
 import BaseTable from "src/components/BaseTable.vue";
 import useCustomerStore from "src/stores/modules/customer";
@@ -166,6 +187,34 @@ const headerColumns = [
 
 const loading = ref(true);
 const selected = ref([]);
+
+const search = reactive({
+  loading: false,
+  query: null,
+});
+const searchHandler = async () => {
+  search.loading = true;
+  try {
+    const {
+      data: { data: customers, meta },
+    } = await getCustomers({
+      limit: data.rowsPerPage,
+      page: data.page,
+      search: search.query.length ? search.query : undefined,
+    });
+    data.customers = customers;
+    data.totalCount = meta?.total_count;
+    data.filterCount = meta?.filter_count;
+    search.loading = false;
+  } catch (error) {
+    search.loading = false;
+  }
+};
+const resetSearch = () => {
+  search.query = "";
+  searchHandler();
+};
+
 const deleteCustomerDialog = ref(false);
 const handleDelete = async () => {
   deleteCustomerDialog.value = false;
@@ -176,6 +225,7 @@ const handleDelete = async () => {
 const data = reactive({
   customers: [],
   totalCount: 0,
+  filterCount: 0,
   page: 1,
   rowsPerPage: 10,
 });
@@ -203,7 +253,6 @@ onMounted(() => {
 
 const changePage = (page) => {
   data.page = page;
-
   fetchCustomers();
 };
 </script>
