@@ -45,7 +45,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 
   if (isTemplate) {
     const lang: Language = {
-      code: language,
+      code: language === "English" ? "en_US" : language,
     };
 
     if (isIncludedComponent) {
