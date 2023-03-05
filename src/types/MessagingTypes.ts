@@ -26,29 +26,6 @@ export interface Member {
   first_name?: string;
   last_name?: string;
 }
-export interface IChat {
-  id: string;
-  contacts_id: string;
-  customers_id: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  last_message: string;
-  members: string;
-  name: string;
-  status: ChatTypes;
-  totalUnread?: number;
-}
-// export interface IMessage {
-//   id: number;
-//   chat_id: string;
-//   status: string;
-//   date_created: string;
-//   date_updated?: string;
-//   type: string;
-//   content: string;
-//   channel?: string;
-//   direction?: Direction;
-// }
 
 export enum SendMessageStatus {
   DEFAULT,
@@ -67,7 +44,18 @@ export interface Message {
   type?: MessageType;
   sendMessageStatus?: SendMessageStatus;
   totalUnread?: number;
-  last_message_id?: number;
+}
+export interface IChat {
+  id: string;
+  contacts_id: string;
+  customers_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  last_message: Message;
+  members: string;
+  name: string;
+  status: ChatTypes;
+  totalUnread?: number;
 }
 
 export interface CachedChatMessages {
@@ -101,22 +89,6 @@ export interface SendTextMessage {
   language?: string;
   isIncludedComponent?: boolean;
 }
-
-export interface LastMessage {
-  id: number;
-  // chat_id: string;
-  status: MessageStatus;
-  direction: Direction;
-  content: string;
-  type: string;
-  totalUnread?: number;
-  date_created: string;
-  last_message_id?: number;
-}
-
-// export interface IChatMessageCacheItem extends IMessage {
-//   chatId: string;
-// }
 
 export interface ChatPayloadWabaContentText {
   preview_url: boolean;

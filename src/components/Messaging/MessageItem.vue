@@ -2,13 +2,13 @@
   <div class="relative">
     <q-spinner-ios
       v-if="sendMessageStatus === SendMessageStatus.PENDING"
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      color="white"
-      size="2em"
+      class="absolute left-0 -translate-x-9"
+      color="primary"
+      size="1em"
     />
     <q-icon
       v-if="sendMessageStatus === SendMessageStatus.FAILURE"
-      class="absolute -left-full"
+      class="absolute left-0 -translate-x-9"
       name="warning"
       color="warning"
       size="1rem"
@@ -21,7 +21,14 @@
       />
     </span>
     <span v-else-if="content?.type === MessageType.AUDIO">
-      <q-icon class="text-4xl" name="mic" />
+      <q-icon
+        class="cursor-pointer"
+        name="record_voice_over"
+        color="white"
+        size="1rem"
+        @click="audioPlay"
+      />
+      <audio ref="audio" class="hidden invisible" :src="content.url"></audio>
     </span>
     <span v-else-if="content?.type === MessageType.TEMPLATE">
       {{ messageTemplate(content) }}
@@ -31,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
 import AuthImage from "src/components/AuthImage/AuthImage.vue";
@@ -40,16 +48,25 @@ interface Props {
   sendMessageStatus?: SendMessageStatus;
 }
 const { getUserInfo } = useUserInfoStore();
-
+const audio: any = ref(null);
 const messageTemplate = (content: any) => {
   if (content?.template?.components) {
     const component = content?.template?.components?.find(
-      (component) => component?.type === "body"
+      (component: any) => component?.type === "body"
     );
     if (component) return component?.parameters[0].text;
   }
 
   return content?.template?.text;
+};
+
+const audioPlay = () => {
+  if (audio.value.paused) {
+    audio.value.play();
+  } else {
+    audio.value.pause();
+    audio.value.currentTime = 0;
+  }
 };
 
 withDefaults(defineProps<Props>(), {

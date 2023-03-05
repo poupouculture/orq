@@ -50,10 +50,8 @@ const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const name = computed<string>(() => getChatName(props.data));
 
 const message = computed<string>(() => {
-  let { last_message: lastMessage } = props.data;
+  const { last_message: lastMessage } = props.data;
   if (!lastMessage) return;
-  lastMessage = JSON.parse(lastMessage);
-
   switch (lastMessage?.content?.type) {
     case MessageType.IMAGE:
       return "[pic]";
@@ -61,16 +59,16 @@ const message = computed<string>(() => {
       return "[audio]";
     case MessageType.TEXT:
       return lastMessage?.content?.text;
+    case MessageType.TEMPLATE:
+      return lastMessage?.content.template.text;
     default:
       return lastMessage?.content?.file_name;
   }
-  // return JSON.parse(lastMessage)?.content;
 });
 
 const time = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
-  const parseMessage = JSON.parse(lastMessage);
-  const dateCreated = parseMessage?.date_created;
+  const dateCreated = lastMessage?.date_created;
   return dateCreated && format(new Date(dateCreated), "hh:mm aa");
 });
 </script>
