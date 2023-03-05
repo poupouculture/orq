@@ -336,8 +336,8 @@ watch(messages, () => {
 watch(
   () => getSelectedChat.value,
   (val) => {
-    const lastMessage = JSON.parse(val?.last_message);
-    if (lastMessage.date_created) {
+    const lastMessage = val?.last_message;
+    if (lastMessage?.date_created) {
       const differenceDate: number = differenceInDays(
         new Date(lastMessage.date_created),
         new Date()
@@ -345,6 +345,8 @@ watch(
 
       isChatExpired.value = differenceDate < 0;
       message.value = "";
+    } else {
+      isChatExpired.value = false;
     }
   }
 );
@@ -378,7 +380,6 @@ const showCustomerInfoInMobile = () => {
 };
 
 const sendMessage = async () => {
-  // need opimise
   if (!message.value.length) return;
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const tempId = Date.now();
@@ -391,7 +392,7 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
   };
-  if (!isTemplate.value) cachedMessage.push(newMessage);
+  cachedMessage.push(newMessage);
   message.value = "";
   isChatExpired.value = false;
   try {
@@ -417,29 +418,20 @@ const sendMessage = async () => {
           color: "purple",
         });
       } else {
-        addMessage.id = data.derp_chats_messages_id;
+        addMessage.id = data.derp_chats_messages_id ?? data;
         addMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
-        // may need date_created backend
-        let lastmessage: any = getSelectedChat.value.last_message;
-        if (lastmessage) {
-          lastmessage = JSON.parse(lastmessage);
-          lastmessage.content = newMessage.content;
-          lastmessage.date_created = new Date().toUTCString();
-          getSelectedChat.value.last_message = JSON.stringify(lastmessage);
-        }
       }
     } else {
-      // what this part for ???
       startNewChat(getCustomer.value.id);
       messagingStore.fetchChats();
       messagingStore.setSelectedTab(ChatTypes.ONGOING);
-      // emit("newChatCreated", ChatTypes.ONGOING);
     }
     isTemplate.value = false;
   } catch (error) {
     const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
     const addMessage: any = cachedMessage.find((item) => item.id === tempId);
     addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
+    isTemplate.value = false;
     Swal.fire({
       icon: "error",
       title: "Oops...",

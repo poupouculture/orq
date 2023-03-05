@@ -2,13 +2,13 @@
   <div class="relative">
     <q-spinner-ios
       v-if="sendMessageStatus === SendMessageStatus.PENDING"
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      color="white"
-      size="2em"
+      class="absolute left-0 -translate-x-9"
+      color="primary"
+      size="1em"
     />
     <q-icon
       v-if="sendMessageStatus === SendMessageStatus.FAILURE"
-      class="absolute -left-full"
+      class="absolute left-0 -translate-x-9"
       name="warning"
       color="warning"
       size="1rem"
