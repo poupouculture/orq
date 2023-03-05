@@ -57,20 +57,10 @@
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
         :loading="loading"
+        row-key="name"
         @changePage="changePage"
         v-model:selected="selected"
       >
-        <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            auto-width
-          >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-
         <template #body-cell-name="props">
           <q-td :props="props" auto-width>
             <div class="firstrowholder">
