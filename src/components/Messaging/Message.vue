@@ -199,8 +199,8 @@
             icon="mic"
             size="md"
             class="q-mt-md active:bg-primary"
-            @mousedown="Recorder.recStart"
-            @mouseup="Recorder.recStop"
+            @mousedown="recStart"
+            @mouseup="recStop"
           />
 
           <q-btn
@@ -255,9 +255,12 @@ import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
 import { format, differenceInDays, isToday } from "date-fns";
+import Recorder from "recorder-core";
+import "recorder-core/src/engine/mp3";
+import "recorder-core/src/engine/mp3-engine";
 import useMessagingStore from "src/stores/modules/messaging";
 import { getChatName } from "src/utils/trim-word";
-import { updateChatStatus, startNewChat, uploadImage } from "src/api/messaging";
+import { updateChatStatus, startNewChat, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
 import {
@@ -274,7 +277,6 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import MessageItem from "./MessageItem.vue";
-import Recorder from "./Recorder";
 
 interface ActionChat {
   index: number;
@@ -293,6 +295,8 @@ const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const activeAction: Ref<ActionChat | null> = ref(null);
 const uplader: any = ref(null);
+const rec: any = ref(null);
+const audioData = ref();
 // const newMessage: Ref<Message> = ref(null);
 // const { recOpen, recStart, recStop } = recorder();
 // recOpen();
@@ -501,11 +505,108 @@ const handleScroll = () => {
   activeAction.value = null;
 };
 
+const sendMedia = async (blob: Blob) => {
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const tempId = Date.now();
+  const newMessage = {
+    id: tempId,
+    content: {
+      url: audioData.value,
+      type: MessageType.AUDIO,
+    },
+    status: MessageStatus.SENT,
+    type: MessageType.AUDIO,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  };
+  cachedMessage.push(newMessage);
+
+  const bodyFormData = new FormData();
+  bodyFormData.append("caption", "test.mp3");
+  bodyFormData.append("file", blob);
+  await uploadMedia(getSelectedChatId.value, bodyFormData);
+  const cm: any = cachedMessage.find((item) => item.id === tempId);
+  cm.sendMessageStatus = SendMessageStatus.DEFAULT;
+  console.log(1213);
+};
+
+const recOpen = function (success?: () => void) {
+  rec.value = Recorder({
+    type: "mp3",
+    sampleRate: 16000,
+    bitRate: 16,
+    onProcess: function () // buffers: Buffer,
+    // powerLevel: number,
+    // bufferDuration: number,
+    // bufferSampleRate: number,
+    // newBufferIdx: Buffer,
+    // asyncEnd: any
+    {
+      console.log(
+        "录制过程"
+        // buffers,
+        // powerLevel,
+        // bufferDuration,
+        // bufferSampleRate,
+        // newBufferIdx,
+        // asyncEnd
+      );
+    },
+  });
+
+  rec.value.open(
+    function () {
+      success && success();
+    },
+    function (msg: string, isUserNotAllow: string) {
+      Notify.create({
+        message: isUserNotAllow
+          ? "Please turn on the recording permission of the browser"
+          : msg,
+        type: "negative",
+        color: "purple",
+      });
+    }
+  );
+};
+
+/** start recorder **/
+function recStart() {
+  rec.value.start();
+}
+
+/** stop recorder **/
+function recStop() {
+  rec.value.stop(
+    function (blob: Blob, duration: number) {
+      console.log(
+        blob,
+        (window.URL || window.webkitURL).createObjectURL(blob),
+        "时长:" + duration + "ms"
+      );
+      audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
+      sendMedia(blob);
+    },
+    function (msg: string) {
+      console.log("recording error:" + msg);
+      rec.value.close();
+      rec.value = null;
+    }
+  );
+}
+/** close recorder **/
+function recClose() {
+  rec.value.close();
+  rec.value = null;
+}
+recOpen();
+
 const upload = ([file]: any) => {
   const bodyFormData = new FormData();
   bodyFormData.append("caption", "Fred");
   bodyFormData.append("file", file);
-  uploadImage(getSelectedChatId.value, bodyFormData);
+  uploadMedia(getSelectedChatId.value, bodyFormData);
   uplader.value.reset();
 };
 
@@ -519,6 +620,6 @@ onUpdated(() => {
 });
 
 onBeforeUnmount(() => {
-  Recorder.recClose();
+  recClose();
 });
 </script>
