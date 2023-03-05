@@ -391,7 +391,7 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
   };
-  if (!isTemplate.value) cachedMessage.push(newMessage);
+  if (isTemplate.value !== true) cachedMessage.push(newMessage);
   message.value = "";
   isChatExpired.value = false;
   try {
@@ -478,7 +478,7 @@ const sendMessageTemplate = (
   isIncComponent: boolean
 ) => {
   templateName.value = name;
-  message.value = msg;
+  message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
   isIncludeComponent.value = isIncComponent;
