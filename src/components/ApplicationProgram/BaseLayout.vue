@@ -326,33 +326,34 @@ onMounted(() => {
       actionCategory.value !== ac.NONE &&
       actionCategory.value !== undefined
     ) {
-      const buttons = buttonsComponent?.buttons;
+      const buttons = buttonsComponent?.value;
 
       if (buttons !== undefined && buttons !== "") {
         if (actionCategory.value === ac.CALL_TO_ACTION) {
-          actions.value =
-            buttons === null
-              ? Array(2).fill(null)
-              : buttons.map(function (btn) {
-                  const formatted = {};
-                  if (btn.type === fat.CALL_PHONE) {
-                    formatted.type = at.CALL_PHONE;
-                    if (formatted.phone_number?.indexOf(" ")) {
-                      formatted.value = btn.phone_number;
-                    } else {
-                      const arrPhone = formatted.phone_number?.spllit(" ");
-                      formatted.countryOrWebtype = arrPhone[0];
-                      formatted.value = arrPhone[1];
-                    }
-                  } else {
-                    formatted.type = at.VIEW_WEB;
-                    formatted.countryOrWebtype = "Static";
-                    formatted.value = btn.url;
-                  }
-                  formatted.label = btn.text;
+          if (buttons === null) {
+            actions.value = Array(2).fill(null);
+          } else {
+            actions.value = buttons?.buttons?.map((btn) => {
+              const formatted = {};
+              if (btn.type === fat.CALL_PHONE) {
+                formatted.type = at.CALL_PHONE;
+                if (btn.phone_number?.indexOf(" ")) {
+                  formatted.value = btn.phone_number;
+                } else {
+                  const arrPhone = formatted.phone_number?.spllit(" ");
+                  formatted.countryOrWebtype = arrPhone[0];
+                  formatted.value = arrPhone[1];
+                }
+              } else {
+                formatted.type = at.VIEW_WEB;
+                formatted.countryOrWebtype = "Static";
+                formatted.value = btn.url;
+              }
+              formatted.label = btn.text;
 
-                  return formatted;
-                });
+              return formatted;
+            });
+          }
         } else {
           replies.value =
             buttons === null ? [] : buttons?.map((btn) => btn.text);
@@ -409,7 +410,6 @@ const submitGeneralInformation = () => {
   let buttonValues = "";
   if (actionCategory.value !== ac.NONE) {
     if (actionCategory.value === ac.CALL_TO_ACTION) {
-      console.log(actions.value);
       buttonValues = actions.value?.map(function (btn) {
         const formatted = {};
         if (btn.type === at.CALL_PHONE) {

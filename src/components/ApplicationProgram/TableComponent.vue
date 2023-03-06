@@ -91,7 +91,7 @@
         {{ props.row.top_block_reason ? props.row.top_block_reason : 0 }}
       </q-td>
     </template>
-    <template #body-cell-created_by="props">
+    <template #body-cell-user_created="props">
       <q-td
         :props="props"
         :class="{ 'cursor-pointer': propsTable.isSimple }"
@@ -230,13 +230,13 @@ const headerColumns = ref([
     field: "top_block_reason",
     classes: "text-black",
   },
-  {
-    name: "user_created",
-    align: "center",
-    label: "Created By",
-    field: "user_created",
-    classes: "text-black",
-  },
+  // {
+  //   name: "user_created",
+  //   align: "center",
+  //   label: "Created By",
+  //   field: "user_created",
+  //   classes: "text-black",
+  // },
   {
     name: "date_created",
     align: "center",

@@ -7,7 +7,14 @@
       <q-card-section>
         <p class="text-lg mb-2">Customers</p>
         <div class="row justify-between">
-          <q-input placeholder="Search" outlined dense>
+          <q-input
+            v-model="search"
+            @change="handleSearch"
+            @keypress.enter.prevent="handleSearch"
+            placeholder="Search Customer..."
+            outlined
+            dense
+          >
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
@@ -125,6 +132,7 @@ const data = reactive({
   page: 1,
   rowsPerPage: 10,
 });
+const search = ref("");
 
 const groupedCompanies = (companies) => {
   const grouped = companies.map((company) => company.companies_id.name_english);
@@ -137,16 +145,21 @@ const fetchCustomers = async () => {
   } = await getCustomersWithContacts({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.value,
   });
 
   data.customers = customers;
-  data.totalCount = meta?.total_count;
+  data.totalCount = meta?.filter_count;
   loading.value = false;
 };
 
 const changePage = (page) => {
   data.page = page;
 
+  fetchCustomers();
+};
+
+const handleSearch = () => {
   fetchCustomers();
 };
 

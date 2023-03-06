@@ -476,7 +476,7 @@ const sendMessageTemplate = (
   isIncComponent: boolean
 ) => {
   templateName.value = name;
-  message.value = msg;
+  message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
   isIncludeComponent.value = isIncComponent;

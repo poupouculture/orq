@@ -3,7 +3,7 @@
     <!-- search part -->
     <q-item-label header>
       <img class="q-mb-lg" src="~assets/images/logo-invert.png" />
-      <q-input v-model="seachText" placeholder="Search Chats..." outlined dense>
+      <q-input v-model="seachText" placeholder="Search ..." outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
