@@ -9,6 +9,8 @@
     v-model:selected="selected"
     flat
     :hide-pagination="hidePagination"
+    binary-state-sort
+    column-sort-order="ad"
   >
     <template v-slot:header-selection v-if="disableSelect"> </template>
     <template v-slot:body-selection v-if="disableSelect"></template>
@@ -38,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   selected: {
@@ -79,14 +81,19 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["changePage", "update:selected"]);
+const emit = defineEmits([
+  "changePage",
+  "update:selected",
+  "update:pagination",
+]);
 const page = ref(props.page);
 const selected = computed({
   set: (value) => emit("update:selected", value),
   get: () => props.selected,
 });
-const pagination = reactive({
-  sortBy: "desc",
+
+const pagination = ref({
+  sortBy: "first_name",
   descending: false,
   page: page.value,
   rowsPerPage: 10,
