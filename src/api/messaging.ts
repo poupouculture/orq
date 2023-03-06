@@ -17,6 +17,19 @@ export const getChatMessagesByChatId = async (id: string) => {
   return data;
 };
 
+export const loadChatMessages = async (payload: any) => {
+  const defaultParams = {
+    page_size: 50,
+    direction: "forward",
+    // backwards forward
+  };
+  const { data } = await api.post(`/waba/load-chat-messages-page`, {
+    ...defaultParams,
+    ...payload,
+  });
+  return data;
+};
+
 export const sendChatTextMessage = async (payload: SendTextMessage) => {
   const {
     chatId,
