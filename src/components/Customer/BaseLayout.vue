@@ -39,8 +39,8 @@
             </div>
           </q-tab-panel>
 
-          <q-tab-panel name="Remark">
-            <!-- <Remark /> -->
+          <q-tab-panel name="remark">
+            <Remark v-model="remarks" />
           </q-tab-panel>
 
           <q-tab-panel name="Attachement">
@@ -61,16 +61,19 @@ import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import ServiceRecord from "./ServiceRecord.vue";
 // import OtherInformation from "../OtherInformation/OtherInformation.vue";
-// import Remark from "../Remark/Remark.vue";
+import Remark from "../Remark/Remark.vue";
+import useCustomerStore from "src/stores/modules/customer";
 // import Attachement from "../Attachement/Attachement.vue";
 defineProps({
   mode: String,
 });
 const emit = defineEmits(["submitGeneralInformation"]);
-
+const customerStore = useCustomerStore();
 const tab = ref("general");
 
+const remarks = ref(customerStore.customer.remarks);
 const submitGeneralInformation = (payload) => {
+  payload.remarks = remarks.value;
   emit("submitGeneralInformation", payload);
 };
 </script>
