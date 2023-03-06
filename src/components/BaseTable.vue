@@ -93,7 +93,7 @@ const selected = computed({
 });
 
 const pagination = ref({
-  sortBy: "first_name",
+  sortBy: "",
   descending: false,
   page: page.value,
   rowsPerPage: 10,
