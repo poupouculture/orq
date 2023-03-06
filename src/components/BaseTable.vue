@@ -18,17 +18,25 @@
       <slot :name="slot" v-bind="scope" />
     </template>
     <template v-slot:bottom>
-      <div class="row justify-between q-pt-lg q-pb-lg" style="width: 100%">
-        <div class="col">
-          {{ getPaginationLabel() }}
+      <div
+        class="grid grid-cols-1 py-3 lg:grid-cols-3 w-full items-center gap-4"
+      >
+        <div class="col-span-1 flex justify-center lg:justify-start">
+          <p class="mb-0 text-sm text-[#757575]">
+            {{ getPaginationLabel }}
+          </p>
         </div>
-        <div class="col absolute-bottom-right q-ma-lg">
+
+        <div
+          class="col-span-1 lg:col-span-2 flex justify-center lg:justify-end"
+        >
           <q-pagination
             v-model="page"
+            size="15px"
             @update:model-value="changePage"
             :max="totalPage"
-            :max-pages="10"
-            direction-links
+            :max-pages="$q.screen.lt.lg ? 2 : 7"
+            :direction-links="$q.screen.gt.sm"
             flat
             color="grey"
             active-color="primary"
@@ -99,14 +107,14 @@ const pagination = ref({
   rowsPerPage: 10,
 });
 
-const getPaginationLabel = () => {
+const getPaginationLabel = computed(() => {
   const max = props.page * props.rowsPerPage;
   const maxIndex = props.totalCount < max ? props.totalCount : max;
   const minIndex = props.rowsPerPage * (props.page - 1) + 1;
 
   return `Showing ${minIndex} to ${maxIndex} of
   ${props.totalCount} results`;
-};
+});
 
 const totalPage = computed(() =>
   Math.ceil(props.totalCount / props.rowsPerPage)
