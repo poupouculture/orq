@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="message-item relative">
     <q-spinner-ios
       v-if="sendMessageStatus === SendMessageStatus.PENDING"
       class="absolute left-0 -translate-x-9"
@@ -13,14 +13,14 @@
       color="warning"
       size="1rem"
     />
-    <span v-if="content?.type === MessageType.IMAGE">
-      <!-- {{ content.url }} -->
+    <div v-if="content?.type === MessageType.IMAGE">
       <AuthImage
+        class="image"
         :imgUrl="content.url + '&fit=inside&width=128&height=128'"
         :authToken="`Bearer ${getUserInfo.access_token}`"
       />
-    </span>
-    <span v-else-if="content?.type === MessageType.AUDIO">
+    </div>
+    <span v-else-if="content?.type === MessageType.MEDIA">
       <q-icon
         class="cursor-pointer"
         name="record_voice_over"
@@ -74,3 +74,12 @@ withDefaults(defineProps<Props>(), {
   sendMessageStatus: SendMessageStatus.DEFAULT,
 });
 </script>
+
+<style lang="scss" scoped>
+.message-item {
+  .image {
+    width: 128px;
+    height: 128px;
+  }
+}
+</style>

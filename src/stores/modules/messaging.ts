@@ -9,11 +9,10 @@ import {
 import { ChatTypes } from "src/constants/ChatKeyword";
 import {
   getChats,
-  getChatMessagesByChatId,
+  loadChatMessages,
   sendChatTextMessage,
   getContact,
 } from "src/api/messaging";
-import { Loading } from "quasar";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
@@ -128,24 +127,28 @@ const useMessagingStore = defineStore("messaging", {
       });
     },
 
-    async fetchChatMessagesById(chatId: string) {
+    async fetchChatMessagesById(chatId: string, lastMessageId?: number) {
       try {
-        Loading.show();
-        const cachedChatMessage = this.cachedChatMessages[chatId];
-        if (!cachedChatMessage) {
-          const messages = await getChatMessagesByChatId(chatId);
-          this.cachedChatMessages[chatId] = messages.map((item: any) => ({
-            id: item.id,
-            content: JSON.parse(item.content),
-            status: item.status,
-            type: item.type,
-            direction: item.direction,
-            date_created: item.date_created,
-          }));
-        }
-        Loading.hide();
+        const { data } = await loadChatMessages({
+          chat_id: chatId,
+          last_message_id: lastMessageId,
+        });
+        this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
+        const messages = data.map((item: any) => ({
+          id: item.id,
+          content: JSON.parse(item.content),
+          status: item.status,
+          type: item.type,
+          direction: item.direction,
+          date_created: item.date_created,
+        }));
+        this.cachedChatMessages[chatId] = [
+          ...messages,
+          ...this.cachedChatMessages[chatId],
+        ];
+        return data.length;
       } catch (e) {
-        Loading.hide();
+        console.log(e);
       }
     },
 
@@ -157,9 +160,6 @@ const useMessagingStore = defineStore("messaging", {
     async onSelectChat(chatId: string) {
       this.selectedChatId = chatId;
       this.rightDrawerOpen = true;
-      if (!this.cachedChatMessages[chatId]) {
-        this.fetchChatMessagesById(chatId);
-      }
     },
 
     async fetchContactNumber(contactId: string) {

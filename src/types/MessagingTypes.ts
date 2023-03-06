@@ -8,7 +8,7 @@ export const enum MessageType {
   TEXT = "text",
   TEMPLATE = "template",
   IMAGE = "image",
-  AUDIO = "audio",
+  MEDIA = "media",
 }
 
 export const enum MessageStatus {
@@ -44,6 +44,7 @@ export interface Message {
   type?: MessageType;
   sendMessageStatus?: SendMessageStatus;
   totalUnread?: number;
+  label?: string;
 }
 export interface IChat {
   id: string;
