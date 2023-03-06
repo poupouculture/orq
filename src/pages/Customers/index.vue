@@ -53,11 +53,11 @@
       <BaseTable
         :rows="data.customers"
         :total-count="search.query ? data.filterCount : data.totalCount"
-        :page="data.page"
+        v-model:page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
         :loading="loading"
-        row-key="name"
+        row-key="id"
         @changePage="changePage"
         v-model:selected="selected"
       >
@@ -78,11 +78,6 @@
               </div>
             </div>
             <p></p>
-          </q-td>
-        </template>
-        <template #body-cell-customerCode="props">
-          <q-td :props="props">
-            {{ props.row.customer_code }}
           </q-td>
         </template>
         <template #body-cell-company="props">
@@ -133,13 +128,13 @@ const customerStore = useCustomerStore();
 
 const headerColumns = [
   {
-    name: "name",
+    name: "first_name",
     align: "left",
     label: "Name",
-    field: "name",
-    sortable: true,
+    field: "first_name",
     classes: "text-black",
     style: "max-width: 10%",
+    sortable: true,
   },
   {
     name: "company",
@@ -150,10 +145,10 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "customerCode",
+    name: "customer_code",
     align: "left",
     label: "Customer Code",
-    field: "customerCode",
+    field: "customer_code",
     sortable: true,
     classes: "text-black",
   },
