@@ -525,6 +525,14 @@ import useCustomerStore from "src/stores/modules/customer";
 const route = useRoute();
 const customerStore = useCustomerStore();
 
+const props = defineProps({
+  customerId: {
+    type: String,
+    required: false,
+    default: () => "",
+  },
+});
+
 const phonedialog = ref(false);
 const phoneNumber = ref("");
 const extension = ref("");
@@ -545,7 +553,7 @@ const handleclick = (data) => {
 };
 
 const addPhone = async () => {
-  const customerId = route.params.id;
+  const customerId = props.customerId ? props.customerId : route.params.id;
   const params = {
     category: type.value,
     phone_number: phoneNumber.value,

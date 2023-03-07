@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
 import {
   getCustomer,
-  addContact,
+  // addContact,
   addCustomerContact,
   addCustomer,
   updateCustomer,
   deleteCustomer,
+  addCustomerContactAlong,
 } from "../../api/customers";
 import { IState, FormPayload, ICustomer } from "src/types/CustomerTypes";
 import { getUser } from "src/api/user";
@@ -111,12 +112,18 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addContact(customerId: string, payload: unknown) {
-      const {
-        data: { data: contact },
-      } = await addContact(payload);
-      const { id: contactId } = contact;
+      // const {
+      //   data: { data: contact },
+      // } = await addContact(payload);
+      // const { id: contactId } = contact;
 
-      const result = await addCustomerContact(customerId, contactId);
+      // const result = await addCustomerContact(customerId, contactId);
+      const result = await addCustomerContactAlong({
+        contacts: {
+          create: payload,
+        },
+        customers_id: customerId,
+      });
       return result;
     },
     async addCustomer(payload: FormPayload) {

@@ -28,7 +28,7 @@
     </q-tab-panel>
     <q-tab-panel name="contact">
       <div class="contact-info">
-        <ContactInfo />
+        <ContactInfo :customer-id="customerStore.getCustomer.id" />
       </div>
     </q-tab-panel>
     <q-tab-panel name="service_record">

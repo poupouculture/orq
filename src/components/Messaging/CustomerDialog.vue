@@ -135,21 +135,21 @@ const data = reactive({
 const search = ref("");
 
 const groupedCompanies = (companies) => {
-  const grouped = companies.map((company) => company.companies_id.name_english);
+  const grouped = companies.map((company) => company.name);
   return grouped.join(", ");
 };
 
 const fetchCustomers = async () => {
   const {
-    data: { data: customers, meta },
+    data: { data: customers },
   } = await getCustomersWithContacts({
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
   });
 
-  data.customers = customers;
-  data.totalCount = meta?.filter_count;
+  data.customers = customers.customers;
+  data.totalCount = customers?.filter_count;
   loading.value = false;
 };
 
