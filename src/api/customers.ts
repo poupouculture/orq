@@ -105,6 +105,11 @@ export const addCustomerContact = async (customerId, contactId) => {
   return customerContact;
 };
 
+export const addCustomerContactAlong = async (payload) => {
+  const customerContact = await api.post("items/contacts_customers", payload);
+  return customerContact;
+};
+
 export const searchCustomers = async (payload: any) => {
   const data = await api.get("/items/customers", {
     params: {
