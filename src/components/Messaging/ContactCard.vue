@@ -55,7 +55,7 @@ const message = computed<string>(() => {
   switch (lastMessage?.content?.type) {
     case MessageType.IMAGE:
       return "[pic]";
-    case MessageType.AUDIO:
+    case MessageType.MEDIA:
       return "[audio]";
     case MessageType.TEXT:
       return lastMessage?.content?.text;

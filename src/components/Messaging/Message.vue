@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="getSelectedChat?.id"
+    v-if="getSelectedChatId"
     class="h-full w-full flex flex-col"
     id="parentChatList"
   >
@@ -47,11 +47,52 @@
       </div>
     </div>
     <ChatConversationButton
+      class="pb-2 border-b"
       v-if="getSelectedChat.status !== ChatTypes.CLOSED"
     />
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full">
       <div
+        class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
+        ref="scrollAreaRef"
+      >
+        <q-infinite-scroll
+          :key="getSelectedChatId"
+          ref="infiniteScrollRef"
+          @load="loadMore"
+          :initialIndex="0"
+          :reverse="true"
+          :scroll-target="scrollAreaRef"
+        >
+          <!-- bg-[#E8E7FB] text-[#2E2E3A] -->
+          <q-chat-message
+            v-for="item in messages"
+            :key="item.id"
+            class="pb-4"
+            avatar="https://cdn.quasar.dev/img/avatar4.jpg"
+            :sent="item.direction === Direction.OUTGOING"
+          >
+            <MessageItem
+              :content="item.content"
+              :sendMessageStatus="item.sendMessageStatus"
+            />
+            <template #label>{{ item.label }}</template>
+            <template #stamp>
+              <span>{{ format(new Date(item.date_created), "p") }}</span>
+            </template>
+          </q-chat-message>
+          <template #loading>
+            <div class="row justify-center q-my-md">
+              <q-spinner-dots
+                color="primary"
+                name="dots"
+                size="40px"
+              ></q-spinner-dots>
+            </div>
+          </template>
+        </q-infinite-scroll>
+      </div>
+      <!-- <div
         class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
         ref="scrollAreaRef"
       >
@@ -72,7 +113,6 @@
                 : format(new Date(message.date_created), "eee, d MMM")
             }}
           </div>
-          <!-- Chat Items -->
           <div
             class="flex"
             :class="[
@@ -105,14 +145,12 @@
                   />
                 </div>
                 <div class="mx-4">
-                  <!-- {{ message.content }} -->
                   <MessageItem
                     :content="message.content"
                     :sendMessageStatus="message.sendMessageStatus"
                   />
                 </div>
               </div>
-              <!-- Time and Check icon (read) -->
               <div class="flex items-center ml-auto mr-0.5 mt-1 space-x-1">
                 <small class="text-[#9A9AAF]" style="font-size: 10px">
                   {{ format(new Date(message.date_created), "p") }}
@@ -149,7 +187,7 @@
         >
           Reply
         </div>
-      </div>
+      </div> -->
     </main>
     <!-- footer -->
     <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
@@ -230,7 +268,10 @@
       </div>
     </footer>
   </div>
-  <div v-else class="flex flex-col justify-center items-center h-full">
+  <div
+    v-show="!getSelectedChatId"
+    class="flex flex-col justify-center items-center h-full"
+  >
     <img class="" src="~assets/images/startchat.png" />
     <p class="text-[#9A9AAF] font-medium text-base">
       Choose a contact to start your conversation
@@ -249,14 +290,15 @@ import {
   ref,
   watch,
   nextTick,
-  onMounted,
-  onUpdated,
+  // onMounted,
+  // onUpdated,
   onBeforeUnmount,
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, differenceInDays, isToday } from "date-fns";
+import { format, isSameDay, differenceInDays, isToday } from "date-fns";
+// import { format, differenceInDays, isToday } from "date-fns";
 import Recorder from "recorder-core";
 import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
@@ -279,14 +321,15 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import MessageItem from "./MessageItem.vue";
-
-interface ActionChat {
-  index: number;
-  top: number | undefined;
-  left: number | undefined;
-}
+// interface ActionChat {
+//   index: number;
+//   top: number | undefined;
+//   left: number | undefined;
+// }
 
 const scrollAreaRef = ref<HTMLDivElement>();
+const infiniteScrollRef = ref<HTMLDivElement>();
+
 const message: Ref<string> = ref("");
 // const sendLoading: Ref<boolean> = ref(false);
 const isChatExpired: Ref<boolean> = ref(true);
@@ -295,7 +338,7 @@ const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
-const activeAction: Ref<ActionChat | null> = ref(null);
+// const activeAction: Ref<ActionChat | null> = ref(null);
 const uplader: any = ref(null);
 const rec: any = ref(null);
 const audioData = ref();
@@ -328,16 +371,37 @@ const messages = computed<Message[]>(() => {
     cachedMessage?.map((message, index) => {
       return {
         ...message,
-        old_date_created: cachedMessage[index - 1]?.date_created || null,
+        label: isSameDay(
+          new Date(message.date_created),
+          new Date(cachedMessage[index + 1]?.date_created)
+        )
+          ? ""
+          : isToday(new Date(message.date_created))
+          ? "Today"
+          : format(new Date(message.date_created), "eee, d MMM"),
       };
     }) || []
   );
 });
 
+const loadMore = async (index: number, done: (stop: boolean) => void) => {
+  const length = await messagingStore.fetchChatMessagesById(
+    getSelectedChatId.value,
+    messages.value?.[0]?.id
+  );
+  const stop = length < 50;
+  done(stop);
+};
+
 // Watch
-watch(messages, () => {
-  scrollToBottom();
-});
+// watch(
+//   () => getSelectedChatId.value,
+//   async () => {
+//     await nextTick();
+//     infiniteScrollRef.value?.resume();
+// infiniteScrollRef.value?.reset();
+//   }
+// );
 
 watch(
   () => getSelectedChat.value,
@@ -399,6 +463,7 @@ const sendMessage = async () => {
     sendMessageStatus: SendMessageStatus.PENDING,
   };
   cachedMessage.push(newMessage);
+  scrollToBottom();
   message.value = "";
   isChatExpired.value = false;
   try {
@@ -483,29 +548,29 @@ const sendMessageTemplate = (
   sendMessage();
 };
 
-const showActionChat = (index: number) => {
-  if (activeAction.value !== null && activeAction.value?.index === index) {
-    activeAction.value = null;
-  } else {
-    const rec = document
-      ?.getElementById(`chat-action-${index}`)
-      ?.getBoundingClientRect();
+// const showActionChat = (index: number) => {
+//   if (activeAction.value !== null && activeAction.value?.index === index) {
+//     activeAction.value = null;
+//   } else {
+//     const rec = document
+//       ?.getElementById(`chat-action-${index}`)
+//       ?.getBoundingClientRect();
 
-    const rec2 = document
-      ?.getElementById(`parentChatList`)
-      ?.getBoundingClientRect();
+//     const rec2 = document
+//       ?.getElementById(`parentChatList`)
+//       ?.getBoundingClientRect();
 
-    activeAction.value = {
-      index,
-      top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
-      left: rec?.left - rec2?.left - 30,
-    };
-  }
-};
+//     activeAction.value = {
+//       index,
+//       top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
+//       left: rec?.left - rec2?.left - 30,
+//     };
+//   }
+// };
 
-const handleScroll = () => {
-  activeAction.value = null;
-};
+// const handleScroll = () => {
+//   activeAction.value = null;
+// };
 
 const sendMedia = async (blob: Blob) => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
@@ -514,23 +579,25 @@ const sendMedia = async (blob: Blob) => {
     id: tempId,
     content: {
       url: audioData.value,
-      type: MessageType.AUDIO,
+      type: MessageType.MEDIA,
     },
     status: MessageStatus.SENT,
-    type: MessageType.AUDIO,
+    type: MessageType.MEDIA,
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
   };
   cachedMessage.push(newMessage);
-
+  scrollToBottom();
   const bodyFormData = new FormData();
+  const file = new window.File([blob], "test.mp3", { type: "mp3" });
   bodyFormData.append("caption", "test.mp3");
-  bodyFormData.append("file", blob);
-  await uploadMedia(getSelectedChatId.value, bodyFormData);
+  bodyFormData.append("file", file);
+
+  const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
   const cm: any = cachedMessage.find((item) => item.id === tempId);
   cm.sendMessageStatus = SendMessageStatus.DEFAULT;
-  console.log(1213);
+  cm.id = data.derp_chats_messages_id;
 };
 
 const recOpen = function (success?: () => void) {
@@ -612,21 +679,21 @@ const upload = ([file]: any) => {
   uplader.value.reset();
 };
 
-onMounted(() => {
-  scrollToBottom();
-  scrollAreaRef.value.addEventListener("scroll", handleScroll);
-});
+// onMounted(() => {
+//   scrollToBottom();
+//   scrollAreaRef.value.addEventListener("scroll", handleScroll);
+// });
 
-onUpdated(() => {
-  scrollAreaRef.value.addEventListener("scroll", handleScroll);
-});
+// onUpdated(() => {
+// scrollAreaRef.value.addEventListener("scroll", handleScroll);
+// });
 
 onBeforeUnmount(() => {
   recClose();
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .mic-recorder {
   -webkit-touch-callout: none !important;
   -webkit-user-select: none;

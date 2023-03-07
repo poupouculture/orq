@@ -175,21 +175,12 @@ const selected = ref([]);
 
 const search = reactive({
   loading: false,
-  query: null,
+  query: "",
 });
 const searchHandler = async () => {
   search.loading = true;
   try {
-    const {
-      data: { data: customers, meta },
-    } = await getCustomers({
-      limit: data.rowsPerPage,
-      page: data.page,
-      search: search.query.length ? search.query : undefined,
-    });
-    data.customers = customers;
-    data.totalCount = meta?.total_count;
-    data.filterCount = meta?.filter_count;
+    await fetchCustomers();
     search.loading = false;
   } catch (error) {
     search.loading = false;
@@ -225,10 +216,17 @@ const fetchCustomers = async () => {
   } = await getCustomers({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.query.length ? search.query : undefined,
+    filter: search.query.length
+      ? {
+          key: "filter[first_name][_neq]",
+          value: "null",
+        }
+      : undefined,
   });
-
   data.customers = customers;
   data.totalCount = meta?.total_count;
+  data.filterCount = meta?.filter_count;
   loading.value = false;
 };
 

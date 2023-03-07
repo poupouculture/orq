@@ -128,6 +128,8 @@
                   >
                     <q-date
                       v-model="dateOfBirth"
+                      :options="optionDateFn"
+                      mask="YYYY-MM-DD"
                       @input="() => $refs.qDateProxy.hide()"
                     ></q-date>
                   </q-popup-proxy>
@@ -240,6 +242,7 @@ import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
 import { useRouter } from "vue-router";
+import { date } from "quasar";
 
 interface Option {
   value: string | number;
@@ -436,6 +439,10 @@ const discardChanges = () => {
 
 const submitDelete = () => {
   deleteDialog.value = false;
+};
+
+const optionDateFn = (qdate: string) => {
+  return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
 };
 
 const mappingCompanies = () => {
