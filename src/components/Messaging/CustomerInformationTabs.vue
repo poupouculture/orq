@@ -43,7 +43,7 @@ import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 const enum CustomerInformationTabs {
@@ -52,22 +52,23 @@ const enum CustomerInformationTabs {
   SERVICE_RECORD = "service_record",
 }
 const customerStore = useCustomerStore();
+const customer = computed(() => customerStore.getCustomer);
 const messagingStore = useMessagingStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
 );
 const saveCustomer = async (val: FormPayload) => {
-  let customer = null;
-  if (customerStore.getCustomer.id) {
+  let customerResult = null;
+  if (customer.value.id) {
     // update
-    await customerStore.updateCustomer(customerStore.getCustomer.id, val);
-    customer = customerStore.getCustomer;
+    await customerStore.updateCustomer(customer.value.id, val);
+    customerResult = customerStore.getCustomer;
   } else {
     // insert
-    customer = await customerStore.addCustomer(val);
+    customerResult = await customerStore.addCustomer(val);
     const contactId = getSelectedChat.value.contacts_id;
-    await customerStore.addCustomerContact(customer.id, contactId);
+    await customerStore.addCustomerContact(customerResult.id, contactId);
   }
 
   messagingStore.fetchChats();
