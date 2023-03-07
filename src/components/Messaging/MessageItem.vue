@@ -16,11 +16,11 @@
     <div v-if="content?.type === MessageType.IMAGE">
       <AuthImage
         class="image"
-        :imgUrl="content.url + '&fit=inside&width=128&height=128'"
+        :imgUrl="content.url + '&fit=inside&height=128'"
         :authToken="`Bearer ${getUserInfo.access_token}`"
       />
     </div>
-    <span v-else-if="content?.type === MessageType.MEDIA">
+    <span v-else-if="content?.type === MessageType.AUDIO">
       <q-icon
         class="cursor-pointer"
         name="record_voice_over"
@@ -38,7 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { api } from "boot/axios";
 import useUserInfoStore from "stores/modules/userInfo";
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
 import AuthImage from "src/components/AuthImage/AuthImage.vue";
@@ -69,16 +70,31 @@ const audioPlay = () => {
   }
 };
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
   sendMessageStatus: SendMessageStatus.DEFAULT,
 });
+
+watch(
+  () => props.content.url,
+  async (val) => {
+    if (!val) return;
+    const { data } = await api.get(val, {
+      responseType: "blob",
+    });
+    const blob = new Blob([data], { type: "audio/mgpe" });
+    audio.value.src = (window.URL || window.webkitURL).createObjectURL(blob);
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <style lang="scss" scoped>
 .message-item {
   .image {
-    width: 128px;
+    // width: 128px;
     height: 128px;
   }
 }

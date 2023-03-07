@@ -8,6 +8,7 @@ export const enum MessageType {
   TEXT = "text",
   TEMPLATE = "template",
   IMAGE = "image",
+  AUDIO = "audio",
   MEDIA = "media",
 }
 
