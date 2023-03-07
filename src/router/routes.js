@@ -65,6 +65,11 @@ const routes = [
           import("pages/ApplicationProgram/BotTemplate/edit.vue"),
       },
       {
+        path: "application-programs/campaign/campaign-setting",
+        component: () =>
+          import("pages/ApplicationProgram/Campaign/campaignSettings.vue"),
+      },
+      {
         path: "document-builders",
         component: () => import("pages/DocumentBuilder/index.vue"),
       },
