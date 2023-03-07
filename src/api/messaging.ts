@@ -12,23 +12,29 @@ export const getChats = async (type: ChatTypes) => {
   return data;
 };
 
-export const getChatMessagesByChatId = async (id: string) => {
-  const { data } = await api.get(`/waba/chats/messages/${id}`);
-  return data;
-};
-
-export const loadChatMessages = async (payload: any) => {
-  const defaultParams = {
-    page_size: 50,
-    direction: "forward",
-    // backwards forward
-  };
-  const { data } = await api.post(`/waba/load-chat-messages-page`, {
-    ...defaultParams,
-    ...payload,
+export const getChatMessagesByChatId = async (
+  id: string,
+  page = 1,
+  limit = 15
+) => {
+  const { data } = await api.get(`/waba/chats/messages/${id}`, {
+    params: { page, limit },
   });
   return data;
 };
+
+// export const loadChatMessages = async (payload: any) => {
+//   const defaultParams = {
+//     page_size: 50,
+//     direction: "forward",
+//     // backwards forward
+//   };
+//   const { data } = await api.post(`/waba/load-chat-messages-page`, {
+//     ...defaultParams,
+//     ...payload,
+//   });
+//   return data;
+// };
 
 export const sendChatTextMessage = async (payload: SendTextMessage) => {
   const {

@@ -64,7 +64,6 @@
           :reverse="true"
           :scroll-target="scrollAreaRef"
         >
-          <!-- bg-[#E8E7FB] text-[#2E2E3A] -->
           <q-chat-message
             v-for="item in messages"
             :key="item.id"
@@ -92,102 +91,6 @@
           </template>
         </q-infinite-scroll>
       </div>
-      <!-- <div
-        class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
-        ref="scrollAreaRef"
-      >
-        <div v-for="(message, i) in messages" :key="message.id">
-          <div
-            v-if="
-              message.old_date_created == null ||
-              differenceInDays(
-                new Date(message.date_created),
-                new Date(message.old_date_created)
-              ) > 0
-            "
-            class="text-center py-4 text-[#9A9AAF] date"
-          >
-            {{
-              isToday(new Date(message.date_created))
-                ? "Today"
-                : format(new Date(message.date_created), "eee, d MMM")
-            }}
-          </div>
-          <div
-            class="flex"
-            :class="[
-              message.direction === Direction.OUTGOING
-                ? 'justify-end'
-                : 'justify-start',
-            ]"
-          >
-            <div
-              class="w-1/12 flex items-center px-2 text-lg text-gray-400 order-last"
-            >
-              <q-icon name="fa-solid fa-face-smile" class="cursor-pointer" />
-            </div>
-            <div class="flex flex-col max-w-[60%] mb-2">
-              <div
-                class="rounded-md pb-3 whitespace-pre-wrap block break-words w-full"
-                :class="[
-                  message.direction === Direction.OUTGOING
-                    ? 'bg-primary text-white rounded-br-none'
-                    : 'bg-[#E8E7FB] text-[#2E2E3A] rounded-tl-none',
-                ]"
-              >
-                <div
-                  class="w-full flex justify-end pt-1 pr-1 hover:cursor-pointer text-gray-400"
-                >
-                  <q-icon
-                    name="expand_more"
-                    :id="`chat-action-${i}`"
-                    @click="showActionChat(i)"
-                  />
-                </div>
-                <div class="mx-4">
-                  <MessageItem
-                    :content="message.content"
-                    :sendMessageStatus="message.sendMessageStatus"
-                  />
-                </div>
-              </div>
-              <div class="flex items-center ml-auto mr-0.5 mt-1 space-x-1">
-                <small class="text-[#9A9AAF]" style="font-size: 10px">
-                  {{ format(new Date(message.date_created), "p") }}
-                </small>
-                <svg
-                  v-if="message.direction === Direction.OUTGOING"
-                  width="14"
-                  height="10"
-                  viewBox="0 0 12 8"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M10.5089 0.194653C10.7861 0.348235 10.8635 0.683145 10.6816 0.942697L6.95684 6.25975C6.77503 6.5193 6.40288 6.60522 6.12569 6.45164L5.48095 6.12457C5.20376 5.97099 4.75241 5.47943 4.93422 5.21988C5.11603 4.96033 5.53234 4.97345 5.80953 5.12703L6.26716 5.22527L9.67779 0.386541C9.8596 0.12699 10.2318 0.0410714 10.5089 0.194653Z"
-                    fill="#9A9AAF"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.71166 0.194816C7.98888 0.348392 8.0662 0.683303 7.88436 0.94286L4.15952 6.25992C3.97768 6.51948 3.60557 6.60539 3.32836 6.45181L1.20508 5.19434C0.927862 5.04076 0.52147 4.75956 0.703307 4.5C0.885144 4.24044 1.24807 4.34642 1.52529 4.5L3.46984 5.22544L6.8805 0.386705C7.06234 0.127149 7.43445 0.0412397 7.71166 0.194816Z"
-                    fill="#9A9AAF"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          v-if="activeAction !== null"
-          class="px-4 py-2 absolute rounded-lg shadow-md top-0 bg-gray-200"
-          :style="`margin-left: ${activeAction.left}px; margin-top: ${activeAction.top}px`"
-        >
-          Reply
-        </div>
-      </div> -->
     </main>
     <!-- footer -->
     <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
@@ -385,11 +288,13 @@ const messages = computed<Message[]>(() => {
 });
 
 const loadMore = async (index: number, done: (stop: boolean) => void) => {
+  const limit = 15;
   const length = await messagingStore.fetchChatMessagesById(
     getSelectedChatId.value,
-    messages.value?.[0]?.id
+    index,
+    limit
   );
-  const stop = length < 50;
+  const stop = length < limit;
   done(stop);
 };
 
@@ -579,10 +484,10 @@ const sendMedia = async (blob: Blob) => {
     id: tempId,
     content: {
       url: audioData.value,
-      type: MessageType.MEDIA,
+      type: MessageType.AUDIO,
     },
     status: MessageStatus.SENT,
-    type: MessageType.MEDIA,
+    type: MessageType.AUDIO,
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
@@ -590,7 +495,7 @@ const sendMedia = async (blob: Blob) => {
   cachedMessage.push(newMessage);
   scrollToBottom();
   const bodyFormData = new FormData();
-  const file = new window.File([blob], "test.mp3", { type: "mp3" });
+  const file = new window.File([blob], "test.mp3", { type: "audio/mpeg" });
   bodyFormData.append("caption", "test.mp3");
   bodyFormData.append("file", file);
 
