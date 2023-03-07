@@ -10,7 +10,7 @@
           Application program /
         </span>
       </router-link>
-      Chatbots
+      Customer Service
     </p>
     <div class="row justify-between">
       <q-input placeholder="Search" outlined dense>
@@ -26,7 +26,7 @@
           color="primary"
           label="Add"
           class="q-mr-sm"
-          @click="router.push('/application-programs/chatbots/create')"
+          @click="router.push('/application-programs/customer-services/create')"
         />
         <q-btn
           icon="archive"
@@ -43,7 +43,7 @@
         :totalCount="data.totalCount"
         :page="data.page"
         :rowsPerPage="data.rowsPerPage"
-        formType="bots"
+        formType="customer-service"
         v-model:selected="selected"
         @changePage="changePage"
         v-if="!loading"
@@ -53,7 +53,10 @@
 </template>
 
 <script setup>
-import { getBotTemplates, updateBotTemplate } from "src/api/botTemplate";
+import {
+  getCustomerServiceTemplates,
+  updateCustomerServiceTemplate,
+} from "src/api/customerService";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
@@ -76,7 +79,7 @@ onMounted(() => {
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
-  } = await getBotTemplates({
+  } = await getCustomerServiceTemplates({
     limit: data.rowsPerPage,
     page: data.page,
   });
@@ -91,11 +94,11 @@ const changePage = (val) => {
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
     data.status = "archived";
-    await updateBotTemplate(data.id, data);
+    await updateCustomerServiceTemplate(data.id, data);
   });
 
   Notify.create({
-    message: `Selected Bot has been archived`,
+    message: `Selected customer service has been archived`,
     position: "top",
     type: "positive",
     color: "blue-9",
