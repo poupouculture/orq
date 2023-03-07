@@ -72,7 +72,12 @@ const useMessagingStore = defineStore("messaging", {
         );
 
         if (index !== -1) {
+          const cachedMessage = this.cachedChatMessages[chatId]?.find(
+            (item) => item.id === lastmessage.id
+          );
+          if (cachedMessage) return;
           const [chat] = this.chatsList.splice(index, 1);
+          this.chatsList.unshift(chat);
           if (lastmessage.status === MessageStatus.RECEIVE) {
             if (this.selectedChatId !== chatId) {
               chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
@@ -81,11 +86,6 @@ const useMessagingStore = defineStore("messaging", {
             }
           }
           chat.last_message = lastmessage;
-          this.chatsList.unshift(chat);
-          const cachedMessage = this.cachedChatMessages[chatId]?.find(
-            (item) => item.id === lastmessage.id
-          );
-          if (cachedMessage) return;
           this.cachedChatMessages[chatId]?.push(lastmessage);
         }
       } catch (error) {
