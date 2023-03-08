@@ -129,24 +129,23 @@ const useMessagingStore = defineStore("messaging", {
 
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
       try {
-        const data = await getChatMessagesByChatId(chatId, page, limit);
+        const { data } = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const messages = data
-          .map((item: any) => ({
-            id: item.id,
-            content: item.content,
-            status: item.status,
-            type: item.type,
-            direction: item.direction,
-            date_created: item.date_created,
-          }))
-          .reverse();
+        const messages = data.messages.map((item: any) => ({
+          id: item.id,
+          content: item.content,
+          status: item.status,
+          type: item.type,
+          direction: item.direction,
+          date_created: item.date_created,
+        }));
         this.cachedChatMessages[chatId] = [
           ...messages,
           ...this.cachedChatMessages[chatId],
         ];
-
-        return data.length;
+        const hasmore =
+          this.cachedChatMessages[chatId].length < data.total_count;
+        return hasmore;
       } catch (e) {
         console.log(e);
       }
