@@ -9,7 +9,7 @@ import {
 import { ChatTypes } from "src/constants/ChatKeyword";
 import {
   getChats,
-  loadChatMessages,
+  getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
 } from "src/api/messaging";
@@ -127,25 +127,25 @@ const useMessagingStore = defineStore("messaging", {
       });
     },
 
-    async fetchChatMessagesById(chatId: string, lastMessageId?: number) {
+    async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
       try {
-        const { data } = await loadChatMessages({
-          chat_id: chatId,
-          last_message_id: lastMessageId,
-        });
+        const data = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const messages = data.map((item: any) => ({
-          id: item.id,
-          content: JSON.parse(item.content),
-          status: item.status,
-          type: item.type,
-          direction: item.direction,
-          date_created: item.date_created,
-        }));
+        const messages = data
+          .map((item: any) => ({
+            id: item.id,
+            content: item.content,
+            status: item.status,
+            type: item.type,
+            direction: item.direction,
+            date_created: item.date_created,
+          }))
+          .reverse();
         this.cachedChatMessages[chatId] = [
           ...messages,
           ...this.cachedChatMessages[chatId],
         ];
+
         return data.length;
       } catch (e) {
         console.log(e);
