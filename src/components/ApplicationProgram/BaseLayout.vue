@@ -3,7 +3,11 @@
     <p class="header-text text-2xl">
       <router-link
         :to="`/application-programs/${
-          props.formType === 'bots' ? 'chatbots' : 'message-templates'
+          props.formType === 'bots'
+            ? 'chatbots'
+            : props.formType === 'customer-service'
+            ? 'customer-serivces'
+            : 'message-templates'
         }`"
         style="text-decoration: none; color: inherit"
       >
@@ -12,7 +16,13 @@
           Application program /
         </span>
       </router-link>
-      {{ props.formType === "bots" ? "Chatbots" : "Message Templates" }}
+      {{
+        props.formType === "bots"
+          ? "Chatbots"
+          : props.formType === "customer-service"
+          ? "Customer Service"
+          : "Message Templates"
+      }}
     </p>
     <div class="w-full flex bg-[#fdfdfd] rounded-lg">
       <div class="w-2/3 flex flex-col p-6 border-r">
@@ -193,7 +203,11 @@
         <div class="row justify-between mt-4">
           <router-link
             :to="`/application-programs/${
-              formType === 'bots' ? 'chatbots' : 'message-templates'
+              formType === 'bots'
+                ? 'chatbots'
+                : props.formType === 'customer-service'
+                ? 'customer-serivces'
+                : 'message-templates'
             }`"
             style="text-decoration: none; color: inherit"
           >

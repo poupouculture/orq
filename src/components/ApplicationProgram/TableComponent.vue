@@ -113,7 +113,11 @@
       <q-td :props="props">
         <router-link
           :to="`/application-programs/${
-            propsTable.formType === 'bots' ? 'chatbots' : 'message-templates'
+            propsTable.formType === 'bots'
+              ? 'chatbots'
+              : props.formType === 'customer-service'
+              ? 'customer-serivces'
+              : 'message-templates'
           }/${props.row.id}`"
           style="text-decoration: none; color: inherit"
           v-if="!propsTable.isSimple"

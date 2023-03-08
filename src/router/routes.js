@@ -65,6 +65,21 @@ const routes = [
           import("pages/ApplicationProgram/BotTemplate/edit.vue"),
       },
       {
+        path: "application-programs/customer-services",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/index.vue"),
+      },
+      {
+        path: "application-programs/customer-services/create",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/create.vue"),
+      },
+      {
+        path: "application-programs/customer-services/:id",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/edit.vue"),
+      },
+      {
         path: "document-builders",
         component: () => import("pages/DocumentBuilder/index.vue"),
       },
