@@ -63,11 +63,11 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
 
 export const getCustomer = async (id: string) => {
   const fields = "*";
-  const companies = "companies.*, companies.companies_id.*";
+  const companies = "companies.*,companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
   const customerGroups =
-    "customer_groups.*, customer_groups.customer_groups_id.*";
-  const tags = "tags.*, tags.tags_id.*";
+    "customer_groups.*,customer_groups.customer_groups_id.*";
+  const tags = "tags.*,tags.tags_id.*";
 
   const customer = await api.get(
     `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`
@@ -83,7 +83,15 @@ export const deleteCustomer = async (payload: string[]) => {
 };
 
 export const addCustomer = async (payload: any) => {
-  const customer = await api.post("/items/customers", payload);
+  const companies = "companies.*,companies.companies_id.*";
+  const contacts = "contacts.contacts_id.*";
+  const customerGroups =
+    "customer_groups.*,customer_groups.customer_groups_id.*";
+  const tags = "tags.*,tags.tags_id.*";
+  const customer = await api.post(
+    `/items/customers?fields=*,${companies},${contacts},${customerGroups},${tags}`,
+    payload
+  );
   return customer;
 };
 

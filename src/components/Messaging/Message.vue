@@ -287,15 +287,13 @@ const messages = computed<Message[]>(() => {
   );
 });
 
-const loadMore = async (index: number, done: (stop: boolean) => void) => {
-  const limit = 15;
-  const length = await messagingStore.fetchChatMessagesById(
+const loadMore = async (index: number, done: (stop?: boolean) => void) => {
+  const hasmore = await messagingStore.fetchChatMessagesById(
     getSelectedChatId.value,
     index,
-    limit
+    15
   );
-  const stop = length < limit;
-  done(stop);
+  done(!hasmore);
 };
 
 // Watch
