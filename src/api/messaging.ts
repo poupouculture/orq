@@ -18,7 +18,7 @@ export const getChatMessagesByChatId = async (
   limit = 15
 ) => {
   const { data } = await api.get(`/waba/chats/messages/${id}`, {
-    params: { page, limit },
+    params: { page, limit, sort: "-id" },
   });
   return data;
 };
