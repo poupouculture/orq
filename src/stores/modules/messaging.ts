@@ -130,8 +130,9 @@ const useMessagingStore = defineStore("messaging", {
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
       try {
         const data = await getChatMessagesByChatId(chatId, page, limit);
+
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const messages = data
+        const messages = data.data.messages
           .map((item: any) => ({
             id: item.id,
             content: item.content,
