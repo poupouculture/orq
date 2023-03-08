@@ -70,6 +70,9 @@ const useCustomerStore = defineStore("customer", {
       const {
         data: { data: customer },
       } = await getCustomer(id);
+      this.setCustomer(customer);
+    },
+    setCustomer(customer: ICustomer) {
       this.customer = [customer].map((item: ICustomer) => ({
         ...item,
         customer_groups: item.customer_groups.filter(
@@ -138,7 +141,7 @@ const useCustomerStore = defineStore("customer", {
           color: "primary",
           type: "positive",
         });
-        this.customer.id = data.id;
+        this.setCustomer(data);
         Loading.hide();
         return data;
       } catch (err: any) {
