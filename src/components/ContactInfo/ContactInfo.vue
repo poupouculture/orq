@@ -556,7 +556,7 @@ const addPhone = async () => {
   const customerId = props.customerId ? props.customerId : route.params.id;
   const params = {
     category: type.value,
-    phone_number: phoneNumber.value,
+    number: phoneNumber.value,
     extension: extension.value,
     remarks: remarks.value,
   };
