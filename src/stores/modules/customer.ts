@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
 import {
   getCustomer,
-  addContact,
+  // addContact,
   addCustomerContact,
   addCustomer,
   updateCustomer,
   deleteCustomer,
+  addCustomerContactAlong,
 } from "../../api/customers";
 import { IState, FormPayload, ICustomer } from "src/types/CustomerTypes";
 import { getUser } from "src/api/user";
@@ -69,6 +70,9 @@ const useCustomerStore = defineStore("customer", {
       const {
         data: { data: customer },
       } = await getCustomer(id);
+      this.setCustomer(customer);
+    },
+    setCustomer(customer: ICustomer) {
       this.customer = [customer].map((item: ICustomer) => ({
         ...item,
         customer_groups: item.customer_groups.filter(
@@ -111,12 +115,18 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addContact(customerId: string, payload: unknown) {
-      const {
-        data: { data: contact },
-      } = await addContact(payload);
-      const { id: contactId } = contact;
+      // const {
+      //   data: { data: contact },
+      // } = await addContact(payload);
+      // const { id: contactId } = contact;
 
-      const result = await addCustomerContact(customerId, contactId);
+      // const result = await addCustomerContact(customerId, contactId);
+      const result = await addCustomerContactAlong({
+        contacts: {
+          create: payload,
+        },
+        customers_id: customerId,
+      });
       return result;
     },
     async addCustomer(payload: FormPayload) {
@@ -131,7 +141,7 @@ const useCustomerStore = defineStore("customer", {
           color: "primary",
           type: "positive",
         });
-        this.customer.id = data.id;
+        this.setCustomer(data);
         Loading.hide();
         return data;
       } catch (err: any) {

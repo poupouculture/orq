@@ -9,7 +9,7 @@ import {
 import { ChatTypes } from "src/constants/ChatKeyword";
 import {
   getChats,
-  loadChatMessages,
+  getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
 } from "src/api/messaging";
@@ -72,7 +72,12 @@ const useMessagingStore = defineStore("messaging", {
         );
 
         if (index !== -1) {
+          const cachedMessage = this.cachedChatMessages[chatId]?.find(
+            (item) => item.id === lastmessage.id
+          );
+          if (cachedMessage) return;
           const [chat] = this.chatsList.splice(index, 1);
+          this.chatsList.unshift(chat);
           if (lastmessage.status === MessageStatus.RECEIVE) {
             if (this.selectedChatId !== chatId) {
               chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
@@ -81,11 +86,6 @@ const useMessagingStore = defineStore("messaging", {
             }
           }
           chat.last_message = lastmessage;
-          this.chatsList.unshift(chat);
-          const cachedMessage = this.cachedChatMessages[chatId]?.find(
-            (item) => item.id === lastmessage.id
-          );
-          if (cachedMessage) return;
           this.cachedChatMessages[chatId]?.push(lastmessage);
         }
       } catch (error) {
@@ -127,16 +127,13 @@ const useMessagingStore = defineStore("messaging", {
       });
     },
 
-    async fetchChatMessagesById(chatId: string, lastMessageId?: number) {
+    async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
       try {
-        const { data } = await loadChatMessages({
-          chat_id: chatId,
-          last_message_id: lastMessageId,
-        });
+        const { data } = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const messages = data.map((item: any) => ({
+        const messages = data.messages.map((item: any) => ({
           id: item.id,
-          content: JSON.parse(item.content),
+          content: item.content,
           status: item.status,
           type: item.type,
           direction: item.direction,
@@ -146,7 +143,9 @@ const useMessagingStore = defineStore("messaging", {
           ...messages,
           ...this.cachedChatMessages[chatId],
         ];
-        return data.length;
+        const hasmore =
+          this.cachedChatMessages[chatId].length < data.total_count;
+        return hasmore;
       } catch (e) {
         console.log(e);
       }

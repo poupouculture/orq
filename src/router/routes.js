@@ -65,9 +65,22 @@ const routes = [
           import("pages/ApplicationProgram/BotTemplate/edit.vue"),
       },
       {
-        path: "application-programs/campaign/campaign-setting",
+        // path: "application-programs/campaign/campaign-setting",
+        // component: () =>
+        //   import("pages/ApplicationProgram/Campaign/campaignSettings.vue"),
+        path: "application-programs/customer-services",
         component: () =>
-          import("pages/ApplicationProgram/Campaign/campaignSettings.vue"),
+          import("pages/ApplicationProgram/CustomerService/index.vue"),
+      },
+      {
+        path: "application-programs/customer-services/create",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/create.vue"),
+      },
+      {
+        path: "application-programs/customer-services/:id",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/edit.vue"),
       },
       {
         path: "document-builders",
