@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="getSelectedChatId"
-    class="h-full w-full flex flex-col"
-    id="parentChatList"
-  >
+  <div v-if="getSelectedChatId" class="h-full w-full flex flex-col">
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
@@ -60,26 +56,15 @@
           :key="getSelectedChatId"
           ref="infiniteScrollRef"
           @load="loadMore"
-          :initialIndex="0"
-          :reverse="true"
+          reverse
+          :offset="300"
           :scroll-target="scrollAreaRef"
         >
-          <q-chat-message
+          <ChatMessage
             v-for="item in messages"
             :key="item.id"
-            class="pb-4"
-            avatar="https://cdn.quasar.dev/img/avatar4.jpg"
-            :sent="item.direction === Direction.OUTGOING"
-          >
-            <MessageItem
-              :content="item.content"
-              :sendMessageStatus="item.sendMessageStatus"
-            />
-            <template #label>{{ item.label }}</template>
-            <template #stamp>
-              <span>{{ format(new Date(item.date_created), "p") }}</span>
-            </template>
-          </q-chat-message>
+            :message="item"
+          />
           <template #loading>
             <div class="row justify-center q-my-md">
               <q-spinner-dots
@@ -95,18 +80,30 @@
     <!-- footer -->
     <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
-        <q-input
-          v-model="message"
-          placeholder="Enter reply information"
-          dense
-          borderless
-          bg-color="grey-2"
-          type="textarea"
-          input-class="px-4 py-4 h-10 sm:h-auto"
-          class="rounded-xl overflow-hidden"
-          @keypress.enter.prevent="sendMessage"
-          :disable="isChatExpired"
-        />
+        <div class="relative rounded-xl overflow-hidden">
+          <q-input
+            v-model="message"
+            placeholder="Enter reply information"
+            dense
+            borderless
+            bg-color="grey-2"
+            type="textarea"
+            input-class="px-4 py-4 h-10 sm:h-auto"
+            :class="{ invisible: showAudio }"
+            @keypress.enter.prevent="sendMessage"
+            :disable="isChatExpired"
+          />
+          <div
+            ref="waveRef"
+            :class="{ invisible: !showAudio }"
+            class="absolute inset-0 bg-primary"
+          ></div>
+          <span
+            class="absolute right-0 bottom-0 text-white p-2"
+            :class="{ invisible: !showAudio }"
+            >{{ time }} ms</span
+          >
+        </div>
         <div class="row justify-end">
           <q-btn
             :flat="!isChatExpired"
@@ -171,15 +168,14 @@
       </div>
     </footer>
   </div>
-  <div
-    v-show="!getSelectedChatId"
-    class="flex flex-col justify-center items-center h-full"
-  >
+  <!-- empty -->
+  <div v-else class="flex flex-col justify-center items-center h-full">
     <img class="" src="~assets/images/startchat.png" />
     <p class="text-[#9A9AAF] font-medium text-base">
       Choose a contact to start your conversation
     </p>
   </div>
+  <!-- template -->
   <MessageTemplateDialog
     v-model="showMessageTemplate"
     @hide="showMessageTemplate = false"
@@ -188,25 +184,17 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computed,
-  ref,
-  watch,
-  nextTick,
-  // onMounted,
-  // onUpdated,
-  onBeforeUnmount,
-} from "vue";
+import { computed, ref, watch, nextTick, onBeforeUnmount } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, isSameDay, differenceInDays, isToday } from "date-fns";
-// import { format, differenceInDays, isToday } from "date-fns";
+import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
 import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
+import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatName } from "src/utils/trim-word";
+import { getChatName, uuid } from "src/utils/trim-word";
 import { updateChatStatus, startNewChat, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
@@ -223,31 +211,23 @@ import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import MessageItem from "./MessageItem.vue";
-// interface ActionChat {
-//   index: number;
-//   top: number | undefined;
-//   left: number | undefined;
-// }
-
+import ChatMessage from "./ChatMessage.vue";
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<HTMLDivElement>();
-
 const message: Ref<string> = ref("");
-// const sendLoading: Ref<boolean> = ref(false);
 const isChatExpired: Ref<boolean> = ref(true);
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
-// const activeAction: Ref<ActionChat | null> = ref(null);
 const uplader: any = ref(null);
 const rec: any = ref(null);
+const wave: any = ref(null);
+const waveRef: any = ref(null);
+const showAudio = ref(false);
+const time = ref(0);
 const audioData = ref();
-// const newMessage: Ref<Message> = ref(null);
-// const { recOpen, recStart, recStop } = recorder();
-// recOpen();
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 const customerStore = useCustomerStore();
@@ -274,14 +254,16 @@ const messages = computed<Message[]>(() => {
     cachedMessage?.map((message, index) => {
       return {
         ...message,
-        label: isSameDay(
-          new Date(message.date_created),
-          new Date(cachedMessage[index + 1]?.date_created)
-        )
-          ? ""
-          : isToday(new Date(message.date_created))
-          ? "Today"
-          : format(new Date(message.date_created), "eee, d MMM"),
+        label:
+          index > 0 &&
+          isSameDay(
+            new Date(message.date_created),
+            new Date(cachedMessage[index - 1]?.date_created)
+          )
+            ? ""
+            : isToday(new Date(message.date_created))
+            ? "Today"
+            : format(new Date(message.date_created), "eee, d MMM"),
       };
     }) || []
   );
@@ -290,36 +272,23 @@ const messages = computed<Message[]>(() => {
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   const hasmore = await messagingStore.fetchChatMessagesById(
     getSelectedChatId.value,
-    index,
-    15
+    index
   );
   done(!hasmore);
 };
 
-// Watch
-// watch(
-//   () => getSelectedChatId.value,
-//   async () => {
-//     await nextTick();
-//     infiniteScrollRef.value?.resume();
-// infiniteScrollRef.value?.reset();
-//   }
-// );
-
 watch(
   () => getSelectedChat.value,
-  (val) => {
-    const lastMessage = val?.last_message;
-    if (lastMessage?.date_created) {
-      const differenceDate: number = differenceInDays(
-        new Date(lastMessage.date_created),
-        new Date()
-      );
-
-      isChatExpired.value = differenceDate < 0;
-      message.value = "";
+  (val, old) => {
+    if (val && !old) {
+      recOpen();
+    }
+    const createDate = val.last_message?.date_created;
+    message.value = "";
+    if (createDate) {
+      isChatExpired.value = !isSameDay(new Date(), new Date(createDate));
     } else {
-      isChatExpired.value = false;
+      isChatExpired.value = true;
     }
   }
 );
@@ -451,30 +420,6 @@ const sendMessageTemplate = (
   sendMessage();
 };
 
-// const showActionChat = (index: number) => {
-//   if (activeAction.value !== null && activeAction.value?.index === index) {
-//     activeAction.value = null;
-//   } else {
-//     const rec = document
-//       ?.getElementById(`chat-action-${index}`)
-//       ?.getBoundingClientRect();
-
-//     const rec2 = document
-//       ?.getElementById(`parentChatList`)
-//       ?.getBoundingClientRect();
-
-//     activeAction.value = {
-//       index,
-//       top: rec?.top - 200 + scrollAreaRef.value?.scrollTop,
-//       left: rec?.left - rec2?.left - 30,
-//     };
-//   }
-// };
-
-// const handleScroll = () => {
-//   activeAction.value = null;
-// };
-
 const sendMedia = async (blob: Blob) => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const tempId = Date.now();
@@ -483,6 +428,8 @@ const sendMedia = async (blob: Blob) => {
     content: {
       url: audioData.value,
       type: MessageType.AUDIO,
+      duration: time.value,
+      local: true,
     },
     status: MessageStatus.SENT,
     type: MessageType.AUDIO,
@@ -492,11 +439,11 @@ const sendMedia = async (blob: Blob) => {
   };
   cachedMessage.push(newMessage);
   scrollToBottom();
+  const filename = uuid();
   const bodyFormData = new FormData();
-  const file = new window.File([blob], "test.mp3", { type: "audio/mpeg" });
-  bodyFormData.append("caption", "test.mp3");
+  const file = new window.File([blob], filename, { type: "audio/mpeg" });
+  bodyFormData.append("caption", filename);
   bodyFormData.append("file", file);
-
   const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
   const cm: any = cachedMessage.find((item) => item.id === tempId);
   cm.sendMessageStatus = SendMessageStatus.DEFAULT;
@@ -508,28 +455,24 @@ const recOpen = function (success?: () => void) {
     type: "mp3",
     sampleRate: 16000,
     bitRate: 16,
-    onProcess: function () // buffers: Buffer,
-    // powerLevel: number,
-    // bufferDuration: number,
-    // bufferSampleRate: number,
-    // newBufferIdx: Buffer,
-    // asyncEnd: any
-    {
-      console.log(
-        "录制过程"
-        // buffers,
-        // powerLevel,
-        // bufferDuration,
-        // bufferSampleRate,
-        // newBufferIdx,
-        // asyncEnd
-      );
+    onProcess: (
+      buffers: Buffer,
+      powerLevel: number,
+      bufferDuration: number,
+      sampleRate: number // buffers: Buffer, // powerLevel: number, // bufferDuration: number, // bufferSampleRate: number, // newBufferIdx: Buffer, // asyncEnd: any
+    ) => {
+      wave.value.input(buffers[buffers.length - 1], powerLevel, sampleRate);
+      time.value = bufferDuration;
     },
   });
 
   rec.value.open(
     function () {
       success && success();
+      wave.value = Recorder.WaveSurferView({
+        elem: waveRef.value,
+        scale: 1,
+      });
     },
     function (msg: string, isUserNotAllow: string) {
       Notify.create({
@@ -545,6 +488,7 @@ const recOpen = function (success?: () => void) {
 
 /** start recorder **/
 function recStart() {
+  showAudio.value = true;
   rec.value.start();
 }
 
@@ -557,6 +501,8 @@ function recStop() {
         (window.URL || window.webkitURL).createObjectURL(blob),
         "时长:" + duration + "ms"
       );
+      showAudio.value = false;
+      time.value = duration;
       audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
       sendMedia(blob);
     },
@@ -572,24 +518,37 @@ function recClose() {
   rec.value.close();
   rec.value = null;
 }
-recOpen();
 
-const upload = ([file]: any) => {
+const upload = async (fileList: any) => {
+  const file = fileList[0];
+  const url = (window.URL || window.webkitURL).createObjectURL(file);
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const tempId = Date.now();
+  const newMessage = {
+    id: tempId,
+    content: {
+      url,
+      type: MessageType.IMAGE,
+      duration: time.value,
+      local: true,
+    },
+    status: MessageStatus.SENT,
+    type: MessageType.IMAGE,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  };
+  cachedMessage.push(newMessage);
+  scrollToBottom();
   const bodyFormData = new FormData();
-  bodyFormData.append("caption", "Fred");
+  bodyFormData.append("caption", file.name);
   bodyFormData.append("file", file);
-  uploadMedia(getSelectedChatId.value, bodyFormData);
   uplader.value.reset();
+  const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
+  const cm: any = cachedMessage.find((item) => item.id === tempId);
+  cm.sendMessageStatus = SendMessageStatus.DEFAULT;
+  cm.id = data.derp_chats_messages_id;
 };
-
-// onMounted(() => {
-//   scrollToBottom();
-//   scrollAreaRef.value.addEventListener("scroll", handleScroll);
-// });
-
-// onUpdated(() => {
-// scrollAreaRef.value.addEventListener("scroll", handleScroll);
-// });
 
 onBeforeUnmount(() => {
   recClose();
