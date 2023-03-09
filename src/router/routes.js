@@ -132,6 +132,11 @@ const routes = [
         component: () => import("src/pages/Order/ServiceRecord/Index.vue"),
       },
       {
+        path: "/order/invoices",
+        name: "order.invoices",
+        component: () => import("src/pages/Order/Invoice/Index.vue"),
+      },
+      {
         path: "/order/service-records/:id",
         name: "order.service-record.detail",
         component: () => import("src/pages/Order/ServiceRecord/Detail.vue"),
