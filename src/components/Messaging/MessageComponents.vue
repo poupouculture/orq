@@ -1,34 +1,21 @@
 <template>
   <div class="message-item relative">
-    <q-spinner-ios
-      v-if="sendMessageStatus === SendMessageStatus.PENDING"
-      class="absolute left-0 -translate-x-9"
-      color="primary"
-      size="1em"
-    />
-    <q-icon
-      v-if="sendMessageStatus === SendMessageStatus.FAILURE"
-      class="absolute left-0 -translate-x-9"
-      name="warning"
-      color="warning"
-      size="1rem"
-    />
-    <div v-if="content?.type === MessageType.IMAGE">
+    <div class="image" v-if="content?.type === MessageType.IMAGE">
+      <img v-if="content.local" :src="content.url" />
       <AuthImage
-        class="image"
+        v-else
         :imgUrl="content.url + '&fit=inside&height=128'"
         :authToken="`Bearer ${getUserInfo.access_token}`"
       />
     </div>
-    <span v-else-if="content?.type === MessageType.AUDIO">
-      <q-icon
-        class="cursor-pointer"
-        name="record_voice_over"
-        color="white"
-        size="1rem"
-        @click="audioPlay"
-      />
+    <span
+      v-else-if="content?.type === MessageType.AUDIO"
+      class="cursor-pointer"
+      @click="audioPlay"
+    >
       <audio ref="audio" class="hidden invisible" :src="content.url"></audio>
+      <q-icon name="play_circle_filled" color="white" size="30px" />
+      <span>{{ duration }}</span>
     </span>
     <span v-else-if="content?.type === MessageType.TEMPLATE">
       {{ messageTemplate(content) }}
@@ -38,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { api } from "boot/axios";
 import useUserInfoStore from "stores/modules/userInfo";
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
@@ -78,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
 watch(
   () => props.content.url,
   async (val) => {
-    if (!val) return;
+    if (!props.content.local) return;
     const { data } = await api.get(val, {
       responseType: "blob",
     });
@@ -89,6 +76,13 @@ watch(
     immediate: true,
   }
 );
+
+const duration = computed(() => {
+  if (props.content.duration) {
+    return Math.ceil(props.content.duration / 10) / 100 + "s";
+  }
+  return "";
+});
 </script>
 
 <style lang="scss" scoped>
