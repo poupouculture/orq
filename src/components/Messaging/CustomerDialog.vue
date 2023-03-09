@@ -149,7 +149,7 @@ const fetchCustomers = async () => {
   });
 
   data.customers = customers.customers;
-  data.totalCount = customers?.filter_count;
+  data.totalCount = customers?.total_count;
   loading.value = false;
 };
 

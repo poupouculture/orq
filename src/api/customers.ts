@@ -39,22 +39,21 @@ export const getCustomers = async (payload: CustomerPayload) => {
 // get all customers who has contacts
 export const getCustomersWithContacts = async (payload: CustomerPayload) => {
   const { limit, page, search } = payload;
-  const fields =
-    "id, first_name, last_name, gender, date_created, position, customer_code";
-  const companies = "companies.companies_id.name_english";
+  // console.log(limit);
+  // const fields = "*";
 
   // const offset = search ? 0 : page === 1 ? 0 : (page - 1) * limit;
 
   // "/items/customers"
   const customers = await api.get("/waba/valid-customers", {
     params: {
-      fields: `${fields},${companies}`,
-      sort: "-date_created",
+      // fields: `${fields}`,
+      // sort: "-date_created",
       // "filter[count(contacts)][_neq]": 0,
       limit,
       page,
       search,
-      meta: "*",
+      // meta: "*",
     },
   });
 
