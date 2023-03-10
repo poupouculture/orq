@@ -2,7 +2,7 @@
 import CompanyInformation from "src/components/Order/Invoice/companyInformation.vue";
 import CustomerInformation from "components/Order/Invoice/customerInformation.vue";
 import InvoiceInformation from "components/Order/Invoice/invoiceInformation.vue";
-import Preview from "components/Order/Invoice/Preview.vue";
+import Preview from "components/Order/Invoice/preview.vue";
 import SendPdf from "components/Order/Invoice/SendPdf.vue";
 import { computed, ref } from "vue";
 
