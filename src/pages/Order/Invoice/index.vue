@@ -3,11 +3,12 @@ import CompanyInformation from "src/components/Order/Invoice/companyInformation.
 import CustomerInformation from "components/Order/Invoice/customerInformation.vue";
 import InvoiceInformation from "components/Order/Invoice/invoiceInformation.vue";
 import Preview from "components/Order/Invoice/Preview.vue";
+import SendPdf from "components/Order/Invoice/SendPdf.vue";
 import { computed, ref } from "vue";
 
 const activeTabs = ref("companyInformation");
 
-// const rightSideComponent = ref("preview");
+const rightSideComponent = ref("sendPdf");
 
 const tabs = computed(() => {
   return [
@@ -28,6 +29,10 @@ const tabs = computed(() => {
     },
   ];
 });
+
+const switchComponent = (componentName: string) => {
+  rightSideComponent.value = componentName;
+};
 </script>
 
 <template>
@@ -74,22 +79,37 @@ const tabs = computed(() => {
 
       <div class="flex justify-center items-center w-full mt-6 gap-6">
         <div>
-          <button class="bg-primary rounded-lg text-white py-2 px-4">
+          <button
+            @click="switchComponent('preview')"
+            :class="[
+              rightSideComponent == 'preview'
+                ? 'bg-primary text-white'
+                : 'border-dotted border-2 text-primary border-primary',
+              'rounded-lg py-2 px-4',
+            ]"
+          >
             Invoice PDF
           </button>
         </div>
 
         <div>
           <button
-            class="text-primary rounded-lg border-dotted border-2 border-primary py-2 px-4"
+            @click="switchComponent('sendPdf')"
+            :class="[
+              rightSideComponent == 'sendPdf'
+                ? 'bg-primary text-white'
+                : 'border-dotted border-2 text-primary border-primary',
+              'rounded-lg py-2 px-4',
+            ]"
           >
-            Invoice PDF
+            Send Now
           </button>
         </div>
       </div>
 
       <div class="flex mb-6 w-full">
-        <Preview />
+        <Preview v-if="rightSideComponent == 'preview'" />
+        <SendPdf v-if="rightSideComponent == 'sendPdf'" />
       </div>
     </div>
   </div>
