@@ -560,6 +560,7 @@ const addPhone = async () => {
     extension: extension.value,
     remarks: remarks.value,
   };
+
   const result = await customerStore.addContact(customerId, params);
   console.log(result);
 };

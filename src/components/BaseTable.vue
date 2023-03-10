@@ -12,7 +12,7 @@
     binary-state-sort
     column-sort-order="ad"
   >
-    <template v-slot:header-selection v-if="disableSelect"> </template>
+    <template v-slot:header-selection v-if="props.disableSelect"> </template>
     <template v-slot:body-selection v-if="disableSelect"></template>
     <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope" />
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUpdated } from "vue";
 
 const props = defineProps({
   selected: {
@@ -123,4 +123,12 @@ const totalPage = computed(() =>
 const changePage = (page: number) => {
   emit("changePage", page);
 };
+
+onMounted(() => {
+  console.log("mounted: ", props.rows);
+});
+
+onUpdated(() => {
+  console.log("updated: ", props.rows);
+});
 </script>
