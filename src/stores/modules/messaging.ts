@@ -87,6 +87,7 @@ const useMessagingStore = defineStore("messaging", {
           }
           chat.last_message = lastmessage;
           this.cachedChatMessages[chatId]?.push(lastmessage);
+          console.log(1);
         }
       } catch (error) {
         console.log(error);

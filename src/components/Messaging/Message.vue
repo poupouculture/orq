@@ -188,7 +188,7 @@ import { computed, ref, watch, nextTick, onBeforeUnmount } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, isSameDay, isToday } from "date-fns";
+import { format, isSameDay, isToday, differenceInDays } from "date-fns";
 import Recorder from "recorder-core";
 import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
@@ -286,7 +286,8 @@ watch(
     const createDate = val.last_message?.date_created;
     message.value = "";
     if (createDate) {
-      isChatExpired.value = !isSameDay(new Date(), new Date(createDate));
+      isChatExpired.value =
+        differenceInDays(new Date(), new Date(createDate)) > 0;
     } else {
       isChatExpired.value = true;
     }
@@ -448,6 +449,7 @@ const sendMedia = async (blob: Blob) => {
   const cm: any = cachedMessage.find((item) => item.id === tempId);
   cm.sendMessageStatus = SendMessageStatus.DEFAULT;
   cm.id = data.derp_chats_messages_id;
+  console.log(2);
 };
 
 const recOpen = function (success?: () => void) {

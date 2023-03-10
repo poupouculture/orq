@@ -1,7 +1,7 @@
 <template>
   <div class="message-item relative">
     <div class="image" v-if="content?.type === MessageType.IMAGE">
-      <img v-if="content.local" :src="content.url" />
+      <img class="h-full" v-if="content.local" :src="content.url" />
       <AuthImage
         v-else
         :imgUrl="content.url + '&fit=inside&height=128'"
@@ -65,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
 watch(
   () => props.content.url,
   async (val) => {
-    if (!props.content.local) return;
+    if (props.content.local) return;
     const { data } = await api.get(val, {
       responseType: "blob",
     });
