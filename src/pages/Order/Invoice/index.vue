@@ -6,7 +6,7 @@ import Preview from "components/Order/Invoice/Preview.vue";
 import SendPdf from "components/Order/Invoice/SendPdf.vue";
 import { computed, ref } from "vue";
 
-const activeTabs = ref("customerInformation");
+const activeTabs = ref("invoiceInformation");
 
 const rightSideComponent = ref("sendPdf");
 

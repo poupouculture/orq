@@ -15,9 +15,9 @@ const setInput = ref(false);
           <q-input placeholder="First Name" dense outlined />
           <div class="flex items-center mt-2">
             <q-checkbox size="xs" v-model="setInput" />
-            <span class="text-sm font-normal text-[#9A9AAF]"
-              >set as default for future invoices</span
-            >
+            <span class="text-sm font-normal text-[#9A9AAF]">
+              set as default for future invoices
+            </span>
           </div>
         </div>
       </div>
