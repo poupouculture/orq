@@ -6,7 +6,7 @@ import Preview from "components/Order/Invoice/Preview.vue";
 import SendPdf from "components/Order/Invoice/SendPdf.vue";
 import { computed, ref } from "vue";
 
-const activeTabs = ref("invoiceInformation");
+const activeTabs = ref("companyInformation");
 
 const rightSideComponent = ref("sendPdf");
 
@@ -39,20 +39,22 @@ const switchComponent = (componentName: string) => {
   <div
     class="w-full flex flex-col lg:flex-row min-h-screen lg:h-full justify-between"
   >
-    <div class="bg-white py-16 px-5 rounded-2xl w-1/2">
+    <div class="bg-white py-16 px-5 rounded-2xl w-full lg:w-1/2">
       <div class="w-full flex flex-col">
         <div class="pb-3">
           <p class="text-capitalize text-[#111827] font-semibold text-2xl">
             new invoice
           </p>
         </div>
-        <div>
+        <div class="">
           <q-tabs
             v-model="activeTabs"
             dense
-            align="left"
+            align="justify"
             active-color="primary"
             narrow-indicator
+            no-caps
+            indicator-color="primary"
           >
             <q-tab
               v-for="(tab, index) in tabs"
@@ -69,14 +71,16 @@ const switchComponent = (componentName: string) => {
               :name="tab.value"
               class="mb-2"
             >
-              <Component :is="tab.component" />
+              <KeepAlive>
+                <Component :is="tab.component" />
+              </KeepAlive>
             </q-tab-panel>
           </q-tab-panels>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col pl-10 py-16 w-1/2">
+    <div class="flex flex-col pl-10 py-16 w-full lg:w-1/2">
       <p class="font-semibold capitalize text-2xl tetx-[#111827]">preview</p>
 
       <div class="flex justify-center items-center w-full mt-6 gap-6">
