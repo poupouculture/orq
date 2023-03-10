@@ -13,17 +13,17 @@ const rightSideComponent = ref("sendPdf");
 const tabs = computed(() => {
   return [
     {
-      label: "Company Information",
+      label: "Company",
       component: CompanyInformation,
       value: "companyInformation",
     },
     {
-      label: "Customer Information",
+      label: "Customer",
       component: CustomerInformation,
       value: "customerInformation",
     },
     {
-      label: "Invoice Information",
+      label: "Invoice",
       component: InvoiceInformation,
       value: "invoiceInformation",
     },
@@ -50,7 +50,7 @@ const switchComponent = (componentName: string) => {
           <q-tabs
             v-model="activeTabs"
             dense
-            align="justify"
+            align="left"
             active-color="primary"
             narrow-indicator
             no-caps

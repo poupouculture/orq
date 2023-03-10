@@ -1,22 +1,34 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const model = ref("Google");
-const options = ref(["Google", "Facebook", "Twitter", "Apple", "Oracle"]);
+const openDialog = ref(false);
 </script>
 
 <template>
   <div class="p-5 mt-5 w-full">
     <div class="flex mb-5 justify-between items-center">
       <div class="flex items-center w-1/2">
-        <q-select
-          class="w-[50%]"
-          color="white"
-          dense
-          standout
-          v-model="model"
-          :options="options"
-        />
+        <q-btn push color="primary" icon-right="send" label="Share via">
+          <q-popup-proxy>
+            <q-banner>
+              <q-list>
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon color="primary" name="mail" />
+                  </q-item-section>
+
+                  <q-item-section>Email Now</q-item-section>
+                </q-item>
+                <q-item @click="openDialog = !openDialog" clickable v-ripple>
+                  <q-item-section>Whatsapp</q-item-section>
+                  <q-item-section avatar>
+                    <q-icon color="primary" name="fa-brands fa-whatsapp" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-banner>
+          </q-popup-proxy>
+        </q-btn>
       </div>
       <q-icon size="25px" color="primary" name="cloud_download" />
     </div>
@@ -89,6 +101,21 @@ const options = ref(["Google", "Facebook", "Twitter", "Apple", "Oracle"]);
         <q-btn label="Pay this invoice" color="primary" />
       </div>
     </div>
+
+    <q-dialog v-model="openDialog">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Customers</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+          repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
+          perferendis totam, ea at omnis vel numquam exercitationem aut, natus
+          minima, porro labore.
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
