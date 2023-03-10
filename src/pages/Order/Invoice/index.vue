@@ -36,7 +36,9 @@ const switchComponent = (componentName: string) => {
 </script>
 
 <template>
-  <div class="w-full flex lg:flex-row h-screen justify-between">
+  <div
+    class="w-full flex flex-col lg:flex-row min-h-screen lg:h-full justify-between"
+  >
     <div class="bg-white py-16 px-5 rounded-2xl w-1/2">
       <div class="w-full flex flex-col">
         <div class="pb-3">
