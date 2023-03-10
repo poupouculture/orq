@@ -521,6 +521,7 @@ import "./ContactInfo.scss";
 import ContactPhoneCard from "../Customer/ContactPhoneCard.vue";
 import { useRoute } from "vue-router";
 import useCustomerStore from "src/stores/modules/customer";
+import { Notify } from "quasar";
 
 const route = useRoute();
 const customerStore = useCustomerStore();
@@ -562,7 +563,13 @@ const addPhone = async () => {
   };
 
   const result = await customerStore.addContact(customerId, params);
-  console.log(result);
+
+  if (result.data?.errors) {
+    Notify.create({
+      message: "Error: " + result.data.errors[0].message,
+      type: "negative",
+    });
+  }
 };
 
 onMounted(() => {

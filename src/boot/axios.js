@@ -37,7 +37,7 @@ export default boot(({ app, store, router }) => {
       const originalConfig = error.config;
       console.log("error: ", error.response);
       if (error.response?.status !== 401) {
-        return Promise.reject(error);
+        return error.response;
       }
       if (error.response) {
         if (error.response.status === 401 && !originalConfig._retry) {
