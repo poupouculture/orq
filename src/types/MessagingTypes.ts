@@ -119,12 +119,14 @@ export interface ChatPayloadWabaContentTemplate {
 }
 
 export interface ChatPayloadWabaContent {
-  messaging_product: string;
-  recipient_type: string;
+  messaging_product?: string;
+  recipient_type?: string;
   to: string;
   type: string;
   text?: ChatPayloadWabaContentText;
-  template?: ChatPayloadWabaContentTemplate;
+  name?: string | undefined;
+  languageCode?: string;
+  components?: TemplateComponent[];
 }
 
 export interface ChatPayload {

@@ -1,10 +1,6 @@
 import { api } from "boot/axios";
 import { ChatKeywords, ChatTypes } from "../constants/ChatKeyword";
-import {
-  SendTextMessage,
-  ChatPayload,
-  Language,
-} from "src/types/MessagingTypes";
+import { SendTextMessage, ChatPayload } from "src/types/MessagingTypes";
 
 export const getChats = async (type: ChatTypes) => {
   const { data } = await api.get(`/waba/chats/list/${type}`);
@@ -55,22 +51,18 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       ? ChatKeywords.SEND_TEMPLATE_MESSAGE
       : ChatKeywords.SEND_TEXT_MESSAGE,
     waba_content: {
-      messaging_product: messageProduct,
-      recipient_type: "individual",
       to,
       type,
     },
   };
 
   if (isTemplate) {
-    const lang: Language = {
-      code: language === "English" ? "en_US" : language,
-    };
-
     if (isIncludedComponent) {
-      currPayload.waba_content.template = {
+      currPayload.waba_content = {
+        to,
+        type,
         name: templateName,
-        language: lang,
+        languageCode: language === "English" ? "en_US" : language,
         components: [
           {
             type: "body",
@@ -87,13 +79,17 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       // It was outside of the conditional
       currPayload.template_content = messageBody;
 
-      currPayload.waba_content.template = {
+      currPayload.waba_content = {
+        to,
+        type,
         name: templateName,
-        language: lang,
-        text: messageBody,
+        languageCode: language === "English" ? "en_US" : language,
+        // text: messageBody,
       };
     }
   } else {
+    currPayload.waba_content.messaging_product = messageProduct;
+    currPayload.waba_content.recipient_type = "individual";
     currPayload.waba_content.text = {
       preview_url: false,
       body: messageBody,
