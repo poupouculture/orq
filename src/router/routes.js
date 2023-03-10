@@ -134,7 +134,7 @@ const routes = [
       {
         path: "/order/invoices",
         name: "order.invoices",
-        component: () => import("src/pages/Order/Invoice/Index.vue"),
+        component: () => import("src/pages/Order/Invoice/index.vue"),
       },
       {
         path: "/order/service-records/:id",
