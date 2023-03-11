@@ -60,7 +60,7 @@ const message = computed<string>(() => {
     case MessageType.TEXT:
       return lastMessage?.content?.text;
     case MessageType.TEMPLATE:
-      return lastMessage?.content.template.text;
+      return lastMessage?.content.template_content;
     default:
       return lastMessage?.content?.file_name;
   }
