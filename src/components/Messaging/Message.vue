@@ -279,10 +279,7 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 
 watch(
   () => getSelectedChat.value,
-  (val, old) => {
-    if (val && !old) {
-      recOpen();
-    }
+  async (val) => {
     const createDate = val.last_message?.date_created;
     message.value = "";
     if (createDate) {
@@ -290,6 +287,20 @@ watch(
         differenceInDays(new Date(), new Date(createDate)) > 0;
     } else {
       isChatExpired.value = true;
+    }
+  }
+);
+
+watch(
+  () => getSelectedChat.value.status,
+  async (val) => {
+    if (val === ChatTypes.ONGOING) {
+      await nextTick();
+      wave.value = Recorder.WaveSurferView({
+        elem: waveRef.value,
+        scale: 1,
+      });
+      recOpen();
     }
   }
 );
@@ -453,6 +464,7 @@ const sendMedia = async (blob: Blob) => {
 };
 
 const recOpen = function (success?: () => void) {
+  if (rec.value) return;
   rec.value = Recorder({
     type: "mp3",
     sampleRate: 16000,
@@ -471,10 +483,6 @@ const recOpen = function (success?: () => void) {
   rec.value.open(
     function () {
       success && success();
-      wave.value = Recorder.WaveSurferView({
-        elem: waveRef.value,
-        scale: 1,
-      });
     },
     function (msg: string, isUserNotAllow: string) {
       Notify.create({
