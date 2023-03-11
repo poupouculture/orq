@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import useInvoice from "src/stores/modules/useInvoices";
 import { ref } from "vue";
 
-const model = ref("United State");
 const options = ref(["United State", "Facebook", "Twitter", "Apple", "Oracle"]);
-const setInput = ref(false);
+const { getCustomer } = useInvoice();
 </script>
 
 <template>
@@ -12,9 +12,14 @@ const setInput = ref(false);
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">First Name</p>
-          <q-input placeholder="First Name" dense outlined />
+          <q-input
+            v-model="getCustomer.firstName.value"
+            placeholder="First Name"
+            dense
+            outlined
+          />
           <div class="flex items-center mt-2">
-            <q-checkbox size="xs" v-model="setInput" />
+            <q-checkbox size="xs" v-model="getCustomer.firstName.setDefault" />
             <span class="text-sm font-normal text-[#9A9AAF]">
               set as default for future invoices
             </span>
@@ -24,55 +29,100 @@ const setInput = ref(false);
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Last Name</p>
-          <q-input placeholder="Last Name" dense outlined />
+          <q-input
+            v-model="getCustomer.lastName"
+            placeholder="Last Name"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Email</p>
-          <q-input placeholder="Email" dense outlined />
+          <q-input
+            v-model="getCustomer.email"
+            placeholder="Email"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Language</p>
-          <q-select dense outlined v-model="model" :options="options" />
+          <q-select
+            dense
+            outlined
+            v-model="getCustomer.language"
+            :options="options"
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Country</p>
-          <q-select dense outlined v-model="model" :options="options" />
+          <q-select
+            dense
+            outlined
+            v-model="getCustomer.country"
+            :options="options"
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">City</p>
-          <q-input placeholder="City" dense outlined />
+          <q-input
+            placeholder="City"
+            v-model="getCustomer.city"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">ZIP/Province</p>
-          <q-input placeholder="ZIP/Province" dense outlined />
+          <q-input
+            placeholder="ZIP/Province"
+            v-model="getCustomer.zip"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Phone</p>
-          <q-input placeholder="Phone" dense outlined />
+          <q-input
+            placeholder="Phone"
+            v-model="getCustomer.phone"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Address 1</p>
-          <q-input placeholder="Address 1" dense outlined />
+          <q-input
+            placeholder="Address 1"
+            v-model="getCustomer.address1"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Address 2</p>
-          <q-input placeholder="Address 2" dense outlined />
+          <q-input
+            placeholder="Address 2"
+            v-model="getCustomer.address2"
+            dense
+            outlined
+          />
         </div>
       </div>
     </div>
