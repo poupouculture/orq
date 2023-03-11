@@ -38,14 +38,14 @@ interface Props {
 const { getUserInfo } = useUserInfoStore();
 const audio: any = ref(null);
 const messageTemplate = (content: any) => {
-  if (content?.template?.components) {
-    const component = content?.template?.components?.find(
+  if (content?.components) {
+    const component = content?.components?.find(
       (component: any) => component?.type === "body"
     );
     if (component) return component?.parameters[0].text;
   }
 
-  return content?.template?.text;
+  return content?.text;
 };
 
 const audioPlay = () => {
