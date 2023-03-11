@@ -51,14 +51,15 @@ const { getUserInfo } = useUserInfoStore();
 const audio: any = ref(null);
 const playing = ref(false);
 const messageTemplate = (content: any) => {
-  if (content?.template?.components) {
-    const component = content?.template?.components?.find(
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
       (component: any) => component?.type === "body"
     );
     if (component) return component?.parameters[0].text;
   }
 
-  return content?.template?.text;
+  return content?.template_content || content?.template?.text;
 };
 
 const audioPlay = () => {
