@@ -45,7 +45,7 @@ const messageTemplate = (content: any) => {
     if (component) return component?.parameters[0].text;
   }
 
-  return content?.text;
+  return content?.template_content;
 };
 
 const audioPlay = () => {
