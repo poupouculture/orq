@@ -72,12 +72,13 @@ const useMessagingStore = defineStore("messaging", {
         );
 
         if (index !== -1) {
+          const [chat] = this.chatsList.splice(index, 1);
+          this.chatsList.unshift(chat);
           const cachedMessage = this.cachedChatMessages[chatId]?.find(
             (item) => item.id === lastmessage.id
           );
+          chat.last_message = lastmessage;
           if (cachedMessage) return;
-          const [chat] = this.chatsList.splice(index, 1);
-          this.chatsList.unshift(chat);
           if (lastmessage.status === MessageStatus.RECEIVE) {
             if (this.selectedChatId !== chatId) {
               chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
@@ -85,7 +86,6 @@ const useMessagingStore = defineStore("messaging", {
               chat.totalUnread = 0;
             }
           }
-          chat.last_message = lastmessage;
           this.cachedChatMessages[chatId]?.push(lastmessage);
           console.log(1);
         }
