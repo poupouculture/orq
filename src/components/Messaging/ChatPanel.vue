@@ -242,9 +242,10 @@ const snapshotChats = async () => {
             );
             if (chat) {
               messagingStore.updateChatsList(chat, status);
-            } else {
-              // 考虑直接调用接口
             }
+            // else {
+            //   // 考虑直接调用接口
+            // }
           }
         }
         snapshoted = true;
@@ -263,15 +264,20 @@ const snapshotMessage = (chatId: string) => {
           if (snapshoted) {
             const data = change.doc.data();
             console.log(data);
-            // if (data.status === MessageStatus.SENT) return;
+            let content;
+            try {
+              content =
+                typeof data.content === "string"
+                  ? JSON.parse(data.content)
+                  : data.content;
+            } catch (e) {
+              content = { text: data.content, type: "text" };
+            }
             if (data.date_created) {
               messagingStore.setChatsLastMessage(chatId, {
                 ...data,
                 id: data.last_message_id,
-                content:
-                  typeof data.content === "string"
-                    ? JSON.parse(data.content)
-                    : data.content,
+                content,
                 direction:
                   data.status === MessageStatus.SENT
                     ? Direction.OUTGOING
