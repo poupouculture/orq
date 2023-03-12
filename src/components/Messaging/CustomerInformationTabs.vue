@@ -67,8 +67,13 @@ const saveCustomer = async (val: FormPayload) => {
   } else {
     // insert
     customerResult = await customerStore.addCustomer(val);
-    const contactId = getSelectedChat.value.contacts_id;
-    await customerStore.addCustomerContact(customerResult.id, contactId);
+    if (!customerResult?.data?.errors) {
+      const contactId = getSelectedChat.value.contacts_id;
+      await customerStore.addCustomerContact(
+        customerResult?.data.id,
+        contactId
+      );
+    }
   }
 
   messagingStore.fetchChats();

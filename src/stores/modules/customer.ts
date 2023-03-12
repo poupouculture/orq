@@ -132,16 +132,23 @@ const useCustomerStore = defineStore("customer", {
     async addCustomer(payload: FormPayload) {
       Loading.show();
       try {
-        const {
-          data: { data },
-        } = await addCustomer(payload);
-        Notify.create({
-          message: "Successful to saved customer",
-          position: "top",
-          color: "primary",
-          type: "positive",
-        });
-        this.setCustomer(data);
+        const data = await addCustomer(payload);
+
+        if (data.data?.errors) {
+          Notify.create({
+            message: "Error: " + data.data.errors[0].message,
+            type: "negative",
+          });
+        } else {
+          Notify.create({
+            message: "Successful to saved customer",
+            position: "top",
+            color: "primary",
+            type: "positive",
+          });
+
+          this.setCustomer(data.data);
+        }
         Loading.hide();
         return data;
       } catch (err: any) {
