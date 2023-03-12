@@ -6,6 +6,52 @@ const { getInvoice, getCustomer } = useInvoice();
 const openDialog = ref(false);
 const send = ref(false);
 const check = ref(true);
+const filter = ref("");
+
+// Table
+const columns = ref([
+  {
+    name: "name",
+    required: true,
+    label: "Name",
+    align: "left",
+    field: (row) => row.name,
+    format: (val) => `${val}`,
+    sortable: true,
+  },
+  {
+    name: "company",
+    align: "center",
+    label: "Company",
+    field: "company",
+    sortable: true,
+  },
+  {
+    name: "customerCode",
+    align: "center",
+    label: "Customer Code",
+    field: "customerCode",
+  },
+  { name: "action", align: "center", label: "Action", field: "action" },
+]);
+
+const rows = ref([
+  {
+    name: "Asim",
+    company: "Syn",
+    customerCode: 122339828,
+  },
+  {
+    name: "Asim q",
+    company: "Syn",
+    customerCode: 122339828,
+  },
+  {
+    name: "John q",
+    company: "Syn",
+    customerCode: 122339828,
+  },
+]);
 </script>
 
 <template>
@@ -140,16 +186,53 @@ const check = ref(true);
     </div>
 
     <q-dialog v-model="openDialog">
-      <q-card>
+      <q-card class="w-[900px]">
         <q-card-section>
           <div class="text-h6">Customers</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
-          repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
-          perferendis totam, ea at omnis vel numquam exercitationem aut, natus
-          minima, porro labore.
+          <q-table
+            :rows="rows"
+            flat
+            :columns="columns"
+            :filter="filter"
+            row-key="name"
+          >
+            <template v-slot:top-right>
+              <q-input
+                borderless
+                dense
+                debounce="300"
+                v-model="filter"
+                placeholder="Search"
+              >
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </template>
+            <template v-slot:body="props">
+              <q-tr :props="props" @click="onRowClick(props.row)">
+                <q-td style="padding: 30px 20px" key="name" :props="props">
+                  {{ props.row.name }}
+                </q-td>
+                <q-td style="padding: 30px 20px" key="company" :props="props">
+                  {{ props.row.company }}
+                </q-td>
+                <q-td
+                  style="padding: 30px 20px"
+                  key="customerCode"
+                  :props="props"
+                >
+                  {{ props.row.customerCode }}
+                </q-td>
+                <q-td style="padding: 30px 20px" key="action" :props="props">
+                  <q-btn label="Choose" color="primary" />
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
         </q-card-section>
       </q-card>
     </q-dialog>
