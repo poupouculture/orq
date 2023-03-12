@@ -1,7 +1,7 @@
 <template>
   <div class="message-item relative">
     <div class="image" v-if="content?.type === MessageType.IMAGE">
-      <img v-if="content.local" :src="content.url" />
+      <img class="h-full" v-if="content.local" :src="content.url" />
       <AuthImage
         v-else
         :imgUrl="content.url + '&fit=inside&height=128'"
@@ -13,8 +13,20 @@
       class="cursor-pointer"
       @click="audioPlay"
     >
-      <audio ref="audio" class="hidden invisible" :src="content.url"></audio>
-      <q-icon name="play_circle_filled" color="white" size="30px" />
+      <audio
+        ref="audio"
+        @pause="playing = false"
+        class="hidden invisible"
+        :src="content.url"
+      ></audio>
+
+      <q-icon v-show="playing" name="pause_circle" color="white" size="30px" />
+      <q-icon
+        v-show="!playing"
+        name="play_circle_filled"
+        color="white"
+        size="30px"
+      />
       <span>{{ duration }}</span>
     </span>
     <span v-else-if="content?.type === MessageType.TEMPLATE">
@@ -37,23 +49,27 @@ interface Props {
 }
 const { getUserInfo } = useUserInfoStore();
 const audio: any = ref(null);
+const playing = ref(false);
 const messageTemplate = (content: any) => {
-  if (content?.template?.components) {
-    const component = content?.template?.components?.find(
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
       (component: any) => component?.type === "body"
     );
     if (component) return component?.parameters[0].text;
   }
 
-  return content?.template?.text;
+  return content?.template_content || content?.template?.text;
 };
 
 const audioPlay = () => {
   if (audio.value.paused) {
     audio.value.play();
+    playing.value = true;
   } else {
     audio.value.pause();
     audio.value.currentTime = 0;
+    playing.value = false;
   }
 };
 
@@ -63,10 +79,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 watch(
-  () => props.content.url,
+  () => props.content,
   async (val) => {
-    if (!props.content.local) return;
-    const { data } = await api.get(val, {
+    if (val.local || val.type !== MessageType.AUDIO) return;
+    const { data } = await api.get(val.url, {
       responseType: "blob",
     });
     const blob = new Blob([data], { type: "audio/mgpe" });

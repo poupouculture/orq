@@ -23,10 +23,12 @@ const getImgUrl = () => {
 
   request.onreadystatechange = () => {
     if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
-      authImg.value.src = URL.createObjectURL(request.response);
-      authImg.value.onLoad = () => {
-        URL.revokeObjectURL(authImg.value.src);
-      };
+      try {
+        authImg.value.src = URL.createObjectURL(request.response);
+        authImg.value.onLoad = () => {
+          URL.revokeObjectURL(authImg.value.src);
+        };
+      } catch (e) {}
     }
   };
   request.send(null);
