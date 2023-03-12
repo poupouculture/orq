@@ -27,7 +27,7 @@ const updateModel = (value) => {
 };
 </script>
 <style lang="scss" scoped>
-.q-pagination::v-deep {
+:deep(.q-pagination) {
   .q-btn {
     // set active button index
     &.text-primary {

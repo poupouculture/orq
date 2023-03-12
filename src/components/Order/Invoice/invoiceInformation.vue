@@ -2,7 +2,25 @@
 import { ref } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 
-const options = ref(["United State", "Facebook", "Twitter", "Apple", "Oracle"]);
+const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
+const labelHead = ref([
+  {
+    label: "Items",
+    class: "col-span-3",
+  },
+  {
+    label: "Qty",
+    class: "col-span-1 text-center",
+  },
+  {
+    label: "Rate",
+    class: "col-span-1 text-center",
+  },
+  {
+    label: "Amount",
+    class: "col-span-1 text-center",
+  },
+]);
 
 const { getInvoice } = useInvoice();
 </script>
@@ -28,7 +46,7 @@ const { getInvoice } = useInvoice();
             dense
             outlined
             v-model="getInvoice.status.value"
-            :options="options"
+            :options="statusOptions"
           />
           <div class="flex items-center mt-2">
             <q-checkbox size="xs" v-model="getInvoice.status.setDefault" />
@@ -45,7 +63,7 @@ const { getInvoice } = useInvoice();
             bg-color="white"
             v-model="getInvoice.dateIssue"
             :rules="['date']"
-            placeholder="Due Date"
+            placeholder="Date Issue"
             dense
             outlined
           >
@@ -97,17 +115,12 @@ const { getInvoice } = useInvoice();
 
       <div class="col-span-2 mt-5">
         <div class="grid grid-cols-6">
-          <div class="col-span-3">
-            <p class="font-semibold text-base">Items</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-base">Qty</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-base">Rate</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-base">Amount</p>
+          <div
+            v-for="(item, index) in labelHead"
+            :key="index"
+            :class="item.class"
+          >
+            <p class="font-semibold text-base">{{ item.label }}</p>
           </div>
         </div>
       </div>
@@ -116,7 +129,7 @@ const { getInvoice } = useInvoice();
         <div
           v-for="(item, index) in getInvoice.items"
           :key="index"
-          class="grid grid-cols-6"
+          class="grid grid-cols-6 mb-2"
         >
           <div class="col-span-3">
             <p class="font-extralight text-[#2E2E3A] text-xs">
@@ -133,25 +146,34 @@ const { getInvoice } = useInvoice();
           </div>
           <div class="col-span-1 text-center">
             <p class="font-extralight text-[#2E2E3A] text-xs">
-              {{ item.amount }}
+              {{ item.amount.label }}
             </p>
           </div>
         </div>
       </div>
 
-      <div class="col-span-2">
-        <div class="grid gap-5 grid-cols-6">
+      <div class="col-span-2 flex flex-col gap-3">
+        <div
+          v-for="(newItem, index) in getInvoice.form"
+          :key="index"
+          class="grid gap-5 grid-cols-6"
+        >
           <div class="col-span-3">
-            <q-input placeholder="Add Description" dense outlined />
+            <q-input
+              v-model="newItem.description"
+              placeholder="Add Description"
+              dense
+              outlined
+            />
           </div>
           <div class="col-span-1 text-center px-2">
-            <q-input placeholder="0" dense outlined />
+            <q-input v-model="newItem.qty" placeholder="0" dense outlined />
           </div>
           <div class="col-span-1 text-center px-2">
-            <q-input placeholder="0" dense outlined />
+            <q-input v-model="newItem.rate" placeholder="0" dense outlined />
           </div>
           <div class="col-span-1 text-center px-2">
-            <q-input placeholder="0" dense outlined />
+            <q-input v-model="newItem.amount" placeholder="0" dense outlined />
           </div>
         </div>
       </div>
@@ -161,7 +183,7 @@ const { getInvoice } = useInvoice();
       <div class="flex text-primary gap-3 flex-col">
         <div class="text-end flex gap-5">
           <span class="w-[80px]">Total</span>
-          <span class="w-[80px]">{{ total }}</span>
+          <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
         <div class="text-end flex gap-5">
           <span class="w-[80px]">Add tax</span>
@@ -169,7 +191,7 @@ const { getInvoice } = useInvoice();
         </div>
         <div class="text-end flex gap-5">
           <span class="text-end">Add discount</span>
-          <span class="w-[80px]">$00</span>
+          <span class="w-[80px]">$0</span>
         </div>
       </div>
     </div>
@@ -196,17 +218,25 @@ const { getInvoice } = useInvoice();
 
       <p class="text-base font-semibold">Custom fields</p>
       <div class="flex items-center">
-        <q-checkbox size="xs" val="field" v-model="getInvoice.customField" />
+        <q-checkbox
+          size="xs"
+          val="field"
+          v-model="getInvoice.optional.customField"
+        />
         <span class="text-sm font-normal text-[#9A9AAF]">
           Add custom field
         </span>
       </div>
       <div class="flex items-center">
-        <q-checkbox size="xs" val="memo" v-model="getInvoice.memo" />
+        <q-checkbox size="xs" val="memo" v-model="getInvoice.optional.memo" />
         <span class="text-sm font-normal text-[#9A9AAF]"> Memo </span>
       </div>
       <div class="flex items-center">
-        <q-checkbox size="xs" val="footer" v-model="getInvoice.footer" />
+        <q-checkbox
+          size="xs"
+          val="footer"
+          v-model="getInvoice.optional.footer"
+        />
         <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
       </div>
       <div class="">
