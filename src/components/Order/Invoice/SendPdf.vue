@@ -2,6 +2,10 @@
 import useInvoice from "src/stores/modules/useInvoices";
 import { ref } from "vue";
 
+const bgImage = ref(
+  "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
+);
+
 const { getInvoice, getCustomer } = useInvoice();
 const openDialog = ref(false);
 const send = ref(false);
@@ -215,7 +219,16 @@ const rows = ref([
             <template v-slot:body="props">
               <q-tr :props="props" @click="onRowClick(props.row)">
                 <q-td style="padding: 30px 20px" key="name" :props="props">
-                  {{ props.row.name }}
+                  <div class="flex gap-2">
+                    <div
+                      class="rounded-full w-10 h-10 bg-cover bg-center"
+                      :class="bgImage"
+                    />
+                    <div class="flex flex-col">
+                      <span>{{ props.row.name }}</span>
+                      <span class="text-xs text-slate-400">06-06-2023</span>
+                    </div>
+                  </div>
                 </q-td>
                 <q-td style="padding: 30px 20px" key="company" :props="props">
                   {{ props.row.company }}

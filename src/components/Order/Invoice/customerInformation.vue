@@ -4,9 +4,11 @@ import { ref } from "vue";
 
 const country = ["United State", "Indonesia", "China"];
 const language = ["English", "Germany"];
+const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
 
 const languageOptions = ref(language);
 const countryOptions = ref(country);
+const phoneOptions = ref(phone);
 
 const { getCustomer } = useInvoice();
 
@@ -37,6 +39,22 @@ const filterLanguage = (val: any, update: any) => {
   update(() => {
     const needle = val.toLowerCase();
     languageOptions.value = language.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const filterPhone = (val: any, update: any) => {
+  if (val === "") {
+    update(() => {
+      phoneOptions.value = phone;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    phoneOptions.value = phone.filter(
       (v) => v.toLowerCase().indexOf(needle) > -1
     );
   });
@@ -152,12 +170,22 @@ const filterLanguage = (val: any, update: any) => {
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Phone</p>
-          <q-input
-            placeholder="Phone"
-            v-model="getCustomer.phone"
-            dense
+          <q-select
             outlined
-          />
+            dense
+            v-model="getCustomer.phone"
+            use-input
+            input-debounce="0"
+            :options="phoneOptions"
+            @filter="filterPhone"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey"> No results </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </div>
       </div>
       <div class="col-span-1">
