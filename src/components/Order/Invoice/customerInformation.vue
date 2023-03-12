@@ -2,8 +2,45 @@
 import useInvoice from "src/stores/modules/useInvoices";
 import { ref } from "vue";
 
-const options = ref(["United State", "Facebook", "Twitter", "Apple", "Oracle"]);
+const country = ["United State", "Indonesia", "China"];
+const language = ["English", "Germany"];
+
+const languageOptions = ref(language);
+const countryOptions = ref(country);
+
 const { getCustomer } = useInvoice();
+
+const filterCountry = (val: any, update: any) => {
+  if (val === "") {
+    update(() => {
+      countryOptions.value = country;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    countryOptions.value = country.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const filterLanguage = (val: any, update: any) => {
+  if (val === "") {
+    update(() => {
+      languageOptions.value = language;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    languageOptions.value = language.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
 </script>
 
 <template>
@@ -52,22 +89,42 @@ const { getCustomer } = useInvoice();
         <div class="w-full">
           <p class="label-style mb-2">Language</p>
           <q-select
-            dense
             outlined
+            dense
             v-model="getCustomer.language"
-            :options="options"
-          />
+            use-input
+            input-debounce="0"
+            :options="languageOptions"
+            @filter="filterLanguage"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey"> No results </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Country</p>
           <q-select
-            dense
             outlined
+            dense
             v-model="getCustomer.country"
-            :options="options"
-          />
+            use-input
+            input-debounce="0"
+            :options="countryOptions"
+            @filter="filterCountry"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey"> No results </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </div>
       </div>
       <div class="col-span-1">

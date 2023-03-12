@@ -6,8 +6,46 @@ const bgImage = ref(
   "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
 );
 
-const options = ref(["United State", "Facebook", "Twitter", "Apple", "Oracle"]);
+const country = ["United State", "Indonesia", "China"];
+const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
+
+const phoneOptions = ref(phone);
+const countryOptions = ref(country);
 const { getCompany } = useInvoice();
+
+// Function
+
+const filterPhone = (val: any, update: any) => {
+  if (val === "") {
+    update(() => {
+      phoneOptions.value = phone;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    phoneOptions.value = phone.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const filterCountry = (val: any, update: any) => {
+  if (val === "") {
+    update(() => {
+      countryOptions.value = country;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    countryOptions.value = country.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
 </script>
 
 <template>
@@ -62,23 +100,47 @@ const { getCompany } = useInvoice();
           <div class="w-full">
             <p class="label-style mb-2">Country</p>
             <q-select
-              dense
               outlined
+              dense
               v-model="getCompany.country"
-              :options="options"
-            />
+              use-input
+              input-debounce="0"
+              :options="countryOptions"
+              @filter="filterCountry"
+              behavior="menu"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </div>
         </div>
 
         <div class="col-span-1">
           <div class="w-full">
             <p class="label-style mb-2">Phone</p>
-            <q-input
-              placeholder="Phone"
-              v-model="getCompany.phone"
-              dense
+            <q-select
               outlined
-            />
+              dense
+              v-model="getCompany.phone"
+              use-input
+              input-debounce="0"
+              :options="phoneOptions"
+              @filter="filterPhone"
+              behavior="menu"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </div>
         </div>
       </div>
