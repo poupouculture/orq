@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import useInvoice from "src/stores/modules/useInvoices";
+import { ref } from "vue";
 
 const { getInvoice, getCustomer } = useInvoice();
+const openDialog = ref(false);
+const send = ref(false);
+const check = ref(true);
 </script>
 
 <template>
@@ -11,21 +15,48 @@ const { getInvoice, getCustomer } = useInvoice();
         <q-btn push color="primary" icon-right="send" label="Share via">
           <q-popup-proxy>
             <q-banner>
-              <q-list>
-                <q-item clickable v-ripple>
-                  <q-item-section avatar>
-                    <q-icon color="primary" name="mail" />
-                  </q-item-section>
+              <div class="flex flex-col">
+                <div class="border-b-2 flex-col flex">
+                  <div class="gap-3 items-center flex">
+                    <q-radio
+                      checked-icon="task_alt"
+                      unchecked-icon="panorama_fish_eye"
+                      size="xs"
+                      v-model="send"
+                      val="Email"
+                      label="Email Now"
+                    />
 
-                  <q-item-section>Email Now</q-item-section>
-                </q-item>
-                <q-item @click="openDialog = !openDialog" clickable v-ripple>
-                  <q-item-section>Whatsapp</q-item-section>
-                  <q-item-section avatar>
-                    <q-icon color="primary" name="fa-brands fa-whatsapp" />
-                  </q-item-section>
-                </q-item>
-              </q-list>
+                    <q-icon style="color: #ccc; font-size: 1.4em" name="send" />
+                  </div>
+                  <q-checkbox
+                    size="xs"
+                    v-model="check"
+                    val="xs"
+                    label="Set as default"
+                  />
+                </div>
+
+                <div class="flex-col flex">
+                  <div
+                    @click="openDialog = !openDialog"
+                    class="gap-3 cursor-pointer items-center flex"
+                  >
+                    <q-radio
+                      checked-icon="task_alt"
+                      unchecked-icon="panorama_fish_eye"
+                      size="xs"
+                      v-model="send"
+                      val="Whatsapp"
+                    />
+                    <span>Whatsapp </span>
+                    <q-icon
+                      style="color: #ccc; font-size: 1.4em"
+                      name="fa-brands fa-whatsapp"
+                    />
+                  </div>
+                </div>
+              </div>
             </q-banner>
           </q-popup-proxy>
         </q-btn>
