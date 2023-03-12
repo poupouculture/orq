@@ -4,30 +4,30 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
     company: {
       companyName: "Apple Inc",
-      address1: "",
-      address2: "",
+      address1: "Nyc 1",
+      address2: "Nyc 2",
       country: "United State",
-      phone: "",
-      zip: "",
-      city: "",
+      phone: "26262262",
+      zip: "12345",
+      city: "NYC",
     },
     customer: {
       firstName: {
-        value: "john doe",
+        value: "john",
         setDefault: true,
       },
-      lastName: "",
-      email: "",
+      lastName: "Doe",
+      email: "johndoe@mail.com",
       language: "English",
       country: "United State",
-      city: "",
-      zip: "",
-      phone: "",
-      address1: "",
-      address2: "",
+      city: "Nyc",
+      zip: "1234",
+      phone: "124598811",
+      address1: "Ycn 1",
+      address2: "Ycn 2",
     },
     invoice: {
-      invoiceNumber: "",
+      invoiceNumber: "INV-1322525",
       status: {
         value: "Draft",
         setDefault: false,
@@ -39,16 +39,24 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           item: "hand Bag",
           qty: 25,
           rate: 2.0,
-          amount: 0,
+          amount: {
+            label: "",
+            totalPrice: 0,
+          },
         },
         {
           item: "hand Bag 2",
           qty: 250,
           rate: 5.0,
-          amount: 0,
+          amount: {
+            label: "",
+            totalPrice: 0,
+          },
         },
       ],
       optional: {
+        notes: "Please check your email",
+        terms: "Over Due",
         customField: false,
         memo: true,
         footer: false,
@@ -61,8 +69,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           amount: 0,
         },
       ],
-      notes: "",
-      terms: "",
+      totalPrice: {
+        label: "",
+        value: 0,
+      },
     },
   }),
   getters: {
@@ -74,36 +84,31 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         currency: "USD",
       });
 
-      const item = {
-        ...state.invoice,
-        items: state.invoice.items.map((item) => {
-          return {
-            ...item,
-            rate: dollarFormat.format(item.rate),
-            amount: {
-              label: dollarFormat.format(item.qty * item.rate),
-              totalPrice: item.qty * item.rate,
-            },
-          };
-        }),
-        totalPrice: {
-          label: "",
-          value: 0,
-        },
-      };
+      const formatItem: any[] = state.invoice.items.map((item) => {
+        return {
+          ...item,
+          rate: dollarFormat.format(item.rate),
+          amount: {
+            label: dollarFormat.format(item.qty * item.rate),
+            totalPrice: item.qty * item.rate,
+          },
+        };
+      });
 
-      const totalPrice = item.items.reduce(
+      state.invoice.items = formatItem;
+
+      const totalPrice = state.invoice.items.reduce(
         (accumulator, currentValue) =>
           accumulator + currentValue.amount.totalPrice,
         0
       );
 
-      item.totalPrice = {
+      state.invoice.totalPrice = {
         label: dollarFormat.format(totalPrice),
         value: totalPrice,
       };
 
-      return item;
+      return state.invoice;
     },
   },
 });

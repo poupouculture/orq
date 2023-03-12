@@ -200,7 +200,7 @@ const { getInvoice } = useInvoice();
       <div class="w-full">
         <p class="label-style mb-2">Notes (Optional)</p>
         <q-input
-          v-model="getInvoice.notes"
+          v-model="getInvoice.optional.notes"
           placeholder="Notes or payment details"
           dense
           outlined
@@ -209,7 +209,7 @@ const { getInvoice } = useInvoice();
       <div class="w-full">
         <p class="label-style mb-2">Terms</p>
         <q-input
-          v-model="getInvoice.terms"
+          v-model="getInvoice.optional.terms"
           placeholder="Terms & conditions"
           dense
           outlined

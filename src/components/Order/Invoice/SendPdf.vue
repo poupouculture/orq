@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import useInvoice from "src/stores/modules/useInvoices";
 
-const openDialog = ref(false);
+const { getInvoice, getCustomer } = useInvoice();
 </script>
 
 <template>
@@ -33,11 +33,13 @@ const openDialog = ref(false);
       <q-icon size="25px" color="primary" name="cloud_download" />
     </div>
     <div class="bg-white w-full rounded-lg p-5">
-      <p class="font-medium">TO: <span>john@gmail.com</span></p>
+      <p class="font-medium">
+        TO: <span class="font-bold pl-2">{{ getCustomer.email }}</span>
+      </p>
 
       <div class="flex flex-col text-[#111827] justify-center items-center p-5">
         <p class="font-semibold text-lg">BALANCE DUE</p>
-        <p class="font-normal text-sm">$100.00</p>
+        <p class="font-normal text-sm">{{ getInvoice.totalPrice.label }}</p>
         <p class="font-normal py-3 text-sm">Thanks for choosing us!</p>
 
         <div class="flex py-4 gap-3 flex-col">
@@ -49,7 +51,7 @@ const openDialog = ref(false);
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
             <div class="w-[100px] ml-4">
-              <p class="text-sm font-normal">INV-006</p>
+              <p class="text-sm font-normal">{{ getInvoice.invoiceNumber }}</p>
             </div>
           </div>
 
@@ -61,7 +63,7 @@ const openDialog = ref(false);
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
             <div class="w-[100px] ml-4">
-              <p class="text-sm font-normal">Feb 20, 2023</p>
+              <p class="text-sm font-normal">{{ getInvoice.dueDate }}</p>
             </div>
           </div>
           <div class="flex gap-3 justify-between">
@@ -72,7 +74,9 @@ const openDialog = ref(false);
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
             <div class="w-[100px] ml-4">
-              <p class="text-sm font-normal">$100</p>
+              <p class="text-sm font-normal">
+                {{ getInvoice.totalPrice.label }}
+              </p>
             </div>
           </div>
           <div class="flex gap-3 justify-between">
@@ -83,7 +87,9 @@ const openDialog = ref(false);
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
             <div class="w-[100px] ml-4">
-              <p class="text-sm font-normal">$100</p>
+              <p class="text-sm font-normal">
+                {{ getInvoice.totalPrice.label }}
+              </p>
             </div>
           </div>
           <div class="flex gap-3 justify-between">
@@ -94,7 +100,7 @@ const openDialog = ref(false);
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
             <div class="w-[100px] ml-4">
-              <p class="text-sm font-normal">Draft</p>
+              <p class="text-sm font-normal">{{ getInvoice.status.value }}</p>
             </div>
           </div>
         </div>
