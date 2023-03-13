@@ -49,6 +49,18 @@ const { selectedChatId } = storeToRefs(messagingStore);
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const name = computed<string>(() => getChatName(props.data));
 
+const messageTemplate = (content: any) => {
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
+      (component: any) => component?.type === "body"
+    );
+    if (component) return component?.parameters[0].text;
+  }
+
+  return content?.template_content || content?.template?.text;
+};
+
 const message = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
   if (!lastMessage) return;
@@ -60,7 +72,7 @@ const message = computed<string>(() => {
     case MessageType.TEXT:
       return lastMessage?.content?.text;
     case MessageType.TEMPLATE:
-      return lastMessage?.content.template.text;
+      return messageTemplate(lastMessage.content);
     default:
       return lastMessage?.content?.file_name;
   }

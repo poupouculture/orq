@@ -98,12 +98,22 @@
         </template>
         <template #body-cell-action="props">
           <q-td :props="props">
-            <router-link
+            <q-btn
+              size="sm"
               :to="`/customers/${props.row.id}`"
-              style="text-decoration: none; color: inherit"
+              flat
+              round
+              color="primary"
+              icon="edit"
             >
-              <p class="edit-button">Edit</p></router-link
-            >
+              <q-tooltip
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+              >
+                Edit
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </template>
       </BaseTable>

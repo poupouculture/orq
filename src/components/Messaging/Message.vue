@@ -49,16 +49,17 @@
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full">
       <div
-        class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2"
+        class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
           :key="getSelectedChatId"
           ref="infiniteScrollRef"
           @load="loadMore"
+          :initial-index="0"
           reverse
           :offset="300"
-          :scroll-target="scrollAreaRef"
+          scroll-target=".scroll_area"
         >
           <ChatMessage
             v-for="item in messages"
@@ -184,11 +185,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onBeforeUnmount } from "vue";
+import { computed, ref, watch, nextTick, onBeforeUnmount, reactive } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, isSameDay, isToday } from "date-fns";
+import { format, isSameDay, isToday, differenceInDays } from "date-fns";
 import Recorder from "recorder-core";
 import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
@@ -212,6 +213,9 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import ChatMessage from "./ChatMessage.vue";
+interface HasMore {
+  [key: string]: boolean;
+}
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<HTMLDivElement>();
 const message: Ref<string> = ref("");
@@ -232,6 +236,7 @@ const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 const customerStore = useCustomerStore();
 const { getCustomer } = storeToRefs(customerStore);
+const hasMoreMessage: HasMore = reactive({});
 
 const { getSelectedChat, getSelectedChatId, cachedChatMessages } =
   storeToRefs(messagingStore);
@@ -270,25 +275,42 @@ const messages = computed<Message[]>(() => {
 });
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
+  if (hasMoreMessage?.[getSelectedChatId.value] === false) {
+    infiniteScrollRef.value?.stop();
+    return;
+  }
   const hasmore = await messagingStore.fetchChatMessagesById(
     getSelectedChatId.value,
     index
   );
+  hasMoreMessage[getSelectedChatId.value] = !!hasmore;
   done(!hasmore);
 };
 
 watch(
-  () => getSelectedChat.value,
-  (val, old) => {
-    if (val && !old) {
-      recOpen();
-    }
-    const createDate = val.last_message?.date_created;
+  () => getSelectedChat.value?.last_message,
+  async (val) => {
     message.value = "";
+    const createDate = val?.date_created;
     if (createDate) {
-      isChatExpired.value = !isSameDay(new Date(), new Date(createDate));
+      isChatExpired.value =
+        differenceInDays(new Date(), new Date(createDate)) > 0;
     } else {
       isChatExpired.value = true;
+    }
+  }
+);
+
+watch(
+  () => getSelectedChat.value.status,
+  async (val) => {
+    if (val === ChatTypes.ONGOING) {
+      await nextTick();
+      wave.value = Recorder.WaveSurferView({
+        elem: waveRef.value,
+        scale: 1,
+      });
+      recOpen();
     }
   }
 );
@@ -448,9 +470,11 @@ const sendMedia = async (blob: Blob) => {
   const cm: any = cachedMessage.find((item) => item.id === tempId);
   cm.sendMessageStatus = SendMessageStatus.DEFAULT;
   cm.id = data.derp_chats_messages_id;
+  console.log(2);
 };
 
 const recOpen = function (success?: () => void) {
+  if (rec.value) return;
   rec.value = Recorder({
     type: "mp3",
     sampleRate: 16000,
@@ -469,10 +493,6 @@ const recOpen = function (success?: () => void) {
   rec.value.open(
     function () {
       success && success();
-      wave.value = Recorder.WaveSurferView({
-        elem: waveRef.value,
-        scale: 1,
-      });
     },
     function (msg: string, isUserNotAllow: string) {
       Notify.create({

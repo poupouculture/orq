@@ -77,6 +77,9 @@ const routes = [
           import("pages/ApplicationProgram/BotTemplate/edit.vue"),
       },
       {
+        // path: "application-programs/campaign/campaign-setting",
+        // component: () =>
+        //   import("pages/ApplicationProgram/Campaign/campaignSettings.vue"),
         path: "application-programs/customer-services",
         component: () =>
           import("pages/ApplicationProgram/CustomerService/index.vue"),
@@ -139,6 +142,11 @@ const routes = [
         path: "/order/service-records",
         name: "order.service-record",
         component: () => import("src/pages/Order/ServiceRecord/Index.vue"),
+      },
+      {
+        path: "/order/invoices",
+        name: "order.invoices",
+        component: () => import("src/pages/Order/Invoice/index.vue"),
       },
       {
         path: "/order/service-records/:id",
