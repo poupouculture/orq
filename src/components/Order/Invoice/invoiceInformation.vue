@@ -1,11 +1,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import useInvoice from "src/stores/modules/useInvoices";
 
-const model = ref("United State");
-const options = ref(["United State", "Facebook", "Twitter", "Apple", "Oracle"]);
-const setInput = ref(false);
-const issueDate = ref(null);
-const dueDate = ref(null);
+const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
+const labelHead = ref([
+  {
+    label: "Items",
+    class: "col-span-3",
+  },
+  {
+    label: "Qty",
+    class: "col-span-1 text-center",
+  },
+  {
+    label: "Rate",
+    class: "col-span-1 text-center",
+  },
+  {
+    label: "Amount",
+    class: "col-span-1 text-center",
+  },
+]);
+
+const { getInvoice } = useInvoice();
 </script>
 
 <template>
@@ -14,15 +31,25 @@ const dueDate = ref(null);
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Invoice Number</p>
-          <q-input placeholder="Invoice Number" dense outlined />
+          <q-input
+            v-model="getInvoice.invoiceNumber"
+            placeholder="Invoice Number"
+            dense
+            outlined
+          />
         </div>
       </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Status</p>
-          <q-select dense outlined v-model="model" :options="options" />
+          <q-select
+            dense
+            outlined
+            v-model="getInvoice.status.value"
+            :options="statusOptions"
+          />
           <div class="flex items-center mt-2">
-            <q-checkbox size="xs" v-model="setInput" />
+            <q-checkbox size="xs" v-model="getInvoice.status.setDefault" />
             <span class="text-sm font-normal text-[#9A9AAF]">
               set as default
             </span>
@@ -34,9 +61,9 @@ const dueDate = ref(null);
           <p class="label-style mb-2">Date Issue</p>
           <q-input
             bg-color="white"
-            v-model="issueDate"
+            v-model="getInvoice.dateIssue"
             :rules="['date']"
-            placeholder="Due Date"
+            placeholder="Date Issue"
             dense
             outlined
           >
@@ -48,7 +75,7 @@ const dueDate = ref(null);
                   transition-hide="scale"
                 >
                   <q-date
-                    v-model="issueDate"
+                    v-model="getInvoice.dateIssue"
                     @input="() => $refs.qDateProxy.hide()"
                   />
                 </q-popup-proxy>
@@ -62,7 +89,7 @@ const dueDate = ref(null);
           <p class="label-style mb-2">Due Date</p>
           <q-input
             bg-color="white"
-            v-model="dueDate"
+            v-model="getInvoice.dueDate"
             :rules="['date']"
             placeholder="Due Date"
             dense
@@ -76,7 +103,7 @@ const dueDate = ref(null);
                   transition-hide="scale"
                 >
                   <q-date
-                    v-model="dueDate"
+                    v-model="getInvoice.dueDate"
                     @input="() => $refs.qDateProxy.hide()"
                   />
                 </q-popup-proxy>
@@ -88,51 +115,65 @@ const dueDate = ref(null);
 
       <div class="col-span-2 mt-5">
         <div class="grid grid-cols-6">
-          <div class="col-span-3">
-            <p class="font-semibold text-base">Items</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-base">Qty</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-base">Rate</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-base">Amount</p>
+          <div
+            v-for="(item, index) in labelHead"
+            :key="index"
+            :class="item.class"
+          >
+            <p class="font-semibold text-base">{{ item.label }}</p>
           </div>
         </div>
       </div>
 
       <div class="col-span-2">
-        <div class="grid grid-cols-6">
+        <div
+          v-for="(item, index) in getInvoice.items"
+          :key="index"
+          class="grid grid-cols-6 mb-2"
+        >
           <div class="col-span-3">
-            <p class="font-extralight text-[#2E2E3A] text-xs">hand bag</p>
+            <p class="font-extralight text-[#2E2E3A] text-xs">
+              {{ item.item }}
+            </p>
           </div>
           <div class="col-span-1 text-center">
-            <p class="font-extralight text-[#2E2E3A] text-xs">25</p>
+            <p class="font-extralight text-[#2E2E3A] text-xs">{{ item.qty }}</p>
           </div>
           <div class="col-span-1 text-center">
-            <p class="font-extralight text-[#2E2E3A] text-xs">$2.00</p>
+            <p class="font-extralight text-[#2E2E3A] text-xs">
+              {{ item.rate }}
+            </p>
           </div>
           <div class="col-span-1 text-center">
-            <p class="font-extralight text-[#2E2E3A] text-xs">$50.00</p>
+            <p class="font-extralight text-[#2E2E3A] text-xs">
+              {{ item.amount.label }}
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="col-span-2">
-        <div class="grid gap-5 grid-cols-6">
+      <div class="col-span-2 flex flex-col gap-3">
+        <div
+          v-for="(newItem, index) in getInvoice.form"
+          :key="index"
+          class="grid gap-5 grid-cols-6"
+        >
           <div class="col-span-3">
-            <q-input placeholder="Add Description" dense outlined />
+            <q-input
+              v-model="newItem.description"
+              placeholder="Add Description"
+              dense
+              outlined
+            />
           </div>
           <div class="col-span-1 text-center px-2">
-            <q-input placeholder="0" dense outlined />
+            <q-input v-model="newItem.qty" placeholder="0" dense outlined />
           </div>
           <div class="col-span-1 text-center px-2">
-            <q-input placeholder="0" dense outlined />
+            <q-input v-model="newItem.rate" placeholder="0" dense outlined />
           </div>
           <div class="col-span-1 text-center px-2">
-            <q-input placeholder="0" dense outlined />
+            <q-input v-model="newItem.amount" placeholder="0" dense outlined />
           </div>
         </div>
       </div>
@@ -142,7 +183,7 @@ const dueDate = ref(null);
       <div class="flex text-primary gap-3 flex-col">
         <div class="text-end flex gap-5">
           <span class="w-[80px]">Total</span>
-          <span class="w-[80px]">$100.00</span>
+          <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
         <div class="text-end flex gap-5">
           <span class="w-[80px]">Add tax</span>
@@ -150,7 +191,7 @@ const dueDate = ref(null);
         </div>
         <div class="text-end flex gap-5">
           <span class="text-end">Add discount</span>
-          <span class="w-[80px]">$00</span>
+          <span class="w-[80px]">$0</span>
         </div>
       </div>
     </div>
@@ -158,26 +199,44 @@ const dueDate = ref(null);
     <div class="flex flex-col gap-3">
       <div class="w-full">
         <p class="label-style mb-2">Notes (Optional)</p>
-        <q-input placeholder="Notes or payment details" dense outlined />
+        <q-input
+          v-model="getInvoice.optional.notes"
+          placeholder="Notes or payment details"
+          dense
+          outlined
+        />
       </div>
       <div class="w-full">
         <p class="label-style mb-2">Terms</p>
-        <q-input placeholder="Terms & conditions" dense outlined />
+        <q-input
+          v-model="getInvoice.optional.terms"
+          placeholder="Terms & conditions"
+          dense
+          outlined
+        />
       </div>
 
       <p class="text-base font-semibold">Custom fields</p>
       <div class="flex items-center">
-        <q-checkbox size="xs" v-model="setInput" />
+        <q-checkbox
+          size="xs"
+          val="field"
+          v-model="getInvoice.optional.customField"
+        />
         <span class="text-sm font-normal text-[#9A9AAF]">
           Add custom field
         </span>
       </div>
       <div class="flex items-center">
-        <q-checkbox size="xs" v-model="setInput" />
+        <q-checkbox size="xs" val="memo" v-model="getInvoice.optional.memo" />
         <span class="text-sm font-normal text-[#9A9AAF]"> Memo </span>
       </div>
       <div class="flex items-center">
-        <q-checkbox size="xs" v-model="setInput" />
+        <q-checkbox
+          size="xs"
+          val="footer"
+          v-model="getInvoice.optional.footer"
+        />
         <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
       </div>
       <div class="">
