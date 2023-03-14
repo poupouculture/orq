@@ -1,13 +1,10 @@
 <template>
   <div class="message-item relative">
-    <div class="image" v-if="content?.type === MessageType.IMAGE">
-      <img class="h-full" v-if="content.local" :src="content.url" />
-      <AuthImage
-        v-else
-        :imgUrl="content.url + '&fit=inside&height=128'"
-        :authToken="`Bearer ${getUserInfo.access_token}`"
-      />
-    </div>
+    <MessageImage
+      v-if="content?.type === MessageType.IMAGE"
+      :src="content.url"
+      :name="content.media_id"
+    />
     <span
       v-else-if="content?.type === MessageType.AUDIO"
       class="cursor-pointer"
@@ -39,15 +36,13 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { api } from "boot/axios";
-import useUserInfoStore from "stores/modules/userInfo";
 import { MessageType, SendMessageStatus } from "src/types/MessagingTypes";
-import AuthImage from "src/components/AuthImage/AuthImage.vue";
+import MessageImage from "./MessageImage.vue";
 
 interface Props {
   content: any;
   sendMessageStatus?: SendMessageStatus;
 }
-const { getUserInfo } = useUserInfoStore();
 const audio: any = ref(null);
 const playing = ref(false);
 const messageTemplate = (content: any) => {
