@@ -37,7 +37,7 @@ const useUserInfoStore = defineStore("userInfo", {
         const user = data.data.data;
         this.userInfo = user;
         LocalStorage.set("userinfo", JSON.stringify(user));
-        await this.getProfile();
+        this.getProfile();
         Notify.create({
           message: "Successful login.",
           color: "blue-9",
@@ -89,7 +89,15 @@ const useUserInfoStore = defineStore("userInfo", {
           return data;
         }
       } catch (err) {
+        this.$reset();
+        LocalStorage.clear();
         this.router.push("/login");
+        // Notify.create({
+        //   message: "login timeout",
+        //   type: "positive",
+        //   position: "top",
+        //   color: "primary",
+        // });
       }
     },
     setUserInfo(params) {

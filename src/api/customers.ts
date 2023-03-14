@@ -3,22 +3,32 @@ import { api } from "boot/axios";
 interface CustomerPayload {
   limit: number;
   page: number;
+  search: string;
+  filter?: {
+    key: string;
+    value: string;
+  };
 }
 
 export const getCustomers = async (payload: CustomerPayload) => {
-  const { limit, page } = payload;
+  const { limit, page, search, filter } = payload;
   const fields =
-    "id, first_name, last_name, gender, date_created, position, customer_code";
+    "id,first_name,last_name,gender,date_created,position,customer_code";
   const companies = "companies.companies_id.name_english";
+  const tags = "tags.tags_id.*";
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
 
+  const filterField =
+    filter && filter.key ? { [filter.key]: filter.value } : undefined;
   const customers = await api.get("/items/customers", {
     params: {
-      fields: `${fields},${companies}`,
+      fields: `${fields},${companies},${tags}`,
       sort: "-date_created",
+      ...filterField,
       limit,
       offset,
+      search,
       meta: "*",
     },
   });
@@ -27,16 +37,23 @@ export const getCustomers = async (payload: CustomerPayload) => {
 };
 
 // get all customers who has contacts
-export const getCustomersWithContacts = async () => {
-  const fields =
-    "id, first_name, last_name, gender, date_created, position, customer_code";
-  const companies = "companies.companies_id.name_english";
+export const getCustomersWithContacts = async (payload: CustomerPayload) => {
+  const { limit, page, search } = payload;
+  // console.log(limit);
+  // const fields = "*";
 
-  const customers = await api.get("/items/customers", {
+  // const offset = search ? 0 : page === 1 ? 0 : (page - 1) * limit;
+
+  // "/items/customers"
+  const customers = await api.get("/waba/valid-customers", {
     params: {
-      fields: `${fields},${companies}`,
-      sort: "-date_created",
-      "filter[count(contacts)][_neq]": 0,
+      // fields: `${fields}`,
+      // sort: "-date_created",
+      // "filter[count(contacts)][_neq]": 0,
+      limit,
+      page,
+      search,
+      // meta: "*",
     },
   });
 
@@ -45,11 +62,11 @@ export const getCustomersWithContacts = async () => {
 
 export const getCustomer = async (id: string) => {
   const fields = "*";
-  const companies = "companies.*, companies.companies_id.*";
+  const companies = "companies.*,companies.companies_id.*";
   const contacts = "contacts.contacts_id.*";
   const customerGroups =
-    "customer_groups.*, customer_groups.customer_groups_id.*";
-  const tags = "tags.*, tags.tags_id.*";
+    "customer_groups.*,customer_groups.customer_groups_id.*";
+  const tags = "tags.*,tags.tags_id.*";
 
   const customer = await api.get(
     `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`
@@ -57,8 +74,23 @@ export const getCustomer = async (id: string) => {
   return customer;
 };
 
-export const addCustomer = async (payload) => {
-  const customer = await api.post("/items/customers", payload);
+export const deleteCustomer = async (payload: string[]) => {
+  const customer = await api.delete("/items/customers", {
+    data: payload,
+  });
+  return customer;
+};
+
+export const addCustomer = async (payload: any) => {
+  const companies = "companies.*,companies.companies_id.*";
+  const contacts = "contacts.contacts_id.*";
+  const customerGroups =
+    "customer_groups.*,customer_groups.customer_groups_id.*";
+  const tags = "tags.*,tags.tags_id.*";
+  const customer = await api.post(
+    `/items/customers?fields=*,${companies},${contacts},${customerGroups},${tags}`,
+    payload
+  );
   return customer;
 };
 
@@ -77,6 +109,11 @@ export const addCustomerContact = async (customerId, contactId) => {
     customers_id: customerId,
     contacts_id: contactId,
   });
+  return customerContact;
+};
+
+export const addCustomerContactAlong = async (payload) => {
+  const customerContact = await api.post("items/contacts_customers", payload);
   return customerContact;
 };
 

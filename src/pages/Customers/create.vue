@@ -1,7 +1,6 @@
 <template>
   <BaseLayout v-if="!loading" @submitGeneralInformation="submit" />
 </template>
-
 <script setup>
 import { onMounted, ref } from "vue";
 import BaseLayout from "src/components/Customer/BaseLayout.vue";
@@ -21,13 +20,8 @@ onMounted(() => {
 
 const submit = async (payload) => {
   try {
-    const data = await customerStore.addCustomer(payload);
-
-    $q.notify({
-      type: "positive",
-      message: "a new customer has been added.",
-    });
-    router.push(`/customers/${data.id}`);
+    await customerStore.addCustomer(payload);
+    router.push(`/customers`);
   } catch (error) {
     $q.notify({
       type: "warning",

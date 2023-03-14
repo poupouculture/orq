@@ -7,7 +7,14 @@
       <q-card-section>
         <p class="text-lg mb-2">Customers</p>
         <div class="row justify-between">
-          <q-input placeholder="Search" outlined dense>
+          <q-input
+            v-model="search"
+            @change="handleSearch"
+            @keypress.enter.prevent="handleSearch"
+            placeholder="Search Customer..."
+            outlined
+            dense
+          >
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
@@ -72,7 +79,7 @@
   </q-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { getCustomersWithContacts } from "src/api/customers";
 import BaseTable from "src/components/BaseTable.vue";
@@ -125,28 +132,34 @@ const data = reactive({
   page: 1,
   rowsPerPage: 10,
 });
+const search = ref("");
 
 const groupedCompanies = (companies) => {
-  const grouped = companies.map((company) => company.companies_id.name_english);
+  const grouped = companies.map((company) => company.name);
   return grouped.join(", ");
 };
 
 const fetchCustomers = async () => {
   const {
-    data: { data: customers, meta },
+    data: { data: customers },
   } = await getCustomersWithContacts({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.value,
   });
 
-  data.customers = customers;
-  data.totalCount = meta?.total_count;
+  data.customers = customers.customers;
+  data.totalCount = customers?.total_count;
   loading.value = false;
 };
 
 const changePage = (page) => {
   data.page = page;
 
+  fetchCustomers();
+};
+
+const handleSearch = () => {
   fetchCustomers();
 };
 

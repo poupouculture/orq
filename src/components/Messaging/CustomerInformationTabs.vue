@@ -12,18 +12,24 @@
   >
     <q-tab name="general" label="General Information" />
     <q-tab name="other" label="Other Information" />
+    <q-tab name="contact" label="Contact Information" />
     <q-tab name="service_record" label="Service Record" />
   </q-tabs>
   <q-separator size="2px" style="margin-top: -2px" />
   <q-tab-panels v-model="customerInformationTab" animated>
     <q-tab-panel name="general" class="pannel-each">
       <GeneralInformation
-        :mode="isContactNumberExist ? '' : 'show'"
+        mode="show"
         :show-active="false"
         :show-return-button="false"
         :show-delete-button="false"
         @submit="saveCustomer"
       />
+    </q-tab-panel>
+    <q-tab-panel name="contact">
+      <div class="contact-info">
+        <ContactInfo :customer-id="customerStore.getCustomer.id" />
+      </div>
     </q-tab-panel>
     <q-tab-panel name="service_record">
       <ServiceRecord />
@@ -32,42 +38,44 @@
 </template>
 <script setup lang="ts">
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
+import ServiceRecord from "../Customer/ServiceRecord.vue";
+import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
-import { computed, ref } from "vue";
+import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import ServiceRecord from "../Customer/ServiceRecord.vue";
-
 const enum CustomerInformationTabs {
   GENERAL = "general",
   OTHER = "other",
   SERVICE_RECORD = "service_record",
 }
 const customerStore = useCustomerStore();
+const customer = computed(() => customerStore.getCustomer);
 const messagingStore = useMessagingStore();
-
-const { getChats, getSelectedChatIndex } = storeToRefs(messagingStore);
-const isContactNumberExist = computed(
-  () => messagingStore.isContactNumberExist
-);
+const { getSelectedChat } = storeToRefs(messagingStore);
 const customerInformationTab: Ref<CustomerInformationTabs> = ref(
   CustomerInformationTabs.GENERAL
 );
-
 const saveCustomer = async (val: FormPayload) => {
-  if (customerStore.getCustomer.id) {
+  let customerResult = null;
+  if (customer.value.id) {
     // update
-    await customerStore.updateCustomer(customerStore.getCustomer.id, val);
+    await customerStore.updateCustomer(customer.value.id, val);
+    customerResult = customerStore.getCustomer;
   } else {
     // insert
-    const selectedChat = getChats.value[getSelectedChatIndex.value];
-    const contactId = selectedChat.contacts_id;
-    const customer = await customerStore.addCustomer(val);
-    await customerStore.addCustomerContact(customer.id, contactId);
+    customerResult = await customerStore.addCustomer(val);
+    if (!customerResult?.data?.errors) {
+      const contactId = getSelectedChat.value.contacts_id;
+      await customerStore.addCustomerContact(
+        customerResult?.data.id,
+        contactId
+      );
+    }
   }
 
-  messagingStore.fetchChats(messagingStore.getSelectedTab);
+  messagingStore.fetchChats();
 };
 </script>

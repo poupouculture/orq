@@ -1,11 +1,28 @@
 <template>
   <div class="main-container">
-    <p class="header-text">
-      <span class="text-gray-400">
-        <q-icon name="fa-solid fa-arrow-left" />
-        Application program /
-      </span>
-      Message Templates
+    <p class="header-text text-2xl">
+      <router-link
+        :to="`/application-programs/${
+          props.formType === 'bots'
+            ? 'chatbots'
+            : props.formType === 'customer-service'
+            ? 'customer-serivces'
+            : 'message-templates'
+        }`"
+        style="text-decoration: none; color: inherit"
+      >
+        <span class="text-gray-400 cursor-pointer">
+          <q-icon name="fa-solid fa-arrow-left" />
+          Application program /
+        </span>
+      </router-link>
+      {{
+        props.formType === "bots"
+          ? "Chatbots"
+          : props.formType === "customer-service"
+          ? "Customer Service"
+          : "Message Templates"
+      }}
     </p>
     <div class="w-full flex bg-[#fdfdfd] rounded-lg">
       <div class="w-2/3 flex flex-col p-6 border-r">
@@ -21,11 +38,26 @@
         />
 
         <div class="label flex flex-col">
+          <p class="text-xl">Is Email</p>
+          <p class="text-gray-400">Is this email template</p>
+        </div>
+
+        <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
+          <InputSelect
+            :options="isEmailOptions"
+            :default="isEmail"
+            :value="isEmail"
+            @input="updateIsEmail"
+            v-if="!loading"
+          />
+        </div>
+
+        <div class="label flex flex-col">
           <p class="text-xl">Languages</p>
           <p class="text-gray-400">Select your message language</p>
         </div>
 
-        <div class="w-2/12 mt-2 mb-4">
+        <div class="w-full md:w-8/12 lg:w-6/12 mt-2 mb-4">
           <InputSelect
             :options="languageOptions"
             :default="language"
@@ -44,7 +76,7 @@
         </div>
 
         <div class="flex mt-2 mb-4 gap-4">
-          <div class="w-2/12">
+          <div class="w-full md:w-4/12 lg:w-3/12">
             <InputSelect
               :options="headerOptions"
               :default="header"
@@ -98,6 +130,20 @@
         </div>
 
         <div class="label flex flex-col">
+          <p class="text-xl">Approved</p>
+          <p class="text-gray-400">Is this template approved</p>
+        </div>
+
+        <div class="mt-2 mb-4">
+          <input
+            type="text"
+            class="w-full md:w-4/12 lg:w-3/12 h-10 block border rounded-lg pl-4"
+            :value="isApproved"
+            disabled
+          />
+        </div>
+
+        <div class="label flex flex-col">
           <p class="text-xl">Button</p>
           <p class="text-gray-400">
             Create buttons that let customers respond to your message or take
@@ -105,7 +151,7 @@
           </p>
         </div>
 
-        <div class="w-3/12 mt-2 mb-4">
+        <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
           <InputSelect
             :options="actionCategoryOptions"
             :default="actionCategory"
@@ -156,7 +202,13 @@
 
         <div class="row justify-between mt-4">
           <router-link
-            :to="`/application-programs/message-templates`"
+            :to="`/application-programs/${
+              formType === 'bots'
+                ? 'chatbots'
+                : props.formType === 'customer-service'
+                ? 'customer-serivces'
+                : 'message-templates'
+            }`"
             style="text-decoration: none; color: inherit"
           >
             <p
@@ -204,6 +256,7 @@ import {
   actionType as at,
   formattedActionType as fat,
 } from "../../constants/messageTemplate.js";
+import { codes, names } from "../../constants/languages.js";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
@@ -213,20 +266,29 @@ const props = defineProps({
     type: Object,
     required: false,
   },
+  formType: {
+    type: String,
+    required: false,
+    default: () => "message",
+  },
 });
 
 const name = ref(null);
-const languageOptions = ["English", "Chineese"];
+const languageCodes = codes;
+const languageOptions = names;
+const isEmailOptions = ["Yes", "No"];
 const headerOptions = ["Text", "Media"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const actions = ref(Array(2).fill(null));
 
+const isEmail = ref("No");
 const language = ref("English");
 const header = ref(null);
 const headerMessage = ref("");
 const media = ref(null);
 const bodyMessage = ref("");
 const footerMessage = ref("");
+const isApproved = ref("No");
 const actionCategory = ref("None");
 const replies = ref(["", ""]);
 const status = ref("Draft");
@@ -238,6 +300,11 @@ const loading = ref(true);
 onMounted(() => {
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
+
+    if (tempData?.json?.components) {
+      tempData.components = tempData?.json?.components;
+    }
+
     const headerComponent = tempData?.components?.find(
       (c) => c.type === "HEADER"
     );
@@ -250,11 +317,13 @@ onMounted(() => {
     );
 
     name.value = tempData.name;
-    language.value =
-      tempData.language === "en_US" ? "English" : tempData.language;
+    isEmail.value = tempData.is_email_template ? "Yes" : "No";
+    language.value = languageCodes.includes(tempData.language)
+      ? languageOptions[languageCodes.indexOf(tempData.language)]
+      : tempData.language;
 
     header.value = headerComponent?.format;
-    if (header.value.toUpperCase() === "TEXT") {
+    if (header.value?.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent?.text;
     } else {
       media.value = headerComponent?.text;
@@ -263,6 +332,7 @@ onMounted(() => {
     bodyMessage.value =
       bodyComponent?.text === undefined ? "" : bodyComponent?.text;
     footerMessage.value = footerComponent?.text;
+    isApproved.value = tempData.is_approved ? "Yes" : "No";
 
     updateActionCategory(buttonsComponent?.value?.category);
 
@@ -270,33 +340,34 @@ onMounted(() => {
       actionCategory.value !== ac.NONE &&
       actionCategory.value !== undefined
     ) {
-      const buttons = buttonsComponent?.buttons;
+      const buttons = buttonsComponent?.value;
 
       if (buttons !== undefined && buttons !== "") {
         if (actionCategory.value === ac.CALL_TO_ACTION) {
-          actions.value =
-            buttons === null
-              ? Array(2).fill(null)
-              : buttons.map(function (btn) {
-                  const formatted = {};
-                  if (btn.type === fat.CALL_PHONE) {
-                    formatted.type = at.CALL_PHONE;
-                    if (formatted.phone_number?.indexOf(" ")) {
-                      formatted.value = btn.phone_number;
-                    } else {
-                      const arrPhone = formatted.phone_number?.spllit(" ");
-                      formatted.countryOrWebtype = arrPhone[0];
-                      formatted.value = arrPhone[1];
-                    }
-                  } else {
-                    formatted.type = at.VIEW_WEB;
-                    formatted.countryOrWebtype = "Static";
-                    formatted.value = btn.url;
-                  }
-                  formatted.label = btn.text;
+          if (buttons === null) {
+            actions.value = Array(2).fill(null);
+          } else {
+            actions.value = buttons?.buttons?.map((btn) => {
+              const formatted = {};
+              if (btn.type === fat.CALL_PHONE) {
+                formatted.type = at.CALL_PHONE;
+                if (btn.phone_number?.indexOf(" ")) {
+                  formatted.value = btn.phone_number;
+                } else {
+                  const arrPhone = formatted.phone_number?.spllit(" ");
+                  formatted.countryOrWebtype = arrPhone[0];
+                  formatted.value = arrPhone[1];
+                }
+              } else {
+                formatted.type = at.VIEW_WEB;
+                formatted.countryOrWebtype = "Static";
+                formatted.value = btn.url;
+              }
+              formatted.label = btn.text;
 
-                  return formatted;
-                });
+              return formatted;
+            });
+          }
         } else {
           replies.value =
             buttons === null ? [] : buttons?.map((btn) => btn.text);
@@ -312,6 +383,10 @@ onMounted(() => {
 
   loading.value = false;
 });
+
+const updateIsEmail = (value) => {
+  isEmail.value = value;
+};
 
 const updateLanguage = (value) => {
   language.value = value;
@@ -349,7 +424,6 @@ const submitGeneralInformation = () => {
   let buttonValues = "";
   if (actionCategory.value !== ac.NONE) {
     if (actionCategory.value === ac.CALL_TO_ACTION) {
-      console.log(actions.value);
       buttonValues = actions.value?.map(function (btn) {
         const formatted = {};
         if (btn.type === at.CALL_PHONE) {
@@ -369,35 +443,55 @@ const submitGeneralInformation = () => {
     }
   }
 
+  const formattedValueForEmit = (type) => {
+    if (type === "language") {
+      return languageOptions.includes(language.value)
+        ? languageCodes[languageOptions.indexOf(language.value)]
+        : language.value;
+    }
+    if (type === "components") {
+      return [
+        {
+          type: "HEADER",
+          format: header.value.toUpperCase(),
+          text: header.value === "Text" ? headerMessage.value : media.value,
+        },
+        {
+          type: "BODY",
+          text: bodyMessage.value,
+        },
+        {
+          type: "FOOTER",
+          text: footerMessage.value,
+        },
+        {
+          type: "BUTTONS",
+          value: {
+            category: actionCategory.value,
+            buttons: buttonValues,
+          },
+        },
+      ];
+    }
+
+    return "";
+  };
+
   emit("submitGeneralInformation", {
     name: name.value,
-    language: language.value,
+    category: "conversation",
+    is_email_template: isEmail.value === "Yes",
+    language: formattedValueForEmit("language"),
     status: status.value,
-    components: [
-      {
-        type: "HEADER",
-        format: header.value.toUpperCase(),
-        text: header.value === "Text" ? headerMessage.value : media.value,
-      },
-      {
-        type: "BODY",
-        text: bodyMessage.value,
-      },
-      {
-        type: "FOOTER",
-        text: footerMessage.value,
-      },
-      {
-        type: "BUTTONS",
-        value: {
-          category: actionCategory.value,
-          buttons: buttonValues,
-        },
-      },
-    ],
+    components: formattedValueForEmit("components"),
     messages_sent: delivered.value,
     messages_opened: read.value,
     top_block_reason: replied.value,
+    json: {
+      name: name.value,
+      language: formattedValueForEmit("language"),
+      components: formattedValueForEmit("components"),
+    },
     created_by: userInfo.userProfile.id,
   });
 };

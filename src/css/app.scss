@@ -2,3 +2,35 @@
 body {
   background-color: #f5f5f5;
 }
+.right-to-left-enter-active {
+  @apply duration-200 ease-out;
+}
+.right-to-left-leave-active {
+  @apply duration-200 ease-in;
+}
+.right-to-left-enter-to,
+.right-to-left-leave-from {
+  @apply transform translate-x-0;
+}
+.right-to-left-enter-from,
+.right-to-left-leave-to {
+  @apply transform translate-x-full;
+}
+
+.fade-scale-enter-active {
+  @apply duration-300 ease-in;
+}
+.fade-scale-leave-active {
+  @apply duration-300 ease-out absolute w-full;
+}
+.fade-scale-enter-to,
+.fade-scale-leave-from {
+  @apply opacity-100 scale-100;
+}
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  @apply opacity-0 scale-95;
+}
+.fade-scale-move {
+  @apply ease-in transition-all;
+}

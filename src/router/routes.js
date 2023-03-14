@@ -1,12 +1,12 @@
 const routes = [
   {
     path: "/login",
-    component: () => import("../../src/pages/Login.vue"),
+    component: () => import("pages/Login.vue"),
     children: [
       {
         path: "",
         name: "login",
-        component: () => import("../../src/pages/Login.vue"),
+        component: () => import("pages/Login.vue"),
       },
     ],
   },
@@ -35,10 +35,6 @@ const routes = [
         component: () => import("pages/ApplicationProgram/index.vue"),
       },
       {
-        path: "application-programs/create",
-        component: () => import("pages/ApplicationProgram/create.vue"),
-      },
-      {
         path: "application-programs/message-templates",
         component: () =>
           import("pages/ApplicationProgram/MessageTemplate/index.vue"),
@@ -52,6 +48,39 @@ const routes = [
         path: "application-programs/message-templates/:id",
         component: () =>
           import("pages/ApplicationProgram/MessageTemplate/edit.vue"),
+      },
+      {
+        path: "application-programs/chatbots",
+        component: () =>
+          import("pages/ApplicationProgram/BotTemplate/index.vue"),
+      },
+      {
+        path: "application-programs/chatbots/create",
+        component: () =>
+          import("pages/ApplicationProgram/BotTemplate/create.vue"),
+      },
+      {
+        path: "application-programs/chatbots/:id",
+        component: () =>
+          import("pages/ApplicationProgram/BotTemplate/edit.vue"),
+      },
+      {
+        // path: "application-programs/campaign/campaign-setting",
+        // component: () =>
+        //   import("pages/ApplicationProgram/Campaign/campaignSettings.vue"),
+        path: "application-programs/customer-services",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/index.vue"),
+      },
+      {
+        path: "application-programs/customer-services/create",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/create.vue"),
+      },
+      {
+        path: "application-programs/customer-services/:id",
+        component: () =>
+          import("pages/ApplicationProgram/CustomerService/edit.vue"),
       },
       {
         path: "document-builders",
@@ -103,6 +132,11 @@ const routes = [
         component: () => import("src/pages/Order/ServiceRecord/Index.vue"),
       },
       {
+        path: "/order/invoices",
+        name: "order.invoices",
+        component: () => import("src/pages/Order/Invoice/index.vue"),
+      },
+      {
         path: "/order/service-records/:id",
         name: "order.service-record.detail",
         component: () => import("src/pages/Order/ServiceRecord/Detail.vue"),
@@ -145,7 +179,7 @@ const routes = [
   },
   {
     path: "/messaging",
-    component: () => import("layouts/MessagingLayout.vue"),
+    component: () => import("components/Messaging/MessageLayout.vue"),
     meta: {
       requiresAuth: true,
     },

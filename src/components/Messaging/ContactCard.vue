@@ -1,64 +1,87 @@
 <template>
-  <q-card
-    class="q-px-md q-py-sm contact-card"
-    :class="{ active: active, inactive: !active }"
+  <div
+    :class="{ 'bg-primary': active }"
+    class="flex w-full contact-card q-pa-sm"
   >
-    <div class="row items-center justify-between">
-      <div class="col-8">
-        <div class="row items-center">
-          <q-avatar class="rounded-avatar">
-            <img src="https://cdn.quasar.dev/img/avatar.png" />
-          </q-avatar>
-          <div class="col-7 q-ml-md">
-            <div
-              class="text-h6"
-              :class="{ 'text-white': active, 'text-dark': !active }"
-            >
-              {{ name }}
-            </div>
-            <div class="text-grey-5">{{ message }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-4 self-start q-py-xs">
-        <div class="column items-end">
-          <div class="text-grey-5">{{ time }}</div>
-          <q-avatar
-            v-if="totalUnread"
-            size="sm"
-            color="accent"
-            text-color="white"
-          >
-            <div class="text-white">{{ totalUnread }}</div>
-          </q-avatar>
-        </div>
-      </div>
-    </div></q-card
-  >
+    <q-avatar class="rounded-avatar q-mr-sm">
+      <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+    </q-avatar>
+    <q-item-section>
+      <q-item-label :class="{ 'text-white': active }" class="text-h6 truncate">
+        {{ name }}
+      </q-item-label>
+      <q-item-label caption lines="1" :class="{ 'text-white': active }">
+        {{ message }}
+      </q-item-label>
+    </q-item-section>
+    <q-item-section side top class="justify-between q-pb-sm">
+      <q-item-label caption :class="{ 'text-white': active }">
+        {{ time }}
+      </q-item-label>
+      <q-badge
+        v-show="props.data.totalUnread"
+        rounded
+        color="red"
+        :label="props.data.totalUnread"
+      />
+    </q-item-section>
+  </div>
 </template>
 
-<script setup>
-defineProps({
-  active: {
-    type: Boolean,
-    default: false,
-  },
-  name: {
-    type: String,
-    default: "",
-  },
-  message: {
-    type: String,
-    default: "",
-  },
-  time: {
-    type: String,
-    default: "",
-  },
-  totalUnread: {
-    type: Number,
-    default: 0,
-  },
+<script setup lang="ts">
+import { computed } from "vue";
+import { format } from "date-fns";
+import { storeToRefs } from "pinia";
+import { getChatName } from "src/utils/trim-word";
+import { IChat, MessageType } from "src/types/MessagingTypes";
+import useMessagingStore from "src/stores/modules/messaging";
+
+export interface Props {
+  data?: IChat;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  data: () => ({} as IChat),
+});
+const messagingStore = useMessagingStore();
+const { selectedChatId } = storeToRefs(messagingStore);
+
+const active = computed<boolean>(() => props.data.id === selectedChatId.value);
+const name = computed<string>(() => getChatName(props.data));
+
+const messageTemplate = (content: any) => {
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
+      (component: any) => component?.type === "body"
+    );
+    if (component) return component?.parameters[0].text;
+  }
+
+  return content?.template_content || content?.template?.text;
+};
+
+const message = computed<string>(() => {
+  const { last_message: lastMessage } = props.data;
+  if (!lastMessage) return;
+  switch (lastMessage?.content?.type) {
+    case MessageType.IMAGE:
+      return "[pic]";
+    case MessageType.AUDIO:
+      return "[audio]";
+    case MessageType.TEXT:
+      return lastMessage?.content?.text;
+    case MessageType.TEMPLATE:
+      return messageTemplate(lastMessage.content);
+    default:
+      return lastMessage?.content?.file_name;
+  }
+});
+
+const time = computed<string>(() => {
+  const { last_message: lastMessage } = props.data;
+  const dateCreated = lastMessage?.date_created;
+  return dateCreated && format(new Date(dateCreated), "hh:mm aa");
 });
 </script>
 
@@ -68,12 +91,5 @@ defineProps({
 }
 .contact-card {
   border-radius: 10px;
-}
-.active {
-  background: $primary;
-}
-.inactive {
-  background: none;
-  box-shadow: none;
 }
 </style>

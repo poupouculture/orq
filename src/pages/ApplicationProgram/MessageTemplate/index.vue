@@ -1,10 +1,15 @@
 <template>
   <div class="main-container">
     <p class="header-text">
-      <span class="text-gray-400">
-        <q-icon name="fa-solid fa-arrow-left" />
-        Application program /
-      </span>
+      <router-link
+        :to="`/application-programs/`"
+        style="text-decoration: none; color: inherit"
+      >
+        <span class="text-gray-400">
+          <q-icon name="fa-solid fa-arrow-left" />
+          Application program /
+        </span>
+      </router-link>
       Message Templates
     </p>
     <div class="row justify-between">
@@ -54,6 +59,7 @@ import {
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
+import { Notify } from "quasar";
 
 const router = useRouter();
 
@@ -80,15 +86,24 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.total_count;
   loading.value = false;
 };
-// const changePage = (val) => {
-//   data.page = val;
-//   fetchApplicationPrograms();
-// };
+const changePage = (val) => {
+  data.page = val;
+  fetchApplicationPrograms();
+};
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
-    data.status = "archive";
+    data.status = "archived";
     await updateMessageTemplate(data.id, data);
   });
+
+  Notify.create({
+    message: `Selected Template has been archived`,
+    position: "top",
+    type: "positive",
+    color: "blue-9",
+  });
+
+  selected.value = [];
 };
 </script>
-<style scoped src="./style.scss" />
+<style scoped src="../style.scss" />

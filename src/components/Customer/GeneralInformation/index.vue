@@ -9,6 +9,17 @@
       @submit="onSubmit"
     >
       <div class="q-pa-md">
+        <div
+          class="row q-mb-lg ml-auto flex justify-end"
+          v-if="mode === 'show' && getSelectedChatId"
+        >
+          <q-btn
+            @click="mode = 'edit'"
+            color="primary"
+            label="Edit"
+            class="dark-btn"
+          />
+        </div>
         <div class="row q-mb-lg">
           <div class="col-2">
             <img
@@ -18,7 +29,16 @@
           </div>
           <div class="col-10">
             <div class="field-holder">
-              <TagOptions v-model="tags" :customer="getCustomer" :mode="mode" />
+              <BaseMultiOptions
+                v-model="tags"
+                label="Labels"
+                filter-url="/items/tags"
+                :options="options.tags"
+                option-variable-name="tags"
+                :mode="mode"
+                @filter="filter"
+                @update:multi-options="updateMultiOptions"
+              />
             </div>
           </div>
         </div>
@@ -50,7 +70,7 @@
         </div>
         <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
-            <p class="label-style">ID Number</p>
+            <p class="label-style">Contact Number</p>
             <q-input
               v-model="idNumber"
               class="indi"
@@ -108,6 +128,8 @@
                   >
                     <q-date
                       v-model="dateOfBirth"
+                      :options="optionDateFn"
+                      mask="YYYY-MM-DD"
                       @input="() => $refs.qDateProxy.hide()"
                     ></q-date>
                   </q-popup-proxy>
@@ -128,19 +150,30 @@
             />
           </div>
           <div class="col">
-            <CompanyOptions
+            <BaseMultiOptions
               v-model="companies"
-              :customer="getCustomer"
+              label="Companies"
+              filter-url="/items/companies"
+              :options="options.companies"
+              option-variable-name="companies"
+              name-label="name_english"
               :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
             />
           </div>
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <CustomerGroupOptions
+            <BaseMultiOptions
               v-model="customerGroups"
-              :customer="getCustomer"
+              label="Customer Groups"
+              filter-url="/items/customer_groups"
+              :options="options.customerGroups"
+              option-variable-name="customerGroups"
               :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
             />
           </div>
           <div class="col"></div>
@@ -158,13 +191,13 @@
           </div>
           <div class="col">
             <div class="btn-hold">
-              <div
+              <!-- <div
                 v-if="showDeleteButton"
                 class="btn-cls"
                 @click="deleteDialog = true"
               >
                 <p>Delete</p>
-              </div>
+              </div> -->
               <q-btn
                 color="primary"
                 label="Save"
@@ -184,29 +217,32 @@
     <ReturnDialog
       v-model="returnDialog"
       @cancel="returnDialog = false"
-      @keepEditing="returnDialog = false"
+      @submit="discardChanges()"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, reactive, computed } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
-import { useQuasar } from "quasar";
 import useMessagingStore from "src/stores/modules/messaging";
-import CustomerGroupOptions from "./Modules/CustomerGroupOptions.vue";
-import CompanyOptions from "./Modules/CompanyOptions.vue";
-import TagOptions from "./Modules/TagOptions.vue";
+import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import {
   transforCustomerGroupPayload,
   transformCompaniesPayload,
   transformTagPayload,
 } from "src/utils/transform-object";
+import { api } from "src/boot/axios";
+import type { Tag as ITag } from "src/types/TagTypes";
+import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
+import type { Company as ICompany } from "src/types/CompanyTypes";
+import { useRouter } from "vue-router";
+import { date } from "quasar";
 
 interface Option {
   value: string | number;
@@ -219,10 +255,15 @@ interface Gender {
 }
 
 type Position = Option;
+type ITagOptions = Option & ITag;
 
 const emit = defineEmits(["submit"]);
+const router = useRouter();
 const props = defineProps({
-  mode: String,
+  mode: {
+    type: String,
+    default: "show",
+  },
   showActive: {
     type: Boolean,
     default: true,
@@ -236,10 +277,11 @@ const props = defineProps({
     default: true,
   },
 });
+const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
-const { getContactNumber } = storeToRefs(messagingStore);
-const $q = useQuasar();
+const getContactNumber = computed(() => messagingStore.getContactNumber);
+const { getSelectedChatId } = storeToRefs(messagingStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
@@ -265,18 +307,18 @@ const customerGroups: Ref<Option[]> = ref([]);
 const tags: Ref<Option[]> = ref([]);
 const isActive = ref(true);
 
+const options: { [key: string]: any[] } = reactive({
+  tags: [] as ITagOptions[],
+  customerGroups: [] as ICustomerGroup[],
+  companies: [] as ICompany[],
+});
+
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(async () => {
-  $q.loading.show({
-    message: "Please wait...",
-    boxClass: "bg-grey-2 text-grey-9",
-    spinnerColor: "primary",
-  });
-
   const customer = customerStore.getCustomer;
 
   if (customer) {
@@ -290,11 +332,18 @@ onMounted(async () => {
       (item) => item.value === customer.position
     );
     gender.value = genderOptions.find((item) => item.value === customer.gender);
+
+    tags.value = customer.tags.map((data: any) => ({
+      label: data.tags_id.name,
+      value: data.tags_id.id,
+    }));
+    companies.value = mappingCompanies();
+    customerGroups.value = mappingCustomerGroups();
   }
-  $q.loading.hide();
 });
 
 watch(getCustomer, () => {
+  mode.value = "show";
   firstName.value = getCustomer.value.first_name;
   lastName.value = getCustomer.value.last_name;
   idNumber.value = getCustomer.value.id_number;
@@ -311,12 +360,48 @@ watch(getCustomer, () => {
   gender.value = genderOptions.find(
     (item) => item.value === getCustomer.value.gender
   );
+  tags.value = getCustomer.value.tags.map((data: any) => ({
+    label: data.tags_id.name,
+    value: data.tags_id.id,
+  }));
+  companies.value = mappingCompanies();
+  customerGroups.value = mappingCustomerGroups();
+  customerForm.value?.resetValidation();
 });
 
 // Watch Contact number
 watch(getContactNumber, (val: string) => {
+  customerForm.value?.resetValidation();
   idNumber.value = val;
 });
+
+const filter = (val: string) => {
+  console.log(val);
+};
+
+const updateMultiOptions = async (val: {
+  data: any[];
+  filterUrl: string;
+  variableName: string;
+  nameLabel: string;
+}) => {
+  const { data: payload, filterUrl, variableName, nameLabel } = val;
+
+  const {
+    data: { data },
+  } = await api.get(filterUrl, {
+    params: {
+      fields: "*",
+      search: payload,
+    },
+  });
+  options[variableName] = data.map((item: any) => {
+    return {
+      value: item.id,
+      label: item[nameLabel],
+    };
+  });
+};
 
 const onSubmit = async () => {
   try {
@@ -347,8 +432,34 @@ const onSubmit = async () => {
   }
 };
 
+const discardChanges = () => {
+  returnDialog.value = false;
+  router.go(-1);
+};
+
 const submitDelete = () => {
   deleteDialog.value = false;
+};
+
+const optionDateFn = (qdate: string) => {
+  return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
+};
+
+const mappingCompanies = () => {
+  return getCustomer.value.companies
+    .filter((data: any) => data.companies_id !== null)
+    .map((data: any) => ({
+      label: data.companies_id.name_english,
+      value: data.companies_id.id,
+    }));
+};
+const mappingCustomerGroups = () => {
+  return getCustomer.value.customer_groups
+    .filter((data: any) => data.customer_groups_id !== null)
+    .map((data: any) => ({
+      label: data.customer_groups_id.name,
+      value: data.customer_groups_id.id,
+    }));
 };
 </script>
 

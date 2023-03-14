@@ -38,6 +38,7 @@ export interface ICustomer {
   isActive: boolean;
   last_name: string;
   position: string;
+  remarks: string;
   service_records?: [string];
   status: string;
   user_created: string;

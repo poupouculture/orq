@@ -20,6 +20,7 @@
             id="account"
             class="mb-3"
             dense
+            label="Input Your Email"
             type="Email"
             debounce="500"
             v-model.trim="login.email"
@@ -31,6 +32,7 @@
             id="password"
             class="mb-3"
             dense
+            label="Input Your Password"
             type="Password"
             debounce="500"
             v-model.trim="login.password"
@@ -50,33 +52,11 @@
         </q-form>
 
         <footer class="mt-5">
-          <div class="flex no-wrap justify-between items-center">
-            <div class="border-b w-28 sm:w-32 border-gray-300"></div>
-            <span class="text-gray-500">Or continue with</span>
-            <div class="border-b w-28 sm:w-32 border-gray-300"></div>
-          </div>
-
-          <div class="mt-5 other-login flex no-wrap justify-between">
-            <q-btn
-              class="w-28 rounded-md text-gray-400"
-              icon="fa-brands fa-facebook"
-              outline
-            />
-            <q-btn
-              class="w-28 rounded-md text-gray-400"
-              icon="fa-brands fa-twitter"
-              outline
-            />
-            <q-btn
-              class="w-28 rounded-md text-gray-400"
-              icon="fa-brands fa-github"
-              outline
-            />
-          </div>
-
           <p class="mt-6 text-gray-400 text-sm">
-            By logging, in, you agree to FIRST LINE's
-            <a href="#">Terms af Service with privacy policy</a>
+            By logging, in, you agree to WabaQ
+            <a href="https://invoice-link.pages.dev/privacy/" target="_blank">
+              Terms af Service with privacy policy
+            </a>
           </p>
         </footer>
       </section>

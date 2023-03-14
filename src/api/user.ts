@@ -25,12 +25,10 @@ export const getUsers = async ({ limit = 10, page = 1 }) => {
 
 export const getUser = async (id: string) => {
   const fields = "*";
-  const companies = "companies.companies_id.*";
-  const contacts = "contacts.contacts_id.*";
+  // const companies = "companies.companies_id.*";
+  // const contacts = "contacts.contacts_id.*";
 
-  const customer = await api.get(
-    `/users/${id}?fields=${fields},${companies},${contacts}`
-  );
+  const customer = await api.get(`/users/${id}?fields=${fields}`);
   return customer;
 };
 
@@ -46,8 +44,8 @@ export const getUser = async (id: string) => {
  * @returns
  */
 export const getChatUsers = async () => {
-  const managers = await api.post(`/waba/load-cs-manager-users`, {});
-  return managers;
+  const users = await api.post(`/waba/load-waba-users`, {});
+  return users;
 };
 
 /**
@@ -58,9 +56,9 @@ export const getChatUsers = async () => {
  * @returns
  */
 export const assignUser = async (chatId: string, userId: string) => {
-  const result = await api.post(`/waba/assign-chat-user`, {
+  const { data } = await api.post(`/waba/assign-chat-user`, {
     chat_id: chatId,
     user_id: userId,
   });
-  return result;
+  return data;
 };

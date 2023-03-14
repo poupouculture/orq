@@ -16,12 +16,20 @@
       </q-th>
     </q-tr>
     <template #body-cell-name="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.name }}
       </q-td>
     </template>
     <template #body-cell-status="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         <span
           class="text-xs font-semibold py-1 px-2 rounded text-[#70CC6B] bg-green-200"
         >
@@ -29,46 +37,94 @@
         </span>
       </q-td>
     </template>
+    <template #body-cell-is_approved="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
+        {{ props.row.is_approved ? "Yes" : "No" }}
+      </q-td>
+    </template>
+    <template #body-cell-is_email_template="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
+        {{ props.row.is_email_template ? "Yes" : "No" }}
+      </q-td>
+    </template>
     <template #body-cell-language="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.language }}
       </q-td>
     </template>
     <template #body-cell-delivered="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.delivered ? props.row.delivered : 0 }}
       </q-td>
     </template>
     <template #body-cell-read="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.messages_opened ? props.row.messages_opened : 0 }}
       </q-td>
     </template>
     <template #body-cell-replied="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.top_block_reason ? props.row.top_block_reason : 0 }}
       </q-td>
     </template>
-    <template #body-cell-created_by="props">
-      <q-td :props="props">
+    <template #body-cell-user_created="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.user_created }}
       </q-td>
     </template>
     <template #body-cell-created_on="props">
-      <q-td :props="props">
+      <q-td
+        :props="props"
+        :class="{ 'cursor-pointer': propsTable.isSimple }"
+        @dblclick="useTemplate(props.row)"
+      >
         {{ props.row.date_created }}
       </q-td>
     </template>
     <template #body-cell-action="props">
       <q-td :props="props">
         <router-link
-          :to="`/application-programs/message-templates/${props.row.id}`"
+          :to="`/application-programs/${
+            propsTable.formType === 'bots'
+              ? 'chatbots'
+              : propsTable.formType === 'customer-service'
+              ? 'customer-services'
+              : 'message-templates'
+          }/${props.row.id}`"
           style="text-decoration: none; color: inherit"
           v-if="!propsTable.isSimple"
         >
           <p class="edit-button">Edit</p>
         </router-link>
-        <button @click="useTemplate(props.row)" v-else>Use</button>
+        <button @click="previewTemplate(props.row)" v-else>Preview</button>
       </q-td>
     </template>
   </BaseTable>
@@ -99,9 +155,14 @@ const propsTable = defineProps({
     type: Boolean,
     default: () => false,
   },
+  formType: {
+    type: String,
+    required: false,
+    default: () => "message",
+  },
 });
 
-const emit = defineEmits(["changePage", "useTemplate"]);
+const emit = defineEmits(["changePage", "useTemplate", "previewTemplate"]);
 
 const headerColumns = ref([
   {
@@ -113,10 +174,34 @@ const headerColumns = ref([
     classes: "text-black",
   },
   {
+    name: "category",
+    align: "left",
+    label: "Category",
+    field: "category",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
     name: "status",
     align: "center",
     label: "Status",
     field: "status",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "is_approved",
+    align: "center",
+    label: "Approved",
+    field: "is_approved",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "is_email_template",
+    align: "center",
+    label: "Is Email",
+    field: "is_email_template",
     sortable: true,
     classes: "text-black",
   },
@@ -149,13 +234,13 @@ const headerColumns = ref([
     field: "top_block_reason",
     classes: "text-black",
   },
-  {
-    name: "user_created",
-    align: "center",
-    label: "Created By",
-    field: "user_created",
-    classes: "text-black",
-  },
+  // {
+  //   name: "user_created",
+  //   align: "center",
+  //   label: "Created By",
+  //   field: "user_created",
+  //   classes: "text-black",
+  // },
   {
     name: "date_created",
     align: "center",
@@ -182,13 +267,25 @@ const useTemplate = (val) => {
   emit("useTemplate", val);
 };
 
+const previewTemplate = (val) => {
+  emit("previewTemplate", val);
+};
+
 onMounted(() => {
   if (propsTable.isSimple) {
     headerColumns.value = headerColumns.value.filter(
       (h) =>
-        h.name !== "top_block_reason" &&
+        h.name !== "is_approved" &&
         h.name !== "date_created" &&
-        h.name !== "user_created"
+        h.name !== "user_created" &&
+        h.name !== "top_block_reason" &&
+        h.name !== "messages_sent" &&
+        h.name !== "messages_opened"
+    );
+  }
+  if (propsTable.formType !== "bots") {
+    headerColumns.value = headerColumns.value.filter(
+      (h) => h.name !== "category"
     );
   }
 });

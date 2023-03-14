@@ -308,7 +308,7 @@
 
     <div class="sub-hold">
       <div class="row">
-        <div class="col-3">
+        <div class="w-full md:w-3/12">
           <div class="row-main">
             <div>
               <div
@@ -422,7 +422,7 @@
             </div>
           </div>
         </div>
-        <div class="col-8" style="margin-left: 10px">
+        <div class="w-full md:w-8/12 mt-4" style="margin-left: 10px">
           <div>
             <div class="row justify-between">
               <q-input outlined v-model="text" dense>
@@ -448,8 +448,12 @@
                 :key="index"
               >
                 <contact-phone-card
-                  :phone-number="contact.contacts_id.phone_number"
-                  :remarks="`This is ${contact.contacts_id.remarks} number`"
+                  :phone-number="contact.contacts_id.number"
+                  :remarks="`This is ${
+                    contact.contacts_id.remarks
+                      ? contact.contacts_id.remarks
+                      : customerStore.customer.first_name
+                  }'s number`"
                   @edit="phonedialog = true"
                 />
               </div>
@@ -512,15 +516,23 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import "./ContactInfo.scss";
-import "vue3-tel-input/dist/vue3-tel-input.css";
 import ContactPhoneCard from "../Customer/ContactPhoneCard.vue";
 import { useRoute } from "vue-router";
 import useCustomerStore from "src/stores/modules/customer";
+import { Notify } from "quasar";
 
 const route = useRoute();
 const customerStore = useCustomerStore();
+
+const props = defineProps({
+  customerId: {
+    type: String,
+    required: false,
+    default: () => "",
+  },
+});
 
 const phonedialog = ref(false);
 const phoneNumber = ref("");
@@ -542,24 +554,27 @@ const handleclick = (data) => {
 };
 
 const addPhone = async () => {
-  const customerId = route.params.id;
+  const customerId = props.customerId ? props.customerId : route.params.id;
   const params = {
     category: type.value,
-    phone_number: phoneNumber.value,
+    number: phoneNumber.value,
     extension: extension.value,
     remarks: remarks.value,
   };
+
   const result = await customerStore.addContact(customerId, params);
-  console.log(result);
+
+  if (result.data?.errors) {
+    Notify.create({
+      message: "Error: " + result.data.errors[0].message,
+      type: "negative",
+    });
+  }
 };
+
+onMounted(() => {
+  console.log(customerStore.customer.contacts[0].number);
+});
 </script>
 
-<style lang="sass" scoped>
-
-.row>div.col-3
-  padding: 10px 15px
-  background: white
-  border-right: 1px solid rgba(86,61,124,.2)
-.row + .row
-  margin-top: 1rem
-</style>
+<style lang="sass" scoped></style>

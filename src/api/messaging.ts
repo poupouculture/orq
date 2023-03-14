@@ -1,27 +1,36 @@
 import { api } from "boot/axios";
 import { ChatKeywords, ChatTypes } from "../constants/ChatKeyword";
-import {
-  SendTextMessage,
-  ChatPayload,
-  Language,
-} from "src/types/MessagingTypes";
+import { SendTextMessage, ChatPayload } from "src/types/MessagingTypes";
 
 export const getChats = async (type: ChatTypes) => {
-  const { data } = await api.post(`/waba/handle-cs-waba-message`, {
-    keyword: ChatKeywords.GET_CHATS,
-    type,
-  });
+  const { data } = await api.get(`/waba/chats/list/${type}`);
 
   return data;
 };
 
-export const getChatMessagesByChatId = async (id: string) => {
-  const { data } = await api.post(`/waba/handle-cs-waba-message`, {
-    keyword: ChatKeywords.GET_MESSAGES_BY_CHAT_ID,
-    chat_id: id,
+export const getChatMessagesByChatId = async (
+  id: string,
+  page = 1,
+  limit = 15
+) => {
+  const { data } = await api.get(`/waba/chats/messages/${id}`, {
+    params: { page, limit, sort: "-id", chunk_sort: "asc" },
   });
   return data;
 };
+
+// export const loadChatMessages = async (payload: any) => {
+//   const defaultParams = {
+//     page_size: 50,
+//     direction: "forward",
+//     // backwards forward
+//   };
+//   const { data } = await api.post(`/waba/load-chat-messages-page`, {
+//     ...defaultParams,
+//     ...payload,
+//   });
+//   return data;
+// };
 
 export const sendChatTextMessage = async (payload: SendTextMessage) => {
   const {
@@ -33,6 +42,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     isTemplate,
     templateName,
     language,
+    isIncludedComponent,
   } = payload;
 
   const currPayload: ChatPayload = {
@@ -41,23 +51,45 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       ? ChatKeywords.SEND_TEMPLATE_MESSAGE
       : ChatKeywords.SEND_TEXT_MESSAGE,
     waba_content: {
-      messaging_product: messageProduct,
-      recipient_type: "individual",
       to,
       type,
     },
   };
 
   if (isTemplate) {
-    currPayload.template_content = messageBody;
-    const lang: Language = {
-      code: language,
-    };
-    currPayload.waba_content.template = {
-      name: templateName,
-      language: lang,
-    };
+    if (isIncludedComponent) {
+      currPayload.waba_content = {
+        to,
+        type,
+        name: templateName,
+        languageCode: language === "English" ? "en_US" : language,
+        components: [
+          {
+            type: "body",
+            parameters: [
+              {
+                type: "text",
+                text: messageBody,
+              },
+            ],
+          },
+        ],
+      };
+    } else {
+      // It was outside of the conditional
+      currPayload.template_content = messageBody;
+
+      currPayload.waba_content = {
+        to,
+        type,
+        name: templateName,
+        languageCode: language === "English" ? "en_US" : language,
+        // text: messageBody,
+      };
+    }
   } else {
+    currPayload.waba_content.messaging_product = messageProduct;
+    currPayload.waba_content.recipient_type = "individual";
     currPayload.waba_content.text = {
       preview_url: false,
       body: messageBody,
@@ -74,12 +106,9 @@ export const getContact = async (contactId: string) => {
   return data;
 };
 
-export const startNewChat = async (customerId: string, textMessage: string) => {
-  const {
-    data: { data },
-  } = await api.post(`/waba/create-chat`, {
+export const startNewChat = async (customerId: string) => {
+  const { data } = await api.post(`/waba/create-chat`, {
     customer_id: customerId,
-    text_message: textMessage,
   });
 
   return data;
@@ -103,5 +132,12 @@ export const closeChat = async (id: string) => {
     chat_id: id,
   });
 
+  return data;
+};
+
+export const uploadMedia = async (chatId: string, payload: any) => {
+  const { data } = await api.post(`/waba/media-message/${chatId}`, payload, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return data;
 };

@@ -1,237 +1,171 @@
 import { defineStore } from "pinia";
 import {
+  IState,
+  IChat,
+  Message,
+  SendTextMessage,
+  MessageStatus,
+} from "src/types/MessagingTypes";
+import { ChatTypes } from "src/constants/ChatKeyword";
+import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
-} from "../../api/messaging";
-import { ChatTypes } from "../../constants/ChatKeyword";
-import {
-  IState,
-  SendTextMessage,
-  IMessage,
-  Direction,
-  ChatGroup,
-  IChat,
-} from "../../types/MessagingTypes";
-import { db, collection, onSnapshot } from "src/boot/firebase";
-
+} from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
-      chats: [],
-      selectedChatIndex: null,
+      chatsList: [],
+      selectedChatId: "",
+      leftDrawerOpen: true,
+      rightDrawerOpen: true,
+      showCustomerInfoMobile: false,
       selectedTab: ChatTypes.PENDING,
-      selectedChat: {},
-      chatMessages: [],
-      cacheMessages: [],
+      chatSnapshotMessage: {},
+      cachedChatMessages: {},
       contactNumber: null,
-      customerName: null,
-      chatSnapshotGroup: {},
     } as unknown as IState),
   getters: {
-    getChats: (state) => state.chats,
-    getChatMessages: (state) => state.chatMessages,
-    getSelectedChatIndex: (state) => state.selectedChatIndex,
-    getSelectedChat: (state) => state.selectedChat,
+    getChatsList: (state) => state.chatsList,
+    getSelectedChatId: (state) => state.selectedChatId,
+    getChatSnapshotMessage: (state) => state.chatSnapshotMessage,
     getContactNumber: (state) => state.contactNumber,
-    getCustomerName: (state) => state.customerName,
-    getSelectedTab: (state) => state.selectedTab,
-    isContactNumberExist: (state) => !!state.contactNumber,
+    getSelectedChat: (state) => {
+      return state.chatsList.find(
+        (chat: IChat) => chat.id === state.selectedChatId
+      ) as IChat;
+    },
   },
   actions: {
-    closeChat() {
-      this.selectedChatIndex = -1;
-      this.chatMessages = [];
-      this.contactNumber = null;
-      this.customerName = null;
+    setSelectedChatId(chatId: string) {
+      this.selectedChatId = chatId;
     },
-    setSelectedChatIndex(index: number) {
-      this.selectedChatIndex = index;
+    setRightDrawerOpen(isOpen: boolean) {
+      this.rightDrawerOpen = isOpen;
+    },
+    setLeftDrawerOpen(isOpen: boolean) {
+      this.leftDrawerOpen = isOpen;
     },
     setSelectedTab(type: ChatTypes) {
       this.selectedTab = type;
     },
-    setChatSnapshotGroup(id: string, cancleFn: unknown) {
-      this.chatSnapshotGroup[id] = cancleFn;
+    setChatStatus(chatId: string, status: ChatTypes) {
+      const chat = this.chatsList.find((chat: IChat) => chat.id === chatId);
+      if (chat) {
+        chat.status = status;
+      }
     },
-    setChatsLastMessage(id: string, lastMessage: any) {
-      this.chats = this.chats.map((chats) => {
-        chats.chats.map((chat) => {
-          if (chat.id === id) {
-            const data = {
-              ...JSON.parse(chat.last_message || ""),
-              ...lastMessage,
-            };
-            chat.last_message = JSON.stringify(data);
+    setChatSnapshotMessage(chatId: string, cancleFn: () => void) {
+      this.chatSnapshotMessage[chatId] = cancleFn;
+    },
+    setContactNumber(contactNumber: string) {
+      this.contactNumber = contactNumber;
+    },
+    setMessageMembers(members: string) {
+      this.getSelectedChat.members = members;
+    },
+    setChatsLastMessage(chatId: string, lastmessage: Message) {
+      try {
+        const index = this.chatsList.findIndex(
+          (chat: IChat) => chat.id === chatId
+        );
+
+        if (index !== -1) {
+          const [chat] = this.chatsList.splice(index, 1);
+          this.chatsList.unshift(chat);
+          const cachedMessage = this.cachedChatMessages[chatId]?.find(
+            (item) => item.id === lastmessage.id
+          );
+          chat.last_message = lastmessage;
+          if (cachedMessage) return;
+          if (lastmessage.status === MessageStatus.RECEIVE) {
+            if (this.selectedChatId !== chatId) {
+              chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;
+            } else {
+              chat.totalUnread = 0;
+            }
           }
-          return chat;
-        });
-        return chats;
-      });
+          this.cachedChatMessages[chatId]?.push(lastmessage);
+          console.log(1);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
-    setSelectedChat(chat: IChat) {
-      this.selectedChat = chat;
+    setCustomerInfoMobile(value: boolean) {
+      this.showCustomerInfoMobile = value;
     },
-    setSelectedChatByStatus(status: ChatTypes) {
-      this.selectedChat.status = status;
+    cleanTotalUnread() {
+      const chat = this.chatsList.find(
+        (chat: IChat) => chat.id === this.selectedChatId
+      );
+      if (chat) {
+        chat.totalUnread = 0;
+      }
+    },
+    updateChatsList(newchat: IChat, status?: ChatTypes) {
+      if (status) {
+        newchat.status = status;
+      }
+      this.chatsList = this.chatsList.filter(
+        (chat: IChat) => chat.id !== newchat.id
+      );
+      this.chatsList.unshift(newchat);
+      this.selectedTab = newchat.status;
     },
     async fetchChats() {
       const ongoingPromise = getChats(ChatTypes.ONGOING);
       const waitingPromise = getChats(ChatTypes.PENDING);
       const closedPromise = getChats(ChatTypes.CLOSED);
-
-      const [ongoing, waiting, closed] = await Promise.all([
-        ongoingPromise,
-        waitingPromise,
-        closedPromise,
-      ]);
-
-      this.chats = [
-        { status: ChatTypes.ONGOING, chats: ongoing },
-        { status: ChatTypes.PENDING, chats: waiting },
-        { status: ChatTypes.CLOSED, chats: closed },
-      ];
+      const ongoing = await ongoingPromise;
+      const waiting = await waitingPromise;
+      const closed = await closedPromise;
+      const chatsList = [...ongoing, ...waiting, ...closed];
+      this.chatsList = chatsList.map((item) => {
+        item.last_message = JSON.parse(item.last_message);
+        return item;
+      });
     },
-    async fetchChatsByStatus(status: ChatTypes) {
-      const chats = await getChats(status);
-      return chats;
-    },
-    async fetchChatMessagesByChatId(chatId: string, refresh: boolean = false) {
-      const cacheMessages: Array<IMessage> = this.cacheMessages;
-      let data: IMessage[] = [];
 
-      // filtering data by chatID
-      const filteredItems: IMessage[] = cacheMessages.length
-        ? cacheMessages.filter(
-            (message: IMessage) => message.chat_id === chatId
-          )
-        : [];
-
-      // checking cache messages exists
-      // refresh for the call getChatMessagesByChatId again
-      if (cacheMessages && filteredItems.length > 0 && !refresh) {
-        data = filteredItems;
-      } else {
-        data = await getChatMessagesByChatId(chatId);
-        data = data.map((item) => ({ ...item, chat_id: chatId }));
-        // this.cacheMessages = this.cacheMessages.filter(
-        //   (message: IMessage) => message.chat_id !== chatId
-        // );
-        // this.cacheMessages = [
-        //   ...cacheMessages,
-        //   ...data.map((item) => ({
-        //     ...item,
-        //     // chat_id for filtering the data when chat selected
-        //     chat_id: chatId,
-        //   })),
-        // ];
-      }
-      this.chatMessages = data;
-    },
-    addMessageToCache({
-      chatId = "",
-      status = "",
-      type = "text",
-      content = "",
-      direction = Direction.INCOMING,
-      dateCreated = "",
-    }: Pick<IMessage, "status" | "type" | "content" | "direction"> & {
-      chatId: IMessage["chat_id"];
-      dateCreated: IMessage["date_created"];
-    }) {
-      const payload = {
-        chat_id: chatId,
-        status,
-        type,
-        content,
-        direction,
-        date_created: dateCreated,
-      };
-
-      const message = this.cacheMessages.find(
-        (item: IMessage) => item.content === content
-      );
-      if (!message) {
-        this.chatMessages.push(payload);
-        this.cacheMessages.push(payload);
+    async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
+      try {
+        const { data } = await getChatMessagesByChatId(chatId, page, limit);
+        this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
+        const messages = data.messages.map((item: any) => ({
+          id: item.id,
+          content: item.content,
+          status: item.status,
+          type: item.type,
+          direction: item.direction,
+          date_created: item.date_created,
+        }));
+        this.cachedChatMessages[chatId] = [
+          ...messages,
+          ...this.cachedChatMessages[chatId],
+        ];
+        const hasmore =
+          this.cachedChatMessages[chatId].length < data.total_count;
+        return hasmore;
+      } catch (e) {
+        console.log(e);
       }
     },
-    async setChatsByStatus(status: ChatTypes) {
-      const chatGroupIndex = this.chats.findIndex(
-        (group: ChatGroup) => group.status === status
-      );
-      if (chatGroupIndex >= 0) {
-        const chats = await getChats(status);
-        this.chats[chatGroupIndex].chats = chats;
-      }
-    },
+
     async sendChatTextMessage(payload: SendTextMessage) {
       const data = await sendChatTextMessage(payload);
       return data;
     },
+
+    async onSelectChat(chatId: string) {
+      this.selectedChatId = chatId;
+      this.rightDrawerOpen = true;
+    },
+
     async fetchContactNumber(contactId: string) {
       const { data } = await getContact(contactId);
       this.setContactNumber(data.number);
     },
-    setCustomerName(name: string) {
-      this.customerName = name;
-    },
-    setContactNumber(contactNumber: string) {
-      this.contactNumber = contactNumber;
-    },
-    onSnapshotMessage(chatId: string) {
-      let snapshoted = false;
-      if (!this.chatSnapshotGroup[chatId]) {
-        const snpshotCancel = onSnapshot(
-          collection(db, "messages", chatId, "members"),
-          async (querySnapshot: any) => {
-            for await (const change of querySnapshot.docChanges()) {
-              const chats: ChatGroup | undefined = this.chats.find(
-                (chat) => chat.status === this.selectedTab
-              );
-              const selectedChat = chats?.chats[this.selectedChatIndex];
-              if (selectedChat && selectedChat.id === chatId) {
-                const { content, status, type } = change.doc.data();
-                const dateCreated = new Date();
-                const direction =
-                  status === "sent" ? Direction.OUTGOING : Direction.INCOMING;
-                this.addMessageToCache({
-                  chatId,
-                  dateCreated: dateCreated.toString(),
-                  direction,
-                  status,
-                  content,
-                  type,
-                });
-              } else {
-                // let status: any;
-                // this.chats.forEach((chats) => {
-                //   chats.chats.forEach((chat) => {
-                //     if (chat.id === chatId) {
-                //       status = chat.status;
-                //     }
-                //   });
-                // });
-                if (snapshoted) {
-                  this.setChatsLastMessage(chatId, change.doc.data());
-                  // this.setChatsByStatus(status);
-                }
-              }
-            }
-            snapshoted = true;
-          }
-        );
-        this.setChatSnapshotGroup(chatId, snpshotCancel);
-      }
-    },
-    removeChatById(chatId: string) {
-      this.chats = this.chats.map((chats: ChatGroup) => {
-        chats.chats = chats.chats.filter((item) => item.id !== chatId);
-        return chats;
-      });
-    },
   },
 });
-
 export default useMessagingStore;

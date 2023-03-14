@@ -4,58 +4,80 @@ export const enum Direction {
   OUTGOING = "outgoing",
   INCOMING = "incoming",
 }
+export const enum MessageType {
+  TEXT = "text",
+  TEMPLATE = "template",
+  IMAGE = "image",
+  AUDIO = "audio",
+  MEDIA = "media",
+}
+
+export const enum MessageStatus {
+  RECEIVE = "received",
+  SENT = "sent",
+}
 
 export const enum Product {
   WHATSAPP = "whatsapp",
 }
 
-export const enum MessageType {
-  TEXT = "text",
-  TEMPLATE = "template",
+export interface Member {
+  id: string;
+  name: string;
+  first_name?: string;
+  last_name?: string;
 }
 
-export interface IMessage {
-  id?: number;
-  chat_id: string;
-  status: string;
-  date_created?: string;
-  type: string;
-  content: string;
-  channel?: string;
-  direction?: Direction;
+export enum SendMessageStatus {
+  DEFAULT,
+  PENDING = "pending",
+  FAILURE = "failure",
+  SUCCESS = "success",
 }
 
-export interface IChatMessageCacheItem extends IMessage {
-  chatId: string;
+export interface Message {
+  id: number;
+  content: any;
+  direction?: string;
+  status: MessageStatus;
+  old_date_created?: string | null;
+  date_created: string;
+  type?: MessageType;
+  sendMessageStatus?: SendMessageStatus;
+  totalUnread?: number;
+  label?: string;
 }
-
 export interface IChat {
   id: string;
-  status: ChatTypes;
-  name?: string;
-  last_message?: string;
   contacts_id: string;
-  customers_id: string;
-  first_name: string;
-  last_name: string;
-  members?: string;
+  customers_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  last_message: Message;
+  members: string;
+  name: string;
+  status: ChatTypes;
+  totalUnread?: number;
 }
 
-export interface ChatGroup {
-  status: ChatTypes;
-  chats: IChat[];
+export interface CachedChatMessages {
+  [key: string]: Message[];
+}
+
+export interface ChatSnapshotMessage {
+  [key: string]: () => void;
 }
 
 export interface IState {
-  chatMessages: Array<IMessage>;
-  cacheMessages: Array<IMessage>;
-  selectedChatIndex: number;
+  chatsList: IChat[];
+  selectedChatId: string;
+  leftDrawerOpen: boolean;
+  rightDrawerOpen: boolean;
+  showCustomerInfoMobile: boolean;
+  cachedChatMessages: CachedChatMessages;
   selectedTab: ChatTypes;
-  selectedChat: IChat;
-  chats: ChatGroup[];
-  contactNumber: null | string;
-  customerName: null | string;
-  chatSnapshotGroup: any;
+  chatSnapshotMessage: ChatSnapshotMessage;
+  contactNumber: string;
 }
 
 export interface SendTextMessage {
@@ -67,6 +89,7 @@ export interface SendTextMessage {
   isTemplate?: boolean;
   templateName?: string;
   language?: string;
+  isIncludedComponent?: boolean;
 }
 
 export interface ChatPayloadWabaContentText {
@@ -78,18 +101,32 @@ export interface Language {
   code: string | undefined;
 }
 
+export interface ComponentParameter {
+  type: string;
+  text: string;
+}
+
+export interface TemplateComponent {
+  type: string;
+  parameters: ComponentParameter[];
+}
+
 export interface ChatPayloadWabaContentTemplate {
   name: string | undefined;
   language: Language;
+  components?: TemplateComponent[];
+  text: string;
 }
 
 export interface ChatPayloadWabaContent {
-  messaging_product: string;
-  recipient_type: string;
+  messaging_product?: string;
+  recipient_type?: string;
   to: string;
   type: string;
   text?: ChatPayloadWabaContentText;
-  template?: ChatPayloadWabaContentTemplate;
+  name?: string | undefined;
+  languageCode?: string;
+  components?: TemplateComponent[];
 }
 
 export interface ChatPayload {

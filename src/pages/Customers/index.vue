@@ -2,9 +2,31 @@
   <div class="main-container">
     <p class="header-text">Customers</p>
     <div class="row justify-between">
-      <q-input placeholder="Search" outlined dense>
+      <q-input
+        placeholder="Search"
+        outlined
+        dense
+        v-model="search.query"
+        :debounce="500"
+        @update:model-value="searchHandler()"
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
+        </template>
+        <template v-slot:append>
+          <q-circular-progress
+            v-if="search.loading"
+            indeterminate
+            rounded
+            size="18px"
+            color="gray-1"
+          />
+          <q-icon
+            v-else-if="search.query"
+            name="close"
+            class="text-gray-400 cursor-pointer"
+            @click="resetSearch()"
+          />
         </template>
       </q-input>
       <div>
@@ -17,30 +39,28 @@
           class="q-mr-sm"
           @click="router.push('/customers/create')"
         />
-        <q-btn icon="delete" no-caps rounded label="Trash" />
+        <q-btn
+          icon="delete"
+          no-caps
+          rounded
+          label="Trash"
+          :disabled="!selected.length"
+          @click="deleteCustomerDialog = true"
+        />
       </div>
     </div>
     <div class="main-content">
       <BaseTable
         :rows="data.customers"
-        :total-count="data.totalCount"
-        :page="data.page"
+        :total-count="search.query ? data.filterCount : data.totalCount"
+        v-model:page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
         :loading="loading"
+        row-key="id"
         @changePage="changePage"
+        v-model:selected="selected"
       >
-        <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            auto-width
-          >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-
         <template #body-cell-name="props">
           <q-td :props="props" auto-width>
             <div class="firstrowholder">
@@ -60,47 +80,71 @@
             <p></p>
           </q-td>
         </template>
-        <template #body-cell-customerCode="props">
-          <q-td :props="props">
-            {{ props.row.customer_code }}
-          </q-td>
-        </template>
         <template #body-cell-company="props">
           <q-td :props="props">
             {{ groupedCompanies(props.row.companies) }}
           </q-td>
         </template>
+        <template #body-cell-label="props">
+          <q-td :props="props">
+            <div v-if="props.row.tags.length">
+              <div v-for="(tag, index) in props.row.tags" :key="index">
+                <q-chip color="primary" text-color="white"
+                  >{{ tag.tags_id.name }}
+                </q-chip>
+              </div>
+            </div>
+          </q-td>
+        </template>
         <template #body-cell-action="props">
           <q-td :props="props">
-            <router-link
+            <q-btn
+              size="sm"
               :to="`/customers/${props.row.id}`"
-              style="text-decoration: none; color: inherit"
+              flat
+              round
+              color="primary"
+              icon="edit"
             >
-              <p class="edit-button">Edit</p></router-link
-            >
+              <q-tooltip
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+              >
+                Edit
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </template>
       </BaseTable>
     </div>
+    <DeleteDialog
+      v-model="deleteCustomerDialog"
+      @cancel="deleteCustomerDialog = false"
+      @submitDelete="handleDelete()"
+    />
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-import { getCustomers } from "../../api/customers";
+import { getCustomers } from "src/api/customers";
 import { useRouter } from "vue-router";
 import BaseTable from "src/components/BaseTable.vue";
+import useCustomerStore from "src/stores/modules/customer";
+import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 
 const router = useRouter();
+const customerStore = useCustomerStore();
 
 const headerColumns = [
   {
-    name: "name",
+    name: "first_name",
     align: "left",
     label: "Name",
-    field: "name",
-    sortable: true,
+    field: "first_name",
     classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
   },
   {
     name: "company",
@@ -111,10 +155,10 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "customerCode",
+    name: "customer_code",
     align: "left",
     label: "Customer Code",
-    field: "customerCode",
+    field: "customer_code",
     sortable: true,
     classes: "text-black",
   },
@@ -124,6 +168,7 @@ const headerColumns = [
     label: "Label",
     field: "label",
     classes: "text-black",
+    style: "max-width: 20%",
   },
 
   {
@@ -136,9 +181,37 @@ const headerColumns = [
 ];
 
 const loading = ref(true);
+const selected = ref([]);
+
+const search = reactive({
+  loading: false,
+  query: "",
+});
+const searchHandler = async () => {
+  search.loading = true;
+  try {
+    await fetchCustomers();
+    search.loading = false;
+  } catch (error) {
+    search.loading = false;
+  }
+};
+const resetSearch = () => {
+  search.query = "";
+  searchHandler();
+};
+
+const deleteCustomerDialog = ref(false);
+const handleDelete = async () => {
+  deleteCustomerDialog.value = false;
+  await customerStore.deleteCustomer(selected.value.map((item) => item.id));
+  selected.value = [];
+  await fetchCustomers();
+};
 const data = reactive({
   customers: [],
   totalCount: 0,
+  filterCount: 0,
   page: 1,
   rowsPerPage: 10,
 });
@@ -153,10 +226,17 @@ const fetchCustomers = async () => {
   } = await getCustomers({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.query.length ? search.query : undefined,
+    filter: search.query.length
+      ? {
+          key: "filter[first_name][_neq]",
+          value: "null",
+        }
+      : undefined,
   });
-
   data.customers = customers;
   data.totalCount = meta?.total_count;
+  data.filterCount = meta?.filter_count;
   loading.value = false;
 };
 
@@ -166,7 +246,6 @@ onMounted(() => {
 
 const changePage = (page) => {
   data.page = page;
-
   fetchCustomers();
 };
 </script>
