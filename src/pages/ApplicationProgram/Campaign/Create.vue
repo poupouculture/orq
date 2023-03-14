@@ -68,6 +68,9 @@
             <p class="font-semibold mb-1">
               Send a test message <span class="text-red-600">*</span>
             </p>
+            <div class="text-xs text-gray-400 mb-2">
+              Test your message before sending to your recipients
+            </div>
             <BaseMultiOptions
               v-model="form.customers"
               filter-url="/items/customers"
@@ -228,14 +231,15 @@ const updateMultiOptions = async (val: {
   nameLabel: string;
 }) => {
   const { data: payload, filterUrl, variableName, nameLabel } = val;
-
   const {
     data: { data },
   } = await api.get(filterUrl, {
     params: {
       fields: "*",
       limit: 10,
-      "filter[first_name][_neq]": "null",
+      ...(nameLabel !== "first_name"
+        ? undefined
+        : { "filter[first_name][_neq]": "null" }),
       search: payload,
     },
   });
