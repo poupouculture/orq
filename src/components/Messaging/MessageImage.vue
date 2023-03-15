@@ -20,14 +20,15 @@
   </q-menu>
 
   <q-dialog v-model="visible" no-shake>
-    <span class="h-full relative">
+    <span class="relative flex h-full w-full">
       <img
-        class="h-full block pointer-events-auto"
+        class="pointer-events-auto block max-h-full max-w-full m-auto"
         :src="originSrc || imageRef.src"
         alt="message_pic"
       />
       <q-btn
-        class="absolute top-0 right-0 pointer-events-auto"
+        class="absolute pointer-events-auto"
+        :style="{ top: '5px', right: '5px' }"
         dense
         flat
         color="white"
@@ -69,17 +70,17 @@ const menu = ref();
 const imageRef = ref();
 const originSrc = ref();
 
-watch(
-  () => props.src,
-  () => {
-    renderImage();
-  }
-);
+// watch(
+//   () => props.src,
+//   () => {
+//     renderImage();
+//   }
+// );
 
 watch(
   () => visible.value,
   (value) => {
-    if (value) {
+    if (value && !originSrc.value) {
       renderImage(value);
     }
   }

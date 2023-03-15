@@ -185,7 +185,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onBeforeUnmount, reactive } from "vue";
+import {
+  computed,
+  ref,
+  watch,
+  nextTick,
+  onBeforeUnmount,
+  reactive,
+  onMounted,
+} from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
@@ -569,9 +577,15 @@ const upload = async (fileList: any) => {
   cm.sendMessageStatus = SendMessageStatus.DEFAULT;
   cm.id = data.derp_chats_messages_id;
 };
+const contextmenu = (e: Event) => e.preventDefault();
+
+onMounted(() => {
+  window.addEventListener("contextmenu", contextmenu);
+});
 
 onBeforeUnmount(() => {
   recClose();
+  window.removeEventListener("contextmenu", contextmenu);
 });
 </script>
 

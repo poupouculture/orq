@@ -74,10 +74,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 watch(
-  () => props.content,
+  () => props.content?.url,
   async (val) => {
-    if (val.local || val.type !== MessageType.AUDIO) return;
-    const { data } = await api.get(val.url, {
+    if (props.content?.url?.startsWith("blob")) {
+      return;
+    }
+    const { data } = await api.get(val, {
       responseType: "blob",
     });
     const blob = new Blob([data], { type: "audio/mgpe" });
