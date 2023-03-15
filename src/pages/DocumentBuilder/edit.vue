@@ -14,6 +14,7 @@ import {
   getDocumentTemplate,
   updateDocumentTemplate,
 } from "../../api/documentTemplate.js";
+import { Notify } from "quasar";
 
 const router = useRouter();
 const route = useRoute();
@@ -29,7 +30,13 @@ onMounted(async () => {
 });
 
 const submit = async (payload) => {
-  await updateDocumentTemplate(id.value, payload);
+  const result = await updateDocumentTemplate(id.value, payload);
+  if (result.data?.errors) {
+    Notify.create({
+      message: "Error: " + result.data.errors[0].message,
+      type: "negative",
+    });
+  }
   router.push("/document-builders");
 };
 </script>

@@ -13,7 +13,7 @@
 </template>
 
 <style scoped>
-::v-deep .q-field__native,
+:deep(.q-field__native),
 .q-field__prefix,
 .q-field__suffix,
 .q-field__input {
