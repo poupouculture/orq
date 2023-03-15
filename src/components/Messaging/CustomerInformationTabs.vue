@@ -70,7 +70,7 @@ const saveCustomer = async (val: FormPayload) => {
     if (!customerResult?.data?.errors) {
       const contactId = getSelectedChat.value.contacts_id;
       await customerStore.addCustomerContact(
-        customerResult?.data.id,
+        customerResult?.data.data.id,
         contactId
       );
     }

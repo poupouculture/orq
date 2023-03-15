@@ -2,7 +2,7 @@
   <div>
     <TransitionGroup name="fade">
       <q-item
-        v-for="item in list"
+        v-for="item in cleanedList"
         :key="item.id"
         class="cursor-pointer q-px-none"
         @click.passive="() => selectChat(item)"
@@ -45,6 +45,12 @@ const list = computed(() =>
       : "visitor".toLowerCase();
     return chat.status === props.type && chatName.includes(props.filterText);
   })
+);
+
+const cleanedList = computed(() =>
+  list.value.filter(
+    (chat, index, self) => index === self.findIndex((t) => t.id === chat.id)
+  )
 );
 
 const selectChat = (chat: IChat) => {
