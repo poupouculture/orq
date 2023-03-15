@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { api } from "src/boot/axios";
 
 interface Props {
@@ -124,10 +124,10 @@ const download = async () => {
 onMounted(() => {
   renderImage();
 });
-onBeforeUnmount(() => {
-  window.URL.revokeObjectURL(imageRef.value);
-  window.URL.revokeObjectURL(originSrc.value);
-});
+// onBeforeUnmount(() => {
+//   window.URL.revokeObjectURL(imageRef.value);
+//   window.URL.revokeObjectURL(originSrc.value);
+// });
 </script>
 
 <style lang="scss" scoped></style>
