@@ -22,13 +22,10 @@
         </div>
         <div class="row q-mb-lg">
           <div class="col-2">
-            <img
-              src="../../../assets/images/imagetaker.png"
-              name="folder_open"
-            />
+            <img src="src/assets/images/imagetaker.png" name="folder_open" />
           </div>
           <div class="col-10">
-            <div class="field-holder">
+            <div class="w-full">
               <BaseMultiOptions
                 v-model="tags"
                 label="Labels"
@@ -131,7 +128,7 @@
                       :options="optionDateFn"
                       mask="YYYY-MM-DD"
                       @input="() => $refs.qDateProxy.hide()"
-                    ></q-date>
+                    />
                   </q-popup-proxy>
                 </q-icon>
               </template>
@@ -176,8 +173,72 @@
               @update:multi-options="updateMultiOptions"
             />
           </div>
-          <div class="col"></div>
+          <div class="col">
+            <p class="label-style">Location Code</p>
+            <q-input
+              v-model="firstName"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
         </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Phone</p>
+            <q-input
+              v-model="firstName"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Deliver Location Address</p>
+            <q-input
+              v-model="firstName"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Phone</p>
+            <q-input
+              v-model="firstName"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Deliver Location Address</p>
+            <q-input
+              v-model="firstName"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+
         <q-checkbox
           v-if="props.showActive && mode !== 'show'"
           v-model="isActive"
