@@ -37,24 +37,64 @@
                 <q-icon name="fa-regular fa-edit" class="text-lg" />
                 <q-icon
                   name="fa-solid fa-trash"
-                  class="text-lg"
+                  class="text-lg hover:cursor-pointer"
                   @click="deleteQuestion(index)"
                 />
               </div>
             </div>
             <div class="w-full flex">
-              <input
-                type="text"
-                class="w-full h-9 block border rounded-lg mt-2 mb-4 pl-4"
-                v-model="questions[index]"
-                placeholder="Type the question here"
-              />
+              <div class="w-full border rounded-lg mt-2">
+                <input
+                  type="text"
+                  class="w-full h-9 block mb-4 pl-4"
+                  v-model="questions[index].text"
+                  placeholder="Type the question here"
+                />
+                <div
+                  class="w-full flex justify-center py-3"
+                  v-if="question.isEmoticon"
+                >
+                  <div class="w-1/3 flex flex-col gap-2">
+                    <div class="w-full flex justify-between">
+                      <img
+                        src="../../assets/images/emoticon-angry.svg"
+                        class="hover:cursor-pointer"
+                        alt=""
+                      />
+                      <img
+                        src="../../assets/images/emoticon-unhappy.svg"
+                        class="hover:cursor-pointer"
+                        alt=""
+                      />
+                      <img
+                        src="../../assets/images/emoticon-flat.svg"
+                        class="hover:cursor-pointer"
+                        alt=""
+                      />
+                      <img
+                        src="../../assets/images/emoticon-smile.svg"
+                        class="hover:cursor-pointer"
+                        alt=""
+                      />
+                      <img
+                        src="../../assets/images/emoticon-love.svg"
+                        class="hover:cursor-pointer"
+                        alt=""
+                      />
+                    </div>
+                    <div class="w-full flex justify-between">
+                      <span class="text-xs">Not Satisfied</span>
+                      <span class="text-xs">Very Satisfied</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div class="w-full flex mt-6">
           <div
-            class="w-full flex items-center text-lg gap-2 hover:cursor-pointer"
+            class="flex items-center text-lg gap-2 hover:cursor-pointer"
             @click="addQuestion"
           >
             <div
@@ -73,7 +113,11 @@
             class="w-full flex items-center justify-between px-3 border-b shadow-md"
           >
             <div class="flex gap-2 py-2">
-              <div class="w-10 h-10 rounded-full bg-primary"></div>
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-full"
+              >
+                <img src="../../assets/images/bot-avatar.svg" alt="" />
+              </div>
               <div class="flex flex-col">
                 <div class="text-lg">Chatbot</div>
                 <div class="text-sm text-green-400">
@@ -109,9 +153,18 @@ import { ref } from "vue";
 import ChatMessage from "../Messaging/ChatMessage.vue";
 
 const questions = ref([
-  "What is your name?",
-  "Have you heard of our product/service before?",
-  "How satisfied were you with our product/service",
+  {
+    text: "What is your name?",
+    isEmoticon: false,
+  },
+  {
+    text: "Have you heard of our product/service before?",
+    isEmoticon: false,
+  },
+  {
+    text: "How satisfied were you with our product/service",
+    isEmoticon: true,
+  },
 ]);
 
 const messages = ref([
@@ -163,6 +216,7 @@ const messages = ref([
     direction: "outgoing",
     type: "text",
     date_created: 741231321,
+    isEmoticon: true,
   },
 ]);
 

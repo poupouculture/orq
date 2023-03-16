@@ -52,6 +52,7 @@
                 <q-input
                   outlined
                   v-model="phoneNumber"
+                  :rules="[(val) => required(val)]"
                   label="Outlined"
                   dense
                   class="input-individual"
@@ -64,6 +65,7 @@
                 <q-input
                   outlined
                   v-model="extension"
+                  :rules="[(val) => required(val)]"
                   label="Outlined"
                   dense
                   class="input-individual"
@@ -82,13 +84,15 @@
                 />
               </div>
             </div>
+            <div class="w-full mt-4 text-red-600">
+              <ul>
+                <li v-for="(err, idx) in errorValidations" :key="idx">
+                  {{ err }}
+                </li>
+              </ul>
+            </div>
             <div class="lowerdialog-btn">
-              <q-btn
-                color="primary"
-                label="Save"
-                v-close-popup
-                @click="addPhone"
-              />
+              <q-btn color="primary" label="Save" @click="addPhone" />
             </div>
           </div>
         </div>
@@ -522,6 +526,7 @@ import ContactPhoneCard from "../Customer/ContactPhoneCard.vue";
 import { useRoute } from "vue-router";
 import useCustomerStore from "src/stores/modules/customer";
 import { Notify } from "quasar";
+import { required } from "src/utils/validation-rules";
 
 const route = useRoute();
 const customerStore = useCustomerStore();
@@ -538,6 +543,7 @@ const phonedialog = ref(false);
 const phoneNumber = ref("");
 const extension = ref("");
 const remarks = ref("");
+const errorValidations = ref([]);
 
 const type = ref("");
 const text = ref("");
@@ -555,20 +561,31 @@ const handleclick = (data) => {
 
 const addPhone = async () => {
   const customerId = props.customerId ? props.customerId : route.params.id;
-  const params = {
-    category: type.value,
-    number: phoneNumber.value,
-    extension: extension.value,
-    remarks: remarks.value,
-  };
+  errorValidations.value = [];
+  if (type.value === "" || type.value === null)
+    errorValidations.value.push("Category is required");
+  if (phoneNumber.value === "" || phoneNumber.value === null)
+    errorValidations.value.push("Phone number is required");
+  if (extension.value === "" || extension.value === null)
+    errorValidations.value.push("Extension is required");
 
-  const result = await customerStore.addContact(customerId, params);
+  if (errorValidations.value.length < 1) {
+    phonedialog.value = false;
+    const params = {
+      category: type.value,
+      number: phoneNumber.value,
+      extension: extension.value,
+      remarks: remarks.value,
+    };
 
-  if (result.data?.errors) {
-    Notify.create({
-      message: "Error: " + result.data.errors[0].message,
-      type: "negative",
-    });
+    const result = await customerStore.addContact(customerId, params);
+
+    if (result.data?.errors) {
+      Notify.create({
+        message: "Error: " + result.data.errors[0].message,
+        type: "negative",
+      });
+    }
   }
 };
 
