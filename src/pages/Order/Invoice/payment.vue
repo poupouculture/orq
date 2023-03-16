@@ -1,7 +1,42 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import useInvoice from "src/stores/modules/useInvoices";
+import Visa from "src/assets/images/visa-logo.png";
+import WeChatPay from "src/assets/images/WeChatPay.png";
+import Atome from "src/assets/images/atome.png";
+import Qr from "src/assets/images/qr.png";
+import AliPay from "src/assets/images/alipay.png";
 
-const check = ref(false);
+const payment = ref("creditCard");
+const { getInvoice, getCompany } = useInvoice();
+
+const paymentOptions = ref([
+  {
+    text: "Credit Card",
+    value: "creditCard",
+    img: Visa,
+  },
+  {
+    text: "WeChat Pay",
+    value: "weChatPay",
+    img: WeChatPay,
+  },
+  {
+    text: "Atome",
+    value: "atome",
+    img: Atome,
+  },
+  {
+    text: "Qr",
+    value: "qr",
+    img: Qr,
+  },
+  {
+    text: "Alipay HK",
+    value: "alipay",
+    img: AliPay,
+  },
+]);
 </script>
 
 <template>
@@ -14,6 +49,84 @@ const check = ref(false);
           <p class="text-capitalize text-[#111827] font-semibold text-2xl">
             Payment Collection
           </p>
+        </div>
+
+        <div>
+          <div class="q-pa-md" style="max-width: 350px">
+            <q-list bordered>
+              <q-expansion-item
+                group="somegroup"
+                icon="explore"
+                label="First"
+                default-opened
+                header-class="text-primary"
+              >
+                <q-card>
+                  <q-card-section>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Quidem, eius reprehenderit eos corrupti commodi magni
+                    quaerat ex numquam, dolorum officiis modi facere maiores
+                    architecto suscipit iste eveniet doloribus ullam aliquid.
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+
+              <q-separator />
+
+              <q-expansion-item
+                group="somegroup"
+                icon="perm_identity"
+                label="Second"
+                header-class="text-teal"
+              >
+                <q-card>
+                  <q-card-section>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Quidem, eius reprehenderit eos corrupti commodi magni
+                    quaerat ex numquam, dolorum officiis modi facere maiores
+                    architecto suscipit iste eveniet doloribus ullam aliquid.
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+
+              <q-separator />
+
+              <q-expansion-item
+                group="somegroup"
+                icon="shopping_cart"
+                label="Third"
+                header-class="text-purple"
+              >
+                <q-card>
+                  <q-card-section>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Quidem, eius reprehenderit eos corrupti commodi magni
+                    quaerat ex numquam, dolorum officiis modi facere maiores
+                    architecto suscipit iste eveniet doloribus ullam aliquid.
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+
+              <q-separator />
+
+              <q-expansion-item
+                group="somegroup"
+                icon="bluetooth"
+                label="Fourth"
+                header-class="bg-teal text-white"
+                expand-icon-class="text-white"
+              >
+                <q-card class="bg-teal-2">
+                  <q-card-section>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Quidem, eius reprehenderit eos corrupti commodi magni
+                    quaerat ex numquam, dolorum officiis modi facere maiores
+                    architecto suscipit iste eveniet doloribus ullam aliquid.
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+            </q-list>
+          </div>
         </div>
       </div>
     </div>
@@ -89,8 +202,12 @@ const check = ref(false);
                   <p class="text-[#111827] text-base font-semibold">Invoice</p>
                 </div>
                 <div class="">
-                  <p class="text-black text-sm font-normal">Synque</p>
-                  <p class="text-black text-sm font-normal">Inv-0006</p>
+                  <p class="text-black text-sm font-normal">
+                    {{ getCompany.companyName }}
+                  </p>
+                  <p class="text-black text-sm font-normal">
+                    {{ getInvoice.invoiceNumber }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -108,7 +225,9 @@ const check = ref(false);
               <div>
                 <img class="w-20" src="/src/assets/images/receipt.png" alt="" />
               </div>
-              <p class="text-[40px] text-[#4B44F6] font-semibold">$100.00</p>
+              <p class="text-[40px] text-[#4B44F6] font-semibold">
+                {{ getInvoice.totalPrice.label }}
+              </p>
             </div>
           </div>
 
@@ -121,11 +240,36 @@ const check = ref(false);
               </p>
             </div>
 
-            <div class="flex items-center justify-evenly">
-              <div>
-                <img class="w-20" src="/src/assets/images/receipt.png" alt="" />
-              </div>
-              <p class="text-[40px] text-[#4B44F6] font-semibold">$100.00</p>
+            <div class="flex flex-col gap-5">
+              <q-item
+                v-for="(item, index) in paymentOptions"
+                :key="index"
+                :class="[
+                  payment == item.value ? 'border-2 border-primary' : '',
+                  'w-full py-0 rounded-lg',
+                ]"
+                tag="label"
+                v-ripple
+              >
+                <q-item-section avatar>
+                  <q-radio
+                    v-model="payment"
+                    :val="item.value"
+                    color="primary"
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="flex items-center gap-3">
+                    <div>
+                      <img class="w-10" :src="item.img" alt="" />
+                    </div>
+
+                    <p class="text-[#2E2E3A] font-medium text-base">
+                      {{ item.text }}
+                    </p>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
             </div>
           </div>
         </div>
