@@ -24,27 +24,32 @@ interface ContactRelation {
 type Gender = "m" | "f";
 
 export interface ICustomer {
-  companies: [CompanyRelation];
-  contacts: [ContactRelation];
-  customer_code: string;
-  date_created: string;
-  date_updated: string;
-  dob: string;
-  email: string;
-  first_name: string;
-  gender: Gender;
-  id: string;
-  id_number: string;
-  isActive: boolean;
-  last_name: string;
-  position: string;
-  remarks: string;
+  companies?: [CompanyRelation] | any;
+  contacts?: [ContactRelation];
+  customer_code?: string;
+  date_created?: string;
+  date_updated?: string;
+  dob?: string;
+  email?: string;
+  first_name?: string;
+  gender?: Gender | any;
+  id?: string;
+  id_number?: string;
+  isActive?: boolean;
+  last_name?: string;
+  position?: any;
+  remarks?: string;
   service_records?: [string];
-  status: string;
-  user_created: string;
-  user_updated: string;
-  customer_groups: ICustomerGroup[];
-  tags: [TagRelation];
+  status?: string;
+  user_created?: string;
+  user_updated?: string;
+  customer_groups?: ICustomerGroup[] | any;
+  tags?: [TagRelation] | any;
+  is_active?: boolean;
+  tel?: null | number;
+  location_code?: null | number;
+  delivery_location_address?: null | string;
+  customer_company_name_en?: null | string;
 }
 
 export interface IState {
