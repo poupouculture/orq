@@ -9,27 +9,6 @@
         @click.stop
         v-if="showContent"
       >
-        <slot name="header-search">
-          <div class="flex items-center justify-between">
-            <div class="w-52 ml-3">
-              <q-input
-                placeholder="Search Items..."
-                bg-color="transparent"
-                outlined
-                dense
-                class="border-gray-400"
-              >
-                <template v-slot:prepend>
-                  <q-icon name="search" class="text-gray-400" />
-                </template>
-                <template v-slot:append>
-                  <q-icon name="filter_list" class="text-gray-400" />
-                </template>
-              </q-input>
-            </div>
-            <q-btn @click="submit()" round color="primary" icon="check" />
-          </div>
-        </slot>
         <slot></slot>
       </div>
     </Transition>
@@ -38,13 +17,8 @@
 <script setup>
 import { ref } from "vue";
 
-const emits = defineEmits(["submit", "changePage", "close"]);
+const emits = defineEmits(["submit", "changePage", "close", "search"]);
 const showContent = ref(true);
-
-const submit = () => {
-  emits("submit");
-  showContent.value = false;
-};
 const close = () => {
   emits("close");
 };

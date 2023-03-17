@@ -25,7 +25,7 @@
           <q-tab-panel name="general" class="pannel-each">
             <GeneralInformation
               @submit="submitGeneralInformation"
-              mode="edit"
+              :mode="'edit'"
             />
           </q-tab-panel>
 
