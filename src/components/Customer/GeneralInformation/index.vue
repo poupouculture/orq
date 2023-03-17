@@ -290,7 +290,7 @@ const mappingCustomerGroups = () => {
             />
           </div>
         </div>
-        <div class="row q-gutter-xl">
+        <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style">Gender</p>
             <q-select
@@ -332,7 +332,7 @@ const mappingCustomerGroups = () => {
             </q-input>
           </div>
         </div>
-        <div class="row q-mb-xs q-gutter-xl">
+        <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style">Position</p>
             <q-select
