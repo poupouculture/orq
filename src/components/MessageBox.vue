@@ -2,9 +2,10 @@
   <Transition name="message">
     <div
       v-if="show"
-      class="bg-[#E2E4ED]/80 px-5 lg:px-10 py-6 mt-5 rounded-lg lg:flex-row no-warp items-center relative flex flex-col space-y-5"
+      class="bg-[#E2E4ED]/80 px-5 rounded-lg lg:flex-row no-wrap items-center relative flex flex-col space-y-5"
+      :class="[padding ? padding : 'lg:px-10 py-6']"
     >
-      <img :src="image" class="w-40 m-auto h-24" />
+      <img :src="image" class="w-36 m-auto h-full" />
       <div
         class="lg:ml-8 flex-1 h-full sm:mt-10 lg:mt-0 text-center lg:text-left"
       >
@@ -48,6 +49,7 @@ import image from "src/assets/images/service-record.png";
 defineProps({
   title: String,
   message: String,
+  padding: String,
   show: {
     type: Boolean,
     default: false,
