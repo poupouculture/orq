@@ -150,7 +150,14 @@ const onSubmit = () => {
   customerForm.value.validate().then((success) => {
     if (success) {
       const payload = {
-        ...formData.value,
+        first_name: formData.value.first_name,
+        last_name: formData.value.last_name,
+        id_number: formData.value.id_number,
+        customer_code: formData.value.customer_code,
+        gender: formData.value.gender,
+        isActive: formData.value.isActive,
+        dob: formData.value.dob,
+        position: formData.value.position,
         customer_group: transforCustomerGroupPayload(
           getCustomer.value,
           formData.value.customer_groups
