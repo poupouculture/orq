@@ -1,6 +1,10 @@
 import { api } from "boot/axios";
 
-export const getDocumentTemplates = async ({ limit = 10, page = 1 }) => {
+export const getDocumentTemplates = async ({
+  limit = 10,
+  page = 1,
+  search = "",
+}) => {
   const fields = `*`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -11,6 +15,7 @@ export const getDocumentTemplates = async ({ limit = 10, page = 1 }) => {
       sort: `-date_created`,
       limit,
       offset,
+      search,
       meta: "*",
     },
   });

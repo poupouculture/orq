@@ -77,9 +77,6 @@ const routes = [
           import("pages/ApplicationProgram/BotTemplate/edit.vue"),
       },
       {
-        // path: "application-programs/campaign/campaign-setting",
-        // component: () =>
-        //   import("pages/ApplicationProgram/Campaign/campaignSettings.vue"),
         path: "application-programs/customer-services",
         component: () =>
           import("pages/ApplicationProgram/CustomerService/index.vue"),
@@ -93,6 +90,18 @@ const routes = [
         path: "application-programs/customer-services/:id",
         component: () =>
           import("pages/ApplicationProgram/CustomerService/edit.vue"),
+      },
+      {
+        path: "application-programs/surveys",
+        component: () => import("pages/ApplicationProgram/Survey/index.vue"),
+      },
+      {
+        path: "application-programs/surveys/create",
+        component: () => import("pages/ApplicationProgram/Survey/create.vue"),
+      },
+      {
+        path: "application-programs/surveys/:id",
+        component: () => import("pages/ApplicationProgram/Survey/edit.vue"),
       },
       {
         path: "document-builders",

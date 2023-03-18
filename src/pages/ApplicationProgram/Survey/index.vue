@@ -10,17 +10,10 @@
           Application program /
         </span>
       </router-link>
-      Message Templates
+      Survey
     </p>
     <div class="row justify-between">
-      <q-input
-        v-model="search"
-        @change="fetchApplicationPrograms"
-        @keypress.enter.prevent="fetchApplicationPrograms"
-        placeholder="Search"
-        outlined
-        dense
-      >
+      <q-input placeholder="Search" outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
@@ -33,7 +26,7 @@
           color="primary"
           label="Add"
           class="q-mr-sm"
-          @click="router.push('/application-programs/message-templates/create')"
+          @click="router.push('/application-programs/surveys/create')"
         />
         <q-btn
           icon="archive"
@@ -44,34 +37,22 @@
         />
       </div>
     </div>
-    <div class="main-content">
-      <TableComponent
-        :applicationPrograms="data.applicationPrograms"
-        :totalCount="data.totalCount"
-        :page="data.page"
-        :rowsPerPage="data.rowsPerPage"
-        v-model:selected="selected"
-        @changePage="changePage"
-        v-if="!loading"
-      />
-    </div>
+    <div class="main-content"></div>
   </div>
 </template>
 
 <script setup>
 import {
-  getMessageTemplates,
-  updateMessageTemplate,
-} from "src/api/messageTemplate";
+  getCustomerServiceTemplates,
+  updateCustomerServiceTemplate,
+} from "src/api/customerService";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import { Notify } from "quasar";
 
 const router = useRouter();
 
 const loading = ref(true);
-const search = ref("");
 const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
@@ -86,27 +67,22 @@ onMounted(() => {
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
-  } = await getMessageTemplates({
+  } = await getCustomerServiceTemplates({
     limit: data.rowsPerPage,
     page: data.page,
-    search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;
   loading.value = false;
 };
-const changePage = (val) => {
-  data.page = val;
-  fetchApplicationPrograms();
-};
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
     data.status = "archived";
-    await updateMessageTemplate(data.id, data);
+    await updateCustomerServiceTemplate(data.id, data);
   });
 
   Notify.create({
-    message: `Selected Template has been archived`,
+    message: `Selected Survey has been archived`,
     position: "top",
     type: "positive",
     color: "blue-9",

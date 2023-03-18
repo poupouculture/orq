@@ -46,6 +46,7 @@ export interface Message {
   sendMessageStatus?: SendMessageStatus;
   totalUnread?: number;
   label?: string;
+  isEmoticon?: boolean;
 }
 export interface IChat {
   id: string;

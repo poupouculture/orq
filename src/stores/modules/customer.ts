@@ -147,7 +147,7 @@ const useCustomerStore = defineStore("customer", {
             type: "positive",
           });
 
-          this.setCustomer(data.data);
+          this.setCustomer(data.data.data);
         }
         Loading.hide();
         return data;
@@ -163,6 +163,7 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addCustomerContact(customerId: string, contactId: string) {
+      console.log("contact", customerId, contactId);
       const result = await addCustomerContact(customerId, contactId);
       return result;
     },

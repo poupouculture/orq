@@ -14,6 +14,7 @@ import {
   getDocumentTemplate,
   updateDocumentTemplate,
 } from "../../api/documentTemplate.js";
+import { Notify } from "quasar";
 
 const router = useRouter();
 const route = useRoute();
@@ -23,13 +24,19 @@ const documentTemplate = ref(null);
 
 onMounted(async () => {
   id.value = route.params.id;
-  documentTemplate.value = await getDocumentTemplate(id.value);
-  console.log(documentTemplate.value);
+  const response = await getDocumentTemplate(id.value);
+  documentTemplate.value = response.data.data;
   loading.value = false;
 });
 
 const submit = async (payload) => {
-  await updateDocumentTemplate(id.value, payload);
+  const result = await updateDocumentTemplate(id.value, payload);
+  if (result.data?.errors) {
+    Notify.create({
+      message: "Error: " + result.data.errors[0].message,
+      type: "negative",
+    });
+  }
   router.push("/document-builders");
 };
 </script>
