@@ -1,5 +1,5 @@
 <template>
-  <RightToLeft @close="close">
+  <RightToLeft :close="closeOverlay" @close="emits('close')">
     <div class="flex items-center justify-between">
       <div class="w-52 ml-3">
         <q-input
@@ -108,6 +108,7 @@ const emits = defineEmits([
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
 const isSearch = ref(false);
+const closeOverlay = ref(false);
 const selectedData = computed({
   get: () => props.modelValue,
   set: (value) => emits("update:modelValue", value),
@@ -127,11 +128,8 @@ const resetSearch = () => {
 };
 
 const submit = () => {
+  closeOverlay.value = true;
   emits("submit");
-};
-
-const close = () => {
-  emits("close");
 };
 const changePage = (val) => {
   emits("changePage", val);

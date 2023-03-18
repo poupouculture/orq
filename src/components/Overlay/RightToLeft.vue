@@ -15,10 +15,22 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
-const emits = defineEmits(["submit", "changePage", "close", "search"]);
+const emits = defineEmits(["close", "update:modelValue"]);
+const props = defineProps({
+  close: {
+    type: Boolean,
+    default: false,
+  },
+});
 const showContent = ref(true);
+watch(
+  () => props.close,
+  () => {
+    showContent.value = false;
+  }
+);
 const close = () => {
   emits("close");
 };

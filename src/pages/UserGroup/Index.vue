@@ -129,6 +129,7 @@
                 <ButtonCustomerMenu
                   :id="group.id"
                   :customer-id="customers_id.id"
+                  :pagination="pagination"
                 />
               </div>
             </div>

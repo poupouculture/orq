@@ -112,7 +112,6 @@ const submitAddCustomer = async (val) => {
       id: props.id,
       customers: val.map((item) => item.id),
     });
-    openAddCustomer.value = false;
     emits("addCustomer");
   }
 };
