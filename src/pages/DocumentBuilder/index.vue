@@ -7,7 +7,14 @@
       Document Template
     </p>
     <div class="row justify-between">
-      <q-input placeholder="Search" outlined dense>
+      <q-input
+        v-model="search"
+        @change="fetchApplicationPrograms"
+        @keypress.enter.prevent="fetchApplicationPrograms"
+        placeholder="Search"
+        outlined
+        dense
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
@@ -38,7 +45,7 @@
         :page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
-        :loading="false"
+        :loading="loading"
         v-model:selected="selected"
         @changePage="changePage"
       >
@@ -124,13 +131,6 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "user_created",
-    align: "center",
-    label: "Created By",
-    field: "user_created",
-    classes: "text-black",
-  },
-  {
     name: "date_created",
     align: "center",
     label: "Created On",
@@ -147,6 +147,7 @@ const headerColumns = [
 ];
 
 const loading = ref(true);
+const search = ref("");
 const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
@@ -164,6 +165,7 @@ const fetchApplicationPrograms = async () => {
   } = await getDocumentTemplates({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;

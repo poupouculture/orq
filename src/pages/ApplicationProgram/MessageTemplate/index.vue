@@ -13,7 +13,14 @@
       Message Templates
     </p>
     <div class="row justify-between">
-      <q-input placeholder="Search" outlined dense>
+      <q-input
+        v-model="search"
+        @change="fetchApplicationPrograms"
+        @keypress.enter.prevent="fetchApplicationPrograms"
+        placeholder="Search"
+        outlined
+        dense
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
@@ -64,6 +71,7 @@ import { Notify } from "quasar";
 const router = useRouter();
 
 const loading = ref(true);
+const search = ref("");
 const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
@@ -81,6 +89,7 @@ const fetchApplicationPrograms = async () => {
   } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;
