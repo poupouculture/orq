@@ -1,230 +1,5 @@
-<template>
-  <div>
-    <q-form
-      ref="customerForm"
-      autocorrect="off"
-      autocapitalize="off"
-      autocomplete="off"
-      spellcheck="false"
-      @submit="onSubmit"
-    >
-      <div class="q-pa-md">
-        <div
-          class="row q-mb-lg ml-auto flex justify-end"
-          v-if="mode === 'show' && getSelectedChatId"
-        >
-          <q-btn
-            @click="mode = 'edit'"
-            color="primary"
-            label="Edit"
-            class="dark-btn"
-          />
-        </div>
-        <div class="row q-mb-lg">
-          <div class="col-2">
-            <img
-              src="../../../assets/images/imagetaker.png"
-              name="folder_open"
-            />
-          </div>
-          <div class="col-10">
-            <div class="field-holder">
-              <BaseMultiOptions
-                v-model="tags"
-                label="Labels"
-                filter-url="/items/tags"
-                :options="options.tags"
-                option-variable-name="tags"
-                :mode="mode"
-                @filter="filter"
-                @update:multi-options="updateMultiOptions"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
-            <p class="label-style">First Name</p>
-            <q-input
-              v-model="firstName"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Last Name</p>
-            <q-input
-              v-model="lastName"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
-        <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Contact Number</p>
-            <q-input
-              v-model="idNumber"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Customer Code</p>
-            <q-input
-              v-model="customerCode"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
-        <div class="row q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Gender</p>
-            <q-select
-              v-model="gender"
-              :options="genderOptions"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Date Of Birth</p>
-            <q-input
-              v-model="dateOfBirth"
-              mask="####-##-##"
-              :rules="[(val) => required(val)]"
-              lazy-rules
-              dense
-              outlined
-              :disable="mode == 'show'"
-              bg-color="white"
-            >
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy
-                    ref="qDateProxy"
-                    transition-show="scale"
-                    transition-hide="scale"
-                  >
-                    <q-date
-                      v-model="dateOfBirth"
-                      :options="optionDateFn"
-                      mask="YYYY-MM-DD"
-                      @input="() => $refs.qDateProxy.hide()"
-                    ></q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-          </div>
-        </div>
-        <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Position</p>
-            <q-select
-              outlined
-              v-model="position"
-              :options="positionOptions"
-              dense
-              :disable="mode == 'show'"
-            />
-          </div>
-          <div class="col">
-            <BaseMultiOptions
-              v-model="companies"
-              label="Companies"
-              filter-url="/items/companies"
-              :options="options.companies"
-              option-variable-name="companies"
-              name-label="name_english"
-              :mode="mode"
-              @filter="filter"
-              @update:multi-options="updateMultiOptions"
-            />
-          </div>
-        </div>
-        <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <BaseMultiOptions
-              v-model="customerGroups"
-              label="Customer Groups"
-              filter-url="/items/customer_groups"
-              :options="options.customerGroups"
-              option-variable-name="customerGroups"
-              :mode="mode"
-              @filter="filter"
-              @update:multi-options="updateMultiOptions"
-            />
-          </div>
-          <div class="col"></div>
-        </div>
-        <q-checkbox
-          v-if="props.showActive && mode !== 'show'"
-          v-model="isActive"
-          label="is Active"
-        />
-        <div class="row q-gutter-xl" v-if="mode !== 'show'">
-          <div v-if="showReturnButton" class="col">
-            <div class="btn-cls" @click="returnDialog = true">
-              <p>Return</p>
-            </div>
-          </div>
-          <div class="col">
-            <div class="btn-hold">
-              <!-- <div
-                v-if="showDeleteButton"
-                class="btn-cls"
-                @click="deleteDialog = true"
-              >
-                <p>Delete</p>
-              </div> -->
-              <q-btn
-                color="primary"
-                label="Save"
-                class="dark-btn"
-                type="submit"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </q-form>
-    <DeleteDialog
-      v-model="deleteDialog"
-      @cancel="deleteDialog = false"
-      @submitDelete="submitDelete"
-    />
-    <ReturnDialog
-      v-model="returnDialog"
-      @cancel="returnDialog = false"
-      @submit="discardChanges()"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
-import { onMounted, ref, watch, reactive, computed } from "vue";
-import type { Ref } from "vue";
+import { ref, watch, reactive, computed } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
@@ -232,18 +7,20 @@ import useCustomerStore from "src/stores/modules/customer";
 import { required } from "src/utils/validation-rules";
 import useMessagingStore from "src/stores/modules/messaging";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
-import {
-  transforCustomerGroupPayload,
-  transformCompaniesPayload,
-  transformTagPayload,
-} from "src/utils/transform-object";
 import { api } from "src/boot/axios";
 import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
 import { useRouter } from "vue-router";
 import { date } from "quasar";
+import { ICustomer } from "src/types/CustomerTypes";
+import {
+  transforCustomerGroupPayload,
+  transformCompaniesPayload,
+  transformTagPayload,
+} from "src/utils/transform-object";
 
+// Type Interface
 interface Option {
   value: string | number;
   label: string;
@@ -254,39 +31,29 @@ interface Gender {
   label: "Male" | "Female";
 }
 
+interface Emit {
+  (e: "submit", val: any): void;
+}
+
+interface Props {
+  mode?: string;
+  showActive?: boolean;
+  showReturnButton?: boolean;
+  showDeleteButton?: boolean;
+}
+
 type Position = Option;
 type ITagOptions = Option & ITag;
 
-const emit = defineEmits(["submit"]);
+// Props & Emit
+
+const emit = defineEmits<Emit>();
 const router = useRouter();
-const props = defineProps({
-  mode: {
-    type: String,
-    default: "show",
-  },
-  showActive: {
-    type: Boolean,
-    default: true,
-  },
-  showReturnButton: {
-    type: Boolean,
-    default: true,
-  },
-  showDeleteButton: {
-    type: Boolean,
-    default: true,
-  },
+const props = withDefaults(defineProps<Props>(), {
+  mode: "show",
 });
-const mode = ref(props.mode ? props.mode : "edit");
-const customerStore = useCustomerStore();
-const messagingStore = useMessagingStore();
-const getContactNumber = computed(() => messagingStore.getContactNumber);
-const { getSelectedChatId } = storeToRefs(messagingStore);
-const positionOptions: Position[] = [
-  { value: "purchase_manager", label: "Purchase Manager" },
-  { value: "owner", label: "Owner" },
-  { value: "restaurant_chef", label: "Restaurant Chef" },
-];
+
+// Array State
 const genderOptions: Gender[] = [
   {
     value: "m",
@@ -295,18 +62,18 @@ const genderOptions: Gender[] = [
   { value: "f", label: "Female" },
 ];
 
-const firstName = ref("");
-const lastName = ref("");
-const idNumber = ref("");
-const customerCode = ref("");
-const gender: Ref<Gender | undefined> = ref(undefined);
-const dateOfBirth = ref("");
-const position: Ref<Position | undefined> = ref(undefined);
-const companies: Ref<Option[]> = ref([]);
-const customerGroups: Ref<Option[]> = ref([]);
-const tags: Ref<Option[]> = ref([]);
-const isActive = ref(true);
+const positionOptions: Position[] = [
+  { value: "purchase_manager", label: "Purchase Manager" },
+  { value: "owner", label: "Owner" },
+  { value: "restaurant_chef", label: "Restaurant Chef" },
+];
 
+// State Ref
+const mode = ref(props.mode ? props.mode : "edit");
+const customerStore = useCustomerStore();
+const messagingStore = useMessagingStore();
+const getContactNumber = computed(() => messagingStore.getContactNumber);
+const { getSelectedChatId } = storeToRefs(messagingStore);
 const options: { [key: string]: any[] } = reactive({
   tags: [] as ITagOptions[],
   customerGroups: [] as ICustomerGroup[],
@@ -318,61 +85,37 @@ const returnDialog = ref(false);
 const customerForm = ref(null);
 const { getCustomer } = storeToRefs(customerStore);
 
-onMounted(async () => {
-  const customer = customerStore.getCustomer;
-
-  if (customer) {
-    firstName.value = customer.first_name;
-    lastName.value = customer.last_name;
-    idNumber.value = customer.id_number;
-    customerCode.value = customer.customer_code;
-    dateOfBirth.value = customer.dob;
-    isActive.value = customer.isActive;
-    position.value = positionOptions.find(
-      (item) => item.value === customer.position
-    );
-    gender.value = genderOptions.find((item) => item.value === customer.gender);
-
-    tags.value = customer.tags.map((data: any) => ({
-      label: data.tags_id.name,
-      value: data.tags_id.id,
-    }));
-    companies.value = mappingCompanies();
-    customerGroups.value = mappingCustomerGroups();
-  }
+// State Reactive
+const formData = ref<ICustomer>({
+  companies: "",
 });
 
-watch(getCustomer, () => {
-  mode.value = "show";
-  firstName.value = getCustomer.value.first_name;
-  lastName.value = getCustomer.value.last_name;
-  idNumber.value = getCustomer.value.id_number;
-  customerCode.value = getCustomer.value.customer_code;
-  dateOfBirth.value = getCustomer.value.dob;
-  isActive.value = getCustomer.value.isActive;
-  position.value = positionOptions.find(
-    (item) => item.value === getCustomer.value.position
-  );
-
-  position.value = positionOptions.find(
-    (item) => item.value === getCustomer.value.position
-  );
-  gender.value = genderOptions.find(
-    (item) => item.value === getCustomer.value.gender
-  );
-  tags.value = getCustomer.value.tags.map((data: any) => ({
-    label: data.tags_id.name,
-    value: data.tags_id.id,
-  }));
-  companies.value = mappingCompanies();
-  customerGroups.value = mappingCustomerGroups();
-  customerForm.value?.resetValidation();
+watch(getCustomer, (value) => {
+  // mode.value = "show";
+  formData.value = {
+    ...value,
+    position: positionOptions.find(
+      (item) => item.value === getCustomer.value.position
+    ),
+    gender: genderOptions.find(
+      (item) => item.value === getCustomer.value.gender
+    ),
+    tags: getCustomer.value.tags.map((data: any) => {
+      return {
+        label: data.tags_id.name,
+        value: data.tags_id.id,
+      };
+    }),
+    companies: mappingCompanies(),
+    customer_groups: mappingCustomerGroups(),
+    user_updated: "User updated", // Sample
+  };
 });
 
-// Watch Contact number
+// // Watch Contact number
 watch(getContactNumber, (val: string) => {
   customerForm.value?.resetValidation();
-  idNumber.value = val;
+  formData.value.id_number = val;
 });
 
 const filter = (val: string) => {
@@ -403,33 +146,32 @@ const updateMultiOptions = async (val: {
   });
 };
 
-const onSubmit = async () => {
-  try {
-    if (!customerForm.value) {
-      return;
+const onSubmit = () => {
+  customerForm.value.validate().then((success) => {
+    if (success) {
+      const payload = {
+        first_name: formData.value.first_name,
+        last_name: formData.value.last_name,
+        id_number: formData.value.id_number,
+        customer_code: formData.value.customer_code,
+        gender: formData.value.gender,
+        isActive: formData.value.isActive,
+        dob: formData.value.dob,
+        position: formData.value.position,
+        customer_group: transforCustomerGroupPayload(
+          getCustomer.value,
+          formData.value.customer_groups
+        ),
+        companies: transformCompaniesPayload(
+          getCustomer.value,
+          formData.value.companies
+        ),
+        tags: transformTagPayload(getCustomer.value, formData.value.tags),
+      };
+
+      emit("submit", payload);
     }
-    const validate = await customerForm.value.validate();
-    if (!validate) return;
-    const payload = {
-      first_name: firstName.value,
-      last_name: lastName.value,
-      id_number: idNumber.value,
-      customer_code: customerCode.value,
-      gender: gender.value?.value,
-      isActive: isActive.value,
-      dob: dateOfBirth.value,
-      position: position.value?.value,
-      customer_groups: transforCustomerGroupPayload(
-        getCustomer.value,
-        customerGroups.value
-      ),
-      companies: transformCompaniesPayload(getCustomer.value, companies.value),
-      tags: transformTagPayload(getCustomer.value, tags.value),
-    };
-    emit("submit", payload);
-  } catch (err) {
-    console.log(err);
-  }
+  });
 };
 
 const discardChanges = () => {
@@ -462,5 +204,276 @@ const mappingCustomerGroups = () => {
     }));
 };
 </script>
+<template>
+  <div>
+    <q-form
+      ref="customerForm"
+      autocorrect="off"
+      autocapitalize="off"
+      autocomplete="off"
+      spellcheck="false"
+      @submit="onSubmit"
+    >
+      <div class="q-pa-md">
+        <div
+          class="row q-mb-lg ml-auto flex justify-end"
+          v-if="mode === 'show' && getSelectedChatId"
+        >
+          <q-btn
+            @click="mode = 'edit'"
+            color="primary"
+            label="Edit"
+            class="dark-btn"
+          />
+        </div>
+        <div class="row q-mb-lg">
+          <div class="col-2">
+            <img src="src/assets/images/imagetaker.png" name="folder_open" />
+          </div>
+          <div class="col-10">
+            <div class="w-full">
+              <BaseMultiOptions
+                v-model="formData.tags"
+                label="Labels"
+                filter-url="/items/tags"
+                :options="options.tags"
+                option-variable-name="tags"
+                :mode="mode"
+                @filter="filter"
+                @update:multi-options="updateMultiOptions"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row q-mb-xs q-gutter-xl">
+          <div class="col">
+            <p class="label-style">First Name</p>
+            <q-input
+              v-model="formData.first_name"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Last Name</p>
+            <q-input
+              v-model="formData.last_name"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-xs q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Contact Number</p>
+            <q-input
+              v-model="formData.id_number"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Customer Code</p>
+            <q-input
+              v-model="formData.customer_code"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Gender</p>
+            <q-select
+              v-model="formData.gender"
+              :options="genderOptions"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Date Of Birth</p>
+            <q-input
+              v-model="formData.dob"
+              mask="####-##-##"
+              lazy-rules
+              dense
+              outlined
+              :disable="mode == 'show'"
+              bg-color="white"
+            >
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy
+                    ref="qDateProxy"
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      v-model="formData.dob"
+                      :options="optionDateFn"
+                      mask="YYYY-MM-DD"
+                      @input="() => $refs.qDateProxy.hide()"
+                    />
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Position</p>
+            <q-select
+              outlined
+              v-model="formData.position"
+              :options="positionOptions"
+              dense
+              :disable="mode == 'show'"
+            />
+          </div>
+          <div class="col">
+            <BaseMultiOptions
+              v-model="formData.companies"
+              label="Companies"
+              filter-url="/items/companies"
+              :options="options.companies"
+              option-variable-name="companies"
+              name-label="name_english"
+              :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <BaseMultiOptions
+              v-model="formData.customer_groups"
+              label="Customer Groups"
+              filter-url="/items/customer_groups"
+              :options="options.customerGroups"
+              option-variable-name="customerGroups"
+              :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Location Code</p>
+            <q-input
+              v-model="formData.location_code"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Phone</p>
+            <q-input
+              v-model="formData.tel"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Deliver Location Address</p>
+            <q-input
+              v-model="formData.delivery_location_address"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg">
+          <div class="col-6">
+            <p class="label-style">Customer Company Name En</p>
+            <q-input
+              v-model="formData.customer_company_name_en"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+
+        <q-checkbox
+          v-if="formData"
+          :disable="mode == 'show'"
+          v-model="formData.is_active"
+          label="Customer Active"
+        />
+        <div class="row q-gutter-xl" v-if="mode !== 'show'">
+          <div v-if="showReturnButton" class="col">
+            <div class="btn-cls" @click="returnDialog = true">
+              <p>Return</p>
+            </div>
+          </div>
+          <div class="col">
+            <div class="btn-hold">
+              <div
+                v-if="showDeleteButton"
+                class="btn-cls"
+                @click="deleteDialog = true"
+              >
+                <p>Delete</p>
+              </div>
+              <q-btn
+                color="primary"
+                label="Save"
+                class="dark-btn"
+                type="submit"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </q-form>
+    <DeleteDialog
+      v-model="deleteDialog"
+      @cancel="deleteDialog = false"
+      @submitDelete="submitDelete"
+    />
+    <ReturnDialog
+      v-model="returnDialog"
+      @cancel="returnDialog = false"
+      @submit="discardChanges()"
+    />
+  </div>
+</template>
 
 <style scoped src="./style.scss" />
