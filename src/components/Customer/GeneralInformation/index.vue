@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, reactive, computed } from "vue";
+import { ref, watch, reactive, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
@@ -87,7 +87,7 @@ const { getCustomer } = storeToRefs(customerStore);
 
 // State Reactive
 const formData = ref<ICustomer>({
-  companies: "",
+  companies: [],
 });
 
 watch(getCustomer, (value) => {
@@ -110,6 +110,29 @@ watch(getCustomer, (value) => {
     customer_groups: mappingCustomerGroups(),
     user_updated: "User updated", // Sample
   };
+});
+
+onMounted(async () => {
+  const customer = customerStore.getCustomer;
+  if (customer) {
+    formData.value = {
+      ...customer,
+      position: positionOptions.find(
+        (item) => item.value === getCustomer.value.position
+      ),
+      gender: genderOptions.find(
+        (item) => item.value === getCustomer.value.gender
+      ),
+      tags: getCustomer.value.tags.map((data: any) => {
+        return {
+          label: data.tags_id.name,
+          value: data.tags_id.id,
+        };
+      }),
+      companies: mappingCompanies(),
+      customer_groups: mappingCustomerGroups(),
+    };
+  }
 });
 
 // // Watch Contact number
@@ -157,7 +180,7 @@ const onSubmit = () => {
         gender: formData.value.gender,
         isActive: formData.value.isActive,
         dob: formData.value.dob,
-        position: formData.value.position,
+        position: formData.value.position.value,
         customer_group: transforCustomerGroupPayload(
           getCustomer.value,
           formData.value.customer_groups

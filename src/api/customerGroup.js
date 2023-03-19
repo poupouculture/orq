@@ -9,7 +9,7 @@ const customerCreate = ({ id = "+", customers }) => {
 };
 
 export const getCustomerGroups = async (
-  { limit = 10, page = 1 },
+  { limit = 10, page = 1, search = undefined },
   id = null
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -21,6 +21,7 @@ export const getCustomerGroups = async (
     params: {
       limit,
       offset,
+      search,
       fields: `id, name, status, customers.id, customers.customers_id.*, ${userGroups}, ${companies}`,
       meta: "*",
     },
@@ -34,17 +35,21 @@ export const getAllCustomerGroups = async () => {
 };
 
 export const getAllCustomerEdit = async (payload) => {
-  const { limit, page, customers } = payload;
+  const { limit, page, customers, search, filter } = payload;
   const fields = "id, first_name, last_name, gender, date_created, position";
   const companies = "companies.companies_id.name_english";
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
+  const filterField =
+    filter && filter.key ? { [filter.key]: filter.value } : undefined;
   const customer = await api.get("/items/customers", {
     params: {
       "filter[id][_nin]": customers.map((c) => c.id).join(),
       fields: `${fields},${companies}`,
       sort: "-date_created",
+      search,
       limit,
+      ...filterField,
       offset,
       meta: "*",
     },
@@ -68,14 +73,20 @@ export const getAllCustomerGroupEdit = async (payload) => {
   return customerGroup;
 };
 
-export const getCustomersFilter = async ({ limit = 10, page = 1 }, id) => {
+export const getCustomersFilter = async (
+  { limit = 10, page = 1, search = undefined, filter = undefined },
+  ids
+) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
+  const filterField =
+    filter && filter.key ? { [filter.key]: filter.value } : undefined;
   const customer = await api.get("/items/customers", {
     params: {
       limit,
       offset,
-      "filter[_and][0][$FOLLOW(customer_groups_customers,customers_id)][_none][customer_groups_id][_eq]":
-        id,
+      search,
+      ...filterField,
+      "filter[_and][0][id][_nin]": ids.join(),
       fields: "*, companies.companies_id.name_english",
       meta: "*",
     },
@@ -115,11 +126,10 @@ export const deleteCustomer = async (id, customerId) => {
         "filter[customers_id][_eq]": customerId,
       },
     });
-    const customer = await api.patch("/items/customer_groups/" + id, {
+    await api.patch("/items/customer_groups/" + id, {
       customers: {
         delete: [result.data[0].id],
       },
     });
-    return customer;
   } catch (error) {}
 };
