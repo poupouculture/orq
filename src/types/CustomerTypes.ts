@@ -50,6 +50,19 @@ export interface ICustomer {
   location_code?: null | number;
   delivery_location_address?: null | string;
   customer_company_name_en?: null | string;
+  cust_cd?: null | string;
+  delyloc_no?: null | string;
+  div_no?: null | string;
+  delyloc_name_e?: null | string;
+  delyloc_name_c?: null | string;
+  delyloc_add1_e?: null | string;
+  delyloc_add2_e?: null | string;
+  delyloc_add3_e?: null | string;
+  delyloc_add1_c?: null | string;
+  delyloc_add2_c?: null | string;
+  delyloc_add3_c?: null | string;
+  salesman_cd?: null | string;
+  last_modify_date?: null | string;
 }
 
 export interface IState {
