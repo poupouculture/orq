@@ -20,12 +20,13 @@ const useCustomerGroupStore = defineStore("customerGroup", {
     getCustomer: (state) => state.customer,
   },
   actions: {
-    async getAll(rowsPerPage = 4, page = 1) {
+    async getAll({ rowsPerPage = 4, page = 1, search = undefined }) {
       const {
         data: { data: customerGroups, meta },
       } = await getCustomerGroups({
         limit: rowsPerPage,
         page,
+        search,
       });
       this.items = customerGroups.filter((item) => item !== null);
       this.meta = {
@@ -51,7 +52,6 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           type: "positive",
           color: "primary",
         });
-        this.getAll();
       } catch (error) {}
       Loading.hide();
     },
@@ -78,7 +78,6 @@ const useCustomerGroupStore = defineStore("customerGroup", {
       Loading.show();
       try {
         await deleteCustomer(id, customerId);
-        await this.getAll();
         Loading.hide();
         Notify.create({
           message: "Customer successfully deleted!",
@@ -87,11 +86,15 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           color: "primary",
         });
       } catch (error) {
+        console.log(error);
         Notify.create({
           message: error,
         });
       }
       Loading.hide();
+    },
+    setMeta(val) {
+      this.meta.page = val.page;
     },
   },
 });

@@ -25,11 +25,11 @@
           <q-tab-panel name="general" class="pannel-each">
             <GeneralInformation
               @submit="submitGeneralInformation"
-              mode="edit"
+              :mode="'edit'"
             />
           </q-tab-panel>
 
-          <q-tab-panel name="Other-Information">
+          <q-tab-panel name="otherInformation">
             <!-- <OtherInformation /> -->
           </q-tab-panel>
 

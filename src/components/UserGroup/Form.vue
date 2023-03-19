@@ -153,16 +153,28 @@
   <AddCustomer
     @submit="(val) => submitAddCustomer(val)"
     :data="customersData"
-    @close="openAddCustomer = false"
+    @close="
+      () => {
+        openAddCustomer = false;
+        customerQuery = '';
+      }
+    "
     @changePage="(val) => changePage(val, 'customer')"
     :pagination="pagination"
+    @search="searchCustomerHandler"
     v-if="openAddCustomer"
   />
   <AddUserGroupOverlay
     @submit="(val) => submitAddUserGroup(val)"
-    @close="openAddUserGroup = false"
+    @close="
+      () => {
+        openAddUserGroup = false;
+        userGroupQuery = '';
+      }
+    "
     :data="userGroupData"
     @changePage="(val) => changePage(val, 'usergroup')"
+    @search="searchUserGroupHandler"
     :pagination="pagination"
     v-if="openAddUserGroup"
   />
@@ -205,12 +217,14 @@ const selectedUserGroup = ref([]);
 const addedUserGroup = ref([]);
 const deletedUserGroup = ref([]);
 const userGroupData = ref([]);
+const userGroupQuery = ref("");
 // Customer state
 const openAddCustomer = ref(false);
 const selectedCustomer = ref([]);
 const addedCustomer = ref([]);
 const deletedCustomer = ref([]);
 const customersData = ref([]);
+const customerQuery = ref("");
 
 const form = reactive({
   name: "",
@@ -254,6 +268,18 @@ const toggleUserGroupOverlay = async () => {
     await fetchUserGroups();
   }
   openAddUserGroup.value = !openAddUserGroup.value;
+};
+const searchCustomerHandler = async (value) => {
+  try {
+    customerQuery.value = value;
+    await fetchCustomers();
+  } catch (error) {}
+};
+const searchUserGroupHandler = async (value) => {
+  try {
+    userGroupQuery.value = value;
+    await fetchUserGroups();
+  } catch (error) {}
 };
 const changePage = (val, type) => {
   pagination.page = val;
@@ -344,49 +370,61 @@ const submitAddUserGroup = async (val) => {
 };
 const fetchUserGroups = async () => {
   Loading.show();
+  const params = {
+    limit: pagination.rowsPerPage,
+    page: pagination.page,
+    userGroups: selectedUserGroup.value,
+    search: userGroupQuery.value.length ? userGroupQuery.value : undefined,
+  };
   if (props.id) {
     const {
       data: { data: userGroups, meta },
-    } = await getAllUserGroupEdit({
-      limit: pagination.rowsPerPage,
-      page: pagination.page,
-      userGroups: selectedUserGroup.value,
-    });
+    } = await getAllUserGroupEdit(params);
     userGroupData.value = userGroups;
-    pagination.totalCount = meta?.total_count;
+    pagination.totalCount = userGroupQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   } else {
     const {
       data: { data: userGroups, meta },
-    } = await getUserGroups({
-      limit: pagination.rowsPerPage,
-      page: pagination.page,
-    });
+    } = await getUserGroups(params);
     userGroupData.value = userGroups;
-    pagination.totalCount = meta?.total_count;
+    pagination.totalCount = userGroupQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   }
   Loading.hide();
 };
 const fetchCustomers = async () => {
   Loading.show();
+  const params = {
+    limit: pagination.rowsPerPage,
+    page: pagination.page,
+    customers: selectedCustomer.value,
+    search: customerQuery.value.length ? customerQuery.value : undefined,
+    filter: customerQuery.value?.length
+      ? {
+          key: "filter[first_name][_neq]",
+          value: "null",
+        }
+      : undefined,
+  };
   if (props.id) {
     const {
       data: { data: customers, meta },
-    } = await getAllCustomerEdit({
-      limit: pagination.rowsPerPage,
-      page: pagination.page,
-      customers: selectedCustomer.value,
-    });
+    } = await getAllCustomerEdit(params);
     customersData.value = customers;
-    pagination.totalCount = meta?.total_count;
+    pagination.totalCount = customerQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   } else {
     const {
       data: { data: customers, meta },
-    } = await getCustomers({
-      limit: pagination.rowsPerPage,
-      page: pagination.page,
-    });
+    } = await getCustomers(params);
     customersData.value = customers;
-    pagination.totalCount = meta?.total_count;
+    pagination.totalCount = customerQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   }
   Loading.hide();
 };

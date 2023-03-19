@@ -31,6 +31,9 @@
         <ContactInfo :customer-id="customerStore.getCustomer.id" />
       </div>
     </q-tab-panel>
+    <q-tab-panel name="other">
+      <div class="contact-info">Other Information</div>
+    </q-tab-panel>
     <q-tab-panel name="service_record">
       <ServiceRecord />
     </q-tab-panel>
