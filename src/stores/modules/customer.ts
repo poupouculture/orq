@@ -73,7 +73,6 @@ const useCustomerStore = defineStore("customer", {
       this.setCustomer(customer);
     },
     setCustomer(customer: ICustomer) {
-      console.log(customer);
       this.customer = [customer].map((item: ICustomer) => ({
         ...item,
         customer_groups: item.customer_groups.filter(
