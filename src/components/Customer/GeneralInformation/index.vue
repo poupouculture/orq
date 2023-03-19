@@ -87,11 +87,11 @@ const { getCustomer } = storeToRefs(customerStore);
 
 // State Reactive
 const formData = ref<ICustomer>({
-  companies: "",
+  companies: [],
 });
 
 watch(getCustomer, (value) => {
-  // mode.value = "show";
+  mode.value = "show";
   formData.value = {
     ...value,
     position: positionOptions.find(
@@ -153,11 +153,11 @@ const onSubmit = () => {
         first_name: formData.value.first_name,
         last_name: formData.value.last_name,
         id_number: formData.value.id_number,
-        customer_code: formData.value.customer_code,
-        gender: formData.value.gender,
+        cust_cd: formData.value.cust_cd,
+        gender: formData.value.gender.value,
         isActive: formData.value.isActive,
         dob: formData.value.dob,
-        position: formData.value.position,
+        position: formData.value.position.value,
         customer_group: transforCustomerGroupPayload(
           getCustomer.value,
           formData.value.customer_groups
@@ -167,8 +167,22 @@ const onSubmit = () => {
           formData.value.companies
         ),
         tags: transformTagPayload(getCustomer.value, formData.value.tags),
+        location_code: formData.value.location_code,
+        tel: formData.value.tel,
+        delivery_location_address: formData.value.delivery_location_address,
+        customer_company_name_en: formData.value.customer_company_name_en,
+        delyloc_no: formData.value.delyloc_no,
+        div_no: formData.value.div_no,
+        delyloc_name_e: formData.value.delyloc_name_e,
+        delyloc_name_c: formData.value.delyloc_name_c,
+        delyloc_add1_e: formData.value.delyloc_add1_e,
+        delyloc_add2_e: formData.value.delyloc_add2_e,
+        delyloc_add3_e: formData.value.delyloc_add3_e,
+        delyloc_add1_c: formData.value.delyloc_add1_c,
+        delyloc_add2_c: formData.value.delyloc_add2_c,
+        delyloc_add3_c: formData.value.delyloc_add3_c,
+        salesman_cd: formData.value.salesman_cd,
       };
-
       emit("submit", payload);
     }
   });
@@ -235,6 +249,7 @@ const mappingCustomerGroups = () => {
               <BaseMultiOptions
                 v-model="formData.tags"
                 label="Labels"
+                :rules="[(val) => required(val)]"
                 filter-url="/items/tags"
                 :options="options.tags"
                 option-variable-name="tags"
@@ -287,7 +302,7 @@ const mappingCustomerGroups = () => {
           <div class="col">
             <p class="label-style">Customer Code</p>
             <q-input
-              v-model="formData.customer_code"
+              v-model="formData.cust_cd"
               class="indi"
               :rules="[(val) => required(val)]"
               outlined
@@ -347,6 +362,7 @@ const mappingCustomerGroups = () => {
               v-model="formData.position"
               :options="positionOptions"
               dense
+              :rules="[(val) => required(val)]"
               :disable="mode == 'show'"
             />
           </div>
@@ -356,8 +372,6 @@ const mappingCustomerGroups = () => {
               label="Companies"
               filter-url="/items/companies"
               :options="options.companies"
-              option-variable-name="companies"
-              name-label="name_english"
               :mode="mode"
               @filter="filter"
               @update:multi-options="updateMultiOptions"
@@ -369,6 +383,7 @@ const mappingCustomerGroups = () => {
             <BaseMultiOptions
               v-model="formData.customer_groups"
               label="Customer Groups"
+              :rules="[(val) => required(val)]"
               filter-url="/items/customer_groups"
               :options="options.customerGroups"
               option-variable-name="customerGroups"
@@ -392,7 +407,7 @@ const mappingCustomerGroups = () => {
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Phone</p>
+            <p class="label-style">Company Tel</p>
             <q-input
               v-model="formData.tel"
               class="indi"
@@ -416,8 +431,60 @@ const mappingCustomerGroups = () => {
             />
           </div>
         </div>
-        <div class="row q-mb-lg">
-          <div class="col-6">
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Delivery Location</p>
+            <q-input
+              v-model="formData.delyloc_no"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Division</p>
+            <q-input
+              v-model="formData.div_no"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Customer Name (English)</p>
+            <q-input
+              v-model="formData.delyloc_name_e"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Customer Name (China)</p>
+            <q-input
+              v-model="formData.delyloc_name_c"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
             <p class="label-style">Customer Company Name En</p>
             <q-input
               v-model="formData.customer_company_name_en"
@@ -429,14 +496,108 @@ const mappingCustomerGroups = () => {
               dense
             />
           </div>
+          <div class="col">
+            <p class="label-style">Last modify date</p>
+            <q-input
+              v-model="formData.last_modify_date"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              disable
+              dense
+            />
+          </div>
         </div>
 
-        <q-checkbox
-          v-if="formData"
-          :disable="mode == 'show'"
-          v-model="formData.is_active"
-          label="Customer Active"
-        />
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col flex flex-col gap-3">
+            <p class="label-style">Address (English)</p>
+            <div class="flex flex-col gap-4">
+              <q-input
+                v-model="formData.delyloc_add1_e"
+                class="indi"
+                :rules="[(val) => required(val)]"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+              <q-input
+                v-model="formData.delyloc_add2_e"
+                class="indi"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+              <q-input
+                v-model="formData.delyloc_add3_e"
+                class="indi"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+            </div>
+          </div>
+          <div class="col flex flex-col gap-3">
+            <p class="label-style">Address (China)</p>
+            <div class="flex flex-col gap-4">
+              <q-input
+                v-model="formData.delyloc_add1_c"
+                class="indi"
+                :rules="[(val) => required(val)]"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+              <q-input
+                v-model="formData.delyloc_add2_c"
+                class="indi"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+              <q-input
+                v-model="formData.delyloc_add3_c"
+                class="indi"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col flex flex-col gap-3">
+            <p class="label-style">Salesman Code</p>
+            <div class="flex flex-col gap-4">
+              <q-input
+                v-model="formData.salesman_cd"
+                class="indi"
+                :rules="[(val) => required(val)]"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+            </div>
+          </div>
+          <div class="col flex justify-center items-center">
+            <q-checkbox
+              v-if="formData"
+              :disable="mode == 'show'"
+              v-model="formData.is_active"
+              label="Customer Active"
+            />
+          </div>
+        </div>
+
         <div class="row q-gutter-xl" v-if="mode !== 'show'">
           <div v-if="showReturnButton" class="col">
             <div class="btn-cls" @click="returnDialog = true">
