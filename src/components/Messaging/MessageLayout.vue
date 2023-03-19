@@ -66,6 +66,8 @@ const update = (val: number) => {
 
 onMounted(() => {
   window.addEventListener("resize", resetLeftWidth);
+  // fixed mobile strange bug;
+  messagingStore.setLeftDrawerOpen(true);
 });
 onBeforeUnmount(() => {
   removeEventListener("resize", resetLeftWidth);

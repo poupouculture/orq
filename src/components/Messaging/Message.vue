@@ -128,6 +128,7 @@
               ref="uplader"
               accept=".gif, .jpg, .jpeg, .png, image/*"
               class="hidden invisible"
+              :filter="imageSizeFilter"
               @added="upload"
             />
           </q-btn>
@@ -362,7 +363,7 @@ const sendMessage = async () => {
   isChatExpired.value = false;
   try {
     if (messages.value.length > 0) {
-      const { data, status } = await messagingStore.sendChatTextMessage({
+      const data = await messagingStore.sendChatTextMessage({
         chatId: getSelectedChatId.value,
         messageProduct: Product.WHATSAPP,
         to: chatNumber.value,
@@ -375,15 +376,21 @@ const sendMessage = async () => {
       });
       const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
       const addMessage: any = cachedMessage.find((item) => item.id === tempId);
-      if (!status) {
+      if (!data.status) {
         addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
-        Notify.create({
-          position: "top",
-          message: data.message,
-          color: "purple",
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: data.message,
         });
+        // Notify.create({
+        //   message: data.message,
+        //   type: "negative",
+        //   color: "purple",
+        //   position: "top",
+        // });
       } else {
-        addMessage.id = data.derp_chats_messages_id ?? data;
+        addMessage.id = data.data.derp_chats_messages_id;
         addMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
       }
     } else {
@@ -463,7 +470,7 @@ const sendMedia = async (blob: Blob) => {
   scrollToBottom();
   const filename = uuid();
   const bodyFormData = new FormData();
-  const file = new window.File([blob], filename, { type: "audio/mpeg" });
+  const file = new window.File([blob], filename, { type: "audio/ogg" });
   bodyFormData.append("caption", filename);
   bodyFormData.append("file", file);
   const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
@@ -568,6 +575,20 @@ const upload = async (fileList: any) => {
   const cm: any = cachedMessage.find((item) => item.id === tempId);
   cm.sendMessageStatus = SendMessageStatus.DEFAULT;
   cm.id = data.derp_chats_messages_id;
+};
+
+const imageSizeFilter = (files: any[]) => {
+  const filterFiles = files.filter((file) => file.size <= 1024 * 1024 * 5);
+  if (!filterFiles.length) {
+    Notify.create({
+      message: "Image cannot exceed 5M",
+      type: "negative",
+      color: "purple",
+      position: "top",
+    });
+  }
+
+  return filterFiles;
 };
 
 onBeforeUnmount(() => {
