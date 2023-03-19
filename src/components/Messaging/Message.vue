@@ -249,8 +249,8 @@ const chatNumber = computed<string>(() =>
   getSelectedChat.value.name.replace(/[^\d]/g, "")
 );
 
-const members = computed<Member[]>(() =>
-  JSON.parse(getSelectedChat.value.members)
+const members = computed<Member[]>(
+  () => JSON.parse(getSelectedChat.value.members) || []
 );
 
 const messages = computed<Message[]>(() => {
