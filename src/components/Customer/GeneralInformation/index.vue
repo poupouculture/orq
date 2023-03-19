@@ -86,6 +86,7 @@ const locationCode = ref("");
 const tel = ref("");
 const deliveryLocationAddress = ref("");
 const customerCompanyNameEn = ref("");
+const customerCompanyNameZht = ref("");
 const delylocNo = ref("");
 const divNo = ref("");
 const delylocNameE = ref("");
@@ -97,6 +98,7 @@ const delylocAdd1C = ref("");
 const delylocAdd2C = ref("");
 const delylocAdd3C = ref("");
 const salesmanCd = ref("");
+const lastModifyDate = ref("");
 
 const options: { [key: string]: any[] } = reactive({
   tags: [] as ITagOptions[],
@@ -133,6 +135,7 @@ onMounted(async () => {
     tel.value = customer.tel;
     deliveryLocationAddress.value = customer.delivery_location_address;
     customerCompanyNameEn.value = customer.customer_company_name_en;
+    customerCompanyNameZht.value = customer.customer_company_name_zht;
     delylocNo.value = customer.delyloc_no;
     divNo.value = customer.div_no;
     delylocNameE.value = customer.delyloc_name_e;
@@ -144,6 +147,7 @@ onMounted(async () => {
     delylocAdd2C.value = customer.delyloc_add2_c;
     delylocAdd3C.value = customer.delyloc_add3_c;
     salesmanCd.value = customer.salesman_cd;
+    lastModifyDate.value = customer.last_modify_date;
     locationCode.value = customer.location_code;
   }
 });
@@ -173,6 +177,7 @@ watch(getCustomer, () => {
   tel.value = getCustomer.value.tel;
   deliveryLocationAddress.value = getCustomer.value.delivery_location_address;
   customerCompanyNameEn.value = getCustomer.value.customer_company_name_en;
+  customerCompanyNameZht.value = getCustomer.value.customer_company_name_zht;
   delylocNo.value = getCustomer.value.delyloc_no;
   divNo.value = getCustomer.value.div_no;
   delylocNameE.value = getCustomer.value.delyloc_name_e;
@@ -184,6 +189,7 @@ watch(getCustomer, () => {
   delylocAdd2C.value = getCustomer.value.delyloc_add2_c;
   delylocAdd3C.value = getCustomer.value.delyloc_add3_c;
   salesmanCd.value = getCustomer.value.salesman_cd;
+  lastModifyDate.value = getCustomer.value.last_modify_date;
   companies.value = mappingCompanies();
   customerGroups.value = mappingCustomerGroups();
   customerForm.value?.resetValidation();
@@ -248,8 +254,9 @@ const onSubmit = async () => {
       tags: transformTagPayload(getCustomer.value, tags.value),
       location_code: locationCode.value,
       tel: tel.value,
-      delivery_location_address: deliveryLocationAddress.value,
+      // delivery_location_address: deliveryLocationAddress.value,
       customer_company_name_en: customerCompanyNameEn.value,
+      customer_company_name_zht: customerCompanyNameZht.value,
       delyloc_no: delylocNo.value,
       div_no: divNo.value,
       delyloc_name_e: delylocNameE.value,
@@ -321,10 +328,22 @@ const mappingCustomerGroups = () => {
           />
         </div>
         <div class="row q-mb-lg">
-          <div class="col-2">
-            <img src="src/assets/images/imagetaker.png" name="folder_open" />
+          <div class="col-5">
+            <p class="label-style">Customer Company Name En</p>
+            <q-input
+              v-model="customerCompanyNameEn"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
           </div>
-          <div class="col-10">
+          <!-- <div class="col-2">
+            <img src="src/assets/images/imagetaker.png" name="folder_open" />
+          </div> -->
+          <div class="col-5">
             <div class="w-full">
               <BaseMultiOptions
                 v-model="tags"
@@ -357,7 +376,6 @@ const mappingCustomerGroups = () => {
             <q-input
               v-model="lastName"
               class="indi"
-              :rules="[(val) => required(val)]"
               outlined
               lazy-rules
               :disable="mode == 'show'"
@@ -391,7 +409,111 @@ const mappingCustomerGroups = () => {
             />
           </div>
         </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Customer Name (English)</p>
+            <q-input
+              v-model="delylocNameE"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Customer Name (Chinese)</p>
+            <q-input
+              v-model="customerCompanyNameZht"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
         <div class="row q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Division No.</p>
+            <q-input
+              v-model="divNo"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Location Code</p>
+            <q-input
+              v-model="locationCode"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Company Tel.</p>
+            <q-input
+              v-model="tel"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <!-- <div class="col">
+            <p class="label-style">Deliver Location Address</p>
+            <q-input
+              v-model="deliveryLocationAddress"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div> -->
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Delivery Location</p>
+            <q-input
+              v-model="delylocNo"
+              class="indi"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <BaseMultiOptions
+              v-model="customerGroups"
+              label="Customer Groups"
+              filter-url="/items/customer_groups"
+              :options="options.customerGroups"
+              option-variable-name="customerGroups"
+              :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
+            />
+          </div>
           <div class="col">
             <p class="label-style">Gender</p>
             <q-select
@@ -403,36 +525,6 @@ const mappingCustomerGroups = () => {
               :disable="mode == 'show'"
               dense
             />
-          </div>
-          <div class="col">
-            <p class="label-style">Date Of Birth</p>
-            <q-input
-              v-model="dateOfBirth"
-              mask="####-##-##"
-              :rules="[(val) => required(val)]"
-              lazy-rules
-              dense
-              outlined
-              :disable="mode == 'show'"
-              bg-color="white"
-            >
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy
-                    ref="qDateProxy"
-                    transition-show="scale"
-                    transition-hide="scale"
-                  >
-                    <q-date
-                      v-model="dateOfBirth"
-                      :options="optionDateFn"
-                      mask="YYYY-MM-DD"
-                      @input="() => $refs.qDateProxy.hide()"
-                    />
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
           </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
@@ -462,133 +554,16 @@ const mappingCustomerGroups = () => {
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <BaseMultiOptions
-              v-model="customerGroups"
-              label="Customer Groups"
-              filter-url="/items/customer_groups"
-              :options="options.customerGroups"
-              option-variable-name="customerGroups"
-              :mode="mode"
-              @filter="filter"
-              @update:multi-options="updateMultiOptions"
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Location Code</p>
+            <p class="label-style">Last modify date</p>
             <q-input
-              v-model="locationCode"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
-        <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Company Tel</p>
-            <q-input
-              v-model="tel"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Deliver Location Address</p>
-            <q-input
-              v-model="deliveryLocationAddress"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
-        <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Delivery Location</p>
-            <q-input
-              v-model="delylocNo"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Division</p>
-            <q-input
-              v-model="divNo"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
-
-        <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Customer Name (English)</p>
-            <q-input
-              v-model="delylocNameE"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Customer Name (China)</p>
-            <q-input
-              v-model="delylocNameC"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
-        <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Customer Company Name En</p>
-            <q-input
-              v-model="customerCompanyNameEn"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <!-- <p class="label-style">Last modify date</p>
-            <q-input
-              v-model="last_modify_date"
+              v-model="lastModifyDate"
               class="indi"
               :rules="[(val) => required(val)]"
               outlined
               lazy-rules
               disable
               dense
-            /> -->
+            />
           </div>
         </div>
 
@@ -624,7 +599,7 @@ const mappingCustomerGroups = () => {
             </div>
           </div>
           <div class="col flex flex-col gap-3">
-            <p class="label-style">Address (China)</p>
+            <p class="label-style">Address (Chinese)</p>
             <div class="flex flex-col gap-4">
               <q-input
                 v-model="delylocAdd1C"
@@ -669,6 +644,35 @@ const mappingCustomerGroups = () => {
                 dense
               />
             </div>
+          </div>
+          <div class="col">
+            <p class="label-style">Date Of Birth</p>
+            <q-input
+              v-model="dateOfBirth"
+              mask="####-##-##"
+              lazy-rules
+              dense
+              outlined
+              :disable="mode == 'show'"
+              bg-color="white"
+            >
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy
+                    ref="qDateProxy"
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      v-model="dateOfBirth"
+                      :options="optionDateFn"
+                      mask="YYYY-MM-DD"
+                      @input="() => $refs.qDateProxy.hide()"
+                    />
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
           </div>
           <div class="col flex justify-center items-center">
             <q-checkbox
