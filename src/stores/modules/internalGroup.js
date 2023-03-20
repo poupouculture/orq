@@ -85,7 +85,6 @@ const useInternalGroupStore = defineStore("internalGroup", {
           color: "primary",
           position: "top",
         });
-        this.getAll();
       } catch (error) {}
       Loading.hide();
     },
@@ -100,7 +99,6 @@ const useInternalGroupStore = defineStore("internalGroup", {
           position: "top",
         });
         Loading.hide();
-        this.getAll(this.meta.rowsPerPage, this.meta.page);
       } catch (error) {
         Notify.create({
           message: error.response?.data.errors[0].message,

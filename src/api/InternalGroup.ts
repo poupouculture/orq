@@ -43,7 +43,7 @@ export const getInternalGroup = async (id: string) => {
 };
 
 export const getUsersFilter = async (
-  { limit = 10, page = 1 },
+  { limit = 10, page = 1, search = undefined },
   ids: string[]
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -53,6 +53,7 @@ export const getUsersFilter = async (
     params: {
       limit,
       offset,
+      search,
       "filter[_and][0][id][_nin]": ids.join(),
       "filter[_or][0][role][name][_in]": "CS,CS-Manager",
       fields,

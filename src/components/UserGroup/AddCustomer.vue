@@ -52,6 +52,7 @@ const emits = defineEmits(["submit", "changePage", "close", "search"]);
 const selected = ref([]);
 const props = defineProps({
   pagination: Object,
+  data: Array,
 });
 const pagination = computed(() => props.pagination);
 const data = computed(() => props.data);

@@ -48,15 +48,18 @@
 import { Loading } from "quasar";
 import useCustomerStore from "src/stores/modules/customer";
 import useInternalGroup from "src/stores/modules/internalGroup";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import BaseLayout from "../Customer/BaseLayout.vue";
 import DeleteDialog from "../Dialogs/DeleteDialog.vue";
 const props = defineProps({
   id: [String, Number],
   userId: [String, Number],
+  pagination: Object,
 });
 const customerStore = useCustomerStore();
+const internalGroupStore = useInternalGroup();
 const showUserDetail = ref(false);
+const pagination = computed(() => props.pagination);
 const openUserDetail = async () => {
   Loading.show();
   await customerStore.fetchUser(props.userId);
@@ -64,10 +67,14 @@ const openUserDetail = async () => {
   showUserDetail.value = true;
 };
 const deleteDialog = ref(false);
-const submitDelete = () => {
-  useInternalGroup().deleteUser({
+const submitDelete = async () => {
+  await internalGroupStore.deleteUser({
     id: props.id,
     userId: props.userId,
+  });
+  await internalGroupStore.getAll({
+    rowsPerPage: pagination.value.rowsPerPage,
+    page: pagination.value.page,
   });
 };
 </script>
