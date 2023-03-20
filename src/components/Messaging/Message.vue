@@ -478,7 +478,7 @@ const sendMedia = async (blob: Blob) => {
   scrollToBottom();
   const filename = uuid();
   const bodyFormData = new FormData();
-  const file = new window.File([blob], filename, { type: "audio/ogg" });
+  const file = new window.File([blob], filename, { type: "audio/mpeg" });
   bodyFormData.append("caption", filename);
   bodyFormData.append("file", file);
   const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
