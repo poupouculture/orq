@@ -25,7 +25,7 @@ onMounted(async () => {
 
 const deleteUser = async () => {
   const id = route.params.id;
-  await customerStore.deleteCustomer(id);
+  await customerStore.deleteCustomer([id]);
   router.push("/customers");
 };
 

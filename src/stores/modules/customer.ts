@@ -40,7 +40,7 @@ const useCustomerStore = defineStore("customer", {
     getCustomer: (state) => state.customer,
   },
   actions: {
-    async deleteCustomer(id: string) {
+    async deleteCustomer(id: [string]) {
       Loading.show();
 
       try {
