@@ -1,6 +1,10 @@
 import { api } from "src/boot/axios";
 
-export const getUsers = async ({ limit = 10, page = 1 }) => {
+export const getUsers = async ({
+  limit = 10,
+  page = 1,
+  search = undefined,
+}) => {
   const fields = `id, first_name, last_name, gender, date_created, position, role.name`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -11,6 +15,7 @@ export const getUsers = async ({ limit = 10, page = 1 }) => {
         limit,
         offset,
         meta: "*",
+        search,
         filter: {
           _or: [
             { role: { name: { _eq: "CS-Manager" } } },

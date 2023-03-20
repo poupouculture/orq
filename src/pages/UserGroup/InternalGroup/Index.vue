@@ -80,6 +80,7 @@
               <ButtonGroupMenu
                 class="w-2/12 grow-0 justify-end"
                 :id="group.id"
+                @add-user="fetchInternalGroups()"
               />
             </div>
             <!-- customers -->
@@ -116,6 +117,7 @@
                   <ButtonUserMenu
                     :id="group.id"
                     :user-id="directus_users_id.id"
+                    :pagination="pagination"
                   />
                 </div>
               </template>
@@ -168,11 +170,7 @@ const pagination = reactive({
 const searchHandler = async () => {
   searchLoading.value = true;
   try {
-    await internalGroupStore.getAll({
-      rowsPerPage: 4,
-      page: 1,
-      search: query.value.length ? query.value : undefined,
-    });
+    await fetchInternalGroups();
     searchLoading.value = false;
   } catch (error) {
     searchLoading.value = false;
@@ -187,21 +185,22 @@ const resetSearch = () => {
 const totalPage = () => {
   return Math.ceil(meta.value.filter_count / pagination.rowsPerPage);
 };
-const changePage = (val) => {
+const changePage = async (val) => {
   pagination.page = val;
-  internalGroupStore.getAll({
-    rowsPerPage: pagination.rowsPerPage,
-    page: pagination.page,
-    search: query.value.length ? query.value : undefined,
-  });
+  await fetchInternalGroups();
   internalGroupStore.setMeta({ ...pagination });
 };
 onMounted(async () => {
   loading.value = true;
+  await fetchInternalGroups();
+  loading.value = false;
+});
+
+const fetchInternalGroups = async () => {
   await internalGroupStore.getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
+    search: query.value.length ? query.value : undefined,
   });
-  loading.value = false;
-});
+};
 </script>

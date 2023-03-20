@@ -32,6 +32,7 @@
       @close="openAddUser = false"
       :data="usersData"
       @changePage="changePage"
+      @search="searchHandler"
       :pagination="pagination"
     />
   </div>
@@ -44,6 +45,7 @@ import useInternalGroupStore from "src/stores/modules/internalGroup";
 import { Loading } from "quasar";
 import AddUserOverlay from "./AddUser.vue";
 
+const emits = defineEmits(["addUser"]);
 const props = defineProps({
   id: [String, Number],
 });
@@ -54,12 +56,19 @@ const internalGroupStore = useInternalGroupStore();
 const item = computed(() =>
   internalGroupStore.items.find((item) => item.id === props.id)
 );
+const userQuery = ref("");
 
 const toggleAddUser = async () => {
   if (!openAddUser.value) {
     await fetchUsers();
   }
   openAddUser.value = !openAddUser.value;
+};
+const searchHandler = async (value) => {
+  try {
+    userQuery.value = value;
+    await fetchUsers();
+  } catch (error) {}
 };
 const pagination = reactive({
   sortBy: "desc",
@@ -77,22 +86,26 @@ const fetchUsers = async () => {
     {
       limit: pagination.rowsPerPage,
       page: pagination.page,
+      search: userQuery.value?.length ? userQuery.value : undefined,
     },
     item.value.users.map((user) => user.directus_users_id.id)
   );
   Loading.hide();
   usersData.value = users;
-  pagination.totalCount = meta?.total_count;
-  pagination.filterCount = meta?.filter_count;
+  pagination.totalCount = userQuery.value.length
+    ? meta?.filter_count
+    : meta?.total_count;
+  Loading.hide();
 };
 
 const submitAddUser = async (val) => {
   toggleAddUser();
   if (val && val.length) {
-    internalGroupStore.addUsers({
+    await internalGroupStore.addUsers({
       id: props.id,
       users: val.map((item) => item.id),
     });
+    emits("addUser");
   }
 };
 
