@@ -41,22 +41,19 @@ const getAudioData = async () => {
   const { data } = await api.get(props.src, {
     responseType: "blob",
   });
-  const blob = new Blob([data], { type: "audio/mgpe" });
+  const blob = new Blob([data], { type: "audio/wav" });
   audio.value.src = (window.URL || window.webkitURL).createObjectURL(blob);
 };
 
 const audioPlay = () => {
-  audio.value.play();
-  playing.value = true;
-
-  // if (audio.value.paused) {
-  //   audio.value.play();
-  // playing.value = true;
-  // } else {
-  //   audio.value.pause();
-  //   audio.value.currentTime = 0;
-  //   playing.value = false;
-  // }
+  if (audio.value.paused) {
+    audio.value.play();
+    playing.value = true;
+  } else {
+    audio.value.pause();
+    // audio.value.currentTime = 0;
+    playing.value = false;
+  }
 };
 // const duration = computed(() => {
 //   if (props.content.duration) {

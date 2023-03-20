@@ -1,10 +1,13 @@
 <template>
-  <div v-if="getSelectedChatId" class="h-full w-full flex flex-col">
+  <div
+    v-if="getSelectedChatId"
+    class="h-full w-full flex flex-col q-pa-md bg-white"
+  >
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
       <div
-        class="flex items-center space-x-3"
+        class="flex items-center space-x-3 cursor-pointer"
         @click="showCustomerInfoInMobile"
       >
         <q-avatar class="rounded-avatar">
@@ -16,18 +19,17 @@
         </div>
       </div>
       <!-- Close button -->
-      <div class="cursor-pointer">
-        <q-btn
-          @click="closeChat"
-          style="color: #64748b"
-          flat
-          round
-          icon="close"
-        />
-      </div>
+      <q-btn
+        class="cursor-pointer lg:hidden max-[1023]:block"
+        @click="closeChat"
+        style="color: #64748b"
+        flat
+        round
+        icon="close"
+      />
     </header>
-    <div class="text-gray-400">Members</div>
-    <div class="flex p-2">
+    <div class="p-2 text-gray-400">Members</div>
+    <div class="flex p-2 justify-between">
       <div
         class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
         v-for="(member, index) of members.slice(0, 3)"
@@ -41,11 +43,11 @@
       >
         {{ members.length - 3 }} +
       </div>
+      <ChatConversationButton
+        v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+      />
     </div>
-    <ChatConversationButton
-      class="pb-2 border-b"
-      v-if="getSelectedChat.status !== ChatTypes.CLOSED"
-    />
+    <q-separator class="mx-2" size="1px" inset />
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full">
       <div
@@ -185,7 +187,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onBeforeUnmount, reactive } from "vue";
+import {
+  computed,
+  ref,
+  watch,
+  nextTick,
+  onBeforeUnmount,
+  reactive,
+  inject,
+} from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
@@ -237,7 +247,8 @@ const userInfoStore = useUserInfoStore();
 const customerStore = useCustomerStore();
 const { getCustomer } = storeToRefs(customerStore);
 const hasMoreMessage: HasMore = reactive({});
-
+const rightDrawerOpen: any = inject("rightDrawerOpen");
+const leftDrawerOpen: any = inject("leftDrawerOpen");
 const { getSelectedChat, getSelectedChatId, cachedChatMessages } =
   storeToRefs(messagingStore);
 
@@ -322,8 +333,7 @@ const scrollToBottom = async () => {
 };
 
 const closeChat = async () => {
-  messagingStore.setSelectedChatId("");
-  messagingStore.setLeftDrawerOpen(true);
+  leftDrawerOpen.value = true;
 };
 
 const initialName = (name: string) => {
@@ -338,9 +348,7 @@ const initialName = (name: string) => {
 };
 
 const showCustomerInfoInMobile = () => {
-  if (window.innerWidth < 1024) {
-    messagingStore.setRightDrawerOpen(false);
-  }
+  rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 
 const sendMessage = async () => {
@@ -463,7 +471,7 @@ const sendMedia = async (blob: Blob) => {
   scrollToBottom();
   const filename = uuid();
   const bodyFormData = new FormData();
-  const file = new window.File([blob], filename, { type: "audio/mpeg" });
+  const file = new window.File([blob], filename, { type: "audio/ogg" });
   bodyFormData.append("caption", filename);
   bodyFormData.append("file", file);
   const data = await uploadMedia(getSelectedChatId.value, bodyFormData);

@@ -196,7 +196,7 @@ const routes = [
       {
         path: "",
         name: "messaging",
-        component: () => import("pages/Messaging/Index.vue"),
+        component: () => import("components/Messaging/Message.vue"),
       },
     ],
   },
