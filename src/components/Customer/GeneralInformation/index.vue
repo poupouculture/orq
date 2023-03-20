@@ -177,7 +177,7 @@ const onSubmit = () => {
         last_name: formData.value.last_name,
         id_number: formData.value.id_number,
         customer_code: formData.value.customer_code,
-        gender: formData.value.gender,
+        gender: formData.value.gender.value,
         isActive: formData.value.isActive,
         dob: formData.value.dob,
         position: formData.value.position.value,

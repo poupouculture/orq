@@ -25,7 +25,7 @@
           <q-tab-panel name="general" class="pannel-each">
             <GeneralInformation
               @submit="submitGeneralInformation"
-              :mode="'edit'"
+              :mode="mode"
             />
           </q-tab-panel>
 
@@ -65,7 +65,10 @@ import Remark from "../Remark/Remark.vue";
 import useCustomerStore from "src/stores/modules/customer";
 // import Attachement from "../Attachement/Attachement.vue";
 defineProps({
-  mode: String,
+  mode: {
+    type: String,
+    default: "edit",
+  },
 });
 const emit = defineEmits(["submitGeneralInformation"]);
 const customerStore = useCustomerStore();
