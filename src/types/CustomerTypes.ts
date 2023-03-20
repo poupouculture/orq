@@ -46,7 +46,7 @@ export interface ICustomer {
   customer_groups?: ICustomerGroup[] | any;
   tags?: [TagRelation] | any;
   is_active?: boolean;
-  tel?: null | number;
+  tel?: null | number | string;
   location_code?: null | number;
   delivery_location_address?: null | string;
   customer_company_name_en?: null | string;

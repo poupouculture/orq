@@ -70,7 +70,10 @@ defineProps({
     default: "edit",
   },
 });
-const emit = defineEmits(["submitGeneralInformation"]);
+const emit = defineEmits([
+  "submitGeneralInformation",
+  "deleteGeneralInformation",
+]);
 const customerStore = useCustomerStore();
 const tab = ref("general");
 
