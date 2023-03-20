@@ -257,7 +257,7 @@ const onSubmit = async () => {
       // delivery_location_address: deliveryLocationAddress.value,
       customer_company_name_en: customerCompanyNameEn.value,
       customer_company_name_zht: customerCompanyNameZht.value,
-      delyloc_no: delylocNo.value,
+      // delyloc_no: delylocNo.value,
       div_no: divNo.value,
       delyloc_name_e: delylocNameE.value,
       delyloc_name_c: delylocNameC.value,
@@ -327,8 +327,32 @@ const mappingCustomerGroups = () => {
             class="dark-btn"
           />
         </div>
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style">Customer Name (English)</p>
+            <q-input
+              v-model="customerCompanyNameEn"
+              class="indi"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+          <div class="col">
+            <p class="label-style">Customer Name (Chinese)</p>
+            <q-input
+              v-model="customerCompanyNameZht"
+              class="indi"
+              outlined
+              lazy-rules
+              :disable="mode == 'show'"
+              dense
+            />
+          </div>
+        </div>
         <div class="row q-mb-lg">
-          <div class="col-5">
+          <!-- <div class="col-5">
             <p class="label-style">Customer Company Name En</p>
             <q-input
               v-model="customerCompanyNameEn"
@@ -339,7 +363,7 @@ const mappingCustomerGroups = () => {
               :disable="mode == 'show'"
               dense
             />
-          </div>
+          </div> -->
           <!-- <div class="col-2">
             <img src="src/assets/images/imagetaker.png" name="folder_open" />
           </div> -->
@@ -356,31 +380,6 @@ const mappingCustomerGroups = () => {
                 @update:multi-options="updateMultiOptions"
               />
             </div>
-          </div>
-        </div>
-        <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
-            <p class="label-style">First Name</p>
-            <q-input
-              v-model="firstName"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Last Name</p>
-            <q-input
-              v-model="lastName"
-              class="indi"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
           </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
@@ -409,11 +408,11 @@ const mappingCustomerGroups = () => {
             />
           </div>
         </div>
-        <div class="row q-mb-lg q-gutter-xl">
+        <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
-            <p class="label-style">Customer Name (English)</p>
+            <p class="label-style">First Name</p>
             <q-input
-              v-model="delylocNameE"
+              v-model="firstName"
               class="indi"
               :rules="[(val) => required(val)]"
               outlined
@@ -423,11 +422,10 @@ const mappingCustomerGroups = () => {
             />
           </div>
           <div class="col">
-            <p class="label-style">Customer Name (Chinese)</p>
+            <p class="label-style">Last Name</p>
             <q-input
-              v-model="customerCompanyNameZht"
+              v-model="lastName"
               class="indi"
-              :rules="[(val) => required(val)]"
               outlined
               lazy-rules
               :disable="mode == 'show'"
@@ -467,7 +465,6 @@ const mappingCustomerGroups = () => {
             <q-input
               v-model="tel"
               class="indi"
-              :rules="[(val) => required(val)]"
               outlined
               lazy-rules
               :disable="mode == 'show'"
@@ -487,7 +484,7 @@ const mappingCustomerGroups = () => {
             />
           </div> -->
         </div>
-        <div class="row q-mb-lg q-gutter-xl">
+        <!-- <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style">Delivery Location</p>
             <q-input
@@ -500,7 +497,7 @@ const mappingCustomerGroups = () => {
               dense
             />
           </div>
-        </div>
+        </div> -->
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <BaseMultiOptions
@@ -554,7 +551,7 @@ const mappingCustomerGroups = () => {
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Last modify date</p>
+            <p class="label-style">Last modified date</p>
             <q-input
               v-model="lastModifyDate"
               class="indi"
@@ -574,7 +571,6 @@ const mappingCustomerGroups = () => {
               <q-input
                 v-model="delylocAdd1E"
                 class="indi"
-                :rules="[(val) => required(val)]"
                 outlined
                 lazy-rules
                 :disable="mode == 'show'"
@@ -604,7 +600,6 @@ const mappingCustomerGroups = () => {
               <q-input
                 v-model="delylocAdd1C"
                 class="indi"
-                :rules="[(val) => required(val)]"
                 outlined
                 lazy-rules
                 :disable="mode == 'show'"
