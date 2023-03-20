@@ -73,6 +73,11 @@
             </span>
           </q-td>
         </template>
+        <template #body-cell-date_created="props">
+          <q-td :props="props">
+            {{ dateFormatter(props.row.date_created) }}
+          </q-td>
+        </template>
         <template #body-cell-action="props">
           <q-td :props="props">
             <router-link
@@ -95,6 +100,7 @@ import {
 } from "src/api/documentTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { dateFormatter } from "src/helpers";
 import BaseTable from "src/components/BaseTable.vue";
 
 const router = useRouter();
@@ -136,6 +142,7 @@ const headerColumns = [
     label: "Created On",
     field: "date_created",
     classes: "text-black",
+    sortable: true,
   },
   {
     name: "action",
@@ -156,9 +163,6 @@ const data = reactive({
   rowsPerPage: 10,
 });
 
-onMounted(() => {
-  fetchApplicationPrograms();
-});
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
@@ -183,5 +187,9 @@ const archiveSelected = () => {
     await updateDocumentTemplate(data.id, data);
   });
 };
+
+onMounted(() => {
+  fetchApplicationPrograms();
+});
 </script>
 <style scoped src="./style.scss" />
