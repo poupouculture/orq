@@ -1,6 +1,6 @@
 <template>
   <BaseTable
-    :rows="propsTable.applicationPrograms"
+    :rows="propsTable.campaigns"
     :total-count="propsTable.totalCount"
     :page="propsTable.page"
     :rows-per-page="propsTable.rowsPerPage"
@@ -37,31 +37,15 @@
         </span>
       </q-td>
     </template>
-    <template #body-cell-is_approved="props">
+    <template #body-cell-sent="props">
       <q-td
         :props="props"
         :class="{ 'cursor-pointer': propsTable.isSimple }"
         @dblclick="useTemplate(props.row)"
       >
-        {{ props.row.is_approved ? "Yes" : "No" }}
-      </q-td>
-    </template>
-    <template #body-cell-is_email_template="props">
-      <q-td
-        :props="props"
-        :class="{ 'cursor-pointer': propsTable.isSimple }"
-        @dblclick="useTemplate(props.row)"
-      >
-        {{ props.row.is_email_template ? "Yes" : "No" }}
-      </q-td>
-    </template>
-    <template #body-cell-language="props">
-      <q-td
-        :props="props"
-        :class="{ 'cursor-pointer': propsTable.isSimple }"
-        @dblclick="useTemplate(props.row)"
-      >
-        {{ props.row.language }}
+        <span>
+          {{ props.row.sent || "-" }}
+        </span>
       </q-td>
     </template>
     <template #body-cell-delivered="props">
@@ -79,7 +63,7 @@
         :class="{ 'cursor-pointer': propsTable.isSimple }"
         @dblclick="useTemplate(props.row)"
       >
-        {{ props.row.messages_opened ? props.row.messages_opened : 0 }}
+        {{ props.row.read ? props.row.read : 0 }}
       </q-td>
     </template>
     <template #body-cell-replied="props">
@@ -88,7 +72,7 @@
         :class="{ 'cursor-pointer': propsTable.isSimple }"
         @dblclick="useTemplate(props.row)"
       >
-        {{ props.row.top_block_reason ? props.row.top_block_reason : 0 }}
+        {{ props.row.replied ? props.row.replied : 0 }}
       </q-td>
     </template>
     <template #body-cell-user_created="props">
@@ -97,7 +81,8 @@
         :class="{ 'cursor-pointer': propsTable.isSimple }"
         @dblclick="useTemplate(props.row)"
       >
-        {{ props.row.user_created }}
+        {{ props.row.user_created.first_name }}
+        {{ props.row.user_created.last_name }}
       </q-td>
     </template>
     <template #body-cell-date_created="props">
@@ -106,7 +91,7 @@
         :class="{ 'cursor-pointer': propsTable.isSimple }"
         @dblclick="useTemplate(props.row)"
       >
-        {{ dateFormatter(props.row.date_created) }}
+        {{ format(new Date(props.row.date_created), "Y-MM-d HH:mm:ss") }}
       </q-td>
     </template>
     <template #body-cell-action="props">
@@ -115,8 +100,8 @@
           :to="`/application-programs/${
             propsTable.formType === 'bots'
               ? 'chatbots'
-              : propsTable.formType === 'customer-service'
-              ? 'customer-services'
+              : props.formType === 'customer-service'
+              ? 'customer-serivces'
               : 'message-templates'
           }/${props.row.id}`"
           style="text-decoration: none; color: inherit"
@@ -132,11 +117,11 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { dateFormatter } from "src/helpers";
 import BaseTable from "src/components/BaseTable.vue";
+import { format } from "date-fns";
 
 const propsTable = defineProps({
-  applicationPrograms: {
+  campaigns: {
     type: Array,
     default: () => [],
   },
@@ -169,16 +154,8 @@ const headerColumns = ref([
   {
     name: "name",
     align: "left",
-    label: "Template Name",
+    label: "Campaigns Name",
     field: "name",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "category",
-    align: "left",
-    label: "Category",
-    field: "category",
     sortable: true,
     classes: "text-black",
   },
@@ -191,64 +168,47 @@ const headerColumns = ref([
     classes: "text-black",
   },
   {
-    name: "is_approved",
+    name: "sent",
     align: "center",
-    label: "Approved",
-    field: "is_approved",
+    label: "Sent",
+    field: "sent",
     sortable: true,
     classes: "text-black",
   },
   {
-    name: "is_email_template",
-    align: "center",
-    label: "Is Email",
-    field: "is_email_template",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "language",
-    align: "center",
-    label: "Language",
-    field: "language",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "messages_sent",
+    name: "delivered",
     align: "center",
     label: "Delivered",
-    field: "messages_sent",
+    field: "delivered",
     classes: "text-black",
   },
   {
-    name: "messages_opened",
+    name: "read",
     align: "center",
     label: "Read",
-    field: "messages_opened",
+    field: "read",
     classes: "text-black",
   },
   {
-    name: "top_block_reason",
+    name: "replied",
     align: "center",
     label: "Replied",
-    field: "top_block_reason",
+    field: "replied",
     classes: "text-black",
   },
-  // {
-  //   name: "user_created",
-  //   align: "center",
-  //   label: "Created By",
-  //   field: "user_created",
-  //   classes: "text-black",
-  // },
+  {
+    name: "user_created",
+    align: "center",
+    label: "Created By",
+    field: "user_created",
+    classes: "text-black",
+  },
   {
     name: "date_created",
     align: "center",
     label: "Created On",
     field: "date_created",
     classes: "text-black",
-    sortable: true,
   },
   {
     name: "action",
@@ -280,9 +240,9 @@ onMounted(() => {
         h.name !== "is_approved" &&
         h.name !== "date_created" &&
         h.name !== "user_created" &&
-        h.name !== "top_block_reason" &&
-        h.name !== "messages_sent" &&
-        h.name !== "messages_opened"
+        h.name !== "replied" &&
+        h.name !== "delivered" &&
+        h.name !== "read"
     );
   }
   if (propsTable.formType !== "bots") {

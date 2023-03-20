@@ -58,6 +58,7 @@ const showCustomerDetail = ref(false);
 const props = defineProps({
   id: [String, Number],
   customerId: [String, Number],
+  pagination: Object,
 });
 const deleteDialog = ref(false);
 const openCustomerDetail = async () => {
@@ -66,8 +67,12 @@ const openCustomerDetail = async () => {
   Loading.hide();
   showCustomerDetail.value = true;
 };
-const deleteCustomer = () => {
-  customerGroupStore.deleteCustomer(props.id, props.customerId);
+const deleteCustomer = async () => {
+  await customerGroupStore.deleteCustomer(props.id, props.customerId);
+  await customerGroupStore.getAll({
+    rowsPerPage: props.pagination.rowsPerPage,
+    page: props.pagination.page,
+  });
 };
 </script>
 <style lang="scss" scoped>

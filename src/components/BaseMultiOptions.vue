@@ -9,7 +9,7 @@
       :input-debounce="700"
       outlined
       lazy-rules
-      multiple
+      :multiple="multiple"
       dense
       map-options
       @filter="filter"
@@ -25,6 +25,7 @@ import { computed } from "vue";
 
 const props = defineProps({
   mode: { default: "edit" },
+  multiple: { default: true },
   label: { type: String, default: "" },
   options: { type: Array, default: () => [] },
   modelValue: { type: Array, default: () => [] },
