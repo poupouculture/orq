@@ -544,6 +544,9 @@ const phoneNumber = ref("");
 const extension = ref("");
 const remarks = ref("");
 const errorValidations = ref([]);
+const addressdialog = ref(false);
+const mediadialog = ref(false);
+const emaildialog = ref(false);
 
 const type = ref("");
 const text = ref("");

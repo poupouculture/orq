@@ -25,6 +25,7 @@
           <q-tab-panel name="general" class="pannel-each">
             <GeneralInformation
               @submit="submitGeneralInformation"
+              @delete="$emit('deleteGeneralInformation')"
               :mode="'edit'"
             />
           </q-tab-panel>
@@ -67,7 +68,10 @@ import useCustomerStore from "src/stores/modules/customer";
 defineProps({
   mode: String,
 });
-const emit = defineEmits(["submitGeneralInformation"]);
+const emit = defineEmits([
+  "submitGeneralInformation",
+  "deleteGeneralInformation",
+]);
 const customerStore = useCustomerStore();
 const tab = ref("general");
 

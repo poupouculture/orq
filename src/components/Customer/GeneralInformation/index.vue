@@ -33,7 +33,7 @@ interface Gender {
 type Position = Option;
 type ITagOptions = Option & ITag;
 
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["submit", "delete"]);
 const router = useRouter();
 const props = defineProps({
   mode: {
@@ -280,10 +280,6 @@ const onSubmit = async () => {
 const discardChanges = () => {
   returnDialog.value = false;
   router.go(-1);
-};
-
-const submitDelete = () => {
-  deleteDialog.value = false;
 };
 
 const optionDateFn = (qdate: string) => {
@@ -645,7 +641,7 @@ const mappingCustomerGroups = () => {
     <DeleteDialog
       v-model="deleteDialog"
       @cancel="deleteDialog = false"
-      @submitDelete="submitDelete"
+      @submitDelete="$emit('delete')"
     />
     <ReturnDialog
       v-model="returnDialog"
