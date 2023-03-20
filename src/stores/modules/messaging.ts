@@ -19,7 +19,7 @@ const useMessagingStore = defineStore("messaging", {
       chatsList: [],
       selectedChatId: "",
       leftDrawerOpen: true,
-      rightDrawerOpen: true,
+      rightDrawerOpen: false,
       showCustomerInfoMobile: false,
       selectedTab: ChatTypes.PENDING,
       chatSnapshotMessage: {},
