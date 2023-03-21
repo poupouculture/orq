@@ -17,7 +17,6 @@ import { api } from "src/boot/axios";
 import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
-import { useRouter } from "vue-router";
 import { date } from "quasar";
 
 interface Option {
@@ -33,8 +32,7 @@ interface Gender {
 type Position = Option;
 type ITagOptions = Option & ITag;
 
-const emit = defineEmits(["submit", "delete"]);
-const router = useRouter();
+const emit = defineEmits(["submit", "delete", "discard"]);
 const props = defineProps({
   mode: {
     type: String,
@@ -279,7 +277,8 @@ const onSubmit = async () => {
 
 const discardChanges = () => {
   returnDialog.value = false;
-  router.go(-1);
+  // router.go(-1);
+  emit("discard");
 };
 
 const optionDateFn = (qdate: string) => {
