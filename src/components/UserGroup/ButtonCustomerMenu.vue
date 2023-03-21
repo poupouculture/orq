@@ -40,7 +40,10 @@
         </svg>
       </div>
       <!-- Content -->
-      <BaseLayout mode="show" />
+      <BaseLayout
+        mode="edit"
+        @submit-general-information="saveCustomerInformation"
+      />
     </div>
   </q-dialog>
 </template>
@@ -73,6 +76,16 @@ const deleteCustomer = async () => {
     rowsPerPage: props.pagination.rowsPerPage,
     page: props.pagination.page,
   });
+};
+const saveCustomerInformation = async (payload) => {
+  await customerStore.updateCustomer(props.customerId, payload);
+  showCustomerDetail.value = false;
+  Loading.show();
+  await customerGroupStore.getAll({
+    rowsPerPage: props.pagination.rowsPerPage,
+    page: props.pagination.page,
+  });
+  Loading.hide();
 };
 </script>
 <style lang="scss" scoped>

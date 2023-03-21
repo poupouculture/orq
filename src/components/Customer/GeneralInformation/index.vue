@@ -197,6 +197,7 @@ watch(getCustomer, () => {
 });
 
 // Watch Contact number
+
 watch(getContactNumber, (val: string) => {
   customerForm.value?.resetValidation();
   idNumber.value = val;
@@ -269,7 +270,6 @@ const onSubmit = async () => {
       delyloc_add3_c: delylocAdd3C.value,
       salesman_cd: salesmanCd.value,
     };
-
     mode.value = "show";
     emit("submit", payload);
   } catch (err) {
