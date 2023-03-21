@@ -11,7 +11,7 @@
       <q-scroll-area class="fit">
         <div class="drawer-content">
           <div class="logo-holder">
-            <img src="../../assets/images/logo.png" />
+            <img class="z-20" src="src/assets/images/logo.svg" />
           </div>
           <div class="input-holder">
             <input
