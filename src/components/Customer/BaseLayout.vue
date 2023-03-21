@@ -23,8 +23,10 @@
       <div class="pannels-holder">
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="general" class="pannel-each">
+            <!-- deleteGeneralInformation -->
             <GeneralInformation
               @discard="$emit('discard')"
+              @delete="$emit('deleteGeneralInformation')"
               @submit="submitGeneralInformation"
               :mode="mode"
             />

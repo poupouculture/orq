@@ -20,8 +20,8 @@ module.exports = configure(function () {
       // include = [],
       // exclude = [],
       // rawOptions = {},
-      // warnings: true,
-      // errors: true,
+      warnings: true,
+      errors: true,
     },
 
     // https://v2.quasar.dev/quasar-cli/prefetch-feature
@@ -107,7 +107,7 @@ module.exports = configure(function () {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: false, // opens browser window automatically
+      open: true, // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
