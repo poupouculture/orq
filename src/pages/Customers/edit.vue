@@ -1,5 +1,9 @@
 <template>
-  <BaseLayout v-if="!loading" @submitGeneralInformation="submit" />
+  <BaseLayout
+    v-if="!loading"
+    @submitGeneralInformation="submit"
+    @deleteGeneralInformation="deleteUser"
+  />
 </template>
 
 <script setup>
@@ -18,6 +22,12 @@ onMounted(async () => {
   await customerStore.fetchCustomer(id);
   loading.value = false;
 });
+
+const deleteUser = async () => {
+  const id = route.params.id;
+  await customerStore.deleteCustomer(id);
+  router.push("/customers");
+};
 
 const submit = async (payload) => {
   const id = route.params.id;

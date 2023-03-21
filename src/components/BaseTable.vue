@@ -59,7 +59,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  rowKey: String,
+  rowKey: {
+    type: String,
+    default: "id",
+  },
   totalCount: {
     type: Number,
     default: 0,

@@ -4,6 +4,7 @@ export const getCustomerServiceTemplates = async ({
   limit = 10,
   page = 1,
   status = "*",
+  search = "",
 }) => {
   const fields = `*, users.*`;
 
@@ -16,6 +17,8 @@ export const getCustomerServiceTemplates = async ({
     offset,
     meta: "*",
   };
+
+  if (search !== "") params.search = search;
 
   if (status !== "*") params["filter[is_approved][_eq]"] = true;
 

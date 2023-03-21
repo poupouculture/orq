@@ -68,6 +68,41 @@
       />
     </div>
   </div>
+  <div class="w-full flex justify-center py-3" v-if="message.isEmoticon">
+    <div class="w-3/4 flex flex-col gap-2">
+      <div class="w-full flex justify-between">
+        <img
+          src="../../assets/images/emoticon-angry.svg"
+          class="hover:cursor-pointer"
+          alt=""
+        />
+        <img
+          src="../../assets/images/emoticon-unhappy.svg"
+          class="hover:cursor-pointer"
+          alt=""
+        />
+        <img
+          src="../../assets/images/emoticon-flat.svg"
+          class="hover:cursor-pointer"
+          alt=""
+        />
+        <img
+          src="../../assets/images/emoticon-smile.svg"
+          class="hover:cursor-pointer"
+          alt=""
+        />
+        <img
+          src="../../assets/images/emoticon-love.svg"
+          class="hover:cursor-pointer"
+          alt=""
+        />
+      </div>
+      <div class="w-full flex justify-between">
+        <span class="text-xs">Not Satisfied</span>
+        <span class="text-xs">Very Satisfied</span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>

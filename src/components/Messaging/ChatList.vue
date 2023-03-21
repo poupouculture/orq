@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { storeToRefs } from "pinia";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ContactCard from "./ContactCard.vue";
@@ -36,6 +36,7 @@ const props = defineProps({
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
+const leftDrawerOpen: any = inject("leftDrawerOpen");
 
 const { chatsList } = storeToRefs(messagingStore);
 const list = computed(() =>
@@ -56,7 +57,8 @@ const cleanedList = computed(() =>
 const selectChat = (chat: IChat) => {
   if (window.innerWidth <= 1024) {
     // messagingStore.setCustomerInfoMobile(false);
-    messagingStore.setLeftDrawerOpen(false);
+    // messagingStore.setLeftDrawerOpen(false);
+    leftDrawerOpen.value = false;
   }
   customerStore.$reset();
   messagingStore.onSelectChat(chat.id);

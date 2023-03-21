@@ -612,49 +612,62 @@ export default defineComponent({
   },
   mounted() {
     if (this.documentTemplate) {
-      const tempData = this.documentTemplate.data.data;
+      const tempData = this.documentTemplate;
 
       const logoComponent = tempData?.components?.find(
         (c) => c.type === comp.LOGO
       );
-      const TitleAndRefComponent = tempData?.find((c) => c.type === comp.TITLE);
-      const BillToComponent = tempData?.find((c) => c.type === comp.BILL_TO);
-      const SynqueTitleComponent = tempData?.find(
+
+      const TitleAndRefComponent = tempData?.components?.find(
+        (c) => c.type === comp.TITLE
+      );
+      const BillToComponent = tempData?.components?.find(
+        (c) => c.type === comp.BILL_TO
+      );
+      const SynqueTitleComponent = tempData?.components?.find(
         (c) => c.type === comp.SYNQUE
       );
-      const TotalAmountComponent = tempData?.find(
+      const TotalAmountComponent = tempData?.components?.find(
         (c) => c.type === comp.TOTAL_AMOUNT
       );
-      const InvoiceNoComponent = tempData?.find(
+      const InvoiceNoComponent = tempData?.components?.find(
         (c) => c.type === comp.INVOICE_NUMBER
       );
-      const IssuedDateComponent = tempData?.find(
+      const IssuedDateComponent = tempData?.components?.find(
         (c) => c.type === comp.ISSUED_DATE
       );
-      const DueDateComponent = tempData?.find((c) => c.type === comp.DUE_DATE);
-      const ItemsComponent = tempData?.find((c) => c.type === comp.ITEMS);
-      const StampComponent = tempData?.find((c) => c.type === comp.STAMP);
-      const PaymentInstructionsComponent = tempData?.find(
+      const DueDateComponent = tempData?.components?.find(
+        (c) => c.type === comp.DUE_DATE
+      );
+      const ItemsComponent = tempData?.components?.find(
+        (c) => c.type === comp.ITEMS
+      );
+      const StampComponent = tempData?.components?.find(
+        (c) => c.type === comp.STAMP
+      );
+      const PaymentInstructionsComponent = tempData?.components?.find(
         (c) => c.type === comp.PAYMENT_INSTRUCTIONS
       );
-      const NotesComponent = tempData?.find((c) => c.type === comp.NOTES);
-      const AmountDueComponent = tempData?.find(
+      const NotesComponent = tempData?.components?.find(
+        (c) => c.type === comp.NOTES
+      );
+      const AmountDueComponent = tempData?.components?.find(
         (c) => c.type === comp.AMOUNT_DUE
       );
 
-      this.logo = [...logoComponent];
-      this.TitleAndRef = [...TitleAndRefComponent];
-      this.BillTo = [...BillToComponent];
-      this.SynqueTitle = [...SynqueTitleComponent];
-      this.TotalAmount = [...TotalAmountComponent];
-      this.InvoiceNo = [...InvoiceNoComponent];
-      this.IssuedDate = [...IssuedDateComponent];
-      this.DueDate = [...DueDateComponent];
-      this.Items = [...ItemsComponent];
-      this.Stamp = [...StampComponent];
-      this.PaymentInstructions = [...PaymentInstructionsComponent];
-      this.Notes = [...NotesComponent];
-      this.AmountDue = [...AmountDueComponent];
+      this.logo = logoComponent;
+      this.TitleAndRef = TitleAndRefComponent;
+      this.BillTo = BillToComponent;
+      this.SynqueTitle = SynqueTitleComponent;
+      this.TotalAmount = TotalAmountComponent;
+      this.InvoiceNo = InvoiceNoComponent;
+      this.IssuedDate = IssuedDateComponent;
+      this.DueDate = DueDateComponent;
+      this.Items = ItemsComponent;
+      this.Stamp = StampComponent;
+      this.PaymentInstructions = PaymentInstructionsComponent;
+      this.Notes = NotesComponent;
+      this.AmountDue = AmountDueComponent;
 
       this.invoice_currency = tempData.invoice_currency;
       this.acceptedMethod = !(

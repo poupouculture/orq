@@ -35,6 +35,18 @@ const routes = [
         component: () => import("pages/ApplicationProgram/index.vue"),
       },
       {
+        path: "application-programs/campaign",
+        component: () => import("pages/ApplicationProgram/Campaign/Index.vue"),
+      },
+      {
+        path: "application-programs/campaign/create",
+        component: () => import("pages/ApplicationProgram/Campaign/Create.vue"),
+      },
+      {
+        path: "application-programs/campaign",
+        component: () => import("pages/ApplicationProgram/Campaign/Index.vue"),
+      },
+      {
         path: "application-programs/message-templates",
         component: () =>
           import("pages/ApplicationProgram/MessageTemplate/index.vue"),
@@ -201,7 +213,7 @@ const routes = [
       {
         path: "",
         name: "messaging",
-        component: () => import("pages/Messaging/Index.vue"),
+        component: () => import("components/Messaging/Message.vue"),
       },
     ],
   },

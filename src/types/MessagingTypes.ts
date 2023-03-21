@@ -46,6 +46,7 @@ export interface Message {
   sendMessageStatus?: SendMessageStatus;
   totalUnread?: number;
   label?: string;
+  isEmoticon?: boolean;
 }
 export interface IChat {
   id: string;
@@ -58,6 +59,7 @@ export interface IChat {
   name: string;
   status: ChatTypes;
   totalUnread?: number;
+  expiration_timestamp: number;
 }
 
 export interface CachedChatMessages {
