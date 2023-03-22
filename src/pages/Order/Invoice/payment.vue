@@ -13,36 +13,46 @@ const payment = ref("creditCard");
 const firstTab = ref(true);
 const secondTab = ref(false);
 const setAsDefault = ref(false);
+const cardNumber = ref("");
+const mmYY = ref("");
+const vcc = ref("");
+const paymentMethod = ref(false);
+const newCard = ref(false);
 const paymentOptions = ref([
   {
     text: "Credit Card",
     value: "creditCard",
     img: Visa,
     active: false,
+    status: false,
   },
   {
     text: "WeChat Pay",
     value: "weChatPay",
     img: WeChatPay,
     active: true,
+    status: false,
   },
   {
     text: "Atome",
     value: "atome",
     img: Atome,
     active: true,
+    status: false,
   },
   {
     text: "Qr",
     value: "qr",
     img: Qr,
     active: false,
+    status: false,
   },
   {
     text: "Alipay HK",
     value: "alipay",
     img: AliPay,
     active: true,
+    status: false,
   },
 ]);
 const availablePayment = computed(() =>
@@ -114,7 +124,12 @@ const availablePayment = computed(() =>
                       </div>
                     </div>
                     <div class="flex justify-center mt-3">
-                      <q-btn flat color="primary" label="Add payment method" />
+                      <q-btn
+                        @click="paymentMethod = !paymentMethod"
+                        flat
+                        color="primary"
+                        label="Add payment method"
+                      />
                     </div>
                   </q-card-section>
                 </q-card>
@@ -147,6 +162,7 @@ const availablePayment = computed(() =>
                     <div class="grid gap-3 grid-cols-6">
                       <div class="col-span-3">
                         <q-input
+                          v-model="cardNumber"
                           dense
                           outlined
                           label="Card Number"
@@ -157,6 +173,7 @@ const availablePayment = computed(() =>
                       <div class="col-span-2">
                         <q-input
                           dense
+                          v-model="mmYY"
                           outlined
                           label="MM/YY"
                           mask="##/##"
@@ -166,6 +183,7 @@ const availablePayment = computed(() =>
                       <div class="col-span-1">
                         <q-input
                           dense
+                          v-model="vcc"
                           outlined
                           label="CVV"
                           mask="###"
@@ -175,6 +193,7 @@ const availablePayment = computed(() =>
                     </div>
                     <div class="flex mt-3 items-center justify-end gap-3">
                       <q-btn
+                        @click="newCard = !newCard"
                         flat
                         color="primary"
                         class="p-0 text-xs"
@@ -335,6 +354,149 @@ const availablePayment = computed(() =>
         </div>
       </div>
     </div>
+
+    <!-- add payment method -->
+
+    <q-dialog v-model="paymentMethod">
+      <div class="rounded-2xl bg-white py-10 px-16">
+        <div class="">
+          <div class="text-h6">Payment Method for this invoice</div>
+          <div class="text-xs font-thin capitalize">
+            customize payment methods in invoice
+          </div>
+        </div>
+
+        <div class="flex mt-5 flex-col gap-4">
+          <div class="flex flex-col gap-3">
+            <div>
+              <div class="w-2/3">
+                <p class="capitalize border-b-2 pb-2">
+                  available for this invoice
+                </p>
+              </div>
+
+              <div class="flex flex-col">
+                <div
+                  v-for="(item, index) in paymentOptions.filter(
+                    (data) => data.active
+                  )"
+                  :key="index"
+                  class="flex mt-3 items-center gap-10"
+                >
+                  <q-toggle
+                    v-model="fourth"
+                    checked-icon="check"
+                    color="primary"
+                    unchecked-icon="clear"
+                  />
+                  <img :src="item.img" class="w-6" alt="" />
+                  <p>
+                    {{ item.text }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="w-2/3">
+                <p class="capitalize border-b-2 pb-2">
+                  unavailable for this invoice
+                </p>
+              </div>
+
+              <div class="flex flex-col">
+                <div
+                  v-for="(item, index) in paymentOptions.filter(
+                    (data) => !data.active
+                  )"
+                  :key="index"
+                  class="flex mt-3 items-center gap-10"
+                >
+                  <q-toggle
+                    v-model="item.status"
+                    checked-icon="check"
+                    color="primary"
+                    unchecked-icon="clear"
+                  />
+                  <img :src="item.img" class="w-6" alt="" />
+                  <p>
+                    {{ item.text }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+              <q-btn
+                v-close-popup
+                class="rounded-lg border-2 border-dotted"
+                color="primary"
+                outline
+                >cancel</q-btn
+              >
+              <q-btn color="primary"> Save </q-btn>
+            </div>
+          </div>
+        </div>
+      </div>
+    </q-dialog>
+
+    <!-- add new card -->
+    <q-dialog v-model="newCard">
+      <div class="rounded-2xl bg-white py-10 px-7 w-[800px]">
+        <q-form>
+          <label for="number" class="text-xs capitalize"> Card Number </label>
+
+          <q-input id="number" outlined dense class="mt-2" />
+
+          <label for="number" class="text-xs capitalize"> name on card </label>
+
+          <q-input id="number" outlined dense class="mt-2" />
+
+          <div class="flex mt-4 justify-between">
+            <div>
+              <label for="number" class="text-xs capitalize">
+                valid till
+              </label>
+
+              <q-input
+                dense
+                class="mt-4"
+                outlined
+                label="MM/YY"
+                mask="##/##"
+                fill-mask
+              />
+            </div>
+            <div>
+              <label for="number" class="text-xs capitalize">
+                CVV or CVC
+              </label>
+
+              <q-input
+                dense
+                class="mt-4"
+                outlined
+                label="CVV"
+                mask="###"
+                fill-mask
+              />
+            </div>
+          </div>
+        </q-form>
+
+        <div class="flex justify-end mt-10 gap-3">
+          <q-btn
+            v-close-popup
+            class="rounded-lg border-2 border-dotted"
+            color="primary"
+            outline
+            >cancel</q-btn
+          >
+          <q-btn color="primary"> Save </q-btn>
+        </div>
+      </div>
+    </q-dialog>
   </div>
 </template>
 
