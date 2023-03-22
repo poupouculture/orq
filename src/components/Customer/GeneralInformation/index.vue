@@ -95,6 +95,7 @@ const delylocAdd3E = ref("");
 const delylocAdd1C = ref("");
 const delylocAdd2C = ref("");
 const delylocAdd3C = ref("");
+const companyCd = ref("");
 const salesmanCd = ref("");
 const lastModifyDate = ref("");
 
@@ -119,6 +120,7 @@ onMounted(async () => {
     customerCode.value = customer.customer_code;
     dateOfBirth.value = customer.dob;
     isActive.value = customer.is_active || false;
+    companyCd.value = customer.company_cd;
     position.value = positionOptions.find(
       (item) => item.value === customer.position
     );
@@ -158,6 +160,7 @@ watch(getCustomer, () => {
   customerCode.value = getCustomer.value.customer_code;
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.is_active;
+  companyCd.value = getCustomer.company_cd;
   position.value = positionOptions.find(
     (item) => item.value === getCustomer.value.position
   );
@@ -267,6 +270,7 @@ const onSubmit = async () => {
       delyloc_add2_c: delylocAdd2C.value,
       delyloc_add3_c: delylocAdd3C.value,
       salesman_cd: salesmanCd.value,
+      company_cd: companyCd.value,
     };
     mode.value = "show";
     emit("submit", payload);
@@ -478,7 +482,6 @@ const mappingCustomerGroups = () => {
             <q-select
               v-model="gender"
               :options="genderOptions"
-              :rules="[(val) => required(val)]"
               outlined
               lazy-rules
               :disable="mode == 'show'"
@@ -548,7 +551,6 @@ const mappingCustomerGroups = () => {
               <q-input
                 v-model="salesmanCd"
                 class="indi"
-                :rules="[(val) => required(val)]"
                 outlined
                 lazy-rules
                 :disable="mode == 'show'"
@@ -588,7 +590,7 @@ const mappingCustomerGroups = () => {
         </div>
 
         <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
+          <div class="col flex">
             <p class="label-style">Last modified date</p>
             <q-input
               v-model="lastModifyDate"
@@ -600,14 +602,27 @@ const mappingCustomerGroups = () => {
               dense
             />
           </div>
-          <div class="col flex justify-center items-center">
-            <q-checkbox
-              :disable="mode == 'show'"
-              v-model="isActive"
-              :true-value="true"
-              :false-value="false"
-              label="Customer Active"
-            />
+          <div class="col flex justify-between items-center">
+            <div class="">
+              <p class="label-style">Company Code</p>
+              <q-input
+                v-model="companyCd"
+                :disable="mode == 'show'"
+                class="indi"
+                outlined
+                lazy-rules
+                dense
+              />
+            </div>
+            <div class="">
+              <q-checkbox
+                :disable="mode == 'show'"
+                v-model="isActive"
+                :true-value="true"
+                :false-value="false"
+                label="Customer Active"
+              />
+            </div>
           </div>
         </div>
 
