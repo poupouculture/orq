@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 import Visa from "src/assets/images/visa-logo.png";
 import WeChatPay from "src/assets/images/WeChatPay.png";
@@ -12,33 +12,42 @@ const { getInvoice, getCompany } = useInvoice();
 const payment = ref("creditCard");
 const firstTab = ref(true);
 const secondTab = ref(false);
+const setAsDefault = ref(false);
 const paymentOptions = ref([
   {
     text: "Credit Card",
     value: "creditCard",
     img: Visa,
+    active: false,
   },
   {
     text: "WeChat Pay",
     value: "weChatPay",
     img: WeChatPay,
+    active: true,
   },
   {
     text: "Atome",
     value: "atome",
     img: Atome,
+    active: true,
   },
   {
     text: "Qr",
     value: "qr",
     img: Qr,
+    active: false,
   },
   {
     text: "Alipay HK",
     value: "alipay",
     img: AliPay,
+    active: true,
   },
 ]);
+const availablePayment = computed(() =>
+  paymentOptions.value.filter((item) => item.active)
+);
 </script>
 
 <template>
@@ -54,7 +63,7 @@ const paymentOptions = ref([
         </div>
 
         <div>
-          <div class="q-pa-md" style="max-width: 350px">
+          <div class="q-pa-md">
             <q-list>
               <q-expansion-item
                 group="somegroup"
@@ -78,10 +87,35 @@ const paymentOptions = ref([
 
                 <q-card>
                   <q-card-section>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Quidem, eius reprehenderit eos corrupti commodi magni
-                    quaerat ex numquam, dolorum officiis modi facere maiores
-                    architecto suscipit iste eveniet doloribus ullam aliquid.
+                    <div
+                      class="bg-white divide-y divide-slate-300 gap-3 flex flex-col p-4 drop-shadow-xl rounded-lg"
+                    >
+                      <div
+                        v-for="(payment, index) in availablePayment"
+                        :key="index"
+                        class="flex items-center pt-3 justify-between"
+                      >
+                        <div class="w-8">
+                          <img :src="payment.img" alt="" />
+                        </div>
+                        <div>
+                          <p class="">
+                            {{ payment.text }}
+                          </p>
+                        </div>
+                        <div>
+                          <q-btn
+                            flat
+                            round
+                            color="blue-grey-11"
+                            icon="delete"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex justify-center mt-3">
+                      <q-btn flat color="primary" label="Add payment method" />
+                    </div>
                   </q-card-section>
                 </q-card>
               </q-expansion-item>
@@ -110,10 +144,49 @@ const paymentOptions = ref([
 
                 <q-card>
                   <q-card-section>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Quidem, eius reprehenderit eos corrupti commodi magni
-                    quaerat ex numquam, dolorum officiis modi facere maiores
-                    architecto suscipit iste eveniet doloribus ullam aliquid.
+                    <div class="grid gap-3 grid-cols-6">
+                      <div class="col-span-3">
+                        <q-input
+                          dense
+                          outlined
+                          label="Card Number"
+                          mask="card"
+                          fill-mask
+                        />
+                      </div>
+                      <div class="col-span-2">
+                        <q-input
+                          dense
+                          outlined
+                          label="MM/YY"
+                          mask="##/##"
+                          fill-mask
+                        />
+                      </div>
+                      <div class="col-span-1">
+                        <q-input
+                          dense
+                          outlined
+                          label="CVV"
+                          mask="###"
+                          fill-mask
+                        />
+                      </div>
+                    </div>
+                    <div class="flex mt-3 items-center justify-end gap-3">
+                      <q-btn
+                        flat
+                        color="primary"
+                        class="p-0 text-xs"
+                        label="add new card"
+                      />
+                      <q-checkbox
+                        size="xs"
+                        v-model="setAsDefault"
+                        val="xs"
+                        label="Set as default"
+                      />
+                    </div>
                   </q-card-section>
                 </q-card>
               </q-expansion-item>
@@ -148,12 +221,7 @@ const paymentOptions = ref([
                         name="send"
                       />
                     </div>
-                    <q-checkbox
-                      size="xs"
-                      v-model="check"
-                      val="xs"
-                      label="Set as default"
-                    />
+                    <q-checkbox size="xs" val="xs" label="Set as default" />
                   </div>
 
                   <div class="flex-col flex">
