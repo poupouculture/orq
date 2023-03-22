@@ -6,6 +6,7 @@ export const searchInternalGroups = async (query: string) => {
   const data = await api.get("/items/user_groups", {
     params: {
       search: query,
+      "filter[type][_neq]": "personal",
     },
   });
   return data;
@@ -21,6 +22,7 @@ export const getInternalGroups = async ({
     params: {
       limit,
       search,
+      "filter[type][_neq]": "personal",
       offset,
       fields:
         "id, name, status, users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name",
