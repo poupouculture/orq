@@ -1,7 +1,7 @@
 <template>
   <BaseLayout
     v-if="!loading"
-    @discard="$router.push({ name: 'customers' })"
+    @discard="$router.go(-1)"
     @submitGeneralInformation="submit"
     @deleteGeneralInformation="deleteUser"
   />
