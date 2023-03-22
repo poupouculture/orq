@@ -3,8 +3,9 @@
     selection="multiple"
     :rows="rows"
     :columns="columns"
+    :v-model:pagination="pagination"
+    :rows-per-page-options="[10]"
     :row-key="rowKey"
-    v-model:pagination="pagination"
     :loading="loading"
     v-model:selected="selected"
     flat
@@ -31,7 +32,7 @@
           class="col-span-1 lg:col-span-2 flex justify-center lg:justify-end"
         >
           <q-pagination
-            v-model="page"
+            v-model="pagination.page"
             size="15px"
             @update:model-value="changePage"
             :max="totalPage"
@@ -48,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUpdated } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   selected: {
@@ -97,16 +98,15 @@ const emit = defineEmits([
   "update:selected",
   "update:pagination",
 ]);
-const page = ref(props.page);
 const selected = computed({
   set: (value) => emit("update:selected", value),
   get: () => props.selected,
 });
 
 const pagination = ref({
-  sortBy: "",
+  sortBy: "desc",
   descending: false,
-  page: page.value,
+  page: props.page,
   rowsPerPage: 10,
 });
 
@@ -126,12 +126,4 @@ const totalPage = computed(() =>
 const changePage = (page: number) => {
   emit("changePage", page);
 };
-
-onMounted(() => {
-  console.log("mounted: ", props.rows);
-});
-
-onUpdated(() => {
-  console.log("updated: ", props.rows);
-});
 </script>
