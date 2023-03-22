@@ -24,6 +24,8 @@
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="general" class="pannel-each">
             <GeneralInformation
+              @discard="$emit('discard')"
+              @delete="$emit('deleteGeneralInformation')"
               @submit="submitGeneralInformation"
               :mode="mode"
             />
@@ -73,6 +75,7 @@ defineProps({
 const emit = defineEmits([
   "submitGeneralInformation",
   "deleteGeneralInformation",
+  "discard",
 ]);
 const customerStore = useCustomerStore();
 const tab = ref("general");

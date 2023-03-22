@@ -106,8 +106,7 @@
                 <!-- for while set image default -->
                 <img
                   :src="
-                    customers_id.avatar ||
-                    'http://localhost:9000/src/assets/images/profileavatar.png'
+                    customers_id.avatar || 'src/assets/images/profileavatar.png'
                   "
                   class="w-10 h-10 rounded-full mx-3"
                 />
