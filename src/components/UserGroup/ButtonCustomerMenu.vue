@@ -14,7 +14,7 @@
   <DeleteDialog
     v-model="deleteDialog"
     @cancel="deleteDialog = false"
-    @submit-delete="deleteCustomer"
+    @submit-delete="deleteCustomerFromCustomerGroup"
   />
   <!-- Modal / Dialog Customer detail -->
   <q-dialog v-model="showCustomerDetail">
@@ -35,6 +35,7 @@
         mode="edit"
         @discard="showCustomerDetail = !showCustomerDetail"
         @submit-general-information="saveCustomerInformation"
+        :show-delete-button="false"
       />
     </div>
   </q-dialog>
@@ -65,7 +66,7 @@ const openCustomerDetail = async () => {
   Loading.hide();
   showCustomerDetail.value = true;
 };
-const deleteCustomer = async () => {
+const deleteCustomerFromCustomerGroup = async () => {
   await customerGroupStore.deleteCustomer(props.id, props.customerId);
   await customerGroupStore.getAll({
     rowsPerPage: props.pagination.rowsPerPage,
