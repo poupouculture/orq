@@ -27,6 +27,7 @@
               @discard="$emit('discard')"
               @delete="$emit('deleteGeneralInformation')"
               @submit="submitGeneralInformation"
+              :show-delete-button="showDeleteButton"
               :mode="mode"
             />
           </q-tab-panel>
@@ -70,6 +71,10 @@ defineProps({
   mode: {
     type: String,
     default: "edit",
+  },
+  showDeleteButton: {
+    type: Boolean,
+    default: true,
   },
 });
 const emit = defineEmits([
