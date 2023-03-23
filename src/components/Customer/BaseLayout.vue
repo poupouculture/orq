@@ -42,7 +42,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="remark">
-            <Remark v-model="remarks" />
+            <Remark v-model.modelValue="remarks" />
           </q-tab-panel>
 
           <q-tab-panel name="Attachement">
@@ -80,7 +80,7 @@ const emit = defineEmits([
 const customerStore = useCustomerStore();
 const tab = ref("general");
 
-const remarks = ref(customerStore.customer.remarks);
+const remarks = ref(customerStore.customer.remarks || "");
 const submitGeneralInformation = (payload) => {
   payload.remarks = remarks.value;
   emit("submitGeneralInformation", payload);
