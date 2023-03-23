@@ -64,6 +64,17 @@ const filterPhone = (val: any, update: any) => {
 <template>
   <div class="mt-5">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div class="col-span-2 grid grid-cols-2">
+        <div class="col-span-1">
+          <div class="w-full">
+            <q-input placeholder="Search" dense outlined>
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+        </div>
+      </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">First Name</p>
