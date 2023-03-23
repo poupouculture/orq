@@ -68,7 +68,7 @@
           class="bg-transparent focus:outline-none pl-3 w-full"
           placeholder="Search ..."
           v-model="query"
-          @input="searchHandler()"
+          @keypress.enter="searchHandler()"
         />
         <div
           class="absolute -right-3 top-0.5 cursor-pointer"
@@ -184,7 +184,7 @@ const filterOption = reactive<IOption[]>([
   },
   {
     label: "ID Number",
-    key: "contact_number",
+    key: "id_number",
   },
   {
     label: "Customer Code",
