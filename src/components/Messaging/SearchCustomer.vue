@@ -11,6 +11,7 @@
         <br />
         If the customer profile already exists, then search below.
       </p>
+
       <div
         class="absolute -right-2 top-3 cursor-pointer"
         @click="openInfo = false"
@@ -183,11 +184,31 @@ const filterOption = reactive<IOption[]>([
   },
   {
     label: "ID Number",
-    key: "id_number",
+    key: "contact_number",
   },
   {
     label: "Customer Code",
     key: "customer_code",
+  },
+  {
+    label: "Customer Name (English)",
+    key: "customer_company_name_en",
+  },
+  {
+    label: "Customer Name (Chinese)",
+    key: "customer_company_name_zht",
+  },
+  {
+    label: "Division No",
+    key: "div_no",
+  },
+  {
+    label: "Salesman Code",
+    key: "salesman_cd",
+  },
+  {
+    label: "Location Code",
+    key: "location_code",
   },
 ]);
 </script>
