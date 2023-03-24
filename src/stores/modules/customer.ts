@@ -34,6 +34,7 @@ const useCustomerStore = defineStore("customer", {
         customer_groups: [],
         companies: [],
         tags: [],
+        company_cd: "",
       },
     } as unknown as IState),
   getters: {

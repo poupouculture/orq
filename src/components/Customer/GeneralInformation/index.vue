@@ -160,7 +160,7 @@ watch(getCustomer, () => {
   customerCode.value = getCustomer.value.customer_code;
   dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.is_active;
-  companyCd.value = getCustomer.company_cd;
+  companyCd.value = getCustomer.value.company_cd;
   position.value = positionOptions.find(
     (item) => item.value === getCustomer.value.position
   );
