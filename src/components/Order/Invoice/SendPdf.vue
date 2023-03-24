@@ -185,11 +185,7 @@ const rows = ref([
             </div>
           </div>
         </div>
-        <q-btn
-          :to="{ name: 'order.payment' }"
-          label="Pay this invoice"
-          color="primary"
-        />
+        <q-btn label="Pay this invoice" color="primary" />
       </div>
     </div>
 
