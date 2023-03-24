@@ -95,8 +95,8 @@ const availablePayment = computed(() =>
                   </q-item-section>
                 </template>
 
-                <q-card>
-                  <q-card-section>
+                <q-card class="flex justify-center">
+                  <q-card-section class="w-96">
                     <div
                       class="bg-white divide-y divide-slate-300 gap-3 flex flex-col p-4 drop-shadow-xl rounded-lg"
                     >
@@ -105,7 +105,7 @@ const availablePayment = computed(() =>
                         :key="index"
                         class="flex items-center pt-3 justify-between"
                       >
-                        <div class="w-8">
+                        <div class="w-6">
                           <img :src="payment.img" alt="" />
                         </div>
                         <div>
@@ -340,7 +340,7 @@ const availablePayment = computed(() =>
                 <q-item-section>
                   <q-item-label class="flex items-center gap-3">
                     <div>
-                      <img class="w-10" :src="item.img" alt="" />
+                      <img class="w-6" :src="item.img" alt="" />
                     </div>
 
                     <p class="text-[#2E2E3A] font-medium text-base">
@@ -384,7 +384,7 @@ const availablePayment = computed(() =>
                   class="flex mt-3 items-center gap-10"
                 >
                   <q-toggle
-                    v-model="fourth"
+                    v-model="item.status"
                     checked-icon="check"
                     color="primary"
                     unchecked-icon="clear"
@@ -491,8 +491,9 @@ const availablePayment = computed(() =>
             class="rounded-lg border-2 border-dotted"
             color="primary"
             outline
-            >cancel</q-btn
           >
+            cancel
+          </q-btn>
           <q-btn color="primary"> Save </q-btn>
         </div>
       </div>
