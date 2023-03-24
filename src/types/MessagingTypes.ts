@@ -80,6 +80,7 @@ export interface IState {
   selectedTab: ChatTypes;
   chatSnapshotMessage: ChatSnapshotMessage;
   contactNumber: string;
+  replayMessage: Message | undefined;
 }
 
 export interface SendTextMessage {

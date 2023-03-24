@@ -2,23 +2,8 @@
   <img
     class="h-full cursor-zoom-in h-32"
     ref="imageRef"
-    v-touch-hold:600.mouse.prevent="handleHold"
     @click.stop="visible = true"
   />
-  <q-menu
-    ref="menu"
-    v-model="showing"
-    fit
-    transition-show="scale"
-    transition-hide="scale"
-  >
-    <q-list>
-      <q-item clickable v-close-popup @click="download">
-        <q-item-section>Down load</q-item-section>
-      </q-item>
-    </q-list>
-  </q-menu>
-
   <q-dialog v-model="visible" no-shake>
     <span class="relative flex h-full w-full">
       <img
@@ -51,6 +36,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { api } from "src/boot/axios";
+import { blobToBase64 } from "src/utils/trim-word";
 
 interface Props {
   src?: string;
@@ -65,17 +51,15 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const visible = ref(false);
-const showing = ref(false);
-const menu = ref();
 const imageRef = ref();
 const originSrc = ref();
 
-// watch(
-//   () => props.src,
-//   () => {
-//     renderImage();
-//   }
-// );
+watch(
+  () => props.src,
+  () => {
+    renderImage();
+  }
+);
 
 watch(
   () => visible.value,
@@ -87,7 +71,7 @@ watch(
 );
 
 const renderImage = async (origin?: boolean) => {
-  if (props.src.startsWith("blob")) {
+  if (props.src.startsWith("data:")) {
     originSrc.value = imageRef.value.src = props.src;
   } else {
     const { data } = await api.get(`${process.env.BACKEND_URL}${props.src}`, {
@@ -97,37 +81,18 @@ const renderImage = async (origin?: boolean) => {
         height: origin ? null : props.height,
       },
     });
+    const base64 = await blobToBase64(data);
     if (origin) {
-      originSrc.value = (window.URL || window.webkitURL).createObjectURL(data);
+      originSrc.value = base64;
     } else {
-      imageRef.value.src = (window.URL || window.webkitURL).createObjectURL(
-        data
-      );
+      imageRef.value.src = base64;
     }
   }
-};
-
-const handleHold = () => {
-  showing.value = true;
-};
-
-const download = async () => {
-  const link = document.createElement("a");
-  if (!originSrc.value) {
-    await renderImage(true);
-  }
-  link.href = originSrc.value;
-  link.download = props.name;
-  link.click();
 };
 
 onMounted(() => {
   renderImage();
 });
-// onBeforeUnmount(() => {
-//   window.URL.revokeObjectURL(imageRef.value);
-//   window.URL.revokeObjectURL(originSrc.value);
-// });
 </script>
 
 <style lang="scss" scoped></style>

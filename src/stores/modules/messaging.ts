@@ -25,6 +25,7 @@ const useMessagingStore = defineStore("messaging", {
       chatSnapshotMessage: {},
       cachedChatMessages: {},
       contactNumber: null,
+      replayMessage: {},
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -87,7 +88,6 @@ const useMessagingStore = defineStore("messaging", {
             }
           }
           this.cachedChatMessages[chatId]?.push(lastmessage);
-          console.log(1);
         }
       } catch (error) {
         console.log(error);
@@ -95,6 +95,9 @@ const useMessagingStore = defineStore("messaging", {
     },
     setCustomerInfoMobile(value: boolean) {
       this.showCustomerInfoMobile = value;
+    },
+    setReplayMessage(message?: Message) {
+      this.replayMessage = message;
     },
     cleanTotalUnread() {
       const chat = this.chatsList.find(
