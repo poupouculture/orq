@@ -159,6 +159,11 @@ const routes = [
         component: () => import("src/pages/Order/Invoice/index.vue"),
       },
       {
+        path: "/order/payment",
+        name: "order.payment",
+        component: () => import("src/pages/Order/Invoice/payment.vue"),
+      },
+      {
         path: "/order/service-records/:id",
         name: "order.service-record.detail",
         component: () => import("src/pages/Order/ServiceRecord/Detail.vue"),

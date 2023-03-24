@@ -240,7 +240,12 @@ const { getInvoice } = useInvoice();
         <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
       </div>
       <div class="">
-        <q-btn color="primary" icon-right="east" label="Payment Setting" />
+        <q-btn
+          color="primary"
+          :to="{ name: 'order.payment' }"
+          icon-right="east"
+          label="Payment Setting"
+        />
       </div>
     </div>
   </div>

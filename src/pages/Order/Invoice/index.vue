@@ -64,7 +64,7 @@ const switchComponent = (componentName: string) => {
             />
           </q-tabs>
           <q-separator class="q-mt-none" />
-          <q-tab-panels v-model="activeTabs" class="mb-2">
+          <q-tab-panels keep-alive v-model="activeTabs" class="mb-2">
             <q-tab-panel
               v-for="(tab, index) in tabs"
               :key="index"
