@@ -11,6 +11,7 @@
         <br />
         If the customer profile already exists, then search below.
       </p>
+
       <div
         class="absolute -right-2 top-3 cursor-pointer"
         @click="openInfo = false"
@@ -67,7 +68,7 @@
           class="bg-transparent focus:outline-none pl-3 w-full"
           placeholder="Search ..."
           v-model="query"
-          @input="searchHandler()"
+          @keypress.enter="searchHandler()"
         />
         <div
           class="absolute -right-3 top-0.5 cursor-pointer"
@@ -188,6 +189,26 @@ const filterOption = reactive<IOption[]>([
   {
     label: "Customer Code",
     key: "customer_code",
+  },
+  {
+    label: "Customer Name (English)",
+    key: "customer_company_name_en",
+  },
+  {
+    label: "Customer Name (Chinese)",
+    key: "customer_company_name_zht",
+  },
+  {
+    label: "Division No",
+    key: "div_no",
+  },
+  {
+    label: "Salesman Code",
+    key: "salesman_cd",
+  },
+  {
+    label: "Location Code",
+    key: "location_code",
   },
 ]);
 </script>

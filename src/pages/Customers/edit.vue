@@ -1,6 +1,7 @@
 <template>
   <BaseLayout
     v-if="!loading"
+    @discard="$router.go(-1)"
     @submitGeneralInformation="submit"
     @deleteGeneralInformation="deleteUser"
   />
@@ -25,7 +26,7 @@ onMounted(async () => {
 
 const deleteUser = async () => {
   const id = route.params.id;
-  await customerStore.deleteCustomer(id);
+  await customerStore.deleteCustomer([id]);
   router.push("/customers");
 };
 

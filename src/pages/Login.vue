@@ -2,7 +2,7 @@
   <div class="login h-full flex no-warp select-none">
     <div class="hidden md:!inline-block bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3">
       <p class="flex no-wrap text-2xl items-center leading-none">
-        <img class="w-40 mr-3" :src="logo" alt="logo" />
+        <img class="w-20 mr-3" :src="logo" alt="logo" />
       </p>
     </div>
 
@@ -73,7 +73,7 @@ export default {
 <script setup>
 import { ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
-import logo from "assets/images/logo.png";
+import logo from "assets/images/logo.svg";
 
 const login = ref({ email: "", password: "" }),
   loading = ref(false),

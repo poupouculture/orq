@@ -66,6 +66,7 @@ export interface ICustomer {
   delyloc_add3_c?: null | string;
   salesman_cd?: null | string;
   last_modify_date?: null | string;
+  company_cd?: null | string;
 }
 
 export interface IState {

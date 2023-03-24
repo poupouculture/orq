@@ -24,7 +24,10 @@
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="general" class="pannel-each">
             <GeneralInformation
+              @discard="$emit('discard')"
+              @delete="$emit('deleteGeneralInformation')"
               @submit="submitGeneralInformation"
+              :show-delete-button="showDeleteButton"
               :mode="mode"
             />
           </q-tab-panel>
@@ -40,7 +43,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="remark">
-            <Remark v-model="remarks" />
+            <Remark v-model.modelValue="remarks" />
           </q-tab-panel>
 
           <q-tab-panel name="Attachement">
@@ -69,15 +72,20 @@ defineProps({
     type: String,
     default: "edit",
   },
+  showDeleteButton: {
+    type: Boolean,
+    default: true,
+  },
 });
 const emit = defineEmits([
   "submitGeneralInformation",
   "deleteGeneralInformation",
+  "discard",
 ]);
 const customerStore = useCustomerStore();
 const tab = ref("general");
 
-const remarks = ref(customerStore.customer.remarks);
+const remarks = ref(customerStore.customer.remarks || "");
 const submitGeneralInformation = (payload) => {
   payload.remarks = remarks.value;
   emit("submitGeneralInformation", payload);

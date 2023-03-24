@@ -1,5 +1,9 @@
 <template>
-  <BaseLayout v-if="!loading" @submitGeneralInformation="submit" />
+  <BaseLayout
+    @discard="$router.go(-1)"
+    v-if="!loading"
+    @submitGeneralInformation="submit"
+  />
 </template>
 <script setup>
 import { onMounted, ref } from "vue";

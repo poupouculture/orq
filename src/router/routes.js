@@ -129,6 +129,7 @@ const routes = [
       },
       {
         path: "customers",
+        name: "customers",
         component: () => import("pages/Customers/index.vue"),
       },
       {

@@ -34,28 +34,28 @@ const useCustomerStore = defineStore("customer", {
         customer_groups: [],
         companies: [],
         tags: [],
+        company_cd: "",
       },
     } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
   },
   actions: {
-    async deleteCustomer(ids: string[]) {
+    async deleteCustomer(id: [string]) {
       Loading.show();
+
       try {
-        const {
-          data: { data },
-        } = await deleteCustomer(ids);
+        const { data } = await deleteCustomer(id);
+
         Notify.create({
           message: "Successful to delete customer",
           position: "top",
           color: "primary",
           type: "positive",
         });
-        Loading.hide();
+
         return data;
       } catch (err: any) {
-        console.log(err);
         Notify.create({
           message: `Error: ${
             err.response.data?.errors[0]?.message || "Fail to updated"
@@ -63,8 +63,41 @@ const useCustomerStore = defineStore("customer", {
           position: "top",
           type: "negative",
         });
+      } finally {
         Loading.hide();
       }
+
+      deleteCustomer(id)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .finally(() => {
+          Loading.hide();
+        });
+
+      // try {
+      //   const {
+      //     data: { data },
+      //   } = await deleteCustomer(ids);
+      //   Notify.create({
+      //     message: "Successful to delete customer",
+      //     position: "top",
+      //     color: "primary",
+      //     type: "positive",
+      //   });
+      //   Loading.hide();
+      //   return data;
+      // } catch (err: any) {
+      //   console.log(err);
+      //   Notify.create({
+      //     message: `Error: ${
+      //       err.response.data?.errors[0]?.message || "Fail to updated"
+      //     }`,
+      //     position: "top",
+      //     type: "negative",
+      //   });
+      //   Loading.hide();
+      // }
     },
     async fetchCustomer(id: string) {
       const {
