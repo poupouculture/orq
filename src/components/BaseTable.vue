@@ -15,6 +15,11 @@
   >
     <template v-slot:header-selection v-if="props.disableSelect"> </template>
     <template v-slot:body-selection v-if="disableSelect"></template>
+    <template #body-cell-date_created="props">
+      <q-td :props="props">
+        {{ dateFormatter(props.row.date_created) }}
+      </q-td>
+    </template>
     <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope" />
     </template>
@@ -50,6 +55,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { dateFormatter } from "src/helpers";
 
 const props = defineProps({
   selected: {
