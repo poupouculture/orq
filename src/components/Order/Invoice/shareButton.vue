@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
-
+import { useQuasar } from "quasar";
 interface Props {
   shareInvoice: {
     via: string;
@@ -16,8 +16,10 @@ const filter = ref("");
 const sendTime = ref("customeDate");
 const activeTab = ref("send");
 const customDate = ref("");
+const sendLinks = ref([]);
 const customTime = ref("00:00");
 const customTimeZone = ref("Pakistan Standard Time (GMT + 5)");
+const $q = useQuasar();
 const shareInvoice = reactive({
   via: props.shareInvoice.via,
   setDefault: props.shareInvoice.setDefault,
@@ -66,6 +68,8 @@ const columns = ref([
   { name: "action", align: "center", label: "Action", field: "action" },
 ]);
 
+const emailsTabs = ref(["johnDoe@gmail.com"]);
+
 const rows = ref([
   {
     name: "Asim",
@@ -102,6 +106,18 @@ const optionsGroup = ref([
     value: "customeDate",
   },
 ]);
+
+// Funtion
+const copyLink = () => {
+  navigator.clipboard.writeText(sendLinks.value[0]).then(() => {
+    $q.notify({
+      position: "top",
+      type: "positive",
+      color: "primary",
+      message: "Link copied to clipboard",
+    });
+  });
+};
 
 onMounted(() => {
   const date = new Date();
@@ -259,7 +275,51 @@ onMounted(() => {
           <q-separator class="q-mt-none" />
 
           <q-tab-panels v-model="activeTab">
-            <q-tab-panel name="send"> Send </q-tab-panel>
+            <q-tab-panel name="send">
+              <div class="container">
+                <q-select
+                  multiple
+                  v-model="sendLinks"
+                  :options="emailsTabs"
+                  hint="Add a message (Options)"
+                >
+                  <template v-slot:selected-item="scope">
+                    <q-chip
+                      removable
+                      dense
+                      @remove="scope.removeAtIndex(scope.index)"
+                      :tabindex="scope.tabindex"
+                      color="grey-4"
+                      text-color="primary"
+                    >
+                      <q-avatar class="">
+                        <img
+                          src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
+                        />
+                      </q-avatar>
+                      {{ scope.opt }}
+                    </q-chip>
+                  </template>
+                </q-select>
+
+                <div class="mt-5 flex justify-end">
+                  <q-btn size="sm" class="" color="primary"> send </q-btn>
+                </div>
+
+                <div v-if="sendLinks.length > 0" class="flex gap-5 flex-col">
+                  <div>
+                    <q-btn
+                      @click="copyLink"
+                      round
+                      class="bg-[#F5F5F5] text-[#9A9AAF] rotate-[-97deg]"
+                      icon="fa-solid fa-link "
+                    />
+                  </div>
+
+                  <span class="text-xs">Copy link</span>
+                </div>
+              </div>
+            </q-tab-panel>
 
             <q-tab-panel name="schedule">
               <div class="flex flex-col">
