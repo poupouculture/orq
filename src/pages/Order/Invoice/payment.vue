@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 import Visa from "src/assets/images/visa-logo.png";
 import WeChatPay from "src/assets/images/WeChatPay.png";
 import Atome from "src/assets/images/atome.png";
 import Qr from "src/assets/images/qr.png";
 import AliPay from "src/assets/images/alipay.png";
+import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
 const { getInvoice, getCompany } = useInvoice();
 
@@ -18,6 +19,10 @@ const mmYY = ref("");
 const vcc = ref("");
 const paymentMethod = ref(false);
 const newCard = ref(false);
+const shareInvoice = reactive({
+  via: "Email",
+  setDefault: true,
+});
 const paymentOptions = ref([
   {
     text: "Credit Card",
@@ -220,52 +225,13 @@ const availablePayment = computed(() =>
 
       <div class="flex gap-10 flex-col">
         <div class="flex justify-end">
-          <q-btn push color="primary" icon-right="send" label="Share via">
-            <q-popup-proxy>
-              <q-banner>
-                <div class="flex flex-col">
-                  <div class="border-b-2 flex-col flex">
-                    <div class="gap-3 items-center flex">
-                      <q-radio
-                        checked-icon="task_alt"
-                        unchecked-icon="panorama_fish_eye"
-                        size="xs"
-                        v-model="send"
-                        val="Email"
-                        label="Email Now"
-                      />
-
-                      <q-icon
-                        style="color: #ccc; font-size: 1.4em"
-                        name="send"
-                      />
-                    </div>
-                    <q-checkbox size="xs" val="xs" label="Set as default" />
-                  </div>
-
-                  <div class="flex-col flex">
-                    <div
-                      @click="openDialog = !openDialog"
-                      class="gap-3 cursor-pointer items-center flex"
-                    >
-                      <q-radio
-                        checked-icon="task_alt"
-                        unchecked-icon="panorama_fish_eye"
-                        size="xs"
-                        v-model="send"
-                        val="Whatsapp"
-                      />
-                      <span>Whatsapp </span>
-                      <q-icon
-                        style="color: #ccc; font-size: 1.4em"
-                        name="fa-brands fa-whatsapp"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </q-banner>
-            </q-popup-proxy>
-          </q-btn>
+          <ShareButton
+            v-model:shareInvoice="shareInvoice"
+            @update:via="(newValue) => (shareInvoice.via = newValue)"
+            @update:setDefault="
+              (newValue) => (shareInvoice.setDefault = newValue)
+            "
+          />
         </div>
 
         <div class="flex p-10 gap-10 flex-col rounded-xl bg-white">
