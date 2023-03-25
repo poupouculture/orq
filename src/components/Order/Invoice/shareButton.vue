@@ -10,8 +10,10 @@ interface Props {
 
 // State
 const whatsappShare = ref<boolean>(false);
+const emailShare = ref<boolean>(true);
 const props = defineProps<Props>();
 const filter = ref("");
+const activeTab = ref("send");
 const shareInvoice = reactive({
   via: props.shareInvoice.via,
   setDefault: props.shareInvoice.setDefault,
@@ -19,6 +21,18 @@ const shareInvoice = reactive({
 const bgImage = ref(
   "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
 );
+
+// tabs
+const tabs = ref([
+  {
+    label: "Send Now",
+    value: "send",
+  },
+  {
+    label: "Schedule",
+    value: "schedule",
+  },
+]);
 
 // Table
 const columns = ref([
@@ -170,6 +184,40 @@ const rows = ref([
               </q-tr>
             </template>
           </q-table>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="emailShare">
+      <q-card class="w-[900px]">
+        <q-card-section class="flex items-center justify-between">
+          <div class="text-h6">Share this link</div>
+
+          <q-btn size="md" flat round color="primary" icon="close" />
+        </q-card-section>
+
+        <q-card-section>
+          <div class="w-[80%]">
+            <q-tabs
+              v-model="activeTab"
+              dense
+              active-color="primary"
+              no-caps
+              indicator-color="primary"
+            >
+              <q-tab
+                v-for="(item, index) in tabs"
+                :key="index"
+                :name="item.value"
+                :label="item.label"
+              />
+            </q-tabs>
+          </div>
+          <q-separator class="q-mt-none" />
+
+          <q-tab-panel>
+            <q-tab-panel name="send"> </q-tab-panel>
+          </q-tab-panel>
         </q-card-section>
       </q-card>
     </q-dialog>
