@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 
 interface Props {
   shareInvoice: {
@@ -10,16 +10,19 @@ interface Props {
 
 // State
 const whatsappShare = ref<boolean>(false);
-const emailShare = ref<boolean>(true);
+const emailShare = ref<boolean>(false);
 const props = defineProps<Props>();
 const filter = ref("");
 const sendTime = ref("customeDate");
-const activeTab = ref("schedule");
+const activeTab = ref("send");
+const customDate = ref("");
+const customTime = ref("00:00");
+const customTimeZone = ref("Pakistan Standard Time (GMT + 5)");
 const shareInvoice = reactive({
   via: props.shareInvoice.via,
   setDefault: props.shareInvoice.setDefault,
 });
-const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
+const timeZoneOptions = ["Pakistan Standard Time (GMT + 5)"];
 const bgImage = ref(
   "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
 );
@@ -99,6 +102,15 @@ const optionsGroup = ref([
     value: "customeDate",
   },
 ]);
+
+onMounted(() => {
+  const date = new Date();
+
+  const month = date.getMonth() >= 10 ? date.getMonth() : `0${date.getMonth()}`;
+  const getDate = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
+
+  customDate.value = `${date.getFullYear()}/${month}/${getDate}`;
+});
 </script>
 
 <template>
@@ -113,9 +125,11 @@ const optionsGroup = ref([
                   checked-icon="task_alt"
                   unchecked-icon="panorama_fish_eye"
                   size="xs"
+                  class="cursor-pointer"
                   v-model="shareInvoice.via"
                   val="Email"
                   label="Email Now"
+                  @click="emailShare = !emailShare"
                 />
                 <q-icon style="color: #ccc; font-size: 1.4em" name="send" />
               </div>
@@ -132,7 +146,8 @@ const optionsGroup = ref([
                   checked-icon="task_alt"
                   unchecked-icon="panorama_fish_eye"
                   size="xs"
-                  @update:model-value="whatsappShare = !whatsappShare"
+                  class="cursor-pointer"
+                  @click="whatsappShare = !whatsappShare"
                   label="Whatsapp"
                   v-model="shareInvoice.via"
                   val="Whatsapp"
@@ -210,11 +225,18 @@ const optionsGroup = ref([
     </q-dialog>
 
     <q-dialog v-model="emailShare">
-      <q-card class="w-[900px]">
+      <q-card class="w-[900px] h-[636px]">
         <q-card-section class="flex items-center justify-between">
           <div class="text-h6">Share this link</div>
 
-          <q-btn size="md" flat round color="primary" icon="close" />
+          <q-btn
+            @click="emailShare = !emailShare"
+            size="md"
+            flat
+            round
+            color="primary"
+            icon="close"
+          />
         </q-card-section>
 
         <q-card-section>
@@ -259,17 +281,31 @@ const optionsGroup = ref([
                   <div class="grid grid-cols-2 gap-10">
                     <div>
                       <p for="" class="mb-3 font-bold">Select Date</p>
-                      <q-input class="mb-3" dense outlined>
+                      <q-input
+                        :rules="['date']"
+                        v-model="customDate"
+                        class="mb-3"
+                        dense
+                        outlined
+                      >
                         <template v-slot:append>
-                          <q-icon name="event" />
+                          <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy cover :breakpoint="600">
+                              <q-date v-model="customDate" />
+                            </q-popup-proxy>
+                          </q-icon>
                         </template>
                       </q-input>
                     </div>
                     <div>
                       <p for="" class="mb-3 font-bold">Select Time</p>
-                      <q-input class="mb-3" dense outlined>
+                      <q-input v-model="customTime" class="mb-3" dense outlined>
                         <template v-slot:append>
-                          <q-icon name="schedule" />
+                          <q-icon name="schedule" class="cursor-pointer">
+                            <q-popup-proxy cover :breakpoint="600">
+                              <q-time v-model="customTime" />
+                            </q-popup-proxy>
+                          </q-icon>
                         </template>
                       </q-input>
                     </div>
@@ -277,8 +313,25 @@ const optionsGroup = ref([
 
                   <div class="">
                     <p for="" class="mb-3 font-bold">Select Time Zone</p>
-                    <q-select class="mb-3" dense outlined :options="options" />
+                    <q-select
+                      class="mb-3"
+                      v-model="customTimeZone"
+                      dense
+                      outlined
+                      :options="timeZoneOptions"
+                    />
                   </div>
+                </div>
+
+                <div class="flex gap-4 justify-end mt-4">
+                  <button
+                    class="rounded-lg py-1 px-4 border-dotted border-2 text-primary border-primary"
+                  >
+                    Cancel
+                  </button>
+                  <button class="rounded-lg py-1 px-4 text-white bg-primary">
+                    Save
+                  </button>
                 </div>
               </div>
             </q-tab-panel>
