@@ -13,11 +13,13 @@ const whatsappShare = ref<boolean>(false);
 const emailShare = ref<boolean>(true);
 const props = defineProps<Props>();
 const filter = ref("");
-const activeTab = ref("send");
+const sendTime = ref("customeDate");
+const activeTab = ref("schedule");
 const shareInvoice = reactive({
   via: props.shareInvoice.via,
   setDefault: props.shareInvoice.setDefault,
 });
+const options = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 const bgImage = ref(
   "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
 );
@@ -76,6 +78,25 @@ const rows = ref([
     name: "John q",
     company: "Syn",
     customerCode: 122339828,
+  },
+]);
+
+const optionsGroup = ref([
+  {
+    label: "One hour",
+    value: "oneHour",
+  },
+  {
+    label: "Two hour",
+    value: "twoHour",
+  },
+  {
+    label: "Tomorrow",
+    value: "tomorrow",
+  },
+  {
+    label: "Custom Date and Time",
+    value: "customeDate",
   },
 ]);
 </script>
@@ -215,9 +236,53 @@ const rows = ref([
           </div>
           <q-separator class="q-mt-none" />
 
-          <q-tab-panel>
-            <q-tab-panel name="send"> </q-tab-panel>
-          </q-tab-panel>
+          <q-tab-panels v-model="activeTab">
+            <q-tab-panel name="send"> Send </q-tab-panel>
+
+            <q-tab-panel name="schedule">
+              <div class="flex flex-col">
+                <div class="">
+                  <p class="font-light text-sm">Schedule to send after</p>
+                </div>
+                <div>
+                  <q-option-group
+                    :options="optionsGroup"
+                    type="radio"
+                    v-model="sendTime"
+                  />
+                </div>
+
+                <div
+                  v-if="sendTime == 'customeDate'"
+                  class="flex flex-col mt-5 gap-5"
+                >
+                  <div class="grid grid-cols-2 gap-10">
+                    <div>
+                      <p for="" class="mb-3 font-bold">Select Date</p>
+                      <q-input class="mb-3" dense outlined>
+                        <template v-slot:append>
+                          <q-icon name="event" />
+                        </template>
+                      </q-input>
+                    </div>
+                    <div>
+                      <p for="" class="mb-3 font-bold">Select Time</p>
+                      <q-input class="mb-3" dense outlined>
+                        <template v-slot:append>
+                          <q-icon name="schedule" />
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+
+                  <div class="">
+                    <p for="" class="mb-3 font-bold">Select Time Zone</p>
+                    <q-select class="mb-3" dense outlined :options="options" />
+                  </div>
+                </div>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
         </q-card-section>
       </q-card>
     </q-dialog>
