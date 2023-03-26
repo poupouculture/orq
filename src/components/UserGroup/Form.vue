@@ -26,6 +26,19 @@
             />
           </div>
         </div>
+        <!-- Tags -->
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <BaseMultiOptions
+              v-model="tags"
+              label="Tags"
+              filter-url="/items/tags"
+              :options="options.tags"
+              option-variable-name="tags"
+              @update:multi-options="updateMultiOptions"
+            />
+          </div>
+        </div>
         <!-- Customer -->
         <h6 class="border-b border-[#D9D9D9]">Customers</h6>
         <div class="flex justify-end items mt-2.5 space-x-3 mb-3">
@@ -202,6 +215,9 @@ import { Loading, Notify } from "quasar";
 import { getUserGroups, getAllUserGroupEdit } from "src/api/userGroup";
 import { getCustomers } from "src/api/customers";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
+import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
+import { api } from "src/boot/axios";
+import { transformTagPayload } from "src/utils/transform-object";
 
 const props = defineProps({
   id: [String],
@@ -235,12 +251,37 @@ onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
     form.status = data.value.status;
+    tags.value = data.value.tags.map((data) => ({
+      label: data.tags_id.name,
+      value: data.tags_id.id,
+    }));
     selectedCustomer.value = data.value?.customers.map((c) => c.customers_id);
     selectedUserGroup.value = data.value?.user_groups.map(
       (ug) => ug.user_groups_id
     );
   }
 });
+const options = reactive({
+  tags: [],
+});
+const tags = ref([]);
+const updateMultiOptions = async (val) => {
+  const { data: payload, filterUrl, variableName, nameLabel } = val;
+  const {
+    data: { data },
+  } = await api.get(filterUrl, {
+    params: {
+      fields: "*",
+      search: payload,
+    },
+  });
+  options[variableName] = data.map((item) => {
+    return {
+      value: item.id,
+      label: item[nameLabel],
+    };
+  });
+};
 const deleteUserGroup = (index) => {
   const userGroupId = selectedUserGroup.value[index].id;
   deletedUserGroup.value.push(userGroupId);
@@ -297,6 +338,7 @@ const submit = async () => {
     if (props.id) {
       await updateCustomerGroup(props.id, {
         ...form,
+        tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
@@ -334,6 +376,7 @@ const submit = async () => {
     } else {
       await addCustomerGroup({
         ...form,
+        tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: userGroupCreate(),
         },

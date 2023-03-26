@@ -36,9 +36,10 @@ export const getInternalGroup = async (id: string) => {
   const users =
     "users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name. users.user_groups_id.*";
   const customerGroups = "customer_groups.*, customer_groups.*.*";
+  const tags = "tags.*, tags.*.*";
   const internalGroups = await api.get("/items/user_groups/" + id, {
     params: {
-      fields: `id, name, status, type, ${customerGroups}, ${users}`,
+      fields: `id,name,status,type,${customerGroups},${users},${tags}`,
     },
   });
   return internalGroups;

@@ -9,8 +9,8 @@
         class="text-gray-400 gap-x-3"
       >
         <q-icon name="keyboard_backspace" class="text-gray-400" />
-        Internal Groups</RouterLink
-      >
+        Internal Groups
+      </RouterLink>
       <span>/</span>
       <span>Edit Internal Group</span>
     </div>
@@ -45,6 +45,7 @@ const submit = async (value) => {
       ...value.form,
       id: route.params.id,
       users: value.users,
+      tags: value.tags,
       customer_groups: value.customerGroups,
     });
     Notify.create({

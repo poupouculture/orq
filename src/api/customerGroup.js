@@ -17,12 +17,13 @@ export const getCustomerGroups = async (
     id !== null ? "/items/customer_groups/" + id : "/items/customer_groups";
   const companies = "customers.customers_id.companies.companies_id.*";
   const userGroups = "user_groups.*, user_groups.user_groups_id.*";
+  const tags = "tags.*, tags.*.*";
   const customerGroups = await api.get(url, {
     params: {
       limit,
       offset,
       search,
-      fields: `id, name, status, customers.id, customers.customers_id.*, ${userGroups}, ${companies}`,
+      fields: `id,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
       meta: "*",
     },
   });

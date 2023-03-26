@@ -12,6 +12,7 @@
     :hide-pagination="hidePagination"
     binary-state-sort
     column-sort-order="ad"
+    @row-click="onRowClick"
   >
     <template v-slot:header-selection v-if="props.disableSelect"> </template>
     <template v-slot:body-selection v-if="disableSelect"></template>
@@ -102,6 +103,16 @@ const selected = computed({
   set: (value) => emit("update:selected", value),
   get: () => props.selected,
 });
+
+const onRowClick = (e: any, row: any) => {
+  const index = selected.value.findIndex((item: any) => item.id === row.id);
+  console.log(index, row);
+  if (index > -1) {
+    selected.value.splice(index, 1);
+  } else {
+    selected.value.push(row);
+  }
+};
 
 const pagination = ref({
   sortBy: "desc",

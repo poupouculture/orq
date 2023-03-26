@@ -9,8 +9,8 @@
         class="text-gray-400 gap-x-3"
       >
         <q-icon name="keyboard_backspace" class="text-gray-400" />
-        Internal Groups</RouterLink
-      >
+        Internal Groups
+      </RouterLink>
       <span>/</span>
       <span>Add Internal Group</span>
     </div>
@@ -35,6 +35,7 @@ const submitData = async (value) => {
   try {
     await addInternalGroup({
       ...value.form,
+      tags: value.tags,
       users: {
         create: userCreate({
           id: "+",

@@ -26,6 +26,19 @@
             />
           </div>
         </div>
+        <!-- Tags -->
+        <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <BaseMultiOptions
+              v-model="tags"
+              label="Tags"
+              filter-url="/items/tags"
+              :options="options.tags"
+              option-variable-name="tags"
+              @update:multi-options="updateMultiOptions"
+            />
+          </div>
+        </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style">Type</p>
@@ -195,6 +208,9 @@ import {
   getCustomerGroups,
 } from "src/api/customerGroup";
 import { Loading } from "quasar";
+import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
+import { api } from "src/boot/axios";
+import { transformTagPayload } from "src/utils/transform-object";
 
 const statusOptions = ["published", "draft"];
 const typeOptions = [
@@ -232,13 +248,37 @@ onMounted(() => {
     form.name = data.value.name;
     form.status = data.value.status;
     form.type = data.value.type;
+    tags.value = data.value.tags.map((data) => ({
+      label: data.tags_id.name,
+      value: data.tags_id.id,
+    }));
     selectedCustomerGroup.value = data.value?.customer_groups.map(
       (c) => c.customer_groups_id
     );
     selectedUser.value = data.value?.users.map((ug) => ug.directus_users_id);
   }
 });
-
+const options = reactive({
+  tags: [],
+});
+const tags = ref([]);
+const updateMultiOptions = async (val) => {
+  const { data: payload, filterUrl, variableName, nameLabel } = val;
+  const {
+    data: { data },
+  } = await api.get(filterUrl, {
+    params: {
+      fields: "*",
+      search: payload,
+    },
+  });
+  options[variableName] = data.map((item) => {
+    return {
+      value: item.id,
+      label: item[nameLabel],
+    };
+  });
+};
 const deleteCustomerGroup = (index) => {
   const customerGroupId = selectedCustomerGroup.value[index].id;
   deletedCustomerGroup.value.push(customerGroupId);
@@ -283,6 +323,7 @@ const submit = async () => {
   if (props.id) {
     emits("submit", {
       form,
+      tags: transformTagPayload(data.value, tags.value, "user_group_id"),
       customerGroups: {
         create: addedCustomerGroup.value.map((customerGroup) => ({
           user_groups_id: props.id,
@@ -321,6 +362,7 @@ const submit = async () => {
   } else {
     emits("submit", {
       form,
+      tags: transformTagPayload(data.value, tags.value, "user_group_id"),
       customerGroups: selectedCustomerGroup.value,
       users: selectedUser.value,
     });
