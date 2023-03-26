@@ -1,9 +1,10 @@
 <template>
   <div class="login h-full flex no-warp select-none">
     <div class="hidden md:!inline-block bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3">
-      <p class="flex no-wrap text-2xl items-center leading-none">
-        <img class="w-20 mr-3" :src="logo" alt="logo" />
-      </p>
+      <div class="flex items-center">
+        <img class="w-[80px] mr-3" :src="logo" alt="logo" />
+        <p class="font-[800] font-inter text-3xl">ChaQue</p>
+      </div>
     </div>
 
     <div class="flex-1 flex no-wrap bg-white">

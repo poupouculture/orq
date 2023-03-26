@@ -1,8 +1,14 @@
 <template>
-  <q-list class="chat-panel pb-14 h-full flex flex-col overflow-x-hidden">
+  <q-list
+    class="chat-panel bg-[#f2f3f7] pb-14 h-full flex flex-col overflow-x-hidden"
+  >
     <!-- search part -->
     <q-item-label header>
-      <img class="q-mb-lg w-20" src="~assets/images/logo.svg" />
+      <div class="logo-holder mb-3 flex items-center gap-3">
+        <img class="w-10" src="~assets/images/logo.svg" />
+        <p class="font-[800] text-[#231815] text-2xl">ChaQue</p>
+      </div>
+
       <q-input v-model="seachText" placeholder="Search ..." outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />
@@ -80,7 +86,12 @@
     </q-tabs>
     <q-separator class="mt-2" size="2px" inset />
     <!-- chatlist part -->
-    <q-tab-panels class="h-full" v-model="selectedTab" animated swipeable>
+    <q-tab-panels
+      class="h-full bg-[#f2f3f7]"
+      v-model="selectedTab"
+      animated
+      swipeable
+    >
       <q-tab-panel
         class="overflow-x-hidden"
         v-for="tab in Tabs"
