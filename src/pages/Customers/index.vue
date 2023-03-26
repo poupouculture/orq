@@ -2,33 +2,11 @@
   <div class="main-container">
     <p class="header-text">Customers</p>
     <div class="row justify-between">
-      <q-input
-        placeholder="Search"
-        outlined
-        dense
-        v-model="search.query"
-        :debounce="500"
-        @update:model-value="searchHandler()"
-      >
-        <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-        <template v-slot:append>
-          <q-circular-progress
-            v-if="search.loading"
-            indeterminate
-            rounded
-            size="18px"
-            color="gray-1"
-          />
-          <q-icon
-            v-else-if="search.query"
-            name="close"
-            class="text-gray-400 cursor-pointer"
-            @click="resetSearch()"
-          />
-        </template>
-      </q-input>
+      <SearchTableInput
+        :loading="search.loading"
+        @search="searchHandler"
+        @reset="resetSearch"
+      />
       <div>
         <q-btn
           icon="add"
@@ -130,6 +108,7 @@ import { ref, reactive, onMounted } from "vue";
 import { getCustomers } from "src/api/customers";
 import { useRouter } from "vue-router";
 import BaseTable from "src/components/BaseTable.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 
@@ -187,7 +166,8 @@ const search = reactive({
   loading: false,
   query: "",
 });
-const searchHandler = async () => {
+const searchHandler = async (searchValue = "") => {
+  search.query = searchValue;
   search.loading = true;
   try {
     await fetchCustomers();
