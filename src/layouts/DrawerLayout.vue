@@ -11,7 +11,7 @@
       <q-scroll-area class="fit">
         <div class="drawer-content">
           <div class="logo-holder flex items-center gap-3">
-            <img class="w-10" src="/src/assets/images/logo.svg" />
+            <img class="w-10" :src="logo" />
             <p class="font-[800] text-white text-2xl">ChaQue</p>
           </div>
           <div class="input-holder">
@@ -115,6 +115,7 @@ import MenuBar from "src/components/MenuBar/MenuBar.vue";
 import SearchInput from "src/components/SearchInput.vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import { pageCodes } from "../utils/page-codes";
+import logo from "assets/images/logo.svg";
 
 const userInfo = useUserInfoStore();
 const drawer = ref(true);
