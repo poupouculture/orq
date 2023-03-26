@@ -9,10 +9,12 @@
 
     <div class="flex-1 flex no-wrap bg-white">
       <section
-        class="login-from mt-16 w-full sm:w-96 max-w-sm mx-auto px-4 sm:px-0"
+        class="login-from flex flex-col justify-center mt-16 w-full sm:w-96 max-w-sm mx-auto px-4 sm:px-0"
       >
-        <h1 class="title text-center text-2xl font-semibold mb-10">
-          Welcome To WABA
+        <h1
+          class="title text-[#111827] font-[800] font-inter text-center text-3xl mb-10"
+        >
+          Welcome Back
         </h1>
 
         <q-form @submit="submit">
@@ -40,21 +42,31 @@
             outlined
           />
 
-          <div class="control flex no-wrap items-center justify-between mb-4">
+          <div class="control flex no-wrap items-center justify-between">
+            <div>
+              <q-checkbox v-model="remember" label="Remember Me" />
+            </div>
+
             <a href="#">Forgot your password?</a>
+          </div>
+
+          <div class="py-4 flex items-center gap-1">
+            <p class="text-sm">No Account ?</p>
+            <RouterLink to="/" class="text-primary"> Create one! </RouterLink>
           </div>
 
           <q-btn
             class="w-full h-9 font-normal rounded-md text-white bg-blue-700"
             :loading="loading"
             type="submit"
-            >Sign in</q-btn
           >
+            Sign in
+          </q-btn>
         </q-form>
 
         <footer class="mt-5">
           <p class="mt-6 text-gray-400 text-sm">
-            By logging, in, you agree to WabaQ
+            By logging, in, you agree to SYNQUE's
             <a href="https://invoice-link.pages.dev/privacy/" target="_blank">
               Terms af Service with privacy policy
             </a>
@@ -79,6 +91,8 @@ import logo from "assets/images/logo.svg";
 const login = ref({ email: "", password: "" }),
   loading = ref(false),
   userInfo = useUserInfoStore();
+
+const remember = ref(false);
 
 const submit = (e) => {
   if (login.value.email && login.value.password) {
