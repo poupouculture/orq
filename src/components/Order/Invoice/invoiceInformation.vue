@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
+const setDefaultMemo = ref(true);
+const customDefault = reactive({
+  fieldName: "",
+  fieldValue: "",
+});
+const setDefaultFooter = ref(true);
 const labelHead = ref([
   {
     label: "Items",
@@ -223,13 +229,79 @@ const { getInvoice } = useInvoice();
           val="field"
           v-model="getInvoice.optional.customField"
         />
-        <span class="text-sm font-normal text-[#9A9AAF]">
+        <span class="text-sm cursor-pointer font-normal text-[#9A9AAF]">
           Add custom field
+          <q-popup-proxy>
+            <q-banner dense rounded class="bg-[#4B44F6]/10 p-4">
+              <label for="memo">Custom Field</label>
+              <q-input
+                class="bg-white rounded-xl mt-3"
+                dense
+                v-model="customDefault.fieldName"
+                outlined
+                type="text"
+                placeholder="Field Name"
+              />
+              <q-input
+                class="bg-white rounded-xl mt-3"
+                dense
+                v-model="customDefault.fieldValue"
+                outlined
+                type="text"
+                placeholder="Field Value"
+              />
+              <q-checkbox
+                v-model="setDefaultMemo"
+                class="text-[#94A3B8] text-xs"
+                size="xs"
+                label="set as default for future invoices"
+              />
+              <div class="flex justify-end gap-3">
+                <button
+                  class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                >
+                  Cancel
+                </button>
+                <button class="rounded-lg py-1 px-2 text-white bg-primary">
+                  Save
+                </button>
+              </div>
+            </q-banner>
+          </q-popup-proxy>
         </span>
       </div>
       <div class="flex items-center">
         <q-checkbox size="xs" val="memo" v-model="getInvoice.optional.memo" />
-        <span class="text-sm font-normal text-[#9A9AAF]"> Memo </span>
+        <span class="text-sm cursor-pointer font-normal text-[#9A9AAF]">
+          Memo
+          <q-popup-proxy>
+            <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
+              <label for="memo">Memo</label>
+              <q-input
+                class="rounded-xl bg-white mt-3"
+                outlined
+                type="textarea"
+                placeholder="Some Text"
+              />
+              <q-checkbox
+                v-model="setDefaultMemo"
+                class="text-[#94A3B8] text-xs"
+                size="xs"
+                label="set as default for future invoices"
+              />
+              <div class="flex justify-end gap-3">
+                <button
+                  class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                >
+                  Cancel
+                </button>
+                <button class="rounded-lg py-1 px-2 text-white bg-primary">
+                  Save
+                </button>
+              </div>
+            </q-banner>
+          </q-popup-proxy>
+        </span>
       </div>
       <div class="flex items-center">
         <q-checkbox
@@ -237,7 +309,36 @@ const { getInvoice } = useInvoice();
           val="footer"
           v-model="getInvoice.optional.footer"
         />
-        <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
+        <span class="text-sm cursor-pointer font-normal text-[#9A9AAF]">
+          Footer
+          <q-popup-proxy>
+            <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
+              <label for="memo">Footer</label>
+              <q-input
+                class="rounded-xl bg-white mt-3"
+                outlined
+                type="textarea"
+                placeholder="Some Text"
+              />
+              <q-checkbox
+                v-model="setDefaultFooter"
+                class="text-[#94A3B8] text-xs"
+                size="xs"
+                label="set as default for future invoices"
+              />
+              <div class="flex justify-end gap-3">
+                <button
+                  class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                >
+                  Cancel
+                </button>
+                <button class="rounded-lg py-1 px-2 text-white bg-primary">
+                  Save
+                </button>
+              </div>
+            </q-banner>
+          </q-popup-proxy>
+        </span>
       </div>
       <div class="">
         <q-btn
