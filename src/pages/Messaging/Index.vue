@@ -1,29 +1,18 @@
 <template>
   <div class="lg:!block">
-    <div
+    <!-- <div
       v-if="showCustomerInfoMobile"
-      @click="closeCustomerInfoMobile()"
       class="flex items-center space-x-2 mb-3 text-gray-600 cursor-pointer"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="icon icon-tabler icon-tabler-arrow-narrow-left"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M5 12l14 0"></path>
-        <path d="M5 12l4 4"></path>
-        <path d="M5 12l4 -4"></path>
-      </svg>
-      <span>Back</span>
-    </div>
+    > -->
+    <q-btn
+      class="float-right"
+      @click="closeCustomerInfoMobile"
+      style="color: #64748b"
+      flat
+      round
+      icon="close"
+    />
+
     <!-- Search Customer -->
     <SearchCustomer />
     <div v-if="newCustomer">
@@ -75,10 +64,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import useMessagingStore from "src/stores/modules/messaging";
+// import useMessagingStore from "src/stores/modules/messaging";
 import { getChatUsers } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
@@ -96,7 +85,7 @@ interface Manager {
   last_name: string;
   role_name: string;
 }
-const messagingStore = useMessagingStore();
+// const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 
 const userInfo = useUserInfoStore();
@@ -107,7 +96,8 @@ const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
 const firebaseToken: Ref<string> = ref("");
-const showCustomerInfoMobile: Ref<boolean> = ref(false);
+// const showCustomerInfoMobile: Ref<boolean> = ref(false);
+const rightDrawerOpen: any = inject("rightDrawerOpen");
 
 const { getFirebaseToken } = storeToRefs(userInfoStore);
 
@@ -116,12 +106,13 @@ onMounted(async () => {
   managers.value = data;
   userRole.value = userInfo.getUserRoleName;
   firebaseToken.value = getFirebaseToken.value;
-  showCustomerInfoMobile.value = window.innerWidth < 1023;
+  // showCustomerInfoMobile.value = window.innerWidth < 1023;
 });
 // closing customer information in mobile view
 const closeCustomerInfoMobile = () => {
-  messagingStore.setCustomerInfoMobile(false);
-  messagingStore.setRightDrawerOpen(true);
+  // messagingStore.setCustomerInfoMobile(false);
+  // messagingStore.setRightDrawerOpen(true);
+  rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 </script>
 

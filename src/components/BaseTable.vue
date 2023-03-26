@@ -3,8 +3,9 @@
     selection="multiple"
     :rows="rows"
     :columns="columns"
+    :v-model:pagination="pagination"
+    :rows-per-page-options="[10]"
     :row-key="rowKey"
-    v-model:pagination="pagination"
     :loading="loading"
     v-model:selected="selected"
     flat
@@ -14,6 +15,11 @@
   >
     <template v-slot:header-selection v-if="props.disableSelect"> </template>
     <template v-slot:body-selection v-if="disableSelect"></template>
+    <template #body-cell-date_created="props">
+      <q-td :props="props">
+        {{ dateFormatter(props.row.date_created) }}
+      </q-td>
+    </template>
     <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope" />
     </template>
@@ -31,7 +37,7 @@
           class="col-span-1 lg:col-span-2 flex justify-center lg:justify-end"
         >
           <q-pagination
-            v-model="page"
+            v-model="pagination.page"
             size="15px"
             @update:model-value="changePage"
             :max="totalPage"
@@ -48,7 +54,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUpdated } from "vue";
+import { computed, ref } from "vue";
+import { dateFormatter } from "src/helpers";
 
 const props = defineProps({
   selected: {
@@ -59,7 +66,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  rowKey: String,
+  rowKey: {
+    type: String,
+    default: "id",
+  },
   totalCount: {
     type: Number,
     default: 0,
@@ -94,16 +104,15 @@ const emit = defineEmits([
   "update:selected",
   "update:pagination",
 ]);
-const page = ref(props.page);
 const selected = computed({
   set: (value) => emit("update:selected", value),
   get: () => props.selected,
 });
 
 const pagination = ref({
-  sortBy: "",
+  sortBy: "desc",
   descending: false,
-  page: page.value,
+  page: props.page,
   rowsPerPage: 10,
 });
 
@@ -123,12 +132,4 @@ const totalPage = computed(() =>
 const changePage = (page: number) => {
   emit("changePage", page);
 };
-
-onMounted(() => {
-  console.log("mounted: ", props.rows);
-});
-
-onUpdated(() => {
-  console.log("updated: ", props.rows);
-});
 </script>

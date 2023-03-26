@@ -35,6 +35,18 @@ const routes = [
         component: () => import("pages/ApplicationProgram/index.vue"),
       },
       {
+        path: "application-programs/campaign",
+        component: () => import("pages/ApplicationProgram/Campaign/Index.vue"),
+      },
+      {
+        path: "application-programs/campaign/create",
+        component: () => import("pages/ApplicationProgram/Campaign/Create.vue"),
+      },
+      {
+        path: "application-programs/campaign",
+        component: () => import("pages/ApplicationProgram/Campaign/Index.vue"),
+      },
+      {
         path: "application-programs/message-templates",
         component: () =>
           import("pages/ApplicationProgram/MessageTemplate/index.vue"),
@@ -117,6 +129,7 @@ const routes = [
       },
       {
         path: "customers",
+        name: "customers",
         component: () => import("pages/Customers/index.vue"),
       },
       {
@@ -144,6 +157,11 @@ const routes = [
         path: "/order/invoices",
         name: "order.invoices",
         component: () => import("src/pages/Order/Invoice/index.vue"),
+      },
+      {
+        path: "/order/payment",
+        name: "order.payment",
+        component: () => import("src/pages/Order/Invoice/payment.vue"),
       },
       {
         path: "/order/service-records/:id",
@@ -196,7 +214,7 @@ const routes = [
       {
         path: "",
         name: "messaging",
-        component: () => import("pages/Messaging/Index.vue"),
+        component: () => import("components/Messaging/Message.vue"),
       },
     ],
   },

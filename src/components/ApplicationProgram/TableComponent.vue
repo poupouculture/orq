@@ -100,13 +100,13 @@
         {{ props.row.user_created }}
       </q-td>
     </template>
-    <template #body-cell-created_on="props">
+    <template #body-cell-date_created="props">
       <q-td
         :props="props"
         :class="{ 'cursor-pointer': propsTable.isSimple }"
         @dblclick="useTemplate(props.row)"
       >
-        {{ props.row.date_created }}
+        {{ dateFormatter(props.row.date_created) }}
       </q-td>
     </template>
     <template #body-cell-action="props">
@@ -132,6 +132,7 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
+import { dateFormatter } from "src/helpers";
 import BaseTable from "src/components/BaseTable.vue";
 
 const propsTable = defineProps({
@@ -247,6 +248,7 @@ const headerColumns = ref([
     label: "Created On",
     field: "date_created",
     classes: "text-black",
+    sortable: true,
   },
   {
     name: "action",

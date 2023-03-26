@@ -30,32 +30,31 @@
       :data="customersData"
       @changePage="changePage"
       :pagination="pagination"
+      @search="searchHandler($event)"
       v-if="openAddCustomer"
     />
   </div>
 </template>
 <script setup>
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
-import { ref, reactive } from "vue";
+import { ref, computed, reactive } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
 import AddCustomer from "./AddCustomer.vue";
 import { getCustomersFilter } from "src/api/customerGroup";
 import { Loading } from "quasar";
 
+const emits = defineEmits(["addCustomer"]);
 const props = defineProps({
   id: [String, Number],
 });
 const customerGroupStore = useCustomerGroupStore();
 const customersData = ref([]);
 const deleteDialog = ref(false);
+const query = ref("");
 const openAddCustomer = ref(false);
-
-const toggleAddCustomer = async () => {
-  if (!openAddCustomer.value) {
-    await fetchCustomers();
-  }
-  openAddCustomer.value = !openAddCustomer.value;
-};
+const item = computed(() =>
+  customerGroupStore.items.find((item) => item.id === props.id)
+);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -63,6 +62,20 @@ const pagination = reactive({
   rowsPerPage: 10,
   totalCount: 0,
 });
+
+const toggleAddCustomer = async () => {
+  if (!openAddCustomer.value) {
+    await fetchCustomers();
+  }
+  openAddCustomer.value = !openAddCustomer.value;
+};
+const searchHandler = async (value) => {
+  try {
+    query.value = value;
+    await fetchCustomers();
+  } catch (error) {}
+};
+
 const changePage = (val) => {
   pagination.page = val;
   fetchCustomers();
@@ -76,20 +89,30 @@ const fetchCustomers = async () => {
     {
       limit: pagination.rowsPerPage,
       page: pagination.page,
+      search: query.value?.length ? query.value : undefined,
+      filter: query.value?.length
+        ? {
+            key: "filter[first_name][_neq]",
+            value: "null",
+          }
+        : undefined,
     },
-    props.id
+    item.value.customers.map((customer) => customer.customers_id.id)
   );
+  pagination.totalCount = query.value.length
+    ? meta?.filter_count
+    : meta?.total_count;
   Loading.hide();
   customersData.value = customers;
-  pagination.totalCount = meta?.total_count;
 };
 
 const submitAddCustomer = async (val) => {
   if (val && val.length) {
-    customerGroupStore.addCustomer({
+    await customerGroupStore.addCustomer({
       id: props.id,
-      customers: val,
+      customers: val.map((item) => item.id),
     });
+    emits("addCustomer");
   }
 };
 

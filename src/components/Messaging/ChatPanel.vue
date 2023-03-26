@@ -2,7 +2,7 @@
   <q-list class="chat-panel pb-14 h-full flex flex-col overflow-x-hidden">
     <!-- search part -->
     <q-item-label header>
-      <img class="q-mb-lg" src="~assets/images/logo-invert.png" />
+      <img class="q-mb-lg w-20" src="~assets/images/logo.svg" />
       <q-input v-model="seachText" placeholder="Search ..." outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />

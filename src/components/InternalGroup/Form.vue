@@ -160,6 +160,7 @@
     @close="openAddCustomerGroup = false"
     @changePage="(val) => changePage(val, 'customergroup')"
     :pagination="paginationCustomerGroup"
+    @search="searchCustomerGroupHandler"
     v-if="openAddCustomerGroup"
   />
   <AddUserOverlay
@@ -168,6 +169,7 @@
     :data="userData"
     @changePage="(val) => changePage(val, 'user')"
     :pagination="paginationUser"
+    @search="searchUserHandler"
     v-if="openAddUser"
   />
   <ReturnDialog
@@ -340,66 +342,81 @@ const submitAddUser = async (val) => {
     });
   }
 };
+const customerGroupQuery = ref("");
+const searchCustomerGroupHandler = async (value) => {
+  try {
+    customerGroupQuery.value = value;
+    await fetchCustomerGroups();
+  } catch (error) {}
+};
 const fetchCustomerGroups = async () => {
+  const params = {
+    limit: paginationCustomerGroup.rowsPerPage,
+    page: paginationCustomerGroup.page,
+    customerGroups: selectedCustomerGroup.value.map((item) => item.id),
+    search: customerGroupQuery.value.length
+      ? customerGroupQuery.value
+      : undefined,
+  };
   if (props.id) {
     Loading.show();
     const {
       data: { data: userGroups, meta },
-    } = await getAllCustomerGroupEdit({
-      limit: paginationCustomerGroup.rowsPerPage,
-      page: paginationCustomerGroup.page,
-      customerGroups: selectedCustomerGroup.value.map((item) => item.id),
-    });
+    } = await getAllCustomerGroupEdit(params);
     Loading.hide();
     customerGroupData.value = userGroups;
-    paginationCustomerGroup.totalCount = meta?.total_count;
-    paginationCustomerGroup.filterCount = meta?.filter_count;
+    paginationCustomerGroup.totalCount = customerGroupQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   } else {
     Loading.show();
     const {
       data: { data: customerGroups, meta },
-    } = await getCustomerGroups(
-      {
-        limit: paginationCustomerGroup.rowsPerPage,
-        page: paginationCustomerGroup.page,
-      },
-      props.id
-    );
+    } = await getCustomerGroups(params, props.id);
     Loading.hide();
     customerGroupData.value = customerGroups;
-    paginationCustomerGroup.totalCount = meta?.total_count;
-    paginationCustomerGroup.filterCount = meta?.filter_count;
+    paginationCustomerGroup.totalCount = customerGroupQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   }
 };
+const userQuery = ref("");
+const searchUserHandler = async (value) => {
+  try {
+    userQuery.value = value;
+    await fetchUsers();
+  } catch (error) {}
+};
 const fetchUsers = async () => {
+  const params = {
+    limit: paginationUser.rowsPerPage,
+    page: paginationUser.page,
+    customers: selectedCustomerGroup.value,
+    search: userQuery.value.length ? userQuery.value : undefined,
+  };
   if (props.id) {
     Loading.show();
     const {
       data: { data: customerGroups, meta },
     } = await getUsersFilter(
-      {
-        limit: paginationUser.rowsPerPage,
-        page: paginationUser.page,
-        customers: selectedCustomerGroup.value,
-      },
+      params,
       selectedUser.value.map((item) => item.id)
     );
     Loading.hide();
     userData.value = customerGroups;
-    paginationUser.totalCount = meta?.total_count;
-    paginationUser.filterCount = meta?.filter_count;
+    paginationUser.totalCount = userQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   } else {
     Loading.show();
     const {
       data: { data: customers, meta },
-    } = await getUsers({
-      limit: paginationUser.rowsPerPage,
-      page: paginationUser.page,
-    });
+    } = await getUsers(params);
     Loading.hide();
     userData.value = customers;
-    paginationUser.totalCount = meta?.total_count;
-    paginationUser.filterCount = meta?.filter_count;
+    paginationUser.totalCount = userQuery.value.length
+      ? meta?.filter_count
+      : meta?.total_count;
   }
 };
 

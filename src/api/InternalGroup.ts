@@ -6,6 +6,7 @@ export const searchInternalGroups = async (query: string) => {
   const data = await api.get("/items/user_groups", {
     params: {
       search: query,
+      "filter[type][_neq]": "personal",
     },
   });
   return data;
@@ -21,6 +22,7 @@ export const getInternalGroups = async ({
     params: {
       limit,
       search,
+      "filter[type][_neq]": "personal",
       offset,
       fields:
         "id, name, status, users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name",
@@ -43,7 +45,7 @@ export const getInternalGroup = async (id: string) => {
 };
 
 export const getUsersFilter = async (
-  { limit = 10, page = 1 },
+  { limit = 10, page = 1, search = undefined },
   ids: string[]
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -53,6 +55,7 @@ export const getUsersFilter = async (
     params: {
       limit,
       offset,
+      search,
       "filter[_and][0][id][_nin]": ids.join(),
       "filter[_or][0][role][name][_in]": "CS,CS-Manager",
       fields,

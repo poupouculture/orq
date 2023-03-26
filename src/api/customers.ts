@@ -75,10 +75,9 @@ export const getCustomer = async (id: string) => {
 };
 
 export const deleteCustomer = async (payload: string[]) => {
-  const customer = await api.delete("/items/customers", {
+  return await api.delete("/items/customers", {
     data: payload,
   });
-  return customer;
 };
 
 export const addCustomer = async (payload: any) => {

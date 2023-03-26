@@ -1,6 +1,6 @@
 <template>
   <div class="service-record q-px-lg py-5">
-    <h2 class="text-h5 font-semibold mt-3">Service Record</h2>
+    <h2 class="text-h5 font-semibold mt-3 mb-5">Service Record</h2>
     <MessageBox
       title="About service records"
       :message="message"

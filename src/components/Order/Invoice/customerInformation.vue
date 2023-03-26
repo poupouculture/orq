@@ -63,7 +63,18 @@ const filterPhone = (val: any, update: any) => {
 
 <template>
   <div class="mt-5">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="col-span-2 grid grid-cols-2 mb-[30px]">
+        <div class="col-span-1">
+          <div class="w-[226px]">
+            <q-input placeholder="Search" dense outlined>
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+        </div>
+      </div>
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">First Name</p>
@@ -75,7 +86,7 @@ const filterPhone = (val: any, update: any) => {
           />
           <div class="flex items-center mt-2">
             <q-checkbox size="xs" v-model="getCustomer.firstName.setDefault" />
-            <span class="text-sm font-normal text-[#9A9AAF]">
+            <span class="text-xs font-normal text-[#9A9AAF]">
               set as default for future invoices
             </span>
           </div>

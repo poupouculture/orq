@@ -7,7 +7,14 @@
       Document Template
     </p>
     <div class="row justify-between">
-      <q-input placeholder="Search" outlined dense>
+      <q-input
+        v-model="search"
+        @change="fetchApplicationPrograms"
+        @keypress.enter.prevent="fetchApplicationPrograms"
+        placeholder="Search"
+        outlined
+        dense
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
@@ -38,7 +45,7 @@
         :page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
-        :loading="false"
+        :loading="loading"
         v-model:selected="selected"
         @changePage="changePage"
       >
@@ -66,6 +73,11 @@
             </span>
           </q-td>
         </template>
+        <template #body-cell-date_created="props">
+          <q-td :props="props">
+            {{ dateFormatter(props.row.date_created) }}
+          </q-td>
+        </template>
         <template #body-cell-action="props">
           <q-td :props="props">
             <router-link
@@ -88,6 +100,7 @@ import {
 } from "src/api/documentTemplate";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { dateFormatter } from "src/helpers";
 import BaseTable from "src/components/BaseTable.vue";
 
 const router = useRouter();
@@ -124,18 +137,12 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "user_created",
-    align: "center",
-    label: "Created By",
-    field: "user_created",
-    classes: "text-black",
-  },
-  {
     name: "date_created",
     align: "center",
     label: "Created On",
     field: "date_created",
     classes: "text-black",
+    sortable: true,
   },
   {
     name: "action",
@@ -147,6 +154,7 @@ const headerColumns = [
 ];
 
 const loading = ref(true);
+const search = ref("");
 const selected = ref([]);
 const data = reactive({
   applicationPrograms: [],
@@ -155,15 +163,13 @@ const data = reactive({
   rowsPerPage: 10,
 });
 
-onMounted(() => {
-  fetchApplicationPrograms();
-});
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
   } = await getDocumentTemplates({
     limit: data.rowsPerPage,
     page: data.page,
+    search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.total_count;
@@ -181,5 +187,9 @@ const archiveSelected = () => {
     await updateDocumentTemplate(data.id, data);
   });
 };
+
+onMounted(() => {
+  fetchApplicationPrograms();
+});
 </script>
 <style scoped src="./style.scss" />

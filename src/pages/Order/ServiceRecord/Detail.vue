@@ -12,7 +12,7 @@
         <span>Service Record</span>
       </RouterLink>
       <span>/</span>
-      <span>#{{ item.reference_number }}</span>
+      <span>#{{ item?.reference_number || "" }}</span>
     </div>
     <div class="px-8 py-4 bg-white rounded-2xl">
       <ServiceRecordList />

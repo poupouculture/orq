@@ -24,8 +24,8 @@ const documentTemplate = ref(null);
 
 onMounted(async () => {
   id.value = route.params.id;
-  documentTemplate.value = await getDocumentTemplate(id.value);
-  console.log(documentTemplate.value);
+  const response = await getDocumentTemplate(id.value);
+  documentTemplate.value = response.data.data;
   loading.value = false;
 });
 
