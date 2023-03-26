@@ -29,19 +29,21 @@
       />
     </header>
     <div class="p-2 text-gray-400">Members</div>
-    <div class="flex p-2 justify-between">
-      <div
-        class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
-        v-for="(member, index) of members.slice(0, 3)"
-        :key="index"
-      >
-        {{ initialName(member?.name) }}
-      </div>
-      <div
-        class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
-        v-if="members.length > 3"
-      >
-        {{ members.length - 3 }} +
+    <div class="flex justify-between p-2">
+      <div class="flex">
+        <div
+          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
+          v-for="(member, index) of members.slice(0, 3)"
+          :key="index"
+        >
+          {{ initialName(member?.name) }}
+        </div>
+        <div
+          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
+          v-if="members.length > 3"
+        >
+          {{ members.length - 3 }} +
+        </div>
       </div>
       <ChatConversationButton
         v-if="getSelectedChat.status !== ChatTypes.CLOSED"
@@ -83,16 +85,22 @@
     <!-- footer -->
     <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
-        <div class="relative rounded-xl overflow-hidden">
+        <div
+          class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2"
+        >
+          <ChatMessage
+            v-if="replayMessage?.id"
+            :message="replayMessage"
+            isReply
+          />
           <q-input
             v-model="message"
             placeholder="Enter reply information"
             dense
             borderless
-            bg-color="grey-2"
             type="textarea"
-            input-class="px-4 py-4 h-10 sm:h-auto"
             :class="{ invisible: showAudio }"
+            input-class="h-10"
             @keypress.enter.prevent="sendMessage"
             :disable="isChatExpired"
           />
@@ -108,6 +116,21 @@
           >
         </div>
         <div class="row justify-end">
+          <q-btn flat round size="md" class="q-mt-md">
+            <img src="~assets/images/bot.svg" />
+          </q-btn>
+          <q-btn
+            flat
+            round
+            color="grey"
+            icon="mic"
+            size="md"
+            class="q-mt-md active:bg-primary mic-recorder"
+            @touchstart.prevent="recStart"
+            @touchend.prevent="recStop"
+            @mousedown="recStart"
+            @mouseup="recStop"
+          />
           <q-btn
             :flat="!isChatExpired"
             round
@@ -134,19 +157,6 @@
               @added="upload"
             />
           </q-btn>
-          <q-btn
-            flat
-            round
-            color="grey"
-            icon="mic"
-            size="md"
-            class="q-mt-md active:bg-primary mic-recorder"
-            @touchstart.prevent="recStart"
-            @touchend.prevent="recStop"
-            @mousedown="recStart"
-            @mouseup="recStop"
-          />
-
           <q-btn
             color="primary"
             label="Send"
@@ -206,8 +216,8 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatName, uuid } from "src/utils/trim-word";
-import { updateChatStatus, startNewChat, uploadMedia } from "src/api/messaging";
+import { getChatName, uuid, blobToBase64 } from "src/utils/trim-word";
+import { updateChatStatus, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
 import {
@@ -222,8 +232,7 @@ import {
 import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
-import useCustomerStore from "src/stores/modules/customer";
-import ChatMessage from "./ChatMessage.vue";
+import ChatMessage from "./MessageItem.vue";
 interface HasMore {
   [key: string]: boolean;
 }
@@ -245,13 +254,15 @@ const time = ref(0);
 const audioData = ref();
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
-const customerStore = useCustomerStore();
-const { getCustomer } = storeToRefs(customerStore);
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
-const { getSelectedChat, getSelectedChatId, cachedChatMessages } =
-  storeToRefs(messagingStore);
+const {
+  getSelectedChat,
+  getSelectedChatId,
+  cachedChatMessages,
+  replayMessage,
+} = storeToRefs(messagingStore);
 
 const name = computed<string>(() => {
   return getChatName(getSelectedChat.value);
@@ -303,6 +314,7 @@ watch(
   () => getSelectedChat.value?.last_message,
   async (val) => {
     message.value = "";
+    messagingStore.setReplayMessage();
     const createDate = val?.date_created;
     if (createDate) {
       isChatExpired.value =
@@ -352,11 +364,28 @@ const showCustomerInfoInMobile = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 
+const messageCallback = async (data: any, newMessage: any) => {
+  console.log(111222, data);
+
+  if (!data.status) {
+    newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: data.message,
+    });
+  } else {
+    newMessage.id = data.data.derp_chats_messages_id;
+    newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
+    newMessage.waba_message_id = data.data.waba_message_id;
+  }
+};
+
 const sendMessage = async () => {
   if (!message.value.length) return;
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const tempId = Date.now();
-  const newMessage = {
+  const newMessage = reactive({
     id: tempId,
     content: message.value,
     status: MessageStatus.SENT,
@@ -364,53 +393,34 @@ const sendMessage = async () => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
-  };
+    waba_message_id: "",
+  });
   cachedMessage.push(newMessage);
+  const { waba_message_id: wabaMessageId } = replayMessage.value;
+  console.log(replayMessage.value);
+
   scrollToBottom();
+  messagingStore.setReplayMessage();
   message.value = "";
   isChatExpired.value = false;
+
   try {
-    if (messages.value.length > 0) {
-      const data = await messagingStore.sendChatTextMessage({
-        chatId: getSelectedChatId.value,
-        messageProduct: Product.WHATSAPP,
-        to: chatNumber.value,
-        type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
-        messageBody: newMessage.content,
-        isTemplate: isTemplate.value,
-        templateName: templateName.value,
-        language: language.value,
-        isIncludedComponent: isIncludeComponent.value,
-      });
-      const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-      const addMessage: any = cachedMessage.find((item) => item.id === tempId);
-      if (!data.status) {
-        addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: data.message,
-        });
-        // Notify.create({
-        //   message: data.message,
-        //   type: "negative",
-        //   color: "purple",
-        //   position: "top",
-        // });
-      } else {
-        addMessage.id = data.data.derp_chats_messages_id;
-        addMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
-      }
-    } else {
-      startNewChat(getCustomer.value.id);
-      messagingStore.fetchChats();
-      messagingStore.setSelectedTab(ChatTypes.ONGOING);
-    }
+    const data = await messagingStore.sendChatTextMessage({
+      chatId: getSelectedChatId.value,
+      messageProduct: Product.WHATSAPP,
+      to: chatNumber.value,
+      type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
+      messageBody: newMessage.content,
+      isTemplate: isTemplate.value,
+      templateName: templateName.value,
+      language: language.value,
+      isIncludedComponent: isIncludeComponent.value,
+      messageId: wabaMessageId,
+    });
+    messageCallback(data, newMessage);
     isTemplate.value = false;
   } catch (error) {
-    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-    const addMessage: any = cachedMessage.find((item) => item.id === tempId);
-    addMessage.sendMessageStatus = SendMessageStatus.FAILURE;
+    newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     isTemplate.value = false;
     Swal.fire({
       icon: "error",
@@ -460,7 +470,7 @@ const sendMessageTemplate = (
 const sendMedia = async (blob: Blob) => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const tempId = Date.now();
-  const newMessage = {
+  const newMessage = reactive({
     id: tempId,
     content: {
       url: audioData.value,
@@ -473,19 +483,17 @@ const sendMedia = async (blob: Blob) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
-  };
+  });
   cachedMessage.push(newMessage);
   scrollToBottom();
+  messagingStore.setReplayMessage();
   const filename = uuid();
   const bodyFormData = new FormData();
   const file = new window.File([blob], filename, { type: "audio/mpeg" });
-  bodyFormData.append("caption", filename);
+  // bodyFormData.append("caption", filename);
   bodyFormData.append("file", file);
   const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
-  const cm: any = cachedMessage.find((item) => item.id === tempId);
-  cm.sendMessageStatus = SendMessageStatus.DEFAULT;
-  cm.id = data.derp_chats_messages_id;
-  console.log(2);
+  messageCallback(data, newMessage);
 };
 
 const recOpen = function (success?: () => void) {
@@ -531,11 +539,6 @@ function recStart() {
 function recStop() {
   rec.value.stop(
     function (blob: Blob, duration: number) {
-      console.log(
-        blob,
-        (window.URL || window.webkitURL).createObjectURL(blob),
-        "时长:" + duration + "ms"
-      );
       showAudio.value = false;
       time.value = duration;
       audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
@@ -554,13 +557,12 @@ function recClose() {
   rec.value = null;
 }
 
-const upload = async (fileList: any) => {
+const upload = async (fileList: File[]) => {
   const file = fileList[0];
-  const url = (window.URL || window.webkitURL).createObjectURL(file);
+  const url = await blobToBase64(file);
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  const tempId = Date.now();
-  const newMessage = {
-    id: tempId,
+  const newMessage = reactive({
+    id: Date.now(),
     content: {
       url,
       type: MessageType.IMAGE,
@@ -568,21 +570,19 @@ const upload = async (fileList: any) => {
       local: true,
     },
     status: MessageStatus.SENT,
-    type: MessageType.IMAGE,
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
-  };
+  });
   cachedMessage.push(newMessage);
   scrollToBottom();
+  messagingStore.setReplayMessage();
   const bodyFormData = new FormData();
-  bodyFormData.append("caption", file.name);
+  // bodyFormData.append("caption", file.name);
   bodyFormData.append("file", file);
   uplader.value.reset();
-  const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
-  const cm: any = cachedMessage.find((item) => item.id === tempId);
-  cm.sendMessageStatus = SendMessageStatus.DEFAULT;
-  cm.id = data.derp_chats_messages_id;
+  const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+  messageCallback(data, newMessage);
 };
 
 const imageSizeFilter = (files: any[]) => {

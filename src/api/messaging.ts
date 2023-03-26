@@ -43,6 +43,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     templateName,
     language,
     isIncludedComponent,
+    messageId,
   } = payload;
 
   const currPayload: ChatPayload = {
@@ -53,6 +54,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     waba_content: {
       to,
       type,
+      context: {},
     },
   };
 
@@ -96,6 +98,8 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     };
   }
 
+  currPayload.waba_content.context = { message_id: messageId };
+
   const { data } = await api.post(`/waba/handle-cs-waba-message`, currPayload);
 
   return data;
@@ -136,7 +140,7 @@ export const closeChat = async (id: string) => {
 };
 
 export const uploadMedia = async (chatId: string, payload: any) => {
-  const { data } = await api.post(`/waba/media-message/${chatId}`, payload, {
+  const data = await api.post(`/waba/media-message/${chatId}`, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;

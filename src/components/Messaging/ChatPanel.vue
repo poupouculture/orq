@@ -111,23 +111,29 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import { io } from "socket.io-client";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, Direction, MessageStatus } from "src/types/MessagingTypes";
+import { IChat } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 
-import {
-  db,
-  collection,
-  onSnapshot,
-  auth,
-  signInWithCustomToken,
-} from "src/boot/firebase";
+// import {
+//   db,
+//   collection,
+//   onSnapshot,
+//   auth,
+//   signInWithCustomToken,
+// } from "src/boot/firebase";
+
+interface MessageCreate {
+  id: string;
+  messages: any[];
+}
 
 const ChatToggleLabel = {
   SHOW: {
@@ -173,11 +179,11 @@ const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
-const { chatsList, selectedTab, getChatSnapshotMessage, getSelectedChatId } =
+const { chatsList, selectedTab, getSelectedChatId } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
-
+const socket = ref();
 const tabsTip = computed(() => {
   const result: any = {};
   chatsList.value.forEach((chat: IChat) => {
@@ -191,11 +197,11 @@ const tabsTip = computed(() => {
   return result;
 });
 
-watch(chatsList, (list) => {
-  list.forEach((chat) => {
-    snapshotMessage(chat.id);
-  });
-});
+// watch(chatsList, (list) => {
+//   list.forEach((chat) => {
+//     snapshotMessage(chat.id);
+//   });
+// });
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
@@ -227,80 +233,104 @@ const chooseCustomer = async (user: any) => {
   }
 };
 
-const snapshotChats = async () => {
-  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-  if (loggedInUser) {
-    let snapshoted = false;
-    snapshotCancel.value = onSnapshot(
-      collection(db, "chats"),
-      async (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (snapshoted) {
-            const { status } = change.doc.data();
-            const chat = chatsList.value.find(
-              (chat: IChat) => chat.id === change.doc.id
-            );
-            if (chat) {
-              messagingStore.updateChatsList(chat, status);
-            }
-            // else {
-            //   // 考虑直接调用接口
-            // }
-          }
-        }
-        snapshoted = true;
-      }
-    );
-  }
-};
+// const snapshotChats = async () => {
+//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+//   if (loggedInUser) {
+//     let snapshoted = false;
+//     snapshotCancel.value = onSnapshot(
+//       collection(db, "chats"),
+//       async (querySnapshot: any) => {
+//         for (const change of querySnapshot.docChanges()) {
+//           if (snapshoted) {
+//             const { status } = change.doc.data();
+// const chat = chatsList.value.find(
+//   (chat: IChat) => chat.id === change.doc.id
+// );
+// if (chat) {
+//   messagingStore.updateChatsList(chat, status);
+// }
+//             // else {
+//             //   // 考虑直接调用接口
+//             // }
+//           }
+//         }
+//         snapshoted = true;
+//       }
+//     );
+//   }
+// };
 
-const snapshotMessage = (chatId: string) => {
-  let snapshoted = false;
-  if (!getChatSnapshotMessage.value[chatId]) {
-    const snpshotCancel = onSnapshot(
-      collection(db, "messages", chatId, "members"),
-      async (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (snapshoted) {
-            const data = change.doc.data();
-            console.log(data);
-            let content;
-            try {
-              content =
-                typeof data.content === "string"
-                  ? JSON.parse(data.content)
-                  : data.content;
-            } catch (e) {
-              content = { text: data.content, type: "text" };
-            }
-            if (data.date_created) {
-              messagingStore.setChatsLastMessage(chatId, {
-                ...data,
-                id: data.last_message_id,
-                content,
-                direction:
-                  data.status === MessageStatus.SENT
-                    ? Direction.OUTGOING
-                    : Direction.INCOMING,
-              });
-            }
-          }
-        }
-        snapshoted = true;
-      }
-    );
-    messagingStore.setChatSnapshotMessage(chatId, snpshotCancel);
-    // this.setChatSnapshotGroup(chatId, snpshotCancel);
-  }
+// const snapshotMessage = (chatId: string) => {
+//   let snapshoted = false;
+//   if (!getChatSnapshotMessage.value[chatId]) {
+//     const snpshotCancel = onSnapshot(
+//       collection(db, "messages", chatId, "members"),
+//       async (querySnapshot: any) => {
+//         for (const change of querySnapshot.docChanges()) {
+//           if (snapshoted) {
+//             const data = change.doc.data();
+//             console.log(data);
+//             let content;
+//             try {
+//               content =
+//                 typeof data.content === "string"
+//                   ? JSON.parse(data.content)
+//                   : data.content;
+//             } catch (e) {
+//               content = { text: data.content, type: "text" };
+//             }
+//             if (data.date_created) {
+//               messagingStore.setChatsLastMessage(chatId, {
+//                 ...data,
+//   id: data.last_message_id,
+//   content,
+//   direction:
+//     data.status === MessageStatus.SENT
+//       ? Direction.OUTGOING
+//       : Direction.INCOMING,
+// });
+//             }
+//           }
+//         }
+//         snapshoted = true;
+//       }
+//     );
+//     messagingStore.setChatSnapshotMessage(chatId, snpshotCancel);
+//     // this.setChatSnapshotGroup(chatId, snpshotCancel);
+//   }
+// };
+
+const initSocket = () => {
+  socket.value = io("https://beams.synque.ca", {
+    reconnectionDelayMax: 30000,
+  });
+  socket.value.on("chat_updated", (data: any) => {
+    console.log("chat_updated", data);
+    const chat = chatsList.value.find((chat: IChat) => chat.id === data.id);
+    if (chat) {
+      messagingStore.updateChatsList(chat, data.status);
+    }
+  });
+  socket.value.on("message_created", (data: any) => {
+    console.log("message_created", data);
+    const { id, messages } = data as MessageCreate;
+    messagingStore.setChatsLastMessage(id, messages[0]);
+  });
+  socket.value.on("chat_created", (data: any) => {
+    console.log("chat_created", data);
+    messagingStore.chatCreate(data.status, data.id);
+  });
 };
 
 onMounted(() => {
   firebaseToken.value = getFirebaseToken.value;
   messagingStore.fetchChats();
-  snapshotChats();
+  // snapshotChats();
+  initSocket();
 });
 onBeforeUnmount(() => {
   snapshotCancel.value();
+  socket.value.disconnect();
 });
 </script>
 

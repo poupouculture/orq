@@ -1,16 +1,29 @@
 <template>
   <div class="message-item relative">
+    <!-- <q-btn class="absolute top-0 right-0" round dense size="xs" icon="close" /> -->
     <component
       :is="componentName"
       :src="content.url"
       :name="content.media_id"
     />
+    <!-- <span class="text-gray">{{ content.caption }}</span> -->
     <span v-if="content?.type === MessageType.TEMPLATE">
       {{ messageTemplate(content) }}
     </span>
     <span v-if="!content?.type || content?.type === MessageType.TEXT">
       {{ content?.text ?? content }}
     </span>
+
+    <!-- <q-menu touch-position context-menu>
+      <q-list dense style="min-width: 100px">
+        <q-item clickable v-close-popup>
+          <q-item-section>Reply</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section>Download</q-item-section>
+        </q-item>
+      </q-list>
+    </q-menu> -->
   </div>
 </template>
 

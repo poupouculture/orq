@@ -21,4 +21,14 @@ export const uuid = (): string => {
   });
 };
 
+export const blobToBase64 = async (blob: Blob) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = function (e: any) {
+      resolve(e.target?.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+};
+
 export default trimWord;
