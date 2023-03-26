@@ -63,7 +63,14 @@ const availablePayment = computed(() =>
   >
     <div class="bg-white py-16 px-5 rounded-2xl w-full lg:w-1/2">
       <div class="w-full flex flex-col">
-        <div class="pb-3">
+        <div class="pb-3 flex items-center gap-3">
+          <q-btn
+            :to="{ name: 'order.invoices' }"
+            flat
+            round
+            color="primary"
+            icon="arrow_back"
+          />
           <p class="text-capitalize text-[#111827] font-semibold text-2xl">
             Payment Collection
           </p>

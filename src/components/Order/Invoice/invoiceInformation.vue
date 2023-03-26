@@ -2,6 +2,7 @@
 import { ref, reactive } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 
+const { getInvoice } = useInvoice();
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 const setDefaultMemo = ref(true);
 const customDefault = reactive({
@@ -27,8 +28,6 @@ const labelHead = ref([
     class: "col-span-1 text-center",
   },
 ]);
-
-const { getInvoice } = useInvoice();
 </script>
 
 <template>
