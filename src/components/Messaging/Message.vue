@@ -236,6 +236,8 @@ const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
+const paramsCount: Ref<any[]> = ref([]);
+const isAnyUploadComponent: Ref<boolean> = ref(false);
 const uplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -381,6 +383,8 @@ const sendMessage = async () => {
         templateName: templateName.value,
         language: language.value,
         isIncludedComponent: isIncludeComponent.value,
+        countParams: paramsCount.value,
+        isUploadComponent: isAnyUploadComponent.value,
       });
       const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
       const addMessage: any = cachedMessage.find((item) => item.id === tempId);
@@ -447,13 +451,17 @@ const sendMessageTemplate = (
   name: string,
   msg: string,
   lang: string,
-  isIncComponent: boolean
+  isIncComponent: boolean,
+  componentCount: any[],
+  isUploadComponent: boolean
 ) => {
   templateName.value = name;
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
   isIncludeComponent.value = isIncComponent;
+  paramsCount.value = componentCount;
+  isAnyUploadComponent.value = isUploadComponent;
   sendMessage();
 };
 

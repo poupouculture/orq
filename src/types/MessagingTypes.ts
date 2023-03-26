@@ -92,6 +92,8 @@ export interface SendTextMessage {
   templateName?: string;
   language?: string;
   isIncludedComponent?: boolean;
+  countParams?: any[];
+  isUploadComponent?: boolean;
 }
 
 export interface ChatPayloadWabaContentText {
@@ -103,9 +105,16 @@ export interface Language {
   code: string | undefined;
 }
 
+export interface ComponentParameterLink {
+  link: string;
+}
+
 export interface ComponentParameter {
   type: string;
-  text: string;
+  text?: string;
+  video?: ComponentParameterLink;
+  image?: ComponentParameterLink;
+  document?: ComponentParameterLink;
 }
 
 export interface TemplateComponent {

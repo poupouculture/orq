@@ -1,6 +1,10 @@
 import { api } from "boot/axios";
 import { ChatKeywords, ChatTypes } from "../constants/ChatKeyword";
-import { SendTextMessage, ChatPayload } from "src/types/MessagingTypes";
+import {
+  SendTextMessage,
+  ChatPayload,
+  ComponentParameter,
+} from "src/types/MessagingTypes";
 
 export const getChats = async (type: ChatTypes) => {
   const { data } = await api.get(`/waba/chats/list/${type}`);
@@ -43,6 +47,8 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     templateName,
     language,
     isIncludedComponent,
+    countParams,
+    isUploadComponent,
   } = payload;
 
   const currPayload: ChatPayload = {
@@ -58,22 +64,49 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 
   if (isTemplate) {
     if (isIncludedComponent) {
+      const components = [];
+      const parameters: ComponentParameter[] = [];
+      if (isUploadComponent) {
+        components.push({
+          type: "header",
+          parameters: [
+            {
+              type: "video",
+              video: {
+                link: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+              },
+            },
+          ],
+        });
+
+        countParams?.forEach((paramBody, index) => {
+          parameters.push({
+            type: "text",
+            text:
+              index === 0
+                ? messageBody.replaceAll("\n", "")
+                : paramBody.replaceAll("\n", ""),
+          });
+        });
+      } else {
+        parameters.push({
+          type: "text",
+          text: messageBody.replaceAll("\n", ""),
+        });
+      }
+
+      components.push({
+        type: "body",
+        parameters,
+      });
+
+      console.log("params body salim", parameters);
       currPayload.waba_content = {
         to,
         type,
         name: templateName,
         languageCode: language === "English" ? "en_US" : language,
-        components: [
-          {
-            type: "body",
-            parameters: [
-              {
-                type: "text",
-                text: messageBody,
-              },
-            ],
-          },
-        ],
+        components,
       };
     } else {
       // It was outside of the conditional
