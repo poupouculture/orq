@@ -9,7 +9,9 @@
       <img
         class="pointer-events-auto block max-h-full max-w-full m-auto"
         :src="originSrc || imageRef.src"
+        :style="styleObj"
         alt="message_pic"
+        @click="scaleImage"
       />
       <q-btn
         class="absolute pointer-events-auto"
@@ -34,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, defineExpose, reactive } from "vue";
 import { api } from "src/boot/axios";
 import { blobToBase64 } from "src/utils/trim-word";
 
@@ -53,6 +55,12 @@ const props = withDefaults(defineProps<Props>(), {
 const visible = ref(false);
 const imageRef = ref();
 const originSrc = ref();
+const styleObj = reactive({
+  transform: "",
+  cursor: "zoom-in",
+  transition: "transform 200ms ease 0s",
+});
+const scale = ref(false);
 
 watch(
   () => props.src,
@@ -90,8 +98,29 @@ const renderImage = async (origin?: boolean) => {
   }
 };
 
+const download = async () => {
+  const link = document.createElement("a");
+  if (!originSrc.value) {
+    await renderImage(true);
+  }
+  link.href = originSrc.value;
+  link.download = props.name;
+  link.click();
+};
+
+const scaleImage = (e: any) => {
+  console.log(e);
+  scale.value = !scale.value;
+  styleObj.transform = scale.value ? `scale(2, 2)` : "";
+  styleObj.cursor = scale.value ? "zoom-out" : `zoom-in`;
+};
+
 onMounted(() => {
   renderImage();
+});
+
+defineExpose({
+  download,
 });
 </script>
 

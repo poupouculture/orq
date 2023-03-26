@@ -43,6 +43,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     templateName,
     language,
     isIncludedComponent,
+    messageId,
   } = payload;
 
   const currPayload: ChatPayload = {
@@ -53,6 +54,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     waba_content: {
       to,
       type,
+      context: {},
     },
   };
 
@@ -95,6 +97,8 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       body: messageBody,
     };
   }
+
+  currPayload.waba_content.context = { message_id: messageId };
 
   const { data } = await api.post(`/waba/handle-cs-waba-message`, currPayload);
 

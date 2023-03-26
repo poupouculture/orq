@@ -88,9 +88,10 @@
         <div
           class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2"
         >
-          <MessageComponents
+          <ChatMessage
             v-if="replayMessage?.id"
-            :content="replayMessage.content"
+            :message="replayMessage"
+            isReply
           />
           <q-input
             v-model="message"
@@ -219,7 +220,6 @@ import { getChatName, uuid, blobToBase64 } from "src/utils/trim-word";
 import { updateChatStatus, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
-import MessageComponents from "./MessageComponents.vue";
 import {
   Direction,
   Product,
@@ -314,6 +314,7 @@ watch(
   () => getSelectedChat.value?.last_message,
   async (val) => {
     message.value = "";
+    messagingStore.setReplayMessage();
     const createDate = val?.date_created;
     if (createDate) {
       isChatExpired.value =
@@ -364,6 +365,8 @@ const showCustomerInfoInMobile = () => {
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
+  console.log(111222, data);
+
   if (!data.status) {
     newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     Swal.fire({
@@ -374,6 +377,7 @@ const messageCallback = async (data: any, newMessage: any) => {
   } else {
     newMessage.id = data.data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
+    newMessage.waba_message_id = data.data.waba_message_id;
   }
 };
 
@@ -389,12 +393,17 @@ const sendMessage = async () => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    waba_message_id: "",
   });
   cachedMessage.push(newMessage);
+  const { waba_message_id: wabaMessageId } = replayMessage.value;
+  console.log(replayMessage.value);
+
   scrollToBottom();
   messagingStore.setReplayMessage();
   message.value = "";
   isChatExpired.value = false;
+
   try {
     const data = await messagingStore.sendChatTextMessage({
       chatId: getSelectedChatId.value,
@@ -406,6 +415,7 @@ const sendMessage = async () => {
       templateName: templateName.value,
       language: language.value,
       isIncludedComponent: isIncludeComponent.value,
+      messageId: wabaMessageId,
     });
     messageCallback(data, newMessage);
     isTemplate.value = false;
@@ -571,7 +581,7 @@ const upload = async (fileList: File[]) => {
   // bodyFormData.append("caption", file.name);
   bodyFormData.append("file", file);
   uplader.value.reset();
-  const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
+  const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
 

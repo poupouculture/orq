@@ -9,7 +9,10 @@
     </div>
   </div>
 
-  <div class="flex pb-6" :class="{ 'flex-row-reverse': isSend }">
+  <div
+    class="flex"
+    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-6': !isReply }"
+  >
     <q-card
       :flat="message.id !== selectedId"
       class="relative rounded max-w-[60%] transition-all duration-150 ease-in"
@@ -24,8 +27,42 @@
           : '',
       ]"
     >
-      <MessageComponents :content="message.content" />
+      <div class="message-item relative">
+        <q-btn
+          v-if="isReply"
+          class="absolute -top-4 -right-6"
+          round
+          dense
+          size="xs"
+          icon="close"
+          color="primary"
+          @click="closeReply"
+        />
+        <MessageImage
+          ref="image"
+          v-if="props.message.content?.type === MessageType.IMAGE"
+          :src="message.content.url"
+          :name="message.content.media_id"
+        />
+        <MessageAudio
+          v-if="props.message.content?.type === MessageType.AUDIO"
+          :src="message.content.url"
+          :name="message.content.media_id"
+        />
+        <span class="text-gray">{{ props.message.content?.caption }}</span>
+        <span v-if="message.content?.type === MessageType.TEMPLATE">
+          {{ messageTemplate(message.content) }}
+        </span>
+        <span
+          v-if="
+            !message.content?.type || message.content?.type === MessageType.TEXT
+          "
+        >
+          {{ message.content?.text ?? message.content }}
+        </span>
+      </div>
       <div
+        v-if="!isReply"
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"
       >
         <small class="text-[#9A9AAF]">
@@ -129,22 +166,37 @@ import { ref, computed } from "vue";
 import {
   Message,
   Direction,
-  MessageType,
   SendMessageStatus,
+  MessageType,
 } from "src/types/MessagingTypes";
 import { format } from "date-fns";
-import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
-const messagingStore = useMessagingStore();
+import MessageImage from "./MessageImage.vue";
+import MessageAudio from "./MessageAudio.vue";
 
-const props = defineProps<{ message: Message }>();
+const messagingStore = useMessagingStore();
+const props = defineProps<{ message: Message; isReply?: boolean }>();
 const operationType = ref("");
 const isSend = computed(() => props.message.direction === Direction.OUTGOING);
 const showBackground = computed(
   () => props.message.content.type !== MessageType.IMAGE
 );
 const selectedId: any = ref();
+const image = ref();
 const list = [{ text: "Reply" }, { text: "Download", visible: ["image"] }];
+
+const messageTemplate = (content: any) => {
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
+      (component: any) => component?.type === "body"
+    );
+    if (component) return component?.parameters[0].text;
+  }
+
+  return content?.template_content || content?.template?.text;
+};
+
 const menuList = computed(() =>
   list.filter(
     (item) =>
@@ -154,9 +206,23 @@ const menuList = computed(() =>
 const toggle = (visible: boolean) => {
   selectedId.value = visible ? props.message.id : null;
 };
+
 const onhandleClick = (type: string) => {
   operationType.value = type;
-  messagingStore.setReplayMessage(props.message);
+  switch (type) {
+    case "Reply":
+      messagingStore.setReplayMessage(props.message);
+      break;
+    case "Download":
+      image.value.download();
+      break;
+    default:
+      break;
+  }
+};
+
+const closeReply = () => {
+  messagingStore.setReplayMessage();
 };
 const stamp = computed(() => {
   return format(new Date(props.message.date_created), "p");

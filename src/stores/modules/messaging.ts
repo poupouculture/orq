@@ -97,7 +97,7 @@ const useMessagingStore = defineStore("messaging", {
       this.showCustomerInfoMobile = value;
     },
     setReplayMessage(message?: Message) {
-      this.replayMessage = message;
+      this.replayMessage = message || ({} as Message);
     },
     cleanTotalUnread() {
       const chat = this.chatsList.find(
@@ -131,6 +131,12 @@ const useMessagingStore = defineStore("messaging", {
       });
     },
 
+    async chatCreate(type: ChatTypes, id: string) {
+      const chats: IChat[] = await getChats(type);
+      const newChat = chats.find((item) => item.id === id) as IChat;
+      this.chatsList.unshift(newChat);
+    },
+
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
       try {
         const { data } = await getChatMessagesByChatId(chatId, page, limit);
@@ -142,6 +148,8 @@ const useMessagingStore = defineStore("messaging", {
           type: item.type,
           direction: item.direction,
           date_created: item.date_created,
+          waba_message_id: item.waba_message_id,
+          waba_associated_message_id: item.waba_associated_message_id,
         }));
         this.cachedChatMessages[chatId] = [
           ...messages,

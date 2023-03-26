@@ -47,6 +47,8 @@ export interface Message {
   totalUnread?: number;
   label?: string;
   isEmoticon?: boolean;
+  waba_message_id?: string;
+  waba_associated_message_id: string;
 }
 export interface IChat {
   id: string;
@@ -93,6 +95,7 @@ export interface SendTextMessage {
   templateName?: string;
   language?: string;
   isIncludedComponent?: boolean;
+  messageId?: string;
 }
 
 export interface ChatPayloadWabaContentText {
@@ -130,6 +133,7 @@ export interface ChatPayloadWabaContent {
   name?: string | undefined;
   languageCode?: string;
   components?: TemplateComponent[];
+  context?: any;
 }
 
 export interface ChatPayload {
