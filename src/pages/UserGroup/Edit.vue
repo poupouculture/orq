@@ -5,9 +5,9 @@
       class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5 xl:mt-8"
     >
       <q-icon name="keyboard_backspace" class="text-gray-400" />
-      <RouterLink :to="{ name: 'customergroups' }" class="text-gray-400"
-        >Customer Groups</RouterLink
-      >
+      <RouterLink :to="{ name: 'customergroups' }" class="text-gray-400">
+        Customer Groups
+      </RouterLink>
       <span>/</span>
       <span>Edit Customer Groups</span>
     </div>
