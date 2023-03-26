@@ -4,7 +4,6 @@ import useInvoice from "src/stores/modules/useInvoices";
 import Visa from "src/assets/images/visa-logo.png";
 import WeChatPay from "src/assets/images/WeChatPay.png";
 import Atome from "src/assets/images/atome.png";
-import Qr from "src/assets/images/qr.png";
 import AliPay from "src/assets/images/alipay.png";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
@@ -43,13 +42,6 @@ const paymentOptions = ref([
     value: "atome",
     img: Atome,
     active: true,
-    status: false,
-  },
-  {
-    text: "Qr",
-    value: "qr",
-    img: Qr,
-    active: false,
     status: false,
   },
   {
