@@ -13,7 +13,7 @@ const whatsappShare = ref<boolean>(false);
 const emailShare = ref<boolean>(false);
 const props = defineProps<Props>();
 const filter = ref("");
-const sendTime = ref("customeDate");
+const sendTime = ref("customDate");
 const activeTab = ref("send");
 const customDate = ref("");
 const sendLinks = ref([]);
@@ -103,7 +103,7 @@ const optionsGroup = ref([
   },
   {
     label: "Custom Date and Time",
-    value: "customeDate",
+    value: "customDate",
   },
 ]);
 
@@ -335,7 +335,7 @@ onMounted(() => {
                 </div>
 
                 <div
-                  v-if="sendTime == 'customeDate'"
+                  v-if="sendTime == 'customDate'"
                   class="flex flex-col mt-5 gap-5"
                 >
                   <div class="grid grid-cols-2 gap-10">
