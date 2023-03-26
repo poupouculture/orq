@@ -101,7 +101,7 @@
             propsTable.formType === 'bots'
               ? 'chatbots'
               : props.formType === 'customer-service'
-              ? 'customer-serivces'
+              ? 'customer-services'
               : 'message-templates'
           }/${props.row.id}`"
           style="text-decoration: none; color: inherit"

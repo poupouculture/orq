@@ -6,7 +6,7 @@
           props.formType === 'bots'
             ? 'chatbots'
             : props.formType === 'customer-service'
-            ? 'customer-serivces'
+            ? 'customer-services'
             : 'message-templates'
         }`"
         style="text-decoration: none; color: inherit"
@@ -206,7 +206,7 @@
               formType === 'bots'
                 ? 'chatbots'
                 : props.formType === 'customer-service'
-                ? 'customer-serivces'
+                ? 'customer-services'
                 : 'message-templates'
             }`"
             style="text-decoration: none; color: inherit"
