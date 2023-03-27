@@ -4,12 +4,11 @@ import useInvoice from "src/stores/modules/useInvoices";
 
 const { getInvoice } = useInvoice();
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
-const setDefaultMemo = ref(true);
-const customDefault = reactive({
-  fieldName: "",
-  fieldValue: "",
-});
-const setDefaultFooter = ref(true);
+
+// Optional State
+const customDefault = reactive(getInvoice.optional.customField);
+const memo = reactive(getInvoice.optional.memo);
+const footer = reactive(getInvoice.optional.footer);
 const labelHead = ref([
   {
     label: "Items",
@@ -223,11 +222,7 @@ const labelHead = ref([
 
       <p class="text-base font-semibold">Custom fields</p>
       <div class="flex items-center">
-        <q-checkbox
-          size="xs"
-          val="field"
-          v-model="getInvoice.optional.customField"
-        />
+        <q-checkbox size="xs" val="field" v-model="customDefault.option" />
         <span class="text-sm cursor-pointer font-normal text-[#9A9AAF]">
           Add custom field
           <q-popup-proxy>
@@ -250,7 +245,7 @@ const labelHead = ref([
                 placeholder="Field Value"
               />
               <q-checkbox
-                v-model="setDefaultMemo"
+                v-model="customDefault.setDefault"
                 class="text-[#94A3B8] text-xs"
                 size="xs"
                 label="set as default for future invoices"
@@ -270,7 +265,7 @@ const labelHead = ref([
         </span>
       </div>
       <div class="flex items-center">
-        <q-checkbox size="xs" val="memo" v-model="getInvoice.optional.memo" />
+        <q-checkbox size="xs" val="memo" v-model="memo.option" />
         <span class="text-sm cursor-pointer font-normal text-[#9A9AAF]">
           Memo
           <q-popup-proxy>
@@ -279,11 +274,12 @@ const labelHead = ref([
               <q-input
                 class="rounded-xl bg-white mt-3"
                 outlined
+                v-model="memo.memo"
                 type="textarea"
                 placeholder="Some Text"
               />
               <q-checkbox
-                v-model="setDefaultMemo"
+                v-model="memo.setDefault"
                 class="text-[#94A3B8] text-xs"
                 size="xs"
                 label="set as default for future invoices"
@@ -303,11 +299,7 @@ const labelHead = ref([
         </span>
       </div>
       <div class="flex items-center">
-        <q-checkbox
-          size="xs"
-          val="footer"
-          v-model="getInvoice.optional.footer"
-        />
+        <q-checkbox size="xs" val="footer" v-model="footer.option" />
         <span class="text-sm cursor-pointer font-normal text-[#9A9AAF]">
           Footer
           <q-popup-proxy>
@@ -316,11 +308,12 @@ const labelHead = ref([
               <q-input
                 class="rounded-xl bg-white mt-3"
                 outlined
+                v-model="footer.value"
                 type="textarea"
                 placeholder="Some Text"
               />
               <q-checkbox
-                v-model="setDefaultFooter"
+                v-model="footer.active"
                 class="text-[#94A3B8] text-xs"
                 size="xs"
                 label="set as default for future invoices"
