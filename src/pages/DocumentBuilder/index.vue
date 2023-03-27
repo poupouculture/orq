@@ -7,18 +7,11 @@
       Document Template
     </p>
     <div class="row justify-between">
-      <q-input
-        v-model="search"
-        @change="fetchApplicationPrograms"
-        @keypress.enter.prevent="fetchApplicationPrograms"
-        placeholder="Search"
-        outlined
-        dense
-      >
-        <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-      </q-input>
+      <SearchTableInput
+        :loading="loading"
+        @search="searchHandler"
+        @reset="resetSearch"
+      />
       <div>
         <q-btn
           icon="add"
@@ -102,6 +95,7 @@ import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { dateFormatter } from "src/helpers";
 import BaseTable from "src/components/BaseTable.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
 
 const router = useRouter();
 
@@ -186,6 +180,17 @@ const archiveSelected = () => {
     data.status = "archive";
     await updateDocumentTemplate(data.id, data);
   });
+};
+
+const searchHandler = (searchValue = "") => {
+  search.value = searchValue;
+  loading.value = true;
+  fetchApplicationPrograms();
+};
+
+const resetSearch = () => {
+  search.value = "";
+  searchHandler();
 };
 
 onMounted(() => {

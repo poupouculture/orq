@@ -16,6 +16,11 @@
           <q-icon name="search" />
         </template>
       </q-input>
+      <SearchTableInput
+        :loading="loading"
+        @search="searchHandler"
+        @reset="resetSearch"
+      />
       <!-- Search | Add | Archieve -->
       <div>
         <q-btn
@@ -45,9 +50,10 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
-import TableComponent from "src/components/Compaign/TableComponent.vue";
 import { useRouter } from "vue-router";
 import { getCampaigns } from "src/api/campaign";
+import TableComponent from "src/components/Compaign/TableComponent.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
 
 const router = useRouter();
 const loading = ref(true);
@@ -63,10 +69,12 @@ const data = reactive({
   page: 1,
   rowsPerPage: 10,
 });
+
 onMounted(async () => {
   await fetchCampaigns();
   loading.value = false;
 });
+
 const fetchCampaigns = async () => {
   const response = await getCampaigns({
     limit: data.rowsPerPage,
@@ -76,8 +84,20 @@ const fetchCampaigns = async () => {
   data.totalCount = response?.data.meta?.total_count;
   loading.value = false;
 };
+
 const changePage = (val: number) => {
   data.page = val;
   fetchCampaigns();
+};
+
+const searchHandler = (searchValue = "") => {
+  search.query = searchValue;
+  loading.value = true;
+  fetchCampaigns();
+};
+
+const resetSearch = () => {
+  search.query = "";
+  searchHandler();
 };
 </script>

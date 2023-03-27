@@ -65,11 +65,22 @@
             </p>
             <div
               class="w-4/12 flex flex-col"
-              v-if="header.toUpperCase() === 'MEDIA'"
+              v-if="mediaHeader.includes(header.toUpperCase())"
             >
               <p class="mt-4 font-semibold">Header</p>
-              <button class="mt-2 py-2 bg-primary text-white rounded-md">
-                Choose JPG or PNG file
+              <button
+                class="mt-2 py-2 bg-primary text-white rounded-md"
+                @click="uplader?.pickFiles"
+              >
+                Choose
+                {{ header === "image" ? "JPG or PNG" : "MP4 or MOV" }}
+                file
+                <q-uploader
+                  ref="uplader"
+                  accept=".gif, .jpg, .jpeg, .png, image/*, .mp4, .mov"
+                  class="hidden invisible"
+                  @added="upload"
+                />
               </button>
             </div>
             <p class="mt-4 font-semibold">Body</p>
@@ -152,6 +163,7 @@ const rowsPerPage = ref(10);
 const selectedTemplate = ref([]);
 const usedTemplate = ref(null);
 const language = ref("");
+const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
 const templateName = ref("");
 const header = ref("");
 const headerMessage = ref("");
@@ -163,6 +175,7 @@ const replies = ref(["", ""]);
 const actions = ref(Array(2).fill(null));
 const customVariables = ref([]);
 const isPreview = ref(false);
+const uplader: any = ref(null);
 
 const data = reactive({
   applicationPrograms: [],
@@ -224,7 +237,9 @@ const send = () => {
     templateName.value,
     bodyMessage.value,
     language.value,
-    customVariables.value?.length > 0
+    customVariables.value?.length > 0,
+    customVariables.value,
+    mediaHeader.includes(header.value.toUpperCase())
   );
   emit("hide");
 };
@@ -285,5 +300,10 @@ const applyTemplateComponent = (val: any) => {
 const changePage = (val: number) => {
   data.page = val;
   fetchTemplates();
+};
+
+const upload = async (fileList: any) => {
+  const file = fileList[0];
+  console.log(file);
 };
 </script>
