@@ -6,7 +6,7 @@
     <q-item-label header>
       <div class="logo-holder mb-3 flex items-center gap-3">
         <img class="w-10" src="~assets/images/logo.svg" />
-        <p class="font-[800] text-[#231815] text-2xl">ChaQue</p>
+        <p class="font-[800] text-[#231815] text-2xl">ChaQ</p>
       </div>
 
       <q-input v-model="seachText" placeholder="Search ..." outlined dense>
