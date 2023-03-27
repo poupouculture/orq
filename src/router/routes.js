@@ -202,6 +202,12 @@ const routes = [
         name: "customergroups-internal-group.edit",
         component: () => import("pages/UserGroup/InternalGroup/Edit.vue"),
       },
+
+      {
+        path: "customer-groups/user-group/",
+        name: "customergroups-user-group",
+        component: () => import("pages/UserGroup/UserGroup/Index.vue"),
+      },
     ],
   },
   {
