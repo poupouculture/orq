@@ -3,7 +3,7 @@
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
       <q-icon name="keyboard_backspace" />
-      <span>Internal Groups</span>
+      <span>Personal Groups</span>
     </div>
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
@@ -74,7 +74,7 @@
                   <img
                     :src="
                       directus_users_id.avatar ||
-                      '/src/assets/images/profileavatar.png'
+                      'http://localhost:9000/src/assets/images/profileavatar.png'
                     "
                     class="w-10 h-10 rounded-full mx-3"
                   />

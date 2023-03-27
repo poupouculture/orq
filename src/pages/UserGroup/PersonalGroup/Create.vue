@@ -5,14 +5,14 @@
       class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5 xl:mt-8"
     >
       <RouterLink
-        :to="{ name: 'internal-group' }"
+        :to="{ name: 'customergroups-internal-group' }"
         class="text-gray-400 gap-x-3"
       >
         <q-icon name="keyboard_backspace" class="text-gray-400" />
-        Internal Groups
+        Personal Groups
       </RouterLink>
       <span>/</span>
-      <span>Add Internal Group</span>
+      <span>Add Personal Group</span>
     </div>
     <!-- Form -->
     <Form @submit="submitData" :loading="loading" />
@@ -51,12 +51,12 @@ const submitData = async (value) => {
     });
     loading.value = false;
     Notify.create({
-      message: "Internal Group successfully created!",
+      message: "Personal Group successfully created!",
       type: "positive",
       color: "primary",
       position: "top",
     });
-    router.push({ name: "internal-group" });
+    router.push({ name: "personal-groups" });
   } catch (e) {
     Notify.create(e);
     loading.value = false;
