@@ -59,6 +59,7 @@ const styleObj = reactive({
   transform: "",
   cursor: "zoom-in",
   transition: "transform 200ms ease 0s",
+  transformOrigin: "",
 });
 const scale = ref(false);
 
@@ -109,10 +110,10 @@ const download = async () => {
 };
 
 const scaleImage = (e: any) => {
-  console.log(e);
   scale.value = !scale.value;
   styleObj.transform = scale.value ? `scale(2, 2)` : "";
   styleObj.cursor = scale.value ? "zoom-out" : `zoom-in`;
+  styleObj.transformOrigin = `${e.offsetX}px ${e.offsetY}px`;
 };
 
 onMounted(() => {
