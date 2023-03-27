@@ -328,7 +328,7 @@ watch(
 );
 
 watch(
-  () => getSelectedChat.value.status,
+  () => getSelectedChat.value?.status,
   async (val) => {
     if (val === ChatTypes.ONGOING) {
       await nextTick();
