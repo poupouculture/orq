@@ -129,6 +129,15 @@ watchEffect(() => {
         </div>
       </div>
 
+      <div class="col-span-1" v-if="customDefault.option">
+        <div class="w-full">
+          <p class="label-style capitalize mb-2">
+            {{ customDefault.fieldName }}
+          </p>
+          <q-input dense outlined v-model="customDefault.fieldValue" />
+        </div>
+      </div>
+
       <div class="col-span-2 mt-5">
         <div class="grid grid-cols-6">
           <div
@@ -245,7 +254,7 @@ watchEffect(() => {
         </span>
         <q-menu no-parent-event v-model="customDefault.active">
           <q-banner dense rounded class="bg-[#4B44F6]/10 p-4">
-            <label for="memo">Custom Field {{ customDefault.active }}</label>
+            <label>Custom Field {{ customDefault.active }}</label>
             <q-input
               class="bg-white rounded-xl mt-3"
               dense
@@ -286,7 +295,7 @@ watchEffect(() => {
         <span class="text-sm font-normal text-[#9A9AAF]"> Memo </span>
         <q-menu no-parent-event v-model="memo.active">
           <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
-            <label for="memo">Memo</label>
+            <label>Memo</label>
             <q-input
               class="rounded-xl bg-white mt-3"
               outlined
@@ -318,7 +327,7 @@ watchEffect(() => {
         <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
         <q-menu no-parent-event v-model="footer.active">
           <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
-            <label for="memo">Footer</label>
+            <label>Footer</label>
             <q-input
               class="rounded-xl bg-white mt-3"
               outlined
