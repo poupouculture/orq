@@ -185,7 +185,7 @@ const seachText = ref("");
 const firebaseToken: Ref<string> = ref("");
 const snapshotCancel = ref();
 const userInfoStore = useUserInfoStore();
-const { getFirebaseToken } = storeToRefs(userInfoStore);
+const { getFirebaseToken, userInfo } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
@@ -314,6 +314,15 @@ const chooseCustomer = async (user: any) => {
 const initSocket = () => {
   socket.value = io("https://beams.synque.ca", {
     reconnectionDelayMax: 30000,
+    extraHeaders: {
+      authorization: `${userInfo.value.access_token}`,
+    },
+  });
+  socket.value.on("connect", () => {
+    console.log("connect", socket.value.connected);
+  });
+  socket.value.io.on("error", () => {
+    console.log("socket error");
   });
   socket.value.on("chat_updated", (data: any) => {
     console.log("chat_updated", data);
