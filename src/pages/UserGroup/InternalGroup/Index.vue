@@ -15,7 +15,7 @@
         />
       </div>
       <q-btn
-        :to="{ name: 'customergroups-internal-group.create' }"
+        :to="{ name: 'internal-group.create' }"
         class="bg-primary text-white"
       >
         <q-icon name="add" class="text-white mr-2" />

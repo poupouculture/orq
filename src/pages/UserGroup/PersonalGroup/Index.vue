@@ -14,13 +14,13 @@
           @reset="resetSearch"
         />
       </div>
-      <q-btn
+      <!-- <q-btn
         :to="{ name: 'customergroups-internal-group.create' }"
         class="bg-primary text-white"
       >
         <q-icon name="add" class="text-white mr-2" />
         <span>Add</span>
-      </q-btn>
+      </q-btn> -->
     </div>
     <!-- Content -->
     <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
