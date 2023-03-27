@@ -74,7 +74,7 @@
                   <img
                     :src="
                       directus_users_id.avatar ||
-                      'http://localhost:9000/src/assets/images/profileavatar.png'
+                      'src/assets/images/profileavatar.png'
                     "
                     class="w-10 h-10 rounded-full mx-3"
                   />
