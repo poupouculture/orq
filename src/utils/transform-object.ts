@@ -59,34 +59,38 @@ export const transformCompaniesPayload = (
 };
 
 export const transformTagPayload = (
-  customer: ICustomer,
-  selectedOptions: Option[]
+  data: {
+    id: string;
+    tags: string[];
+  },
+  selectedOptions: Option[],
+  column: string = "customer_id"
 ) => {
   let tagData = [] as any;
   // When is update the data
-  if (customer.id) {
+  if (data && data.id) {
     // Checking what's deleting from selected tag before
     const deletedTags = difference(
-      customer.tags.map((c: any) => c.tags_id.id),
+      data.tags.map((c: any) => c.tags_id.id),
       selectedOptions.map((c: any) => c.value)
     );
     // Checking what's inserting from selected tag before
     const insertedTags = difference(
       selectedOptions.map((c: any) => c.value),
-      customer.tags.map((c: any) => c.tags_id.id)
+      data.tags.map((c: any) => c.tags_id.id)
     );
     // this for payload to API enpoint.
     tagData = {
       create:
         (insertedTags.length &&
           insertedTags.map((tag) => ({
-            customer_id: customer.id,
+            [column]: data.id,
             tags_id: tag,
           }))) ||
         [],
       delete:
         (deletedTags.length &&
-          customer.tags
+          data.tags
             .filter((cg: any) => deletedTags.includes(cg.tags_id.id))
             .map((data: any) => data.id)) ||
         [],
@@ -95,9 +99,9 @@ export const transformTagPayload = (
   } else {
     // this is for create payload.
     tagData = {
-      create: selectedOptions.map((data: Option) => ({
-        customer_id: "+",
-        tags_id: data.value,
+      create: selectedOptions.map((item: Option) => ({
+        [column]: "+",
+        tags_id: item.value,
       })),
     };
   }

@@ -1,8 +1,14 @@
 <template>
-  <q-list class="chat-panel pb-14 h-full flex flex-col overflow-x-hidden">
+  <q-list
+    class="chat-panel bg-[#f2f3f7] pb-14 h-full flex flex-col overflow-x-hidden"
+  >
     <!-- search part -->
     <q-item-label header>
-      <img class="q-mb-lg w-20" src="~assets/images/logo.svg" />
+      <div class="logo-holder mb-3 flex items-center gap-3">
+        <img class="w-10" src="~assets/images/logo.svg" />
+        <p class="font-[800] text-[#231815] text-2xl">ChaQue</p>
+      </div>
+
       <q-input v-model="seachText" placeholder="Search ..." outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />
@@ -80,7 +86,12 @@
     </q-tabs>
     <q-separator class="mt-2" size="2px" inset />
     <!-- chatlist part -->
-    <q-tab-panels class="h-full" v-model="selectedTab" animated swipeable>
+    <q-tab-panels
+      class="h-full bg-[#f2f3f7]"
+      v-model="selectedTab"
+      animated
+      swipeable
+    >
       <q-tab-panel
         class="overflow-x-hidden"
         v-for="tab in Tabs"
@@ -111,23 +122,29 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import { io } from "socket.io-client";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, Direction, MessageStatus } from "src/types/MessagingTypes";
+import { IChat } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 
-import {
-  db,
-  collection,
-  onSnapshot,
-  auth,
-  signInWithCustomToken,
-} from "src/boot/firebase";
+// import {
+//   db,
+//   collection,
+//   onSnapshot,
+//   auth,
+//   signInWithCustomToken,
+// } from "src/boot/firebase";
+
+interface MessageCreate {
+  id: string;
+  messages: any[];
+}
 
 const ChatToggleLabel = {
   SHOW: {
@@ -173,11 +190,11 @@ const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
-const { chatsList, selectedTab, getChatSnapshotMessage, getSelectedChatId } =
+const { chatsList, selectedTab, getSelectedChatId } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
-
+const socket = ref();
 const tabsTip = computed(() => {
   const result: any = {};
   chatsList.value.forEach((chat: IChat) => {
@@ -191,11 +208,11 @@ const tabsTip = computed(() => {
   return result;
 });
 
-watch(chatsList, (list) => {
-  list.forEach((chat) => {
-    snapshotMessage(chat.id);
-  });
-});
+// watch(chatsList, (list) => {
+//   list.forEach((chat) => {
+//     snapshotMessage(chat.id);
+//   });
+// });
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
@@ -227,80 +244,104 @@ const chooseCustomer = async (user: any) => {
   }
 };
 
-const snapshotChats = async () => {
-  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-  if (loggedInUser) {
-    let snapshoted = false;
-    snapshotCancel.value = onSnapshot(
-      collection(db, "chats"),
-      async (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (snapshoted) {
-            const { status } = change.doc.data();
-            const chat = chatsList.value.find(
-              (chat: IChat) => chat.id === change.doc.id
-            );
-            if (chat) {
-              messagingStore.updateChatsList(chat, status);
-            }
-            // else {
-            //   // 考虑直接调用接口
-            // }
-          }
-        }
-        snapshoted = true;
-      }
-    );
-  }
-};
+// const snapshotChats = async () => {
+//   const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
+//   if (loggedInUser) {
+//     let snapshoted = false;
+//     snapshotCancel.value = onSnapshot(
+//       collection(db, "chats"),
+//       async (querySnapshot: any) => {
+//         for (const change of querySnapshot.docChanges()) {
+//           if (snapshoted) {
+//             const { status } = change.doc.data();
+// const chat = chatsList.value.find(
+//   (chat: IChat) => chat.id === change.doc.id
+// );
+// if (chat) {
+//   messagingStore.updateChatsList(chat, status);
+// }
+//             // else {
+//             //   // 考虑直接调用接口
+//             // }
+//           }
+//         }
+//         snapshoted = true;
+//       }
+//     );
+//   }
+// };
 
-const snapshotMessage = (chatId: string) => {
-  let snapshoted = false;
-  if (!getChatSnapshotMessage.value[chatId]) {
-    const snpshotCancel = onSnapshot(
-      collection(db, "messages", chatId, "members"),
-      async (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (snapshoted) {
-            const data = change.doc.data();
-            console.log(data);
-            let content;
-            try {
-              content =
-                typeof data.content === "string"
-                  ? JSON.parse(data.content)
-                  : data.content;
-            } catch (e) {
-              content = { text: data.content, type: "text" };
-            }
-            if (data.date_created) {
-              messagingStore.setChatsLastMessage(chatId, {
-                ...data,
-                id: data.last_message_id,
-                content,
-                direction:
-                  data.status === MessageStatus.SENT
-                    ? Direction.OUTGOING
-                    : Direction.INCOMING,
-              });
-            }
-          }
-        }
-        snapshoted = true;
-      }
-    );
-    messagingStore.setChatSnapshotMessage(chatId, snpshotCancel);
-    // this.setChatSnapshotGroup(chatId, snpshotCancel);
-  }
+// const snapshotMessage = (chatId: string) => {
+//   let snapshoted = false;
+//   if (!getChatSnapshotMessage.value[chatId]) {
+//     const snpshotCancel = onSnapshot(
+//       collection(db, "messages", chatId, "members"),
+//       async (querySnapshot: any) => {
+//         for (const change of querySnapshot.docChanges()) {
+//           if (snapshoted) {
+//             const data = change.doc.data();
+//             console.log(data);
+//             let content;
+//             try {
+//               content =
+//                 typeof data.content === "string"
+//                   ? JSON.parse(data.content)
+//                   : data.content;
+//             } catch (e) {
+//               content = { text: data.content, type: "text" };
+//             }
+//             if (data.date_created) {
+//               messagingStore.setChatsLastMessage(chatId, {
+//                 ...data,
+//   id: data.last_message_id,
+//   content,
+//   direction:
+//     data.status === MessageStatus.SENT
+//       ? Direction.OUTGOING
+//       : Direction.INCOMING,
+// });
+//             }
+//           }
+//         }
+//         snapshoted = true;
+//       }
+//     );
+//     messagingStore.setChatSnapshotMessage(chatId, snpshotCancel);
+//     // this.setChatSnapshotGroup(chatId, snpshotCancel);
+//   }
+// };
+
+const initSocket = () => {
+  socket.value = io("https://beams.synque.ca", {
+    reconnectionDelayMax: 30000,
+  });
+  socket.value.on("chat_updated", (data: any) => {
+    console.log("chat_updated", data);
+    const chat = chatsList.value.find((chat: IChat) => chat.id === data.id);
+    if (chat) {
+      messagingStore.updateChatsList(chat, data.status);
+    }
+  });
+  socket.value.on("message_created", (data: any) => {
+    console.log("message_created", data);
+    const { id, messages } = data as MessageCreate;
+    messagingStore.setChatsLastMessage(id, messages[0]);
+  });
+  socket.value.on("chat_created", (data: any) => {
+    console.log("chat_created", data);
+    messagingStore.chatCreate(data.status, data.id);
+  });
 };
 
 onMounted(() => {
   firebaseToken.value = getFirebaseToken.value;
   messagingStore.fetchChats();
-  snapshotChats();
+  // snapshotChats();
+  initSocket();
 });
 onBeforeUnmount(() => {
   snapshotCancel.value();
+  socket.value.disconnect();
 });
 </script>
 
