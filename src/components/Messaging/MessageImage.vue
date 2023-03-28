@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, defineExpose, reactive } from "vue";
+import { ref, onMounted, watch, reactive } from "vue";
 import { api } from "src/boot/axios";
 import { blobToBase64 } from "src/utils/trim-word";
 

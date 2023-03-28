@@ -183,7 +183,6 @@ type ChatToggleType = {
 };
 const seachText = ref("");
 const firebaseToken: Ref<string> = ref("");
-const snapshotCancel = ref();
 const userInfoStore = useUserInfoStore();
 const { getFirebaseToken, userInfo } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
@@ -208,14 +207,21 @@ const tabsTip = computed(() => {
   return result;
 });
 
-// watch(chatsList, (list) => {
-//   list.forEach((chat) => {
-//     snapshotMessage(chat.id);
-//   });
-// });
+watch(chatsList, (list) => {
+  list.forEach((chat) => {
+    socket.value.emit("join_chat", chat.id);
+  });
+});
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
+});
+
+socket.value = io("https://beams.synque.ca", {
+  reconnectionDelayMax: 30000,
+  extraHeaders: {
+    authorization: `${userInfo.value.access_token}`,
+  },
 });
 
 const fetchCustomers = async () => {
@@ -312,12 +318,6 @@ const chooseCustomer = async (user: any) => {
 // };
 
 const initSocket = () => {
-  socket.value = io("https://beams.synque.ca", {
-    reconnectionDelayMax: 30000,
-    extraHeaders: {
-      authorization: `${userInfo.value.access_token}`,
-    },
-  });
   socket.value.on("connect", () => {
     console.log("connect", socket.value.connected);
   });
@@ -348,9 +348,12 @@ onMounted(() => {
   // snapshotChats();
   initSocket();
 });
+
 onBeforeUnmount(() => {
-  snapshotCancel.value();
   socket.value.disconnect();
+  chatsList.value.forEach((chat) => {
+    socket.value.emit("leave_chat", chat.id);
+  });
 });
 </script>
 
