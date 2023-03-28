@@ -12,6 +12,7 @@ const searchLoading = ref(false);
 const loading = ref(false);
 const personalGroups = ref([]);
 const singleItem = ref([]);
+const selectedId = ref("");
 const drawer = ref(false);
 
 const allPersonalGroups = computed(() => personalGroups.value);
@@ -62,6 +63,7 @@ const fetchPersonalGroups = async () => {
 };
 
 const getPersonalGroup = (id) => {
+  selectedId.value = id;
   get(id).then((res) => {
     singleItem.value = res.customer_groups.map((item) => {
       return {
@@ -75,6 +77,7 @@ const getPersonalGroup = (id) => {
 };
 
 const closeDrawer = () => {
+  selectedId.value = "";
   singleItem.value = [];
   drawer.value = !drawer.value;
 };
@@ -92,7 +95,7 @@ const headerColumns = [
     align: "left",
     label: "Name",
     field: "name",
-    classes: "text-black",
+    classes: "text-black capitalize",
     style: "max-width: 10%",
     sortable: true,
   },
@@ -102,7 +105,7 @@ const headerColumns = [
     label: "Role",
     field: "status",
     sortable: true,
-    classes: "text-black",
+    classes: "text-black capitalize",
   },
 ];
 </script>
@@ -147,23 +150,24 @@ const headerColumns = [
                 :key="group.id"
               >
                 <div
-                  class="flex h-16 rounded-lg overflow-hidden bg-white border-gray-300 border w-full"
+                  class="grid grid-cols-12 h-16 rounded-lg overflow-hidden bg-white border-gray-300 border w-full"
                 >
-                  <div class="flex items-center w-[82%]">
-                    <div
-                      class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
-                    >
-                      {{ group.name }}
-                    </div>
-                    <div class="truncate">
-                      <div class="truncate">{{ group.name }}</div>
-                      <p class="text-gray-400">
-                        {{ group.customer_groups.length }} Members
-                      </p>
-                    </div>
+                  <div
+                    class="col-span-2 flex text-white items-center justify-center bg-primary"
+                  >
+                    {{ group.name }}
                   </div>
 
-                  <div class="flex items-center">
+                  <div
+                    class="col-span-8 px-3 flex justify-center items-start flex-col"
+                  >
+                    <div class="truncate w-full">{{ group.name }}</div>
+                    <p class="text-gray-400">
+                      {{ group.customer_groups.length }} Members
+                    </p>
+                  </div>
+
+                  <div class="col-span-2 flex items-center">
                     <q-btn color="grey-7" round flat icon="more_vert">
                       <q-menu
                         fit
@@ -180,6 +184,7 @@ const headerColumns = [
                     </q-btn>
                   </div>
                 </div>
+
                 <!-- customers -->
                 <div
                   class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
@@ -256,7 +261,7 @@ const headerColumns = [
             <q-table
               :rows="singleItem"
               :columns="headerColumns"
-              selection="multiple"
+              selection="single"
             />
           </div>
         </div>
