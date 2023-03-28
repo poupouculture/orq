@@ -11,7 +11,8 @@ const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
 const personalGroups = ref([]);
-const drawer = ref(true);
+const singleItem = ref([]);
+const drawer = ref(false);
 
 const allPersonalGroups = computed(() => personalGroups.value);
 const metaPage = computed(() => meta);
@@ -55,13 +56,27 @@ const fetchPersonalGroups = async () => {
     search: query.value.length ? query.value : undefined,
   }).then((res) => {
     personalGroups.value = res;
+
+    console.log(res);
   });
 };
 
 const getPersonalGroup = (id) => {
   get(id).then((res) => {
-    console.log(res.customer_groups);
+    singleItem.value = res.customer_groups.map((item) => {
+      return {
+        name: item.customer_groups_id.name,
+        status: item.customer_groups_id.status,
+      };
+    });
+
+    drawer.value = !drawer.value;
   });
+};
+
+const closeDrawer = () => {
+  singleItem.value = [];
+  drawer.value = !drawer.value;
 };
 
 onMounted(async () => {
@@ -69,6 +84,27 @@ onMounted(async () => {
   await fetchPersonalGroups();
   loading.value = false;
 });
+
+// Table
+const headerColumns = [
+  {
+    name: "name",
+    align: "left",
+    label: "Name",
+    field: "name",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "status",
+    align: "left",
+    label: "Role",
+    field: "status",
+    sortable: true,
+    classes: "text-black",
+  },
+];
 </script>
 
 <template>
@@ -169,22 +205,6 @@ onMounted(async () => {
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center">
-                    <q-btn color="grey-7" round flat icon="more_vert">
-                      <q-menu
-                        fit
-                        anchor="bottom middle"
-                        self="top right"
-                        auto-close
-                      >
-                        <q-list>
-                          <q-item clickable @click="getPersonalGroup(group.id)">
-                            <q-item-section>Map Customer Group</q-item-section>
-                          </q-item>
-                        </q-list>
-                      </q-menu>
-                    </q-btn>
-                  </div>
                 </div>
               </div>
             </div>
@@ -216,7 +236,6 @@ onMounted(async () => {
       overlay
       :width="800"
       :breakpoint="500"
-      bordered
       v-model="drawer"
       side="right"
     >
@@ -232,7 +251,26 @@ onMounted(async () => {
 
             <q-btn round color="primary" size="md" icon="done" />
           </div>
+
+          <div class="mt-10">
+            <q-table
+              :rows="singleItem"
+              :columns="headerColumns"
+              selection="multiple"
+            />
+          </div>
         </div>
+      </div>
+
+      <div class="q-mini-drawer-hide absolute" style="top: 15px; left: -16px">
+        <q-btn
+          @click="closeDrawer"
+          dense
+          round
+          unelevated
+          color="primary"
+          icon="chevron_right"
+        />
       </div>
     </q-drawer>
   </q-layout>
