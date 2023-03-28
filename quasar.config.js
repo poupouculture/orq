@@ -34,7 +34,7 @@ module.exports = configure(function () {
       "i18n",
       "axios",
       "getProfile",
-      "sentry",
+      // "sentry",
       "global-component",
       "firebase",
     ],

@@ -54,7 +54,6 @@ const fetchPersonalGroups = async () => {
     page: pagination.page,
     search: query.value.length ? query.value : undefined,
   }).then((res) => {
-    console.log(res);
     personalGroups.value = res;
   });
 };
@@ -110,7 +109,9 @@ onMounted(async () => {
                 </div>
                 <div class="truncate">
                   <div class="truncate">{{ group.name }}</div>
-                  <p class="text-gray-400">{{ group.users.length }} Members</p>
+                  <p class="text-gray-400">
+                    {{ group.customer_groups.length }} Members
+                  </p>
                 </div>
               </div>
               <ButtonGroupMenu
@@ -125,44 +126,41 @@ onMounted(async () => {
               v-for="(personal, index) in group.customer_groups"
               :key="index"
             >
-              <template>
-                <div
-                  class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
-                >
-                  <!-- for while set image default -->
-                  <img
-                    :src="
-                      personal.avatar || 'src/assets/images/profileavatar.png'
-                    "
-                    class="w-10 h-10 rounded-full mx-3"
-                  />
-                  <div class="truncate">
-                    <div class="relative truncate">
-                      {{ personal.first_name }}
-                      {{ personal.last_name }}
-                    </div>
-                    <div class="text-gray-400 cursor-pointer truncate">
-                      {{ personal.role?.name }}
-                    </div>
+              <div
+                class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
+              >
+                <img
+                  :src="
+                    personal.customer_groups_id.avatar ||
+                    'src/assets/images/profileavatar.png'
+                  "
+                  class="w-10 h-10 rounded-full mx-3"
+                />
+                <div class="truncate">
+                  <div class="relative truncate">
+                    {{ personal.customer_groups_id.name }}
+                  </div>
+                  <div class="text-gray-400 cursor-pointer truncate">
+                    {{ personal.customer_groups_id.status }}
                   </div>
                 </div>
-                <div class="flex items-center">
-                  <q-btn color="grey-7" round flat icon="more_vert">
-                    <q-menu
-                      fit
-                      anchor="bottom middle"
-                      self="top right"
-                      auto-close
-                    >
-                      <q-list>
-                        <q-item clickable>
-                          <q-item-section>Map Customer Group</q-item-section>
-                        </q-item>
-                      </q-list>
-                    </q-menu>
-                  </q-btn>
-                </div>
-              </template>
+              </div>
+              <div class="flex items-center">
+                <q-btn color="grey-7" round flat icon="more_vert">
+                  <q-menu
+                    fit
+                    anchor="bottom middle"
+                    self="top right"
+                    auto-close
+                  >
+                    <q-list>
+                      <q-item clickable>
+                        <q-item-section>Map Customer Group</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
+              </div>
             </div>
           </div>
         </div>
