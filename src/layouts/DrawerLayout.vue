@@ -126,7 +126,14 @@ const menus = computed(() => {
 
   const menus = pages
     .filter((page) => {
-      if (page.pages_id && !page.pages_id.parent_id) {
+      if (
+        page.pages_id &&
+        !page.pages_id.parent_id &&
+        page.pages_id.status === "published"
+      ) {
+        page.pages_id.children = page.pages_id.children.filter(
+          (child) => child.status === "published"
+        );
         // no parent_id
         return pageCodes.some((f) => f.id === page.pages_id.id);
       }
