@@ -1,3 +1,67 @@
+<script setup>
+import ButtonUserMenu from "components/InternalGroup/ButtonUserMenu.vue";
+import BasePagination from "components/BasePagination.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
+import { onMounted, reactive, computed, ref } from "vue";
+import useInternalGroupStore from "src/stores/modules/internalGroup";
+import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
+
+// State
+const internalGroupStore = useInternalGroupStore();
+const query = ref("");
+const searchLoading = ref(false);
+const loading = ref(false);
+
+const internalGroup = computed(() => internalGroupStore.items);
+const meta = computed(() => internalGroupStore.meta);
+const pagination = reactive({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 4,
+});
+
+// Methods
+const searchHandler = async (searchValue = "") => {
+  query.value = searchValue;
+  searchLoading.value = true;
+  try {
+    await fetchInternalGroups();
+    searchLoading.value = false;
+  } catch (error) {
+    searchLoading.value = false;
+  }
+};
+
+const resetSearch = () => {
+  query.value = "";
+  searchHandler();
+};
+
+const totalPage = () => {
+  return Math.ceil(meta.value.filter_count / pagination.rowsPerPage);
+};
+const changePage = async (val) => {
+  pagination.page = val;
+  await fetchInternalGroups();
+  internalGroupStore.setMeta({ ...pagination });
+};
+
+const fetchInternalGroups = async () => {
+  await internalGroupStore.getAll({
+    rowsPerPage: pagination.rowsPerPage,
+    page: pagination.page,
+    search: query.value.length ? query.value : undefined,
+  });
+};
+
+onMounted(async () => {
+  loading.value = true;
+  await fetchInternalGroups();
+  loading.value = false;
+});
+</script>
+
 <template>
   <div class="mt-10">
     <!-- Heading -->
@@ -14,13 +78,6 @@
           @reset="resetSearch"
         />
       </div>
-      <!-- <q-btn
-        :to="{ name: 'customergroups-internal-group.create' }"
-        class="bg-primary text-white"
-      >
-        <q-icon name="add" class="text-white mr-2" />
-        <span>Add</span>
-      </q-btn> -->
     </div>
     <!-- Content -->
     <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
@@ -122,62 +179,3 @@
     </div>
   </div>
 </template>
-<script setup>
-import ButtonUserMenu from "components/InternalGroup/ButtonUserMenu.vue";
-import BasePagination from "components/BasePagination.vue";
-import SearchTableInput from "src/components/SearchTableInput.vue";
-import { onMounted, reactive, computed, ref } from "vue";
-import useInternalGroupStore from "src/stores/modules/internalGroup";
-import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
-
-const internalGroupStore = useInternalGroupStore();
-const query = ref("");
-const searchLoading = ref(false);
-const loading = ref(false);
-const internalGroup = computed(() => internalGroupStore.items);
-const meta = computed(() => internalGroupStore.meta);
-const pagination = reactive({
-  sortBy: "desc",
-  descending: false,
-  page: 1,
-  rowsPerPage: 4,
-});
-
-const searchHandler = async (searchValue = "") => {
-  query.value = searchValue;
-  searchLoading.value = true;
-  try {
-    await fetchInternalGroups();
-    searchLoading.value = false;
-  } catch (error) {
-    searchLoading.value = false;
-  }
-};
-
-const resetSearch = () => {
-  query.value = "";
-  searchHandler();
-};
-
-const totalPage = () => {
-  return Math.ceil(meta.value.filter_count / pagination.rowsPerPage);
-};
-const changePage = async (val) => {
-  pagination.page = val;
-  await fetchInternalGroups();
-  internalGroupStore.setMeta({ ...pagination });
-};
-onMounted(async () => {
-  loading.value = true;
-  await fetchInternalGroups();
-  loading.value = false;
-});
-
-const fetchInternalGroups = async () => {
-  await internalGroupStore.getAll({
-    rowsPerPage: pagination.rowsPerPage,
-    page: pagination.page,
-    search: query.value.length ? query.value : undefined,
-  });
-};
-</script>

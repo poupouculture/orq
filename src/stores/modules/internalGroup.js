@@ -32,6 +32,7 @@ const useInternalGroupStore = defineStore("internalGroup", {
           page,
           search,
         });
+
         this.items = internalGroups.filter((item) => item !== null);
         this.meta = {
           ...this.meta,
