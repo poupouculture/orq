@@ -2,17 +2,19 @@
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref } from "vue";
-import useInternalGroupStore from "src/stores/modules/internalGroup";
 import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
+import userPersonalGroup from "src/stores/modules/personalGroup";
 
 // State
-const internalGroupStore = useInternalGroupStore();
+const { getAll, meta, setMeta } = userPersonalGroup();
+
 const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
+const personalGroups = ref([]);
 
-const internalGroup = computed(() => internalGroupStore.items);
-const meta = computed(() => internalGroupStore.meta);
+const allPersonalGroups = computed(() => personalGroups.value);
+const metaPage = computed(() => meta);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -25,7 +27,7 @@ const searchHandler = async (searchValue = "") => {
   query.value = searchValue;
   searchLoading.value = true;
   try {
-    await fetchInternalGroups();
+    await fetchPersonalGroups();
     searchLoading.value = false;
   } catch (error) {
     searchLoading.value = false;
@@ -38,25 +40,28 @@ const resetSearch = () => {
 };
 
 const totalPage = () => {
-  return Math.ceil(meta.value.filter_count / pagination.rowsPerPage);
+  return Math.ceil(metaPage.value.filter_count / pagination.rowsPerPage);
 };
 const changePage = async (val) => {
   pagination.page = val;
-  await fetchInternalGroups();
-  internalGroupStore.setMeta({ ...pagination });
+  await fetchPersonalGroups();
+  setMeta({ ...pagination });
 };
 
-const fetchInternalGroups = async () => {
-  await internalGroupStore.getAll({
+const fetchPersonalGroups = async () => {
+  await getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
     search: query.value.length ? query.value : undefined,
+  }).then((res) => {
+    console.log(res);
+    personalGroups.value = res;
   });
 };
 
 onMounted(async () => {
   loading.value = true;
-  await fetchInternalGroups();
+  await fetchPersonalGroups();
   loading.value = false;
 });
 </script>
@@ -66,7 +71,7 @@ onMounted(async () => {
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
       <q-icon name="keyboard_backspace" />
-      <span>Personal Groups</span>
+      <span>Personal Groups </span>
     </div>
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
@@ -84,12 +89,12 @@ onMounted(async () => {
       <q-circular-progress indeterminate rounded size="30px" color="primary" />
     </div>
     <div v-else>
-      <template v-if="internalGroup.length">
+      <template v-if="allPersonalGroups.length">
         <div class="grid lg:grid-cols-4 gap-4">
           <!-- Projects -->
           <div
             class="flex flex-col gap-y-2"
-            v-for="group in internalGroup"
+            v-for="group in allPersonalGroups"
             :key="group.id"
           >
             <div
@@ -111,36 +116,33 @@ onMounted(async () => {
               <ButtonGroupMenu
                 class="w-2/12 grow-0 justify-end"
                 :id="group.id"
-                @add-user="fetchInternalGroups()"
+                @add-user="fetchPersonalGroups()"
               />
             </div>
             <!-- customers -->
             <div
               class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
-              v-for="({ directus_users_id }, i) in group.users.filter(
-                (item) => item.directus_users_id !== null
-              )"
-              :key="i"
+              v-for="(personal, index) in group.customer_groups"
+              :key="index"
             >
-              <template v-if="directus_users_id">
+              <template>
                 <div
                   class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                 >
                   <!-- for while set image default -->
                   <img
                     :src="
-                      directus_users_id.avatar ||
-                      'src/assets/images/profileavatar.png'
+                      personal.avatar || 'src/assets/images/profileavatar.png'
                     "
                     class="w-10 h-10 rounded-full mx-3"
                   />
                   <div class="truncate">
                     <div class="relative truncate">
-                      {{ directus_users_id.first_name }}
-                      {{ directus_users_id.last_name }}
+                      {{ personal.first_name }}
+                      {{ personal.last_name }}
                     </div>
                     <div class="text-gray-400 cursor-pointer truncate">
-                      {{ directus_users_id.role?.name }}
+                      {{ personal.role?.name }}
                     </div>
                   </div>
                 </div>

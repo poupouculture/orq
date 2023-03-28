@@ -29,8 +29,6 @@ export const getPersonalGroups = async ({
       meta: "*",
     },
   });
-  console.log(PersonalGroup.data);
-
   return PersonalGroup;
 };
 

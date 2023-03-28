@@ -11,27 +11,40 @@ const usePersonalGroupStore = defineStore("personalGroup", {
     items: [],
     item: null,
     meta: {
+      page: 0,
       total_count: 0,
       filter_count: 0,
     },
   }),
 
+  getters: {
+    getInternalPersonalGroup: (state) => state.items,
+  },
+
   actions: {
     async getAll({ rowsPerPage = 4, page = 1, search = undefined }) {
-      const {
-        data: { data: personalGroup, meta },
-      } = await getPersonalGroups({
-        limit: rowsPerPage,
-        page,
-        search,
-      });
-      this.items = personalGroup.filter((item: any) => item !== null);
-      this.meta = {
-        ...this.meta,
-        total_count: meta?.total_count,
-        filter_count: meta?.filter_count,
-      };
+      try {
+        const {
+          data: { data: personalGroup, meta },
+        } = await getPersonalGroups({
+          limit: rowsPerPage,
+          page,
+          search,
+        });
+
+        this.items = personalGroup.filter((item: any) => item !== null);
+        this.meta = {
+          ...this.meta,
+          total_count: meta?.total_count,
+          filter_count: meta?.filter_count,
+        };
+
+        return this.items;
+      } catch (error) {
+        console.log(error);
+      }
     },
+
     // async get(id) {
     //   const {
     //     data: { data: customerGroups },
@@ -90,9 +103,9 @@ const usePersonalGroupStore = defineStore("personalGroup", {
     //   }
     //   Loading.hide();
     // },
-    // setMeta(val) {
-    //   this.meta.page = val.page;
-    // },
+    setMeta(val: { page: number }) {
+      this.meta.page = val.page;
+    },
   },
 });
 
