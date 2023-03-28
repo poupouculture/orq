@@ -6,7 +6,7 @@
           <q-item
             clickable
             :to="{
-              name: 'customergroups-internal-group.edit',
+              name: 'internal-group.edit',
               params: { id },
             }"
           >

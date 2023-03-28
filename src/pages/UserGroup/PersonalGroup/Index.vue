@@ -3,7 +3,7 @@
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
       <q-icon name="keyboard_backspace" />
-      <span>Internal Groups</span>
+      <span>Personal Groups</span>
     </div>
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
@@ -14,13 +14,13 @@
           @reset="resetSearch"
         />
       </div>
-      <q-btn
-        :to="{ name: 'internal-group.create' }"
+      <!-- <q-btn
+        :to="{ name: 'customergroups-internal-group.create' }"
         class="bg-primary text-white"
       >
         <q-icon name="add" class="text-white mr-2" />
         <span>Add</span>
-      </q-btn>
+      </q-btn> -->
     </div>
     <!-- Content -->
     <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
@@ -74,7 +74,7 @@
                   <img
                     :src="
                       directus_users_id.avatar ||
-                      '/src/assets/images/profileavatar.png'
+                      'src/assets/images/profileavatar.png'
                     "
                     class="w-10 h-10 rounded-full mx-3"
                   />

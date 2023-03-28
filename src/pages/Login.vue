@@ -3,7 +3,7 @@
     <div class="hidden md:!inline-block bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3">
       <div class="flex items-center">
         <img class="w-[80px] mr-3" :src="logo" alt="logo" />
-        <p class="font-[800] font-inter text-3xl">ChaQue</p>
+        <p class="font-[800] font-inter text-3xl">ChaQ</p>
       </div>
     </div>
 

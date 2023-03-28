@@ -173,33 +173,38 @@ const routes = [
         component: () => import("pages/WorkOrder.vue"),
       },
       {
+        path: "personal-groups",
+        name: "personalgroups",
+        component: () => import("pages/UserGroup/PersonalGroup/Index.vue"),
+      },
+      {
         path: "customer-groups",
         name: "customergroups",
-        component: () => import("pages/UserGroup/Index.vue"),
+        component: () => import("pages/CustomerGroup/Index.vue"),
       },
       {
         path: "customer-groups/create",
         name: "customergroups.create",
-        component: () => import("pages/UserGroup/Create.vue"),
+        component: () => import("pages/CustomerGroup/Create.vue"),
       },
       {
         path: "customer-groups/:id/edit",
         name: "customergroups.edit",
-        component: () => import("pages/UserGroup/Edit.vue"),
+        component: () => import("pages/CustomerGroup/Edit.vue"),
       },
       {
-        path: "customer-groups/internal-group",
-        name: "customergroups-internal-group",
+        path: "internal-group",
+        name: "internal-group",
         component: () => import("pages/UserGroup/InternalGroup/Index.vue"),
       },
       {
-        path: "customer-groups/internal-group/create",
-        name: "customergroups-internal-group.create",
+        path: "internal-group/create",
+        name: "internal-group.create",
         component: () => import("pages/UserGroup/InternalGroup/Create.vue"),
       },
       {
-        path: "customer-groups/internal-group/:id/edit",
-        name: "customergroups-internal-group.edit",
+        path: "internal-group/:id/edit",
+        name: "internal-group.edit",
         component: () => import("pages/UserGroup/InternalGroup/Edit.vue"),
       },
 

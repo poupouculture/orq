@@ -12,7 +12,7 @@
         <div class="drawer-content">
           <div class="logo-holder flex items-center gap-3">
             <img class="w-10" src="~assets/images/logo.svg" />
-            <p class="font-[800] text-white text-2xl">ChaQue</p>
+            <p class="font-[800] text-white text-2xl">ChaQ</p>
           </div>
           <div class="input-holder">
             <SearchInput />
