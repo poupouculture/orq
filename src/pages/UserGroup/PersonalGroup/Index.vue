@@ -1,5 +1,4 @@
 <script setup>
-import ButtonUserMenu from "components/InternalGroup/ButtonUserMenu.vue";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref } from "vue";
@@ -146,11 +145,20 @@ onMounted(async () => {
                   </div>
                 </div>
                 <div class="flex items-center">
-                  <ButtonUserMenu
-                    :id="group.id"
-                    :user-id="directus_users_id.id"
-                    :pagination="pagination"
-                  />
+                  <q-btn color="grey-7" round flat icon="more_vert">
+                    <q-menu
+                      fit
+                      anchor="bottom middle"
+                      self="top right"
+                      auto-close
+                    >
+                      <q-list>
+                        <q-item clickable>
+                          <q-item-section>Map Customer Group</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
                 </div>
               </template>
             </div>
