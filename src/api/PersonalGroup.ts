@@ -33,13 +33,14 @@ export const getPersonalGroups = async ({
 };
 
 export const getPersonalGroup = async (id: string) => {
-  const users =
-    "users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name. users.user_groups_id.*";
-  const customerGroups = "customer_groups.*, customer_groups.*.*";
-  const tags = "tags.*, tags.*.*";
+  // const users =
+  //   "users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name. users.user_groups_id.*";
+  // const customerGroups = "customer_groups.*, customer_groups.*.*";
+  // const tags = "tags.*, tags.*.*";
   const PersonalGroup = await api.get("/items/user_groups/" + id, {
     params: {
-      fields: `id,name,status,type,${customerGroups},${users},${tags}`,
+      fields:
+        "id,name,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id",
     },
   });
   return PersonalGroup;

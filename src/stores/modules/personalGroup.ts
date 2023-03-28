@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 // import { Loading, Notify } from "quasar";
 import {
   getPersonalGroups,
-  // addPersonalGroup,
+  getPersonalGroup,
   // deletePersonalGroup,
 } from "src/api/PersonalGroup";
 
@@ -45,12 +45,12 @@ const usePersonalGroupStore = defineStore("personalGroup", {
       }
     },
 
-    // async get(id) {
-    //   const {
-    //     data: { data: customerGroups },
-    //   } = await getCustomerGroups({}, id);
-    //   this.item = customerGroups;
-    // },
+    async get(id: any) {
+      const {
+        data: { data: customerGroups },
+      } = await getPersonalGroup(id);
+      return customerGroups;
+    },
     // async addCustomer(payload) {
     //   Loading.show();
     //   try {
