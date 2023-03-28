@@ -1,9 +1,8 @@
 import { defineStore } from "pinia";
-// import { Loading, Notify } from "quasar";
 import {
   getPersonalGroups,
   getPersonalGroup,
-  // deletePersonalGroup,
+  addRelationship,
 } from "src/api/PersonalGroup";
 
 const usePersonalGroupStore = defineStore("personalGroup", {
@@ -51,58 +50,16 @@ const usePersonalGroupStore = defineStore("personalGroup", {
       } = await getPersonalGroup(id);
       return customerGroups;
     },
-    // async addCustomer(payload) {
-    //   Loading.show();
-    //   try {
-    //     await addCustomerToCustomerGroup(payload);
-    //     Loading.hide();
-    //     Notify.create({
-    //       message: "Customer successfully added!",
-    //       position: "top",
-    //       type: "positive",
-    //       color: "primary",
-    //     });
-    //   } catch (error) {}
-    //   Loading.hide();
-    // },
-    // async delete(id) {
-    //   try {
-    //     Loading.show();
-    //     await deleteCustomerGroup(id);
-    //     this.items = this.items.filter((item) => item.id !== id);
-    //     Loading.hide();
-    //     Notify.create({
-    //       message: "Customer Group successfully deleted!",
-    //       position: "top",
-    //       type: "positive",
-    //       color: "primary",
-    //     });
-    //     this.getAll();
-    //   } catch (error) {
-    //     Notify.create({
-    //       message: error,
-    //     });
-    //   }
-    // },
-    // async deleteCustomer(id, customerId) {
-    //   Loading.show();
-    //   try {
-    //     await deleteCustomer(id, customerId);
-    //     Loading.hide();
-    //     Notify.create({
-    //       message: "Customer successfully deleted!",
-    //       position: "top",
-    //       type: "positive",
-    //       color: "primary",
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //     Notify.create({
-    //       message: error,
-    //     });
-    //   }
-    //   Loading.hide();
-    // },
+
+    async addRelation(userGroupId: string, customerGroupId: string) {
+      const { data: result } = await addRelationship(
+        userGroupId,
+        customerGroupId
+      );
+
+      return result;
+    },
+
     setMeta(val: { page: number }) {
       this.meta.page = val.page;
     },

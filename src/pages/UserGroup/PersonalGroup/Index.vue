@@ -5,14 +5,15 @@ import { onMounted, reactive, computed, ref } from "vue";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 
 // State
-const { getAll, meta, setMeta, get } = userPersonalGroup();
+const { getAll, meta, setMeta, get, addRelation } = userPersonalGroup();
 
 const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
 const personalGroups = ref([]);
 const singleItem = ref([]);
-const selectedId = ref("");
+const userGroupId = ref("");
+const tableSelected = ref([]);
 const drawer = ref(false);
 
 const allPersonalGroups = computed(() => personalGroups.value);
@@ -57,16 +58,15 @@ const fetchPersonalGroups = async () => {
     search: query.value.length ? query.value : undefined,
   }).then((res) => {
     personalGroups.value = res;
-
-    console.log(res);
   });
 };
 
 const getPersonalGroup = (id) => {
-  selectedId.value = id;
+  userGroupId.value = id;
   get(id).then((res) => {
     singleItem.value = res.customer_groups.map((item) => {
       return {
+        ...item.customer_groups_id,
         name: item.customer_groups_id.name,
         status: item.customer_groups_id.status,
       };
@@ -77,9 +77,15 @@ const getPersonalGroup = (id) => {
 };
 
 const closeDrawer = () => {
-  selectedId.value = "";
+  userGroupId.value = "";
   singleItem.value = [];
   drawer.value = !drawer.value;
+};
+
+const newRelations = () => {
+  addRelation(userGroupId.value, tableSelected.value[0].id).then((res) => {
+    console.log(res);
+  });
 };
 
 onMounted(async () => {
@@ -253,15 +259,23 @@ const headerColumns = [
               @search="searchHandler"
               @reset="resetSearch"
             />
-
-            <q-btn round color="primary" size="md" icon="done" />
+            <q-btn
+              :disable="!tableSelected.length > 0"
+              @click="newRelations"
+              round
+              color="primary"
+              size="md"
+              icon="done"
+            />
           </div>
 
           <div class="mt-10">
             <q-table
+              v-model:selected="tableSelected"
               :rows="singleItem"
               :columns="headerColumns"
               selection="single"
+              row-key="name"
             />
           </div>
         </div>
