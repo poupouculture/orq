@@ -561,7 +561,7 @@ function recStop() {
 }
 /** close recorder **/
 function recClose() {
-  rec.value.close();
+  rec.value && rec.value.close();
   rec.value = null;
 }
 
