@@ -72,11 +72,13 @@ const newRelations = () => {
 
 const collectedCustomerGroup = (array) => {
   const a = array.concat();
+
   for (let i = 0; i < a.length; ++i) {
     for (let j = i + 1; j < a.length; ++j) {
-      if (a[i].id === a[j].id) a.splice(j--, 1);
+      if (a[i].id !== a[j].id) a.push(j);
     }
   }
+
   customerGroups.value = a;
 };
 
@@ -293,7 +295,6 @@ const headerColumns = [
           </div>
 
           <div class="mt-10">
-            {{ customerGroups }}
             <q-table
               v-model:selected="tableSelected"
               :rows="customerGroups"
