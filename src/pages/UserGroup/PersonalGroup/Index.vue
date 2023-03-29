@@ -1,24 +1,23 @@
-<script setup>
+<script lang="ts" setup>
+import { onMounted, reactive, computed, ref } from "vue";
+import type { Ref } from "vue";
+import { storeToRefs } from "pinia";
+import { Notify } from "quasar";
+import { PersonalItem } from "src/types/PersonalGroups";
+import userPersonalGroup from "src/stores/modules/personalGroup";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import { onMounted, reactive, computed, ref } from "vue";
-import userPersonalGroup from "src/stores/modules/personalGroup";
 
 // State
-const { getAll, meta, setMeta, addRelation } = userPersonalGroup();
+const personalGroupStore = userPersonalGroup();
+const { personalGroups, customerGroups } = storeToRefs(personalGroupStore);
 
 const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
-const personalGroups = ref([]);
-const singleItem = ref([]); // no needed
-const customerGroups = ref([]);
 const userGroupId = ref("");
-const tableSelected = ref([]);
+const tableSelected: Ref<PersonalItem[]> = ref([]);
 const drawer = ref(false);
-
-const allPersonalGroups = computed(() => personalGroups.value);
-const metaPage = computed(() => meta);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -26,12 +25,32 @@ const pagination = reactive({
   rowsPerPage: 4,
 });
 
+const allPersonalGroups = computed(() => personalGroups.value.data);
+const meta = computed(() => personalGroups.value.meta);
+const totalPage = computed(() =>
+  Math.ceil(meta.value.filter_count / pagination.rowsPerPage)
+);
+const selectedUserGroup = computed(() => {
+  const userGroup = allPersonalGroups.value.find(
+    (item) => item.id === userGroupId.value
+  );
+  return (
+    userGroup?.customer_groups.map((item) => item.customer_groups_id.id) || []
+  );
+});
+
+const remainingGroups = computed(() =>
+  customerGroups.value.filter(
+    (item) => !selectedUserGroup.value.includes(item.id)
+  )
+);
+
 // Methods
 const searchHandler = async (searchValue = "") => {
   query.value = searchValue;
   searchLoading.value = true;
   try {
-    await init();
+    await getPersonalGroupData();
     searchLoading.value = false;
   } catch (error) {
     searchLoading.value = false;
@@ -43,89 +62,53 @@ const resetSearch = () => {
   searchHandler();
 };
 
-const totalPage = () => {
-  return Math.ceil(metaPage.value.filter_count / pagination.rowsPerPage);
-};
-const changePage = async (val) => {
+const changePage = (val: number) => {
   pagination.page = val;
-  await init();
-  setMeta({ ...pagination });
+  getPersonalGroupData();
 };
 
-const openDrawer = (id) => {
+const openDrawer = (id: string) => {
   userGroupId.value = id;
   drawer.value = !drawer.value;
 };
 
 const closeDrawer = () => {
   userGroupId.value = "";
-  singleItem.value = [];
   drawer.value = !drawer.value;
+  tableSelected.value = [];
 };
 
-const newRelations = () => {
-  addRelation(userGroupId.value, tableSelected.value[0].id).then((res) => {
-    console.log(res);
-  });
+const newRelations = async () => {
+  const data = await personalGroupStore.addRelation(
+    userGroupId.value,
+    tableSelected.value[0].id
+  );
+  if (!data.status) {
+    Notify.create({
+      message: data.message,
+      type: "negative",
+      color: "purple",
+      position: "top",
+    });
+  }
 };
 
-// const collectedCustomerGroup = (array) => {
-//   const a = array.concat();
-
-//   for (let i = 0; i < a.length; ++i) {
-//     for (let j = i + 1; j < a.length; ++j) {
-//       if (a[i].id !== a[j].id) a.push(j);
-//     }
-//   }
-
-//   customerGroups.value = a;
-// };
-
-const init = async () => {
-  // const newArray = [];
-  // const secondArray = [];
-
-  // await getCustomerGroup().then((res) => {
-  //   res.data.forEach((item) => {
-  //     secondArray.push(item);
-  //   });
-  // });
-
-  await getAll({
-    rowsPerPage: pagination.rowsPerPage,
-    page: pagination.page,
-    search: query.value.length ? query.value : undefined,
-  }).then((res) => {
-    personalGroups.value = res;
-    // res.forEach(item => {
-    //     item.customer_groups.forEach(data => {
-    //       newArray.push({
-    //          id: data.customer_groups_id.id,
-    //          name: data.customer_groups_id.name,
-    //           status: data.customer_groups_id.status,
-    //       })
-    //     })
-    // })
-    // res.forEach((item) => {
-    //   item.customer_groups.forEach((data) => {
-    //     newArray.push({
-    //       id: data.customer_groups_id.id,
-    //       name: data.customer_groups_id.name,
-    //       status: data.customer_groups_id.status,
-    //     });
-    //   });
-    // });
-    // customerGroups.value =  mergeArray(newArray, secondArray)
-    // personalGroups.value = res;
-  });
-
-  // collectedCustomerGroup(newArray, secondArray);
-};
-
-onMounted(async () => {
+const getPersonalGroupData = async () => {
   loading.value = true;
-  await init();
+  await personalGroupStore.getAll(
+    pagination.rowsPerPage,
+    pagination.page,
+    query.value
+  );
   loading.value = false;
+};
+const getCustomerGroupData = async () => {
+  personalGroupStore.getCustomerGroup();
+};
+
+onMounted(() => {
+  getPersonalGroupData();
+  getCustomerGroupData();
 });
 
 // Table
@@ -202,9 +185,9 @@ const headerColumns = [
                     class="col-span-8 px-3 flex justify-center items-start flex-col"
                   >
                     <div class="truncate w-full">{{ group.name }}</div>
-                    <p class="text-gray-400">
+                    <!-- <p class="text-gray-400">
                       {{ group.customer_groups.length }} Members
-                    </p>
+                    </p> -->
                   </div>
 
                   <div class="col-span-2 flex items-center">
@@ -235,10 +218,8 @@ const headerColumns = [
                     class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                   >
                     <img
-                      :src="
-                        personal.customer_groups_id.avatar ||
-                        'src/assets/images/profileavatar.png'
-                      "
+                      :src="// personal.customer_groups_id.avatar ||
+                      'src/assets/images/profileavatar.png'"
                       class="w-10 h-10 rounded-full mx-3"
                     />
                     <div class="truncate">
@@ -255,7 +236,7 @@ const headerColumns = [
             </div>
             <div class="flex items-center justify-center mt-20">
               <BasePagination
-                :max="totalPage()"
+                :max="totalPage"
                 :max-pages="10"
                 @update-model="changePage"
                 v-model="pagination.page"
@@ -294,7 +275,7 @@ const headerColumns = [
               @reset="resetSearch"
             />
             <q-btn
-              :disable="!tableSelected.length > 0"
+              :disable="tableSelected.length <= 0"
               @click="newRelations"
               round
               color="primary"
@@ -302,11 +283,10 @@ const headerColumns = [
               icon="done"
             />
           </div>
-
           <div class="mt-10">
             <q-table
               v-model:selected="tableSelected"
-              :rows="customerGroups"
+              :rows="remainingGroups"
               :columns="headerColumns"
               selection="single"
               row-key="name"

@@ -1,62 +1,64 @@
 import { defineStore } from "pinia";
 import {
   getPersonalGroups,
-  getPersonalGroup,
+  // getPersonalGroup,
   addRelationship,
   getCustomerGroup,
 } from "src/api/PersonalGroup";
+import { PState } from "src/types/PersonalGroups";
 
 const usePersonalGroupStore = defineStore("personalGroup", {
-  state: () => ({
-    items: [],
-    item: null,
-    meta: {
-      page: 0,
-      total_count: 0,
-      filter_count: 0,
-    },
-  }),
+  state: () =>
+    ({
+      // items: [],
+      // item: null,
+      // meta: {
+      //   page: 0,
+      //   total_count: 0,
+      //   filter_count: 0,
+      // },
+      personalGroups: {
+        data: [],
+        meta: { total_count: 0, filter_count: 0 },
+      },
+      customerGroups: [],
+    } as PState),
 
-  getters: {
-    getInternalPersonalGroup: (state) => state.items,
-  },
+  // getters: {
+  //   getInternalPersonalGroup: (state) => state.items,
+  // },
 
   actions: {
-    async getAll({ rowsPerPage = 4, page = 1, search = undefined }) {
+    async getAll(rowsPerPage: number = 4, page: number = 1, search?: string) {
       try {
         const {
-          data: { data: personalGroup, meta },
-        } = await getPersonalGroups({
-          limit: rowsPerPage,
-          page,
-          search,
-        });
-
-        this.items = personalGroup.filter((item: any) => item !== null);
-        this.meta = {
-          ...this.meta,
-          total_count: meta?.total_count,
-          filter_count: meta?.filter_count,
+          data: { data = [], meta },
+        } = await getPersonalGroups(rowsPerPage, page, search);
+        this.personalGroups.data = data;
+        this.personalGroups.meta = meta || {
+          // page: 0,
+          total_count: 0,
+          filter_count: 0,
         };
-
-        return this.items;
+        // this.setMeta(fetchMeta);
       } catch (error) {
         console.log(error);
       }
     },
 
     async getCustomerGroup() {
-      const { data: customerGroup } = await getCustomerGroup();
-
-      return customerGroup;
-    },
-
-    async get(id: any) {
       const {
-        data: { data: customerGroups },
-      } = await getPersonalGroup(id);
-      return customerGroups;
+        data: { data },
+      } = await getCustomerGroup();
+      this.customerGroups = data;
     },
+
+    // async get(id: any) {
+    //   const {
+    //     data: { data: customerGroups },
+    //   } = await getPersonalGroup(id);
+    //   return customerGroups;
+    // },
 
     async addRelation(userGroupId: string, customerGroupId: string) {
       const { data: result } = await addRelationship(
@@ -67,9 +69,9 @@ const usePersonalGroupStore = defineStore("personalGroup", {
       return result;
     },
 
-    setMeta(val: { page: number }) {
-      this.meta.page = val.page;
-    },
+    // setMeta(meta: Meta) {
+    //   this.personalGroups.meta = { ...this.personalGroups.meta, ...meta };
+    // },
   },
 });
 
