@@ -367,8 +367,6 @@ const showCustomerInfoInMobile = () => {
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
-  console.log(111222, data);
-
   if (!data.status) {
     newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     Swal.fire({
@@ -377,7 +375,8 @@ const messageCallback = async (data: any, newMessage: any) => {
       text: data.message,
     });
   } else {
-    newMessage.id = data.data.derp_chats_messages_id;
+    data = data.data || data;
+    newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.data.waba_message_id;
   }
@@ -398,8 +397,7 @@ const sendMessage = async () => {
     waba_message_id: "",
   });
   cachedMessage.push(newMessage);
-  const { waba_message_id: wabaMessageId } = replayMessage.value;
-  console.log(replayMessage.value);
+  const wabaMessageId = replayMessage.value?.waba_message_id;
 
   scrollToBottom();
   messagingStore.setReplayMessage();

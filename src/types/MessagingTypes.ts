@@ -48,7 +48,7 @@ export interface Message {
   label?: string;
   isEmoticon?: boolean;
   waba_message_id?: string;
-  waba_associated_message_id: string;
+  waba_associated_message_id?: string;
 }
 export interface IChat {
   id: string;

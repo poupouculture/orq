@@ -94,26 +94,18 @@ const emit = defineEmits(["hide", "submit"]);
 
 const headerColumns = [
   {
+    name: "customer_company_name_en",
+    align: "left",
+    label: "Customer Name(English)",
+    field: "customer_company_name_en",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
     name: "name",
     align: "left",
     label: "Name",
     field: "name",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "company",
-    align: "left",
-    label: "Company",
-    field: "company",
-    sortable: true,
-    classes: "text-black",
-  },
-  {
-    name: "customerName",
-    align: "left",
-    label: "Customer Name(English)",
-    field: "customerName",
     sortable: true,
     classes: "text-black",
   },
@@ -126,10 +118,10 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "locationCode",
+    name: "location_code",
     align: "left",
     label: "Location Code",
-    field: "locationCode",
+    field: "location_code",
     sortable: true,
     classes: "text-black",
   },
@@ -139,6 +131,14 @@ const headerColumns = [
     label: "Action",
     field: "action",
     classes: "text-blue",
+  },
+  {
+    name: "company",
+    align: "left",
+    label: "Company",
+    field: "company",
+    sortable: true,
+    classes: "text-black",
   },
 ];
 const loading = ref(true);
