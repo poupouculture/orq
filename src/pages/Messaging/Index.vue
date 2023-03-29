@@ -1,9 +1,5 @@
 <template>
   <div class="lg:!block">
-    <!-- <div
-      v-if="showCustomerInfoMobile"
-      class="flex items-center space-x-2 mb-3 text-gray-600 cursor-pointer"
-    > -->
     <q-btn
       class="float-right"
       @click="closeCustomerInfoMobile"
@@ -66,12 +62,9 @@
 <script setup lang="ts">
 import { ref, onMounted, inject } from "vue";
 import type { Ref } from "vue";
-import { storeToRefs } from "pinia";
-// import useMessagingStore from "src/stores/modules/messaging";
 import { getChatUsers } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
-import useUserInfoStore from "src/stores/modules/userInfo";
 
 const enum Tabs {
   CUSTOMER = "customer",
@@ -85,33 +78,19 @@ interface Manager {
   last_name: string;
   role_name: string;
 }
-// const messagingStore = useMessagingStore();
-const userInfoStore = useUserInfoStore();
-
-const userInfo = useUserInfoStore();
-const userRole: Ref<string> = ref("");
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const managers: Ref<Array<Manager>> = ref([]);
-const firebaseToken: Ref<string> = ref("");
-// const showCustomerInfoMobile: Ref<boolean> = ref(false);
 const rightDrawerOpen: any = inject("rightDrawerOpen");
-
-const { getFirebaseToken } = storeToRefs(userInfoStore);
 
 onMounted(async () => {
   const { data } = await getChatUsers();
   managers.value = data;
-  userRole.value = userInfo.getUserRoleName;
-  firebaseToken.value = getFirebaseToken.value;
-  // showCustomerInfoMobile.value = window.innerWidth < 1023;
 });
-// closing customer information in mobile view
+
 const closeCustomerInfoMobile = () => {
-  // messagingStore.setCustomerInfoMobile(false);
-  // messagingStore.setRightDrawerOpen(true);
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 </script>

@@ -276,7 +276,7 @@ const applyTemplateComponent = (val: any) => {
     const headerComponent = val.components.find(
       (c: any) => c?.type === "HEADER"
     );
-    header.value = headerComponent.format;
+    header.value = headerComponent?.format;
     console.log("used template", headerComponent);
     if (header.value?.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent.value?.text;

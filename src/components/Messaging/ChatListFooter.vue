@@ -10,7 +10,7 @@
         class="px-2"
         @click="router.push('/')"
       />
-      <q-btn round flat color="grey" icon="add_box" size="md" class="px-2" />
+      <!-- <q-btn round flat color="grey" icon="add_box" size="md" class="px-2" />
       <q-btn
         round
         flat
@@ -26,7 +26,7 @@
         icon="notifications"
         size="md"
         class="px-2"
-      />
+      /> -->
       <div
         class="flex items-center space-x-1.5 cursor-pointer"
         @click="toggleInfo()"

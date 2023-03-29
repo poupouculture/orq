@@ -178,3 +178,10 @@ export const uploadMedia = async (chatId: string, payload: any) => {
   });
   return data;
 };
+
+export const chatbots = async () => {
+  const data = await api.get(`/items/chatbots`, {
+    params: { status: "published" },
+  });
+  return data;
+};
