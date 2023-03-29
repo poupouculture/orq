@@ -5,8 +5,7 @@ import { onMounted, reactive, computed, ref } from "vue";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 
 // State
-const { getAll, meta, setMeta, addRelation, getCustomerGroup } =
-  userPersonalGroup();
+const { getAll, meta, setMeta, addRelation } = userPersonalGroup();
 
 const query = ref("");
 const searchLoading = ref(false);
@@ -70,47 +69,57 @@ const newRelations = () => {
   });
 };
 
-const collectedCustomerGroup = (array) => {
-  const a = array.concat();
+// const collectedCustomerGroup = (array) => {
+//   const a = array.concat();
 
-  for (let i = 0; i < a.length; ++i) {
-    for (let j = i + 1; j < a.length; ++j) {
-      if (a[i].id !== a[j].id) a.push(j);
-    }
-  }
+//   for (let i = 0; i < a.length; ++i) {
+//     for (let j = i + 1; j < a.length; ++j) {
+//       if (a[i].id !== a[j].id) a.push(j);
+//     }
+//   }
 
-  customerGroups.value = a;
-};
+//   customerGroups.value = a;
+// };
 
 const init = async () => {
-  const newArray = [];
-  const secondArray = [];
+  // const newArray = [];
+  // const secondArray = [];
 
-  await getCustomerGroup().then((res) => {
-    res.data.forEach((item) => {
-      secondArray.push(item);
-    });
-  });
+  // await getCustomerGroup().then((res) => {
+  //   res.data.forEach((item) => {
+  //     secondArray.push(item);
+  //   });
+  // });
 
   await getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
     search: query.value.length ? query.value : undefined,
   }).then((res) => {
-    res.forEach((item) => {
-      item.customer_groups.forEach((data) => {
-        newArray.push({
-          id: data.customer_groups_id.id,
-          name: data.customer_groups_id.name,
-          status: data.customer_groups_id.status,
-        });
-      });
-    });
-    // customerGroups.value =  mergeArray(newArray, secondArray)
     personalGroups.value = res;
+    // res.forEach(item => {
+    //     item.customer_groups.forEach(data => {
+    //       newArray.push({
+    //          id: data.customer_groups_id.id,
+    //          name: data.customer_groups_id.name,
+    //           status: data.customer_groups_id.status,
+    //       })
+    //     })
+    // })
+    // res.forEach((item) => {
+    //   item.customer_groups.forEach((data) => {
+    //     newArray.push({
+    //       id: data.customer_groups_id.id,
+    //       name: data.customer_groups_id.name,
+    //       status: data.customer_groups_id.status,
+    //     });
+    //   });
+    // });
+    // customerGroups.value =  mergeArray(newArray, secondArray)
+    // personalGroups.value = res;
   });
 
-  collectedCustomerGroup(newArray, secondArray);
+  // collectedCustomerGroup(newArray, secondArray);
 };
 
 onMounted(async () => {

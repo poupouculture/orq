@@ -34,7 +34,7 @@ export const getPersonalGroups = async ({
 
 export const getCustomerGroup = async () => {
   const customerGroup = await api.get(
-    "items/customer_groups?&fields=id,name,status"
+    "/items/customer_groups?limit=10&fields=id,name,status"
   );
 
   return customerGroup;
