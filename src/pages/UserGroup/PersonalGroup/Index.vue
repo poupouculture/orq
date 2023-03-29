@@ -224,10 +224,10 @@ const headerColumns = [
                     />
                     <div class="truncate">
                       <div class="relative truncate">
-                        {{ personal.customer_groups_id.name }}
+                        {{ personal.customer_groups_id?.name }}
                       </div>
                       <div class="text-gray-400 cursor-pointer truncate">
-                        {{ personal.customer_groups_id.status }}
+                        {{ personal.customer_groups_id?.status }}
                       </div>
                     </div>
                   </div>
