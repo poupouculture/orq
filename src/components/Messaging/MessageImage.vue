@@ -1,6 +1,6 @@
 <template>
   <img
-    class="h-full cursor-zoom-in h-32"
+    class="cursor-zoom-in h-32"
     ref="imageRef"
     @click.stop="visible = true"
   />

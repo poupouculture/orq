@@ -54,11 +54,10 @@ import useCustomerStore from "src/stores/modules/customer";
 import Remark from "src/components/Remark/Remark.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
 const customerStore = useCustomerStore();
-const customer = computed(() => customerStore.getCustomer);
 const messagingStore = useMessagingStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
 const remarks = ref("");
@@ -90,9 +89,9 @@ const tabs = ref([
 // Methods
 const saveCustomer = async (val: FormPayload) => {
   let customerResult = null;
-  if (customer.value.id) {
+  if (getSelectedChat.value.customers_id) {
     // update
-    await customerStore.updateCustomer(customer.value.id, val);
+    await customerStore.updateCustomer(getSelectedChat.value.customers_id, val);
     customerResult = customerStore.getCustomer;
   } else {
     // insert
