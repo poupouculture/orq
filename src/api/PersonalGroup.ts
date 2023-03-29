@@ -12,11 +12,11 @@ export const searchPersonalGroup = async (query: string) => {
   return data;
 };
 
-export const getPersonalGroups = async ({
-  limit = 10,
-  page = 1,
-  search = undefined,
-}) => {
+export const getPersonalGroups = async (
+  limit: number = 10,
+  page: number = 1,
+  search?: string
+) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const PersonalGroup = await api.get("/items/user_groups", {
     params: {
@@ -34,7 +34,7 @@ export const getPersonalGroups = async ({
 
 export const getCustomerGroup = async () => {
   const customerGroup = await api.get(
-    "/items/customer_groups?limit=10&fields=id,name,status"
+    "/items/customer_groups?limit=-1&fields=id,name,status"
   );
 
   return customerGroup;
