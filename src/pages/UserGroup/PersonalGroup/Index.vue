@@ -5,13 +5,15 @@ import { onMounted, reactive, computed, ref } from "vue";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 
 // State
-const { getAll, meta, setMeta, get, addRelation } = userPersonalGroup();
+const { getAll, meta, setMeta, addRelation, getCustomerGroup } =
+  userPersonalGroup();
 
 const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
 const personalGroups = ref([]);
-const singleItem = ref([]);
+const singleItem = ref([]); // no needed
+const customerGroups = ref([]);
 const userGroupId = ref("");
 const tableSelected = ref([]);
 const drawer = ref(false);
@@ -30,7 +32,7 @@ const searchHandler = async (searchValue = "") => {
   query.value = searchValue;
   searchLoading.value = true;
   try {
-    await fetchPersonalGroups();
+    await init();
     searchLoading.value = false;
   } catch (error) {
     searchLoading.value = false;
@@ -47,33 +49,13 @@ const totalPage = () => {
 };
 const changePage = async (val) => {
   pagination.page = val;
-  await fetchPersonalGroups();
+  await init();
   setMeta({ ...pagination });
 };
 
-const fetchPersonalGroups = async () => {
-  await getAll({
-    rowsPerPage: pagination.rowsPerPage,
-    page: pagination.page,
-    search: query.value.length ? query.value : undefined,
-  }).then((res) => {
-    personalGroups.value = res;
-  });
-};
-
-const getPersonalGroup = (id) => {
+const openDrawer = (id) => {
   userGroupId.value = id;
-  get(id).then((res) => {
-    singleItem.value = res.customer_groups.map((item) => {
-      return {
-        ...item.customer_groups_id,
-        name: item.customer_groups_id.name,
-        status: item.customer_groups_id.status,
-      };
-    });
-
-    drawer.value = !drawer.value;
-  });
+  drawer.value = !drawer.value;
 };
 
 const closeDrawer = () => {
@@ -88,9 +70,52 @@ const newRelations = () => {
   });
 };
 
+const collectedCustomerGroup = (array) => {
+  const a = array.concat();
+
+  for (let i = 0; i < a.length; ++i) {
+    for (let j = i + 1; j < a.length; ++j) {
+      if (a[i].id !== a[j].id) a.push(j);
+    }
+  }
+
+  customerGroups.value = a;
+};
+
+const init = async () => {
+  const newArray = [];
+  const secondArray = [];
+
+  await getCustomerGroup().then((res) => {
+    res.data.forEach((item) => {
+      secondArray.push(item);
+    });
+  });
+
+  await getAll({
+    rowsPerPage: pagination.rowsPerPage,
+    page: pagination.page,
+    search: query.value.length ? query.value : undefined,
+  }).then((res) => {
+    res.forEach((item) => {
+      item.customer_groups.forEach((data) => {
+        newArray.push({
+          id: data.customer_groups_id.id,
+          name: data.customer_groups_id.name,
+          status: data.customer_groups_id.status,
+        });
+      });
+    });
+    // customerGroups.value =  mergeArray(newArray, secondArray)
+    personalGroups.value = res;
+  });
+
+  collectedCustomerGroup(newArray, secondArray);
+};
+
 onMounted(async () => {
   loading.value = true;
-  await fetchPersonalGroups();
+  await init();
   loading.value = false;
 });
 
@@ -182,7 +207,7 @@ const headerColumns = [
                         auto-close
                       >
                         <q-list>
-                          <q-item clickable @click="getPersonalGroup(group.id)">
+                          <q-item clickable @click="openDrawer(group.id)">
                             <q-item-section>Map Customer Group</q-item-section>
                           </q-item>
                         </q-list>
@@ -272,7 +297,7 @@ const headerColumns = [
           <div class="mt-10">
             <q-table
               v-model:selected="tableSelected"
-              :rows="singleItem"
+              :rows="customerGroups"
               :columns="headerColumns"
               selection="single"
               row-key="name"
