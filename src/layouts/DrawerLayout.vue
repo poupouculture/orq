@@ -122,7 +122,7 @@ const router = useRouter();
 const route = useRoute();
 
 const menus = computed(() => {
-  const pages = userInfo.userProfile.role.pages;
+  const pages = userInfo.userProfile?.role.pages || [];
 
   const menus = pages
     .filter((page) => {

@@ -378,7 +378,7 @@ const messageCallback = async (data: any, newMessage: any) => {
     data = data.data || data;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
-    newMessage.waba_message_id = data.data.waba_message_id;
+    newMessage.waba_message_id = data.waba_message_id;
   }
 };
 
