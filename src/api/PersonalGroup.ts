@@ -32,6 +32,14 @@ export const getPersonalGroups = async ({
   return PersonalGroup;
 };
 
+export const getCustomerGroup = async () => {
+  const customerGroup = await api.get(
+    "items/customer_groups?&fields=id,name,status"
+  );
+
+  return customerGroup;
+};
+
 export const addRelationship = async (
   userGroupId: string,
   customerGroupId: string

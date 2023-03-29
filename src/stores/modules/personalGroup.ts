@@ -3,6 +3,7 @@ import {
   getPersonalGroups,
   getPersonalGroup,
   addRelationship,
+  getCustomerGroup,
 } from "src/api/PersonalGroup";
 
 const usePersonalGroupStore = defineStore("personalGroup", {
@@ -42,6 +43,12 @@ const usePersonalGroupStore = defineStore("personalGroup", {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async getCustomerGroup() {
+      const { data: customerGroup } = await getCustomerGroup();
+
+      return customerGroup;
     },
 
     async get(id: any) {
