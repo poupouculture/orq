@@ -246,7 +246,7 @@ const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
-const isAnyUploadComponent: Ref<boolean> = ref(false);
+const headerType: Ref<string> = ref("TEXT");
 const uplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -416,7 +416,7 @@ const sendMessage = async () => {
       language: language.value,
       isIncludedComponent: isIncludeComponent.value,
       countParams: paramsCount.value,
-      isUploadComponent: isAnyUploadComponent.value,
+      headerType: headerType.value,
       messageId: wabaMessageId,
     });
     messageCallback(data, newMessage);
@@ -461,7 +461,7 @@ const sendMessageTemplate = (
   lang: string,
   isIncComponent: boolean,
   componentCount: any[],
-  isUploadComponent: boolean
+  headType: string
 ) => {
   templateName.value = name;
   message.value = msg.replace("\n", "");
@@ -469,7 +469,7 @@ const sendMessageTemplate = (
   isTemplate.value = true;
   isIncludeComponent.value = isIncComponent;
   paramsCount.value = componentCount;
-  isAnyUploadComponent.value = isUploadComponent;
+  headerType.value = headType;
   sendMessage();
 };
 

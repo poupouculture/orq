@@ -96,7 +96,7 @@ export interface SendTextMessage {
   language?: string;
   isIncludedComponent?: boolean;
   countParams?: any[];
-  isUploadComponent?: boolean;
+  headerType: string;
   messageId?: string;
 }
 
