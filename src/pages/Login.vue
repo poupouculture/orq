@@ -67,8 +67,8 @@
         <footer class="mt-5">
           <p class="mt-6 text-gray-400 text-sm">
             By logging, in, you agree to SYNQUE's
-            <a href="https://invoice-link.pages.dev/privacy/" target="_blank">
-              Terms af Service with privacy policy
+            <a href="https://synque.io/terms-condition.html" target="_blank">
+              Terms of Use
             </a>
           </p>
         </footer>
