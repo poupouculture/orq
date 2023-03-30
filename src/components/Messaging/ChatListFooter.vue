@@ -31,9 +31,13 @@
         class="flex items-center space-x-1.5 cursor-pointer"
         @click="toggleInfo()"
       >
-        <q-avatar size="md">
-          <img src="https://cdn.quasar.dev/img/avatar1.jpg" />
-        </q-avatar>
+        <div class="flex justify-center">
+          <div
+            :style="{ backgroundImage: `url(${profileImg})` }"
+            class="rounded-full w-8 h-8 bg-right-top bg-cover bg-no-repeat"
+          />
+        </div>
+
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="text-gray-400 transition transform duration-300"
@@ -85,10 +89,14 @@
         </svg>
         <span>Back to Chat</span>
       </header>
-      <img
-        src="https://cdn.quasar.dev/img/avatar1.jpg"
-        class="mx-auto w-40 rounded-full mt-8"
-      />
+
+      <div class="w-full flex justify-center">
+        <div
+          :style="{ backgroundImage: `url(${profileImg})` }"
+          class="h-40 w-40 bg-right-top bg-cover bg-no-repeat rounded-full"
+        />
+      </div>
+
       <div class="mt-6">
         <div class="text-sm text-gray-500">Name</div>
         <div class="text-base text-gray-700">
@@ -115,6 +123,7 @@ import { storeToRefs } from "pinia";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import profileImg from "src/assets/images/profileImg.jpeg";
 
 const router = useRouter();
 const userStore = useUserInfoStore();
