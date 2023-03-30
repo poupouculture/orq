@@ -89,6 +89,12 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         label: "",
         value: 0,
       },
+      tax: [
+        {
+          name: "GPT",
+          value: 20,
+        },
+      ],
     },
   }),
   getters: {
@@ -118,6 +124,8 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           accumulator + currentValue.amount.totalPrice,
         0
       );
+
+      // const totalTax = ''
 
       state.invoice.totalPrice = {
         label: dollarFormat.format(totalPrice),

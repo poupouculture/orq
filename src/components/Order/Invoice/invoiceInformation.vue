@@ -9,7 +9,7 @@ const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 const customDefault = reactive(getInvoice.optional.customField);
 const memo = reactive(getInvoice.optional.memo);
 const footer = reactive(getInvoice.optional.footer);
-const taxOption = ref();
+// const taxOption = ref();
 const labelHead = ref([
   {
     label: "Items",
@@ -29,24 +29,24 @@ const labelHead = ref([
   },
 ]);
 
-const taxOptions = ref([
-  {
-    name: "Select Tax",
-    value: null,
-  },
-  {
-    name: "GST",
-    value: 200,
-  },
-  {
-    name: "Sales",
-    value: 20,
-  },
-  {
-    name: "Custom",
-    value: "custom",
-  },
-]);
+// const taxOptions = ref([
+//   {
+//     name: "Select Tax",
+//     value: null,
+//   },
+//   {
+//     name: "GST",
+//     value: 200,
+//   },
+//   {
+//     name: "Sales",
+//     value: 20,
+//   },
+//   {
+//     name: "Custom",
+//     value: "custom",
+//   },
+// ]);
 
 //  Watch
 watchEffect(() => {
@@ -123,15 +123,6 @@ watchEffect(() => {
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Due Date</p>
-          <q-select
-            outlined
-            v-model="taxOption"
-            option-label="name"
-            option-value="value"
-            :options="taxOptions"
-            :dense="true"
-            :options-dense="true"
-          />
           <q-input
             bg-color="white"
             v-model="getInvoice.dueDate"
@@ -240,9 +231,22 @@ watchEffect(() => {
           <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
         <div class="text-end flex gap-5">
-          <span class="w-[80px] cursor-pointer">
-            Add tax
-            <q-popup-proxy>
+          <span class="w-[80px] cursor-pointer"> Add tax </span>
+          <span class="w-[80px]">$0</span>
+        </div>
+
+        <div class="text-end flex gap-5">
+          <span class="w-[80px] cursor-pointer"> Add tax </span>
+          <span class="w-[80px]">$0</span>
+        </div>
+        <div class="text-end flex gap-5">
+          <span class="text-end">Add discount</span>
+          <span class="w-[80px]">$0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- <q-popup-proxy>
               <q-select
                 class="tax-selected"
                 outlined
@@ -254,16 +258,7 @@ watchEffect(() => {
                 :options-dense="true"
               >
               </q-select>
-            </q-popup-proxy>
-          </span>
-          <span class="w-[80px]">$0</span>
-        </div>
-        <div class="text-end flex gap-5">
-          <span class="text-end">Add discount</span>
-          <span class="w-[80px]">$0</span>
-        </div>
-      </div>
-    </div>
+            </q-popup-proxy> -->
 
     <div class="flex flex-col gap-3">
       <div class="w-full">
