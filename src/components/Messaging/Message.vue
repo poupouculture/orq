@@ -11,7 +11,7 @@
         @click="showCustomerInfoInMobile"
       >
         <q-avatar class="rounded-avatar">
-          <img src="https://cdn.quasar.dev/img/avatar.png" />
+          <img :src="profileIcon" />
         </q-avatar>
         <div class="flex flex-col">
           <p class="font-semibold text-lg">{{ name }}</p>
@@ -232,7 +232,8 @@ import {
 import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
-import ChatMessage from "./MessageItem.vue";
+import ChatMessage from "./ChatMessage.vue";
+import profileIcon from "src/assets/images/profileicon.svg";
 interface HasMore {
   [key: string]: boolean;
 }

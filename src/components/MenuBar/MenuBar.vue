@@ -17,7 +17,7 @@
 
     <q-btn unelevated :ripple="false" class="row items-center avatar-btn">
       <q-avatar size="md">
-        <img src="~assets/images/profileavatar.png" />
+        <img :src="profileIcon" />
       </q-avatar>
       <img src="~assets/images/dropdownreal.png" class="dropdown-img" />
       <q-menu class="q-ma-lg" style="width: 400px">
@@ -25,7 +25,7 @@
           <div class="row q-pa-md items-center">
             <div class="q-mr-md">
               <q-avatar size="md">
-                <img src="~assets/images/profileavatar.png" />
+                <img :src="profileIcon" />
               </q-avatar>
             </div>
             <div>
@@ -87,6 +87,7 @@ import { useRouter } from "vue-router";
 import { computed } from "vue";
 import { LocalStorage } from "quasar";
 import useUserInfoStore from "stores/modules/userInfo";
+import profileIcon from "src/assets/images/profileicon.svg";
 
 const props = defineProps({
   modelValue: Boolean,

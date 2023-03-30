@@ -4,7 +4,6 @@ import useInvoice from "src/stores/modules/useInvoices";
 import Visa from "src/assets/images/visa-logo.png";
 import WeChatPay from "src/assets/images/WeChatPay.png";
 import Atome from "src/assets/images/atome.png";
-import Qr from "src/assets/images/qr.png";
 import AliPay from "src/assets/images/alipay.png";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
@@ -46,13 +45,6 @@ const paymentOptions = ref([
     status: false,
   },
   {
-    text: "Qr",
-    value: "qr",
-    img: Qr,
-    active: false,
-    status: false,
-  },
-  {
     text: "Alipay HK",
     value: "alipay",
     img: AliPay,
@@ -71,7 +63,14 @@ const availablePayment = computed(() =>
   >
     <div class="bg-white py-16 px-5 rounded-2xl w-full lg:w-1/2">
       <div class="w-full flex flex-col">
-        <div class="pb-3">
+        <div class="pb-3 flex items-center gap-3">
+          <q-btn
+            :to="{ name: 'order.invoices' }"
+            flat
+            round
+            color="primary"
+            icon="arrow_back"
+          />
           <p class="text-capitalize text-[#111827] font-semibold text-2xl">
             Payment Collection
           </p>

@@ -4,7 +4,7 @@
     class="flex w-full contact-card q-pa-sm"
   >
     <q-avatar class="rounded-avatar q-mr-sm">
-      <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+      <img :src="profileIcon" />
     </q-avatar>
     <q-item-section>
       <q-item-label :class="{ 'text-white': active }" class="text-h6 truncate">
@@ -35,6 +35,7 @@ import { storeToRefs } from "pinia";
 import { getChatName } from "src/utils/trim-word";
 import { IChat, MessageType } from "src/types/MessagingTypes";
 import useMessagingStore from "src/stores/modules/messaging";
+import profileIcon from "src/assets/images/profileicon.svg";
 
 export interface Props {
   data?: IChat;

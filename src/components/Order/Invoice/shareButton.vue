@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
 import { useQuasar } from "quasar";
+import ThankYou from "src/components/Order/Invoice/thankYou.vue";
+
 interface Props {
   shareInvoice: {
     via: string;
@@ -20,6 +22,7 @@ const sendLinks = ref([]);
 const customTime = ref("00:00");
 const customTimeZone = ref("Pakistan Standard Time (GMT + 5)");
 const $q = useQuasar();
+const thankYou = ref(false);
 const shareInvoice = reactive({
   via: props.shareInvoice.via,
   setDefault: props.shareInvoice.setDefault,
@@ -195,7 +198,7 @@ onMounted(() => {
           >
             <template v-slot:top-right>
               <q-input
-                borderless
+                outlined
                 dense
                 debounce="300"
                 v-model="filter"
@@ -303,10 +306,17 @@ onMounted(() => {
                 </q-select>
 
                 <div class="mt-5 flex justify-end">
-                  <q-btn size="sm" class="" color="primary"> send </q-btn>
+                  <q-btn
+                    @click="thankYou = !thankYou"
+                    size="sm"
+                    class=""
+                    color="primary"
+                  >
+                    send
+                  </q-btn>
                 </div>
 
-                <div v-if="sendLinks.length > 0" class="flex gap-5 flex-col">
+                <div class="flex gap-5 flex-col">
                   <div>
                     <q-btn
                       @click="copyLink"
@@ -399,6 +409,11 @@ onMounted(() => {
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <ThankYou
+      :dialog="thankYou"
+      @closeDialog="(newValue) => (thankYou = newValue)"
+    />
   </span>
 </template>
 

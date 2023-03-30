@@ -57,9 +57,25 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       optional: {
         notes: "Please check your email",
         terms: "Over Due",
-        customField: false,
-        memo: true,
-        footer: false,
+        customField: {
+          active: false,
+          fieldName: "new field",
+          fieldValue: "Hello",
+          setDefault: true,
+          option: false,
+        },
+        memo: {
+          active: false,
+          memo: "this is memo",
+          setDefault: false,
+          option: false,
+        },
+        footer: {
+          active: false,
+          value: "this is memo",
+          setDefault: false,
+          option: false,
+        },
       },
       form: [
         {
