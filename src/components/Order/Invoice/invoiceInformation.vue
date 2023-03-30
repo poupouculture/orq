@@ -9,6 +9,7 @@ const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 const customDefault = reactive(getInvoice.optional.customField);
 const memo = reactive(getInvoice.optional.memo);
 const footer = reactive(getInvoice.optional.footer);
+const taxOption = ref();
 const labelHead = ref([
   {
     label: "Items",
@@ -25,6 +26,25 @@ const labelHead = ref([
   {
     label: "Amount",
     class: "col-span-1 text-center",
+  },
+]);
+
+const taxOptions = ref([
+  {
+    name: "Select Tax",
+    value: null,
+  },
+  {
+    name: "GST",
+    value: 200,
+  },
+  {
+    name: "Sales",
+    value: 20,
+  },
+  {
+    name: "Custom",
+    value: "custom",
   },
 ]);
 
@@ -103,6 +123,15 @@ watchEffect(() => {
       <div class="col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Due Date</p>
+          <q-select
+            outlined
+            v-model="taxOption"
+            option-label="name"
+            option-value="value"
+            :options="taxOptions"
+            :dense="true"
+            :options-dense="true"
+          />
           <q-input
             bg-color="white"
             v-model="getInvoice.dueDate"
@@ -211,7 +240,22 @@ watchEffect(() => {
           <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
         <div class="text-end flex gap-5">
-          <span class="w-[80px]">Add tax</span>
+          <span class="w-[80px] cursor-pointer">
+            Add tax
+            <q-popup-proxy>
+              <q-select
+                class="tax-selected"
+                outlined
+                v-model="taxOption"
+                option-label="name"
+                option-value="value"
+                :options="taxOptions"
+                :dense="true"
+                :options-dense="true"
+              >
+              </q-select>
+            </q-popup-proxy>
+          </span>
           <span class="w-[80px]">$0</span>
         </div>
         <div class="text-end flex gap-5">
@@ -366,4 +410,8 @@ watchEffect(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.tax-selected div) {
+  min-width: 100px;
+}
+</style>
