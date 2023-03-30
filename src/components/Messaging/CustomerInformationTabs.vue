@@ -47,6 +47,7 @@
   </q-tab-panels>
 </template>
 <script setup lang="ts">
+import { Notify } from "quasar";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import ServiceRecord from "../Customer/ServiceRecord.vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
@@ -54,13 +55,15 @@ import useCustomerStore from "src/stores/modules/customer";
 import Remark from "src/components/Remark/Remark.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
-import { ref } from "vue";
+import { updateCustomer } from "src/api/customers";
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
 const remarks = ref("");
+const customer = computed(() => customerStore.getCustomer);
 
 const customerInformationTab = ref("general");
 const tabs = ref([
@@ -95,13 +98,19 @@ const saveCustomer = async (val: FormPayload) => {
     customerResult = customerStore.getCustomer;
   } else {
     // insert
-    customerResult = await customerStore.addCustomer(val);
-    if (!customerResult?.data?.errors) {
-      const contactId = getSelectedChat.value.contacts_id;
-      await customerStore.addCustomerContact(
-        customerResult?.data.data.id,
-        contactId
-      );
+    customerResult = await updateCustomer(customer.value.id, val);
+    const contactId = getSelectedChat.value.contacts_id;
+    const { data } = await customerStore.addCustomerContact(
+      customerResult.data.data?.id,
+      contactId
+    );
+    if (data?.errors) {
+      Notify.create({
+        position: "top",
+        message: data?.errors[0]?.message,
+        type: "negative",
+        color: "purple",
+      });
     }
   }
 
