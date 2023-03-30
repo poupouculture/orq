@@ -27,4 +27,8 @@ export const pageCodes = [
     id: "F09",
     icon: "today",
   },
+  {
+    id: "F10",
+    icon: "today",
+  },
 ];

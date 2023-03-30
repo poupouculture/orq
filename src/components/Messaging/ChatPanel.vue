@@ -26,35 +26,6 @@
           </q-btn>
         </template>
       </q-input>
-      <!-- what is this piece for ???  -->
-      <!-- <q-virtual-scroll
-        v-if="chatToggleLabel.state.icon === ChatToggleLabel.HIDE.icon"
-        style="max-height: 300px"
-        :items="data.customers"
-        separator
-        v-slot="{ item, index }"
-        class="q-mt-sm"
-      >
-        <q-item :key="index" class="q-pa-sm" dense>
-          <q-item-section>
-            <q-item-label class="row justify-between">
-              <div>
-                <q-avatar class="rounded-avatar q-mr-sm" size="md">
-                  <img src="https://cdn.quasar.dev/img/avatar.png" />
-                </q-avatar>
-                {{ TrimWord(`${item.first_name} ${item.last_name}`) }}
-              </div>
-              <q-btn
-                round
-                color="primary"
-                size="sm"
-                icon="add"
-                @click="startNewChat(item)"
-              />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-virtual-scroll> -->
     </q-item-label>
     <!-- list part -->
     <q-tabs
@@ -120,25 +91,22 @@ import {
   onBeforeUnmount,
   watch,
 } from "vue";
-import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import { io } from "socket.io-client";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, Direction, MessageStatus } from "src/types/MessagingTypes";
+import { IChat } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 
-import {
-  db,
-  collection,
-  onSnapshot,
-  auth,
-  signInWithCustomToken,
-} from "src/boot/firebase";
+interface MessageCreate {
+  id: string;
+  messages: any[];
+}
 
 const ChatToggleLabel = {
   SHOW: {
@@ -176,19 +144,17 @@ type ChatToggleType = {
   state: typeof ChatToggleLabel[keyof typeof ChatToggleLabel];
 };
 const seachText = ref("");
-const firebaseToken: Ref<string> = ref("");
-const snapshotCancel = ref();
 const userInfoStore = useUserInfoStore();
-const { getFirebaseToken } = storeToRefs(userInfoStore);
+const { userInfo } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
-const { chatsList, selectedTab, getChatSnapshotMessage, getSelectedChatId } =
+const { chatsList, selectedTab, getSelectedChatId } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
-
+const socket = ref();
 const tabsTip = computed(() => {
   const result: any = {};
   chatsList.value.forEach((chat: IChat) => {
@@ -204,7 +170,7 @@ const tabsTip = computed(() => {
 
 watch(chatsList, (list) => {
   list.forEach((chat) => {
-    snapshotMessage(chat.id);
+    socket.value.emit("join_chat", chat.id);
   });
 });
 
@@ -212,20 +178,16 @@ watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
 });
 
+socket.value = io("https://beams.synque.ca", {
+  reconnectionDelayMax: 30000,
+  extraHeaders: {
+    authorization: `${userInfo.value.access_token}`,
+  },
+});
+
 const fetchCustomers = async () => {
   showCustomerDialog.value =
     chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon;
-  // if (chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon) {
-  // emit("showCustomerDialog", true);
-  // const {
-  //   data: { data: customers },
-  // } = await getCustomersWithContacts();
-  // data.customers = customers;
-  // chatToggleLabel.state = ChatToggleLabel.HIDE;
-  // } else {
-  // emit("showCustomerDialog", false);
-  // chatToggleLabel.state = ChatToggleLabel.SHOW;
-  // }
 };
 
 const chooseCustomer = async (user: any) => {
@@ -238,80 +200,41 @@ const chooseCustomer = async (user: any) => {
   }
 };
 
-const snapshotChats = async () => {
-  const loggedInUser = await signInWithCustomToken(auth, firebaseToken.value);
-  if (loggedInUser) {
-    let snapshoted = false;
-    snapshotCancel.value = onSnapshot(
-      collection(db, "chats"),
-      async (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (snapshoted) {
-            const { status } = change.doc.data();
-            const chat = chatsList.value.find(
-              (chat: IChat) => chat.id === change.doc.id
-            );
-            if (chat) {
-              messagingStore.updateChatsList(chat, status);
-            }
-            // else {
-            //   // 考虑直接调用接口
-            // }
-          }
-        }
-        snapshoted = true;
-      }
-    );
-  }
-};
-
-const snapshotMessage = (chatId: string) => {
-  let snapshoted = false;
-  if (!getChatSnapshotMessage.value[chatId]) {
-    const snpshotCancel = onSnapshot(
-      collection(db, "messages", chatId, "members"),
-      async (querySnapshot: any) => {
-        for (const change of querySnapshot.docChanges()) {
-          if (snapshoted) {
-            const data = change.doc.data();
-            console.log(data);
-            let content;
-            try {
-              content =
-                typeof data.content === "string"
-                  ? JSON.parse(data.content)
-                  : data.content;
-            } catch (e) {
-              content = { text: data.content, type: "text" };
-            }
-            if (data.date_created) {
-              messagingStore.setChatsLastMessage(chatId, {
-                ...data,
-                id: data.last_message_id,
-                content,
-                direction:
-                  data.status === MessageStatus.SENT
-                    ? Direction.OUTGOING
-                    : Direction.INCOMING,
-              });
-            }
-          }
-        }
-        snapshoted = true;
-      }
-    );
-    messagingStore.setChatSnapshotMessage(chatId, snpshotCancel);
-    // this.setChatSnapshotGroup(chatId, snpshotCancel);
-  }
+const initSocket = () => {
+  socket.value.on("connect", () => {
+    console.log("connect", socket.value.connected);
+  });
+  socket.value.io.on("error", () => {
+    console.log("socket error");
+  });
+  socket.value.on("chat_updated", (data: any) => {
+    console.log("chat_updated", data);
+    const chat = chatsList.value.find((chat: IChat) => chat.id === data.id);
+    if (chat) {
+      messagingStore.updateChatsList(chat, data.status);
+    }
+  });
+  socket.value.on("message_created", (data: any) => {
+    console.log("message_created", data);
+    const { id, messages } = data as MessageCreate;
+    messagingStore.setChatsLastMessage(id, messages[0]);
+  });
+  socket.value.on("chat_created", (data: any) => {
+    console.log("chat_created", data);
+    messagingStore.chatCreate(data.status, data.id);
+  });
 };
 
 onMounted(() => {
-  firebaseToken.value = getFirebaseToken.value;
   messagingStore.fetchChats();
-  snapshotChats();
+  initSocket();
 });
+
 onBeforeUnmount(() => {
-  snapshotCancel.value();
+  socket.value.disconnect();
+  chatsList.value.forEach((chat) => {
+    socket.value.emit("leave_chat", chat.id);
+  });
 });
 </script>
 

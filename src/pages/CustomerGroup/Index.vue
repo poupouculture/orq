@@ -11,36 +11,11 @@
       <!-- Search and Add -->
       <div class="flex items-center justify-between">
         <div class="w-52 ml-3">
-          <q-input
-            placeholder="Search Items..."
-            bg-color="transparent"
-            outlined
-            dense
-            :debounce="600"
-            class="border-gray-400"
-            v-model="search.query"
-            @update:model-value="searchHandler()"
-          >
-            <template v-slot:prepend>
-              <q-icon name="search" class="text-gray-400" />
-            </template>
-            <template v-slot:append>
-              <q-circular-progress
-                v-if="search.loading"
-                indeterminate
-                rounded
-                size="18px"
-                color="gray-1"
-              />
-              <q-icon
-                v-else-if="search.query"
-                name="close"
-                class="text-gray-400 cursor-pointer"
-                @click="resetSearch()"
-              />
-              <q-icon v-else name="filter_list" class="text-gray-400" />
-            </template>
-          </q-input>
+          <SearchTableInput
+            :loading="search.loading"
+            @search="searchHandler"
+            @reset="resetSearch"
+          />
         </div>
         <q-btn
           :to="{ name: 'customergroups.create' }"
@@ -161,6 +136,7 @@
 <script setup>
 import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
 import BasePagination from "components/BasePagination.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
 import ButtonCustomerMenu from "src/components/UserGroup/ButtonCustomerMenu.vue";
@@ -185,7 +161,8 @@ const search = reactive({
   query: "",
   loading: false,
 });
-const searchHandler = async () => {
+const searchHandler = async (searchValue = "") => {
+  search.query = searchValue;
   search.loading = true;
   try {
     await customerGroupStore.getAll({

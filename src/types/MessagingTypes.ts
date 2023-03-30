@@ -47,6 +47,8 @@ export interface Message {
   totalUnread?: number;
   label?: string;
   isEmoticon?: boolean;
+  waba_message_id?: string;
+  waba_associated_message_id?: string;
 }
 export interface IChat {
   id: string;
@@ -80,6 +82,7 @@ export interface IState {
   selectedTab: ChatTypes;
   chatSnapshotMessage: ChatSnapshotMessage;
   contactNumber: string;
+  replayMessage: Message | undefined;
 }
 
 export interface SendTextMessage {
@@ -92,6 +95,9 @@ export interface SendTextMessage {
   templateName?: string;
   language?: string;
   isIncludedComponent?: boolean;
+  countParams?: any[];
+  isUploadComponent?: boolean;
+  messageId?: string;
 }
 
 export interface ChatPayloadWabaContentText {
@@ -103,9 +109,16 @@ export interface Language {
   code: string | undefined;
 }
 
+export interface ComponentParameterLink {
+  link: string;
+}
+
 export interface ComponentParameter {
   type: string;
-  text: string;
+  text?: string;
+  video?: ComponentParameterLink;
+  image?: ComponentParameterLink;
+  document?: ComponentParameterLink;
 }
 
 export interface TemplateComponent {
@@ -129,6 +142,7 @@ export interface ChatPayloadWabaContent {
   name?: string | undefined;
   languageCode?: string;
   components?: TemplateComponent[];
+  context?: any;
 }
 
 export interface ChatPayload {

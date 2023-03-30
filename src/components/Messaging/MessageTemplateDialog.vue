@@ -18,18 +18,11 @@
             <div class="text-h7">All Templates</div>
 
             <div class="q-mt-lg" style="max-width: 250px">
-              <q-input
-                placeholder="Search by template name"
-                outlined
-                dense
-                type="search"
-                max-width="250px"
-                :model-value="search"
-              >
-                <template v-slot:prepend>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
+              <SearchTableInput
+                :loading="loading"
+                @search="searchHandler"
+                @reset="resetSearch"
+              />
             </div>
           </q-card-section>
 
@@ -65,11 +58,22 @@
             </p>
             <div
               class="w-4/12 flex flex-col"
-              v-if="header.toUpperCase() === 'MEDIA'"
+              v-if="mediaHeader.includes(header.toUpperCase())"
             >
               <p class="mt-4 font-semibold">Header</p>
-              <button class="mt-2 py-2 bg-primary text-white rounded-md">
-                Choose JPG or PNG file
+              <button
+                class="mt-2 py-2 bg-primary text-white rounded-md"
+                @click="uplader?.pickFiles"
+              >
+                Choose
+                {{ header === "image" ? "JPG or PNG" : "MP4 or MOV" }}
+                file
+                <q-uploader
+                  ref="uplader"
+                  accept=".gif, .jpg, .jpeg, .png, image/*, .mp4, .mov"
+                  class="hidden invisible"
+                  @added="upload"
+                />
               </button>
             </div>
             <p class="mt-4 font-semibold">Body</p>
@@ -137,6 +141,8 @@ import { ref, onMounted, watch, reactive } from "vue";
 import type { Ref } from "vue";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import Preview from "src/components/ApplicationProgram/Preview.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
+
 defineProps({
   modelValue: {
     type: Boolean,
@@ -152,6 +158,7 @@ const rowsPerPage = ref(10);
 const selectedTemplate = ref([]);
 const usedTemplate = ref(null);
 const language = ref("");
+const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
 const templateName = ref("");
 const header = ref("");
 const headerMessage = ref("");
@@ -163,6 +170,7 @@ const replies = ref(["", ""]);
 const actions = ref(Array(2).fill(null));
 const customVariables = ref([]);
 const isPreview = ref(false);
+const uplader: any = ref(null);
 
 const data = reactive({
   applicationPrograms: [],
@@ -180,6 +188,7 @@ const fetchTemplates = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     status: "published",
+    search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
@@ -224,7 +233,9 @@ const send = () => {
     templateName.value,
     bodyMessage.value,
     language.value,
-    customVariables.value?.length > 0
+    customVariables.value?.length > 0,
+    customVariables.value,
+    mediaHeader.includes(header.value.toUpperCase())
   );
   emit("hide");
 };
@@ -265,7 +276,7 @@ const applyTemplateComponent = (val: any) => {
     const headerComponent = val.components.find(
       (c: any) => c?.type === "HEADER"
     );
-    header.value = headerComponent.format;
+    header.value = headerComponent?.format;
     console.log("used template", headerComponent);
     if (header.value?.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent.value?.text;
@@ -285,5 +296,21 @@ const applyTemplateComponent = (val: any) => {
 const changePage = (val: number) => {
   data.page = val;
   fetchTemplates();
+};
+
+const searchHandler = (searchValue = "") => {
+  search.value = searchValue;
+  loading.value = true;
+  fetchTemplates();
+};
+
+const resetSearch = () => {
+  search.value = "";
+  searchHandler();
+};
+
+const upload = async (fileList: any) => {
+  const file = fileList[0];
+  console.log(file);
 };
 </script>

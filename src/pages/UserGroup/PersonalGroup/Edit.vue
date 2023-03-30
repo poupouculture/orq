@@ -5,14 +5,14 @@
       class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5 xl:mt-8"
     >
       <RouterLink
-        :to="{ name: 'internal-group' }"
+        :to="{ name: 'customergroups-internal-group' }"
         class="text-gray-400 gap-x-3"
       >
         <q-icon name="keyboard_backspace" class="text-gray-400" />
-        Internal Groups
+        Personal Groups
       </RouterLink>
       <span>/</span>
-      <span>Edit Internal Group</span>
+      <span>Edit Personal Group</span>
     </div>
     <!-- Form -->
     <Form
@@ -49,12 +49,12 @@ const submit = async (value) => {
       customer_groups: value.customerGroups,
     });
     Notify.create({
-      message: "Internal Group successfully updated!",
+      message: "Personal Group successfully updated!",
       type: "positive",
       color: "primary",
       position: "top",
     });
-    router.push({ name: "internal-group" });
+    router.push({ name: "personal-groups" });
   } catch (error) {
     Notify.create(error);
   }

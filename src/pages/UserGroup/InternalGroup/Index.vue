@@ -8,39 +8,14 @@
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
       <div class="w-52 ml-3">
-        <q-input
-          placeholder="Search Items..."
-          bg-color="transparent"
-          outlined
-          dense
-          :debounce="600"
-          class="border-gray-400"
-          v-model="query"
-          @update:model-value="searchHandler()"
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" class="text-gray-400" />
-          </template>
-          <template v-slot:append>
-            <q-circular-progress
-              v-if="searchLoading"
-              indeterminate
-              rounded
-              size="18px"
-              color="gray-1"
-            />
-            <q-icon
-              v-else-if="query"
-              name="close"
-              class="text-gray-400 cursor-pointer"
-              @click="resetSearch()"
-            />
-            <q-icon v-else name="filter_list" class="text-gray-400" />
-          </template>
-        </q-input>
+        <SearchTableInput
+          :loading="searchLoading"
+          @search="searchHandler"
+          @reset="resetSearch"
+        />
       </div>
       <q-btn
-        :to="{ name: 'customergroups-internal-group.create' }"
+        :to="{ name: 'internal-group.create' }"
         class="bg-primary text-white"
       >
         <q-icon name="add" class="text-white mr-2" />
@@ -99,7 +74,7 @@
                   <img
                     :src="
                       directus_users_id.avatar ||
-                      'http://localhost:9000/src/assets/images/profileavatar.png'
+                      '/src/assets/images/profileavatar.png'
                     "
                     class="w-10 h-10 rounded-full mx-3"
                   />
@@ -150,6 +125,7 @@
 <script setup>
 import ButtonUserMenu from "components/InternalGroup/ButtonUserMenu.vue";
 import BasePagination from "components/BasePagination.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref } from "vue";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
 import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
@@ -167,7 +143,8 @@ const pagination = reactive({
   rowsPerPage: 4,
 });
 
-const searchHandler = async () => {
+const searchHandler = async (searchValue = "") => {
+  query.value = searchValue;
   searchLoading.value = true;
   try {
     await fetchInternalGroups();

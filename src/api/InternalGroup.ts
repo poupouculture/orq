@@ -25,20 +25,23 @@ export const getInternalGroups = async ({
       "filter[type][_neq]": "personal",
       offset,
       fields:
-        "id, name, status, users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name",
+        "id,customer_groups.*,customer_groups.*.*,name,type,status,users.*.id,users.*.avatar,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
       meta: "*",
     },
   });
+  console.log(internalGroups.data);
+
   return internalGroups;
 };
 
 export const getInternalGroup = async (id: string) => {
   const users =
-    "users.*.id, users.*.avatar, users.*.first_name, users.*.last_name, users.*.avatar, users.*.role.name. users.user_groups_id.*";
-  const customerGroups = "customer_groups.*, customer_groups.*.*";
+    "users.*.id,users.*.avatar,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name,users.user_groups_id.*";
+  const customerGroups = "customer_groups.*,customer_groups.*.*";
+  const tags = "tags.*, tags.*.*";
   const internalGroups = await api.get("/items/user_groups/" + id, {
     params: {
-      fields: `id, name, status, type, ${customerGroups}, ${users}`,
+      fields: `id,name,status,type,${customerGroups},${users},${tags}`,
     },
   });
   return internalGroups;
@@ -49,7 +52,7 @@ export const getUsersFilter = async (
   ids: string[]
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const fields = `id, first_name, last_name, gender, date_created, position, role.name`;
+  const fields = `id,first_name,last_name,gender,date_created,position,role.name`;
 
   const customer = await api.get("/users", {
     params: {
