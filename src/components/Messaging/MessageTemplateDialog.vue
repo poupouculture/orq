@@ -66,7 +66,13 @@
                 @click="uplader?.pickFiles"
               >
                 Choose
-                {{ header === "image" ? "JPG or PNG" : "MP4 or MOV" }}
+                {{
+                  header.toUpperCase() === "IMAGE"
+                    ? "JPG or PNG"
+                    : header.toUpperCase() === "VIDEO"
+                    ? "MP4 or MOV"
+                    : "PDF"
+                }}
                 file
                 <q-uploader
                   ref="uplader"
@@ -235,7 +241,7 @@ const send = () => {
     language.value,
     customVariables.value?.length > 0,
     customVariables.value,
-    mediaHeader.includes(header.value.toUpperCase())
+    header.value.toUpperCase()
   );
   emit("hide");
 };

@@ -48,7 +48,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     language,
     isIncludedComponent,
     countParams,
-    isUploadComponent,
+    headerType,
     messageId,
   } = payload;
 
@@ -68,17 +68,33 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     if (isIncludedComponent) {
       const components = [];
       const parameters: ComponentParameter[] = [];
-      if (isUploadComponent) {
+      const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
+      console.log("header type: ", headerType);
+
+      if (mediaHeader.includes(headerType)) {
+        const headerParam = {
+          type: headerType.toLowerCase(),
+        };
+
+        if (headerType === "VIDEO") {
+          headerParam.video = {
+            link: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          };
+        }
+        if (headerType === "DOCUMENT") {
+          headerParam.document = {
+            link: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          };
+        }
+        if (headerType === "IMAGE") {
+          headerParam.image = {
+            link: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          };
+        }
+
         components.push({
           type: "header",
-          parameters: [
-            {
-              type: "video",
-              video: {
-                link: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-              },
-            },
-          ],
+          parameters: [headerParam],
         });
 
         countParams?.forEach((paramBody, index) => {
