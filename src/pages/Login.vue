@@ -1,9 +1,14 @@
 <template>
   <div class="login h-full flex no-warp select-none">
-    <div class="hidden md:!inline-block bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3">
+    <div
+      class="hidden md:!flex md:flex-col gap-28 bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3"
+    >
       <div class="flex items-center">
         <img class="w-[80px] mr-3" :src="logo" alt="logo" />
         <p class="font-[800] font-inter text-3xl">ChaQ</p>
+      </div>
+      <div class="flex justify-center">
+        <img :src="loginIllustration" alt="" />
       </div>
     </div>
 
@@ -87,6 +92,7 @@ export default {
 import { ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import logo from "assets/images/logo.svg";
+import loginIllustration from "assets/images/login_illustration.svg";
 
 const login = ref({ email: "", password: "" }),
   loading = ref(false),
