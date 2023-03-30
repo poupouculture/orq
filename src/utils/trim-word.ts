@@ -13,6 +13,12 @@ export const getChatName = (chat: IChat) => {
   } else return "Visitor";
 };
 
+export const getChatNameEn = (chat: IChat) => {
+  if (chat.customers_id) {
+    return trimWord(`${chat.customer_company_name_en}`);
+  } else return "Visitor";
+};
+
 export const uuid = (): string => {
   return "xxxxxxxx-4xxx-yxxx".replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,

@@ -15,7 +15,7 @@
         </q-avatar>
         <div class="flex flex-col">
           <p class="font-semibold text-lg">{{ name }}</p>
-          <p class="text-gray-500">{{ chatNumber }}</p>
+          <p class="text-gray-500">{{ nameEn }} {{ chatNumber }}</p>
         </div>
       </div>
       <!-- Close button -->
@@ -216,7 +216,12 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatName, uuid, blobToBase64 } from "src/utils/trim-word";
+import {
+  getChatName,
+  getChatNameEn,
+  uuid,
+  blobToBase64,
+} from "src/utils/trim-word";
 import { updateChatStatus, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
@@ -269,6 +274,10 @@ const {
 
 const name = computed<string>(() => {
   return getChatName(getSelectedChat.value);
+});
+
+const nameEn = computed<string>(() => {
+  return getChatNameEn(getSelectedChat.value);
 });
 
 const chatNumber = computed<string>(() =>

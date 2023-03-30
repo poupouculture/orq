@@ -62,6 +62,7 @@ export interface IChat {
   status: ChatTypes;
   totalUnread?: number;
   expiration_timestamp: number;
+  customer_company_name_en: string | null;
 }
 
 export interface CachedChatMessages {
