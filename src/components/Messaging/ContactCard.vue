@@ -32,7 +32,7 @@
 import { computed } from "vue";
 import { format } from "date-fns";
 import { storeToRefs } from "pinia";
-import { getChatName } from "src/utils/trim-word";
+import { getChatNameEn } from "src/utils/trim-word";
 import { IChat, MessageType } from "src/types/MessagingTypes";
 import useMessagingStore from "src/stores/modules/messaging";
 
@@ -47,7 +47,7 @@ const messagingStore = useMessagingStore();
 const { selectedChatId } = storeToRefs(messagingStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
-const name = computed<string>(() => getChatName(props.data));
+const name = computed<string>(() => getChatNameEn(props.data));
 
 const messageTemplate = (content: any) => {
   const components = content?.template?.components ?? content?.components;

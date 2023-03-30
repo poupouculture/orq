@@ -6,14 +6,14 @@
       @click="toggleDrawer()"
       size="sm"
     />
-    <div class="flex gap-5 px-4">
+    <!-- <div class="flex gap-5 px-4">
       <img class="w-5 h-5 cursor-pointer" src="~assets/images/pluscomp.png" />
       <img class="w-5 h-5 cursor-pointer" src="~assets/images/messages.png" />
       <img
         class="w-[18px] h-5 cursor-pointer"
         src="~assets/images/notification.png"
       />
-    </div>
+    </div> -->
 
     <q-btn unelevated :ripple="false" class="row items-center avatar-btn">
       <q-avatar size="md">
