@@ -32,7 +32,7 @@ const shareInvoice = reactive({
 
       <div class="flex flex-col text-[#111827] justify-center items-center p-5">
         <p class="font-semibold text-lg">BALANCE DUE</p>
-        <p class="font-normal text-sm">{{ getInvoice.totalPrice.label }}</p>
+        <p class="font-normal text-sm">{{ getTotalPrice.label }}</p>
         <p class="font-normal py-3 text-sm">Thanks for choosing us!</p>
 
         <div class="flex py-4 gap-3 flex-col">
