@@ -16,7 +16,7 @@
       />
       <video loop autoPlay muted v-if="messageTemplateHeader(content).type">
         <source
-          :src="messageTemplateHeader(content).video.link"
+          :src="messageTemplateHeader(content).video?.link"
           type="video/mp4"
         />
       </video>
