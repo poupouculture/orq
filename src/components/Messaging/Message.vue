@@ -15,7 +15,7 @@
         </q-avatar>
         <div class="flex flex-col">
           <p class="font-semibold text-lg">{{ name }}</p>
-          <p class="text-gray-500">{{ chatNumber }}</p>
+          <p class="text-gray-500">{{ nameEn }} {{ chatNumber }}</p>
         </div>
       </div>
       <!-- Close button -->
@@ -216,7 +216,12 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatName, uuid, blobToBase64 } from "src/utils/trim-word";
+import {
+  getChatName,
+  getChatNameEn,
+  uuid,
+  blobToBase64,
+} from "src/utils/trim-word";
 import { updateChatStatus, uploadMedia } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
@@ -247,7 +252,7 @@ const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
-const isAnyUploadComponent: Ref<boolean> = ref(false);
+const headerType: Ref<string> = ref("TEXT");
 const uplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -269,6 +274,10 @@ const {
 
 const name = computed<string>(() => {
   return getChatName(getSelectedChat.value);
+});
+
+const nameEn = computed<string>(() => {
+  return getChatNameEn(getSelectedChat.value);
 });
 
 const chatNumber = computed<string>(() =>
@@ -417,7 +426,7 @@ const sendMessage = async () => {
       language: language.value,
       isIncludedComponent: isIncludeComponent.value,
       countParams: paramsCount.value,
-      isUploadComponent: isAnyUploadComponent.value,
+      headerType: headerType.value,
       messageId: wabaMessageId,
     });
     messageCallback(data, newMessage);
@@ -462,7 +471,7 @@ const sendMessageTemplate = (
   lang: string,
   isIncComponent: boolean,
   componentCount: any[],
-  isUploadComponent: boolean
+  headType: string
 ) => {
   templateName.value = name;
   message.value = msg.replace("\n", "");
@@ -470,7 +479,7 @@ const sendMessageTemplate = (
   isTemplate.value = true;
   isIncludeComponent.value = isIncComponent;
   paramsCount.value = componentCount;
-  isAnyUploadComponent.value = isUploadComponent;
+  headerType.value = headType;
   sendMessage();
 };
 

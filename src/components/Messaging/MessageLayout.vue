@@ -37,7 +37,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import SpliteLine from "src/components/SpliteLine/SpliteLine.vue";
 const messagingStore = useMessagingStore();
 const leftDrawerWidth = ref(350);
-const rightDrawerWidth = ref(650);
+const rightDrawerWidth = ref(550);
 const leftDrawerOpen = ref(true);
 const rightDrawerOpen = ref(false);
 // const rightDrawerOpen = computed({

@@ -35,6 +35,7 @@
           type="text"
           class="w-full h-9 block border rounded-lg mt-2 mb-4 pl-4"
           v-model="name"
+          @keypress="checkName"
         />
 
         <div class="label flex flex-col">
@@ -418,6 +419,20 @@ const deleteReply = (index) => {
 
 const updateReply = (value) => {
   replies.value[value.index] = value.value;
+};
+
+const checkName = (event) => {
+  const keyCode = event.keyCode;
+  if (
+    (keyCode === 32 ||
+      keyCode === 96 ||
+      (keyCode >= 33 && keyCode <= 47) ||
+      (keyCode >= 58 && keyCode <= 94)) &
+    (props.formType !== "bots" && props.formType !== "customer-service")
+  ) {
+    event.preventDefault();
+    return false;
+  }
 };
 
 const submitGeneralInformation = () => {
