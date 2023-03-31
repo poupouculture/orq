@@ -81,6 +81,7 @@ module.exports = configure(function () {
         SENDER_ID: process.env.SENDER_ID,
         APP_ID: process.env.APP_ID,
         MEASUREMENT_ID: process.env.MEASUREMENT_ID,
+        SOCKETS_URL: process.env.SOCKETS_URL,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
