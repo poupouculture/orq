@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
 
+const dollarFormat = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
 const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
     company: {
@@ -94,39 +99,64 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           name: "GPT",
           value: 20,
         },
-        // {
-        //   name: "TAX",
-        //   value: 40
-        // }
+        {
+          name: "TAX",
+          value: 40,
+        },
       ],
     },
   }),
   getters: {
     getCompany: (state) => state.company,
     getCustomer: (state) => state.customer,
-    getInvoice: (state) => {
-      const dollarFormat = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
+    getTax: (state) => {
+      // var tax = (PRICE / 100) * TAX PRECENTAGE
+
+      const totalPrice = state.invoice.items.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.amount.totalPrice,
+        0
+      );
+
+      const taxInformation = state.invoice.tax.map((item) => {
+        return {
+          ...item,
+          taxName: item.name,
+          percentage: item.value,
+          taxPrice: {
+            label: dollarFormat.format((totalPrice / 100) * item.value),
+            value: (totalPrice / 100) * item.value,
+          },
+        };
       });
 
-      // const priceWithTax = ( price: number ) => {
+      return taxInformation;
+    },
+    getTotalPrice: (state) => {
+      const priceWithTax = (price: number) => {
+        const totalTax = state.invoice.tax.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.value,
+          0
+        );
 
-      //   const totalTax = state.invoice.tax.reduce(
-      //     (accumulator, currentValue) =>
-      //       accumulator + currentValue.value,
-      //     0
-      //   );
+        // TOTAL * ((100 + TAX PERCENTAGE) / 100)
+        const priceAndTax = price * ((100 + totalTax) / 100);
+        return {
+          label: dollarFormat.format(priceAndTax),
+          value: priceAndTax,
+        };
+      };
 
-      //   //TOTAL * ((100 + TAX PERCENTAGE) / 100)
-      //   const priceAndTax = price * ((100 + totalTax) / 100)
-      //   return {
-      //     label: dollarFormat.format(priceAndTax) ,
-      //     value:  priceAndTax
-      //   }
+      const totalPrice = state.invoice.items.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.amount.totalPrice,
+        0
+      );
 
-      // }
+      return priceWithTax(totalPrice);
+    },
 
+    getInvoice: (state) => {
       const formatItem: any[] = state.invoice.items.map((item) => {
         return {
           ...item,
@@ -145,15 +175,6 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           accumulator + currentValue.amount.totalPrice,
         0
       );
-
-      // if ( state.invoice.tax.length > 0 ) {
-      //   state.invoice.totalPrice = priceWithTax(totalPrice)
-      // } else {
-      //   state.invoice.totalPrice = {
-      //     label: dollarFormat.format(totalPrice), // Dollar format
-      //     value: totalPrice, // Number only
-      //   };
-      // }
 
       state.invoice.totalPrice = {
         label: dollarFormat.format(totalPrice), // Dollar format

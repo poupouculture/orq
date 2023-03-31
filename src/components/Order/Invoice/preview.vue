@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import useInvoice from "src/stores/modules/useInvoices";
 
-const { getInvoice, getCustomer, getCompany } = useInvoice();
+const { getInvoice, getCustomer, getCompany, getTax, getTotalPrice } =
+  useInvoice();
 </script>
 
 <template>
@@ -140,13 +141,33 @@ const { getInvoice, getCustomer, getCompany } = useInvoice();
           <p>{{ getInvoice.totalPrice.label }}</p>
         </div>
       </div>
+
+      <div
+        v-for="(tax, index) in getTax"
+        :key="index"
+        class="grid items-center w-full grid-cols-6 h-[30px]"
+      >
+        <div class="col-span-4"></div>
+        <div class="col-span-1 text-center">
+          <p class="font-semibold text-sm">
+            {{ tax.taxName }}
+            <span class="text-primary">
+              {{ `${tax.percentage}%` }}
+            </span>
+          </p>
+        </div>
+
+        <div class="col-span-1 text-center">
+          <p>{{ tax.taxPrice.label }}</p>
+        </div>
+      </div>
       <div class="grid items-center w-full grid-cols-6 h-[30px]">
         <div class="col-span-4"></div>
         <div class="col-span-1 text-center">
           <p class="font-semibold text-sm">Total:</p>
         </div>
         <div class="col-span-1 text-center">
-          <p>{{ getInvoice.totalPrice.label }}</p>
+          <p>{{ getTotalPrice.label }}</p>
         </div>
       </div>
       <div class="grid items-center w-full grid-cols-6 h-[30px]">
@@ -157,7 +178,7 @@ const { getInvoice, getCustomer, getCompany } = useInvoice();
           </div>
         </div>
         <div class="bg-primary py-2 text-white col-span-1 text-center">
-          <p class="font-semibold text-sm">{{ getInvoice.totalPrice.label }}</p>
+          <p class="font-semibold text-sm">{{ getTotalPrice.label }}</p>
         </div>
       </div>
 
