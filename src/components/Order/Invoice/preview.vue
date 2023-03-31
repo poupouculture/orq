@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import useInvoice from "src/stores/modules/useInvoices";
 
-const { getInvoice, getCustomer, getCompany, getTax, getTotalPrice } =
-  useInvoice();
+const {
+  getInvoice,
+  getCustomer,
+  getCompany,
+  getTax,
+  getTotalPrice,
+  getDicount,
+} = useInvoice();
 </script>
 
 <template>
@@ -160,6 +166,28 @@ const { getInvoice, getCustomer, getCompany, getTax, getTotalPrice } =
 
           <div class="col-span-1 text-center">
             <p>{{ tax.taxPrice.label }}</p>
+          </div>
+        </div>
+      </template>
+
+      <template v-if="getDicount.length > 0">
+        <div
+          v-for="(item, index) in getDicount"
+          :key="index"
+          class="grid items-center w-full grid-cols-6 h-[30px]"
+        >
+          <div class="col-span-4"></div>
+          <div class="col-span-1 text-center">
+            <p class="font-semibold text-sm">
+              {{ item.discountName }}
+              <span class="text-red-500">
+                {{ `${item.percentage}%` }}
+              </span>
+            </p>
+          </div>
+
+          <div class="col-span-1 text-red-500 text-center">
+            <p>-{{ item.discountPrice.label }}</p>
           </div>
         </div>
       </template>

@@ -2,7 +2,7 @@
 import { ref, reactive, watchEffect } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 
-const { getInvoice, getTax, getTotalPrice } = useInvoice();
+const { getInvoice, getTax, getTotalPrice, getDicount } = useInvoice();
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 
 // Optional State
@@ -28,25 +28,6 @@ const labelHead = ref([
     class: "col-span-1 text-center",
   },
 ]);
-
-// const taxOptions = ref([
-//   {
-//     name: "Select Tax",
-//     value: null,
-//   },
-//   {
-//     name: "GST",
-//     value: 200,
-//   },
-//   {
-//     name: "Sales",
-//     value: 20,
-//   },
-//   {
-//     name: "Custom",
-//     value: "custom",
-//   },
-// ]);
 
 //  Watch
 watchEffect(() => {
@@ -230,17 +211,33 @@ watchEffect(() => {
           <span class="w-[80px]">Total</span>
           <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
+        <template v-if="getTax.length > 0">
+          <div
+            v-for="(item, index) in getTax"
+            :key="index"
+            class="text-end flex gap-5"
+          >
+            <span class="w-[80px] cursor-pointer">
+              {{ item.taxName }} {{ item.percentage }}%
+            </span>
+            <span class="w-[80px]">{{ item.taxPrice.label }}</span>
+          </div>
+        </template>
 
-        <div
-          v-for="(item, index) in getTax"
-          :key="index"
-          class="text-end flex gap-5"
-        >
-          <span class="w-[80px] cursor-pointer">
-            {{ item.taxName }} {{ item.percentage }}%
-          </span>
-          <span class="w-[80px]">{{ item.taxPrice.label }}</span>
-        </div>
+        <template v-if="getDicount.length > 0">
+          <div
+            v-for="(item, index) in getDicount"
+            :key="index"
+            class="text-end flex gap-5"
+          >
+            <span class="w-[80px] text-red-500 cursor-pointer">
+              {{ item.discountName }} {{ item.percentage }}%
+            </span>
+            <span class="w-[80px] text-red-500"
+              >- {{ item.discountPrice.label }}</span
+            >
+          </div>
+        </template>
 
         <div class="text-end flex gap-5">
           <span class="w-[80px] cursor-pointer">

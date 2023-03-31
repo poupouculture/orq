@@ -33,12 +33,24 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
     invoice: {
       invoiceNumber: "INV-1322525",
+      dateIssue: null,
+      dueDate: null,
+      discount: [
+        {
+          name: "Sale",
+          value: 20,
+        },
+      ],
+      discountOptions: [
+        {
+          name: "Sale",
+          value: 20,
+        },
+      ],
       status: {
         value: "Draft",
         setDefault: false,
       },
-      dateIssue: null,
-      dueDate: null,
       items: [
         {
           item: "hand Bag",
@@ -90,11 +102,14 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           amount: 0,
         },
       ],
-      totalPrice: {
-        label: "",
-        value: 0,
-      },
       tax: [
+        {
+          name: "TAX",
+          value: 40,
+        },
+      ],
+      taxOptions: [
+        // It gonnna be options
         {
           name: "GPT",
           value: 20,
@@ -109,6 +124,29 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
   getters: {
     getCompany: (state) => state.company,
     getCustomer: (state) => state.customer,
+    getDicount: (state) => {
+      if (state.invoice.discount.length === 0) return;
+
+      const totalPrice = state.invoice.items.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.amount.totalPrice,
+        0
+      );
+
+      const taxInformation = state.invoice.discount.map((item) => {
+        return {
+          ...item,
+          discountName: item.name,
+          percentage: item.value,
+          discountPrice: {
+            label: dollarFormat.format((totalPrice / 100) * item.value),
+            value: (totalPrice / 100) * item.value,
+          },
+        };
+      });
+
+      return taxInformation;
+    },
     getTax: (state) => {
       // var tax = (PRICE / 100) * TAX PRECENTAGE
       if (state.invoice.tax.length === 0) return;
@@ -143,8 +181,22 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         // TOTAL * ((100 + TAX PERCENTAGE) / 100)
         const priceAndTax = price * ((100 + totalTax) / 100);
         return {
-          label: dollarFormat.format(priceAndTax),
+          label: priceAndTax,
           value: priceAndTax,
+        };
+      };
+
+      const calculateDiscount = (price: number) => {
+        const totalDiscount = state.invoice.discount.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.value,
+          0
+        );
+
+        // TOTAL * ((100 + TAX PERCENTAGE) / 100)
+        const discountPrice = price * ((100 + totalDiscount) / 100);
+        return {
+          label: discountPrice,
+          value: discountPrice,
         };
       };
 
@@ -154,7 +206,15 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         0
       );
 
-      return priceWithTax(totalPrice);
+      const subTotal = {
+        label: dollarFormat.format(
+          priceWithTax(totalPrice).label - calculateDiscount(totalPrice).label
+        ),
+        value:
+          priceWithTax(totalPrice).label - calculateDiscount(totalPrice).label,
+      };
+
+      return subTotal;
     },
 
     getInvoice: (state) => {

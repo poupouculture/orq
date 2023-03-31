@@ -3,7 +3,8 @@ import { reactive } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
-const { getInvoice, getCustomer, getTotalPrice, getTax } = useInvoice();
+const { getInvoice, getCustomer, getTotalPrice, getTax, getDicount } =
+  useInvoice();
 const shareInvoice = reactive({
   via: "Email",
   setDefault: true,
@@ -73,26 +74,51 @@ const shareInvoice = reactive({
             </div>
           </div>
 
-          <div
-            v-for="(item, index) in getTax"
-            :key="index"
-            class="flex gap-3 justify-between"
-          >
-            <div class="w-[100px]">
-              <p class="text-sm font-normal">
-                {{ item.taxName }}
-                <span class="text-primary">{{ item.percentage }}%</span>
-              </p>
+          <template v-if="getTax.length > 0">
+            <div
+              v-for="(item, index) in getTax"
+              :key="index"
+              class="flex gap-3 justify-between"
+            >
+              <div class="w-[100px]">
+                <p class="text-sm font-normal">
+                  {{ item.taxName }}
+                  <span class="text-primary">{{ item.percentage }}%</span>
+                </p>
+              </div>
+              <div class="flex w-[100px] items-center">
+                <div class="border-b-4 border-dotted w-full"></div>
+              </div>
+              <div class="w-[100px] ml-4">
+                <p class="text-sm font-normal">
+                  {{ item.taxPrice.label }}
+                </p>
+              </div>
             </div>
-            <div class="flex w-[100px] items-center">
-              <div class="border-b-4 border-dotted w-full"></div>
+          </template>
+
+          <template v-if="getDicount.length > 0">
+            <div
+              v-for="(item, index) in getDicount"
+              :key="index"
+              class="flex gap-3 justify-between"
+            >
+              <div class="w-[100px]">
+                <p class="text-sm font-normal">
+                  {{ item.discountName }}
+                  <span class="text-red-500">{{ item.percentage }}%</span>
+                </p>
+              </div>
+              <div class="flex w-[100px] items-center">
+                <div class="border-b-4 border-dotted w-full"></div>
+              </div>
+              <div class="w-[100px] ml-4">
+                <p class="text-sm font-normal text-red-500">
+                  - {{ item.discountPrice.label }}
+                </p>
+              </div>
             </div>
-            <div class="w-[100px] ml-4">
-              <p class="text-sm font-normal">
-                {{ item.taxPrice.label }}
-              </p>
-            </div>
-          </div>
+          </template>
 
           <div class="flex gap-3 justify-between">
             <div class="w-[100px]">
