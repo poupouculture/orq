@@ -79,18 +79,25 @@ const closeDrawer = () => {
 };
 
 const newRelations = async () => {
-  const data = await personalGroupStore.addRelation(
+  await personalGroupStore.addRelation(
     userGroupId.value,
     tableSelected.value[0].id
   );
-  if (!data.status) {
-    Notify.create({
-      message: data.message,
-      type: "negative",
-      color: "purple",
-      position: "top",
-    });
-  }
+  await getPersonalGroupData();
+  Notify.create({
+    message: "success",
+    type: "positive",
+    position: "top",
+    color: "primary",
+  });
+  // if (!data.status) {
+  //   Notify.create({
+  //     message: data.message,
+  //     type: "negative",
+  //     color: "purple",
+  //     position: "top",
+  //   });
+  // }
 };
 
 const getPersonalGroupData = async () => {
