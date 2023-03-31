@@ -94,6 +94,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           name: "GPT",
           value: 20,
         },
+        // {
+        //   name: "TAX",
+        //   value: 40
+        // }
       ],
     },
   }),
@@ -105,6 +109,23 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         style: "currency",
         currency: "USD",
       });
+
+      // const priceWithTax = ( price: number ) => {
+
+      //   const totalTax = state.invoice.tax.reduce(
+      //     (accumulator, currentValue) =>
+      //       accumulator + currentValue.value,
+      //     0
+      //   );
+
+      //   //TOTAL * ((100 + TAX PERCENTAGE) / 100)
+      //   const priceAndTax = price * ((100 + totalTax) / 100)
+      //   return {
+      //     label: dollarFormat.format(priceAndTax) ,
+      //     value:  priceAndTax
+      //   }
+
+      // }
 
       const formatItem: any[] = state.invoice.items.map((item) => {
         return {
@@ -125,16 +146,28 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         0
       );
 
-      // const totalTax = ''
+      // if ( state.invoice.tax.length > 0 ) {
+      //   state.invoice.totalPrice = priceWithTax(totalPrice)
+      // } else {
+      //   state.invoice.totalPrice = {
+      //     label: dollarFormat.format(totalPrice), // Dollar format
+      //     value: totalPrice, // Number only
+      //   };
+      // }
 
       state.invoice.totalPrice = {
-        label: dollarFormat.format(totalPrice),
-        value: totalPrice,
+        label: dollarFormat.format(totalPrice), // Dollar format
+        value: totalPrice, // Number only
       };
 
       return state.invoice;
     },
   },
+  // actions: {
+  //   taxProccess() {
+
+  //   }
+  // }
 });
 
 export default useInvoiceRecord;
