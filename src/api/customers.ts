@@ -86,7 +86,7 @@ export const addCustomer = async (payload: any) => {
   const customerGroups =
     "customer_groups.*,customer_groups.customer_groups_id.*";
   const tags = "tags.*,tags.tags_id.*";
-  const customer = await api.patch(
+  const customer = await api.post(
     `/items/customers?fields=*,${companies},${contacts},${customerGroups},${tags}`,
     payload
   );
