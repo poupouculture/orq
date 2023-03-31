@@ -178,7 +178,9 @@ watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
 });
 
-socket.value = io("https://beams.synque.ca", {
+const socketUrl = process.env.SOCKETS_URL as string;
+console.log(socketUrl);
+socket.value = io(socketUrl, {
   reconnectionDelayMax: 30000,
   extraHeaders: {
     authorization: `${userInfo.value.access_token}`,
