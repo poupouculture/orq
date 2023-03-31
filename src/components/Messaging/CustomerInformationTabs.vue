@@ -55,7 +55,7 @@ import useCustomerStore from "src/stores/modules/customer";
 import Remark from "src/components/Remark/Remark.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
-import { updateCustomer } from "src/api/customers";
+import { updateCustomer, addCustomer } from "src/api/customers";
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 
@@ -98,11 +98,11 @@ const saveCustomer = async (val: FormPayload) => {
     customerResult = customerStore.getCustomer;
   } else {
     // insert
-    if (!customer.value.id) {
-      customerStore.addCustomer(val);
-      return;
+    if (customer.value.id) {
+      customerResult = await updateCustomer(customer.value.id, val);
+    } else {
+      customerResult = await addCustomer(val);
     }
-    customerResult = await updateCustomer(customer.value.id, val);
     const contactId = getSelectedChat.value.contacts_id;
     const { data } = await customerStore.addCustomerContact(
       customerResult.data.data?.id,
