@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
-const { getInvoice, getCustomer } = useInvoice();
+const { getInvoice, getCustomer, getTotalPrice, getTax } = useInvoice();
 const shareInvoice = reactive({
   via: "Email",
   setDefault: true,
@@ -58,6 +58,7 @@ const shareInvoice = reactive({
               <p class="text-sm font-normal">{{ getInvoice.dueDate }}</p>
             </div>
           </div>
+
           <div class="flex gap-3 justify-between">
             <div class="w-[100px]">
               <p class="text-sm font-normal">Total</p>
@@ -71,6 +72,28 @@ const shareInvoice = reactive({
               </p>
             </div>
           </div>
+
+          <div
+            v-for="(item, index) in getTax"
+            :key="index"
+            class="flex gap-3 justify-between"
+          >
+            <div class="w-[100px]">
+              <p class="text-sm font-normal">
+                {{ item.taxName }}
+                <span class="text-primary">{{ item.percentage }}%</span>
+              </p>
+            </div>
+            <div class="flex w-[100px] items-center">
+              <div class="border-b-4 border-dotted w-full"></div>
+            </div>
+            <div class="w-[100px] ml-4">
+              <p class="text-sm font-normal">
+                {{ item.taxPrice.label }}
+              </p>
+            </div>
+          </div>
+
           <div class="flex gap-3 justify-between">
             <div class="w-[100px]">
               <p class="text-sm font-normal">Balance</p>
@@ -80,7 +103,7 @@ const shareInvoice = reactive({
             </div>
             <div class="w-[100px] ml-4">
               <p class="text-sm font-normal">
-                {{ getInvoice.totalPrice.label }}
+                {{ getTotalPrice.label }}
               </p>
             </div>
           </div>

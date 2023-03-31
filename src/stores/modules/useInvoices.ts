@@ -111,6 +111,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     getCustomer: (state) => state.customer,
     getTax: (state) => {
       // var tax = (PRICE / 100) * TAX PRECENTAGE
+      if (state.invoice.tax.length === 0) return;
 
       const totalPrice = state.invoice.items.reduce(
         (accumulator, currentValue) =>

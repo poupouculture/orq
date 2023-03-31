@@ -2,7 +2,7 @@
 import { ref, reactive, watchEffect } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 
-const { getInvoice } = useInvoice();
+const { getInvoice, getTax, getTotalPrice } = useInvoice();
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 
 // Optional State
@@ -225,23 +225,37 @@ watchEffect(() => {
     </div>
 
     <div class="w-full flex justify-end mt-5">
-      <div class="flex text-primary gap-3 flex-col">
+      <div class="flex text-primary gap-1 flex-col">
         <div class="text-end flex gap-5">
           <span class="w-[80px]">Total</span>
           <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
-        <div class="text-end flex gap-5">
-          <span class="w-[80px] cursor-pointer"> Add tax </span>
-          <span class="w-[80px]">$0</span>
+
+        <div
+          v-for="(item, index) in getTax"
+          :key="index"
+          class="text-end flex gap-5"
+        >
+          <span class="w-[80px] cursor-pointer">
+            {{ item.taxName }} {{ item.percentage }}%
+          </span>
+          <span class="w-[80px]">{{ item.taxPrice.label }}</span>
         </div>
 
         <div class="text-end flex gap-5">
-          <span class="w-[80px] cursor-pointer"> Add tax </span>
+          <span class="w-[80px] cursor-pointer">
+            {{ getTax.length > 0 ? "Another tax" : "Add Tax" }}
+          </span>
           <span class="w-[80px]">$0</span>
         </div>
         <div class="text-end flex gap-5">
           <span class="text-end">Add discount</span>
           <span class="w-[80px]">$0</span>
+        </div>
+
+        <div class="text-end flex gap-5">
+          <span class="w-[80px]">Amoun Due</span>
+          <span class="w-[80px]"> {{ getTotalPrice.label }} </span>
         </div>
       </div>
     </div>

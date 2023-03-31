@@ -142,25 +142,28 @@ const { getInvoice, getCustomer, getCompany, getTax, getTotalPrice } =
         </div>
       </div>
 
-      <div
-        v-for="(tax, index) in getTax"
-        :key="index"
-        class="grid items-center w-full grid-cols-6 h-[30px]"
-      >
-        <div class="col-span-4"></div>
-        <div class="col-span-1 text-center">
-          <p class="font-semibold text-sm">
-            {{ tax.taxName }}
-            <span class="text-primary">
-              {{ `${tax.percentage}%` }}
-            </span>
-          </p>
-        </div>
+      <template v-if="getInvoice.tax.length > 0">
+        <div
+          v-for="(tax, index) in getTax"
+          :key="index"
+          class="grid items-center w-full grid-cols-6 h-[30px]"
+        >
+          <div class="col-span-4"></div>
+          <div class="col-span-1 text-center">
+            <p class="font-semibold text-sm">
+              {{ tax.taxName }}
+              <span class="text-primary">
+                {{ `${tax.percentage}%` }}
+              </span>
+            </p>
+          </div>
 
-        <div class="col-span-1 text-center">
-          <p>{{ tax.taxPrice.label }}</p>
+          <div class="col-span-1 text-center">
+            <p>{{ tax.taxPrice.label }}</p>
+          </div>
         </div>
-      </div>
+      </template>
+
       <div class="grid items-center w-full grid-cols-6 h-[30px]">
         <div class="col-span-4"></div>
         <div class="col-span-1 text-center">
