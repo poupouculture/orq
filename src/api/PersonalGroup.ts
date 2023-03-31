@@ -44,11 +44,9 @@ export const addRelationship = async (
   userGroupId: string,
   customerGroupId: string
 ) => {
-  const results = await api.post("waba/add_users_group_customers_groups", {
-    params: {
-      user_group_id: userGroupId,
-      customer_groups_id: customerGroupId,
-    },
+  const results = await api.post("/items/customer_groups_user_groups", {
+    user_groups_id: userGroupId,
+    customer_groups_id: customerGroupId,
   });
 
   return results;

@@ -98,6 +98,10 @@ const saveCustomer = async (val: FormPayload) => {
     customerResult = customerStore.getCustomer;
   } else {
     // insert
+    if (!customer.value.id) {
+      customerStore.addCustomer(val);
+      return;
+    }
     customerResult = await updateCustomer(customer.value.id, val);
     const contactId = getSelectedChat.value.contacts_id;
     const { data } = await customerStore.addCustomerContact(
