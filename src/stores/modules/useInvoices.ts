@@ -36,10 +36,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       dateIssue: null,
       dueDate: null,
       discount: [
-        {
-          name: "Discount",
-          value: 20,
-        },
+        // {
+        //   name: "Discount",
+        //   value: 20,
+        // },
       ],
       discountOptions: [
         {
@@ -128,8 +128,8 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
   getters: {
     getCompany: (state) => state.company,
     getCustomer: (state) => state.customer,
-    getDicount: (state) => {
-      if (state.invoice.discount.length === 0) return;
+    getDiscount: (state) => {
+      if (state.invoice.discount.length === 0) return 0;
 
       const totalPrice = state.invoice.items.reduce(
         (accumulator, currentValue) =>
@@ -248,6 +248,19 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       };
 
       this.$state.invoice.tax.push(newTax);
+    },
+
+    addDiscount(discount: number) {
+      this.$state.invoice.discount.push({
+        name: "Discount",
+        value: discount,
+      });
+    },
+    editDiscount(discount: number) {
+      this.$state.invoice.discount[0].value = discount;
+    },
+    deleteDiscount() {
+      this.$state.invoice.discount = [];
     },
   },
 });

@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
 
 const invoice = useInvoice();
-const { getInvoice, getTax, getTotalPrice, getDicount } = storeToRefs(invoice);
+const { getInvoice, getTax, getTotalPrice, getDiscount } = storeToRefs(invoice);
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 
 // Optional State
@@ -15,6 +15,7 @@ const newTax = reactive({
   name: "",
   value: "",
 });
+const discountPercentage = ref(0);
 const labelHead = ref([
   {
     label: "Items",
@@ -50,6 +51,14 @@ watchEffect(() => {
 
 const addTax = () => {
   invoice.addTax(newTax);
+};
+
+const addDiscount = () => {
+  invoice.addDiscount(discountPercentage.value);
+};
+
+const editDiscount = (discount: number) => {
+  invoice.editDiscount(discount);
 };
 </script>
 
@@ -314,66 +323,99 @@ const addTax = () => {
       >
         <q-card>
           <q-card-section class="flex flex-col">
-            <div class="grid grid-cols-6">
-              <div class="col-span-3">
-                <p class="font-semibold text-base"></p>
+            <template v-if="getDiscount.length > 0">
+              <div class="grid grid-cols-6">
+                <div class="col-span-3">
+                  <p class="font-semibold text-base"></p>
+                </div>
+
+                <div class="col-span-2">
+                  <p class="font-semibold text-center text-base">Percentage</p>
+                </div>
+
+                <div class="col-span-1 text-center">
+                  <p class="font-semibold text-base">Discount</p>
+                </div>
               </div>
 
-              <div class="col-span-2">
-                <p class="font-semibold text-center text-base">Percentage</p>
-              </div>
+              <div
+                v-for="(item, index) in getDiscount"
+                :key="index"
+                class="grid mt-3 grid-cols-6"
+              >
+                <div class="col-span-3">
+                  <p class="font-extralight text-[#2E2E3A] text-xs">
+                    {{ item.name }}
+                  </p>
+                </div>
 
-              <div class="col-span-1 text-center">
-                <p class="font-semibold text-base">Discount</p>
-              </div>
-            </div>
+                <div class="col-span-2 relative">
+                  <div
+                    class="font-extralight cursor-pointer text-[#2E2E3A] text-center text-xs"
+                  >
+                    {{ item.percentage }}%
+                    <q-popup-edit
+                      v-model="item.percentage"
+                      auto-save
+                      v-slot="scope"
+                    >
+                      <q-input
+                        type="number"
+                        v-model="scope.value"
+                        dense
+                        autofocus
+                        counter
+                        @keyup.enter="editDiscount(scope.value)"
+                      />
+                    </q-popup-edit>
 
-            <div
-              v-for="(item, index) in getDicount"
-              :key="index"
-              class="grid mt-3 grid-cols-6"
-            >
-              <div class="col-span-3">
-                <p class="font-extralight text-[#2E2E3A] text-xs">
-                  {{ item.name }}
-                </p>
-              </div>
+                    <q-icon class="ml-3 absolute" color="primary" name="edit" />
+                  </div>
+                </div>
 
-              <div class="col-span-2">
-                <p class="font-extralight text-[#2E2E3A] text-center text-xs">
-                  {{ item.percentage }}%
-                </p>
-              </div>
+                <div class="col-span-1 text-center relative">
+                  <p class="font-extralight text-[#2E2E3A] text-xs">
+                    {{ item.discountPrice.label }}
+                  </p>
 
-              <div class="col-span-1 text-center">
-                <p class="font-extralight text-[#2E2E3A] text-xs">
-                  {{ item.discountPrice.label }}
-                </p>
+                  <q-icon
+                    @click="invoice.deleteDiscount()"
+                    class="ml-3 absolute cursor-pointer top-0 -right-3 text-red-500"
+                    name="delete"
+                  />
+                </div>
               </div>
-            </div>
+            </template>
 
-            <div
-              v-for="(item, index) in getDicount"
-              :key="index"
-              class="grid mt-3 grid-cols-6"
-            >
-              <div class="col-span-3">
-                <p class="font-extralight text-[#2E2E3A] text-xs">
-                  {{ item.name }}
-                </p>
-              </div>
+            <div v-else class="mt-4">
+              <q-btn size="sm" color="primary" label="Add Discount">
+                <q-menu anchor="bottom right" self="top end">
+                  <q-banner class="bg-[#4B44F6]/10 p-4" dense rounded>
+                    <q-input
+                      class="bg-white rounded-xl mt-3"
+                      dense
+                      v-model="discountPercentage"
+                      outlined
+                      type="number"
+                      placeholder="Percentage"
+                    />
 
-              <div class="col-span-2">
-                <p class="font-extralight text-[#2E2E3A] text-center text-xs">
-                  {{ item.percentage }}%
-                </p>
-              </div>
-
-              <div class="col-span-1 text-center">
-                <p class="font-extralight text-[#2E2E3A] text-xs">
-                  {{ item.discountPrice.label }}
-                </p>
-              </div>
+                    <div class="flex mt-3 justify-end gap-3">
+                      <button
+                        class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        @click="addDiscount"
+                        class="rounded-lg py-1 px-2 text-white bg-primary"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </q-banner>
+                </q-menu>
+              </q-btn>
             </div>
           </q-card-section>
         </q-card>
@@ -399,9 +441,9 @@ const addTax = () => {
           </div>
         </template>
 
-        <template v-if="getDicount.length > 0">
+        <template v-if="getDiscount.length > 0">
           <div
-            v-for="(item, index) in getDicount"
+            v-for="(item, index) in getDiscount"
             :key="index"
             class="text-end flex gap-5"
           >

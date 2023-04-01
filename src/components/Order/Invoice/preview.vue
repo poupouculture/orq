@@ -9,7 +9,7 @@ const {
   getCompany,
   getTax,
   getTotalPrice,
-  getDicount,
+  getDiscount,
 } = storeToRefs(invoice);
 </script>
 
@@ -172,9 +172,9 @@ const {
         </div>
       </template>
 
-      <template v-if="getDicount.length > 0">
+      <template v-if="getDiscount.length > 0">
         <div
-          v-for="(item, index) in getDicount"
+          v-for="(item, index) in getDiscount"
           :key="index"
           class="grid items-center w-full grid-cols-6 h-[30px]"
         >
