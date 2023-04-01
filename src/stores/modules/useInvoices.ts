@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
 
+const dollarFormat = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
 const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
     company: {
@@ -28,12 +33,24 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
     invoice: {
       invoiceNumber: "INV-1322525",
+      dateIssue: null,
+      dueDate: null,
+      discount: [
+        {
+          name: "Discount",
+          value: 20,
+        },
+      ],
+      discountOptions: [
+        {
+          name: "Discount",
+          value: 20,
+        },
+      ],
       status: {
         value: "Draft",
         setDefault: false,
       },
-      dateIssue: null,
-      dueDate: null,
       items: [
         {
           item: "hand Bag",
@@ -85,21 +102,113 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           amount: 0,
         },
       ],
-      totalPrice: {
-        label: "",
-        value: 0,
-      },
+      tax: [
+        {
+          name: "TAX",
+          value: 40,
+        },
+      ],
+      taxOptions: [
+        // It gonnna be options
+        {
+          name: "GPT",
+          value: 20,
+        },
+        {
+          name: "TAX",
+          value: 40,
+        },
+      ],
     },
   }),
   getters: {
     getCompany: (state) => state.company,
     getCustomer: (state) => state.customer,
-    getInvoice: (state) => {
-      const dollarFormat = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
+    getDicount: (state) => {
+      if (state.invoice.discount.length === 0) return;
+
+      const totalPrice = state.invoice.items.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.amount.totalPrice,
+        0
+      );
+
+      const discountInformation = state.invoice.discount.map((item) => {
+        return {
+          ...item,
+          discountName: item.name,
+          percentage: item.value,
+          discountPrice: {
+            label: dollarFormat.format((totalPrice / 100) * item.value),
+            value: (totalPrice / 100) * item.value,
+          },
+        };
       });
 
+      return discountInformation;
+    },
+    getTax: (state) => {
+      // var tax = (PRICE / 100) * TAX PRECENTAGE
+      if (state.invoice.tax.length === 0) return;
+
+      const totalPrice = state.invoice.items.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.amount.totalPrice,
+        0
+      );
+
+      const taxInformation = state.invoice.tax.map((item) => {
+        return {
+          ...item,
+          taxName: item.name,
+          percentage: item.value,
+          taxPrice: {
+            label: dollarFormat.format((totalPrice / 100) * item.value),
+            value: (totalPrice / 100) * item.value,
+          },
+        };
+      });
+
+      return taxInformation;
+    },
+    getTotalPrice: (state) => {
+      let taxPercentage = 0;
+
+      let discountPercentage = 0;
+
+      if (state.invoice.tax.length > 0) {
+        taxPercentage = state.invoice.tax.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.value,
+          0
+        );
+      }
+
+      if (state.invoice.discount.length > 0) {
+        discountPercentage = state.invoice.discount.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.value,
+          0
+        );
+      }
+
+      const totalPrice = state.invoice.items.reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.amount.totalPrice,
+        0
+      );
+
+      const priceWithTax = (taxPercentage / 100) * totalPrice + totalPrice;
+
+      const discountPrice = (discountPercentage / 100) * totalPrice;
+
+      const subtotal = priceWithTax - discountPrice;
+
+      return {
+        label: dollarFormat.format(subtotal),
+        value: subtotal,
+      };
+    },
+
+    getInvoice: (state) => {
       const formatItem: any[] = state.invoice.items.map((item) => {
         return {
           ...item,
@@ -120,13 +229,28 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       );
 
       state.invoice.totalPrice = {
-        label: dollarFormat.format(totalPrice),
-        value: totalPrice,
+        label: dollarFormat.format(totalPrice), // Dollar format
+        value: totalPrice, // Number only
       };
 
       return state.invoice;
     },
   },
+  actions: {
+    addTax(tax: { name: string; value: string }) {
+      const newTax = {
+        name: tax.name,
+        value: parseInt(tax.value),
+      };
+
+      this.$state.invoice.tax.push(newTax);
+    },
+  },
+  // actions: {
+  //   taxProccess() {
+
+  //   }
+  // }
 });
 
 export default useInvoiceRecord;

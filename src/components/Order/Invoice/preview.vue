@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import useInvoice from "src/stores/modules/useInvoices";
+import { storeToRefs } from "pinia";
 
-const { getInvoice, getCustomer, getCompany } = useInvoice();
+const invoice = useInvoice();
+const {
+  getInvoice,
+  getCustomer,
+  getCompany,
+  getTax,
+  getTotalPrice,
+  getDicount,
+} = storeToRefs(invoice);
 </script>
 
 <template>
@@ -140,13 +149,58 @@ const { getInvoice, getCustomer, getCompany } = useInvoice();
           <p>{{ getInvoice.totalPrice.label }}</p>
         </div>
       </div>
+
+      <template v-if="getInvoice.tax.length > 0">
+        <div
+          v-for="(tax, index) in getTax"
+          :key="index"
+          class="grid items-center w-full grid-cols-6 h-[30px]"
+        >
+          <div class="col-span-4"></div>
+          <div class="col-span-1 text-center">
+            <p class="font-semibold text-sm">
+              {{ tax.taxName }}
+              <span class="text-primary">
+                {{ `${tax.percentage}%` }}
+              </span>
+            </p>
+          </div>
+
+          <div class="col-span-1 text-center">
+            <p>{{ tax.taxPrice.label }}</p>
+          </div>
+        </div>
+      </template>
+
+      <template v-if="getDicount.length > 0">
+        <div
+          v-for="(item, index) in getDicount"
+          :key="index"
+          class="grid items-center w-full grid-cols-6 h-[30px]"
+        >
+          <div class="col-span-4"></div>
+          <div class="col-span-1 text-center">
+            <p class="font-semibold text-sm">
+              {{ item.discountName }}
+              <span class="text-red-500">
+                {{ `${item.percentage}%` }}
+              </span>
+            </p>
+          </div>
+
+          <div class="col-span-1 text-red-500 text-center">
+            <p>-{{ item.discountPrice.label }}</p>
+          </div>
+        </div>
+      </template>
+
       <div class="grid items-center w-full grid-cols-6 h-[30px]">
         <div class="col-span-4"></div>
         <div class="col-span-1 text-center">
           <p class="font-semibold text-sm">Total:</p>
         </div>
         <div class="col-span-1 text-center">
-          <p>{{ getInvoice.totalPrice.label }}</p>
+          <p>{{ getTotalPrice.label }}</p>
         </div>
       </div>
       <div class="grid items-center w-full grid-cols-6 h-[30px]">
@@ -157,7 +211,7 @@ const { getInvoice, getCustomer, getCompany } = useInvoice();
           </div>
         </div>
         <div class="bg-primary py-2 text-white col-span-1 text-center">
-          <p class="font-semibold text-sm">{{ getInvoice.totalPrice.label }}</p>
+          <p class="font-semibold text-sm">{{ getTotalPrice.label }}</p>
         </div>
       </div>
 

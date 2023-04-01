@@ -1,6 +1,7 @@
 /* eslint-env node */
-require("dotenv").config();
-
+const configPath =
+  process.env.NODE_ENV !== "development" ? ".env.development" : ".env";
+require("dotenv").config({ path: configPath });
 /*
  * This file runs in a Node context (it's NOT transpiled by Babel), so use only
  * the ES6 features that are supported by your Node version. https://node.green/
