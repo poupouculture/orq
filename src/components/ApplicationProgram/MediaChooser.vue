@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-3 gap-14 mb-4">
     <div
-      class="p-4"
+      class="p-4 shadow-md"
       @click="setMedia('image')"
       :class="{
         'bg-[#eff2fe]': media === 'image',
@@ -33,7 +33,7 @@
       </div>
     </div>
     <div
-      class="p-4"
+      class="p-4 shadow-md"
       @click="setMedia('video')"
       :class="{
         'bg-[#eff2fe]': media === 'video',
@@ -65,7 +65,7 @@
       </div>
     </div>
     <div
-      class="p-4"
+      class="p-4 shadow-md"
       @click="setMedia('document')"
       :class="{
         'bg-[#eff2fe]': media === 'document',

@@ -19,23 +19,23 @@
         @change="handleAllChange"
       />
     </div>
-    <div class="col-span-2 flex flex-col">
-      <span class="font-semibold">
-        {{ actionType === at.CALL_PHONE ? "Country" : "URL Type" }}
-      </span>
+    <div class="col-span-2 flex flex-col" v-if="actionType === at.CALL_PHONE">
+      <span class="font-semibold"> Country: </span>
       <InputSelect
-        :options="
-          actionType === at.CALL_PHONE
-            ? actionCountryOptions
-            : actionWebtypeOptions
-        "
-        :default="actionCountryOrWebtype"
-        :value="actionCountryOrWebtype"
-        @input="updateActionCountryOrWebtype"
+        :options="actionCountryOptions"
+        :default="actionCountry"
+        :value="actionCountry"
+        @input="updateActionCountry"
         class="bg-white rounded-lg"
       />
     </div>
-    <div class="col-span-3 flex flex-col">
+    <div
+      class="flex flex-col"
+      :class="{
+        'col-span-3': actionType === at.CALL_PHONE,
+        'col-span-5': actionType !== at.CALL_PHONE,
+      }"
+    >
       <span class="font-semibold">
         {{ actionType === at.CALL_PHONE ? "Phone Number" : "URL" }}
       </span>
@@ -69,44 +69,44 @@ const props = defineProps({
 const emit = defineEmits(["updateAction"]);
 
 const actionTypeOptions = [at.CALL_PHONE, at.VIEW_WEB];
-let actionCountryOptions = [];
-const actionWebtypeOptions = ["Static", "Dynamic"];
+const actionCountryOptions = ref([]);
 
 const actionType = ref(at.CALL_PHONE);
 const actionValue = ref("");
 const actionText = ref("");
-const actionCountryOrWebtype = ref("ID +62");
+const actionCountry = ref("ID +62");
 
 const updateActionType = (value) => {
   actionType.value = value;
-  actionCountryOrWebtype.value = value === at.CALL_PHONE ? "ID +62" : "Static";
+  actionCountry.value = value === at.CALL_PHONE ? "ID +62" : "Static";
   handleAllChange();
 };
 
-const updateActionCountryOrWebtype = (value) => {
-  actionCountryOrWebtype.value = value;
+const updateActionCountry = (value) => {
+  actionCountry.value = value;
   handleAllChange();
 };
 
 const handleAllChange = () => {
-  emit("updateAction", {
+  const emitData = {
     index: props.index,
     type: actionType.value,
     label: actionText.value,
-    countryOrWebtype: actionCountryOrWebtype.value,
+    country: actionCountry.value,
     value: actionValue.value,
-  });
+  };
+
+  emit("updateAction", emitData);
 };
 
 onMounted(() => {
-  console.log(phoneCodes);
-  actionCountryOptions = phoneCodes.map(
+  actionCountryOptions.value = phoneCodes.map(
     (phone) => phone.code + " " + phone.dial_code
   );
-  if (props.action !== undefined) {
+  if (props.action !== undefined && props.action !== null) {
     actionType.value = props.action.type;
     actionText.value = props.action.label;
-    actionCountryOrWebtype.value = props.action.countryOrWebtype;
+    actionCountry.value = props.action.country;
     actionValue.value = props.action.value;
   }
 });
