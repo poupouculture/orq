@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import useInvoice from "src/stores/modules/useInvoices";
+import { storeToRefs } from "pinia";
 
+const invoice = useInvoice();
 const {
   getInvoice,
   getCustomer,
@@ -8,7 +10,7 @@ const {
   getTax,
   getTotalPrice,
   getDicount,
-} = useInvoice();
+} = storeToRefs(invoice);
 </script>
 
 <template>

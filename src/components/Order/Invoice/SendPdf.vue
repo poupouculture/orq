@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { reactive } from "vue";
+import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
+const invoice = useInvoice();
 const { getInvoice, getCustomer, getTotalPrice, getTax, getDicount } =
-  useInvoice();
+  storeToRefs(invoice);
 const shareInvoice = reactive({
   via: "Email",
   setDefault: true,

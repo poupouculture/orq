@@ -37,13 +37,13 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       dueDate: null,
       discount: [
         {
-          name: "Sale",
+          name: "Discount",
           value: 20,
         },
       ],
       discountOptions: [
         {
-          name: "Sale",
+          name: "Discount",
           value: 20,
         },
       ],
@@ -234,6 +234,16 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       };
 
       return state.invoice;
+    },
+  },
+  actions: {
+    addTax(tax: { name: string; value: string }) {
+      const newTax = {
+        name: tax.name,
+        value: parseInt(tax.value),
+      };
+
+      this.$state.invoice.tax.push(newTax);
     },
   },
   // actions: {

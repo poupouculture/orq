@@ -110,7 +110,7 @@ const toggleDrawer = () => {
 
 const logout = () => {
   LocalStorage.remove("userinfo");
-  userInfo.setUserProfile(null);
+  // userInfo.setUserProfile(null);
   userInfo.setUserInfo({
     access_token: "",
     expires: null,
