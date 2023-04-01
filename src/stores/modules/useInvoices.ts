@@ -119,6 +119,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           value: 40,
         },
       ],
+      totalPrice: {
+        label: "",
+        value: 0,
+      },
     },
   }),
   getters: {
@@ -246,11 +250,6 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       this.$state.invoice.tax.push(newTax);
     },
   },
-  // actions: {
-  //   taxProccess() {
-
-  //   }
-  // }
 });
 
 export default useInvoiceRecord;
