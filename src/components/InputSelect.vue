@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 
 const props = defineProps({
   options: {
@@ -134,6 +134,10 @@ const filteredOptions = ref([]);
 
 onMounted(() => {
   emit("input", selected.value);
+  filteredOptions.value = props.options;
+});
+
+onUpdated(() => {
   filteredOptions.value = props.options;
 });
 

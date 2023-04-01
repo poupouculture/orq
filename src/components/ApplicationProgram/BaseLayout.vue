@@ -33,10 +33,19 @@
 
         <input
           type="text"
-          class="w-full h-9 block border rounded-lg mt-2 mb-4 pl-4"
+          class="w-full h-9 block border rounded-lg mt-2 pl-4"
+          :class="{
+            'mb-2': isShowDuplicateName,
+            'mb-4': !isShowDuplicateName,
+          }"
           v-model="name"
           @keypress="checkName"
+          @change="changeDuplication"
         />
+
+        <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
+          Name is not valid because it's already used
+        </div>
 
         <div class="label flex flex-col">
           <p class="text-xl">Is Email</p>
@@ -88,8 +97,8 @@
           </div>
           <input
             type="text"
-            class="w-9/12 block border rounded-lg pl-4"
-            v-if="header === 'Text'"
+            class="w-8/12 block border rounded-lg pl-4"
+            v-if="header === 'TEXT'"
             v-model="headerMessage"
           />
         </div>
@@ -103,16 +112,42 @@
           </p>
         </div>
 
-        <div class="mt-2 mb-4">
+        <div
+          class="mt-2"
+          :class="{
+            'mb-2': customVariables.length > 0,
+            'mb-4': customVariables.length < 1,
+          }"
+        >
           <textarea
             type="text"
             class="w-full block border rounded-lg p-4"
             rows="4"
             v-model="bodyMessage"
+            @change="bodyMessageChange"
           ></textarea>
           <span class="text-gray-400">
             Characters: {{ bodyMessage.length }}/1024
           </span>
+        </div>
+
+        <div
+          class="w-full flex flex-col mb-2"
+          v-if="customVariables.length > 0"
+        >
+          <div class="text-gray-400">Example:</div>
+          <div
+            class="w-full"
+            v-for="(example, index) of customVariables"
+            :key="index"
+          >
+            <input
+              type="text"
+              class="w-full h-10 block border rounded-lg pl-4 mb-2"
+              v-model="customVariables[index]"
+              :placeholder="`example for variable {{${index + 1}}}`"
+            />
+          </div>
         </div>
 
         <div class="label flex flex-col">
@@ -221,6 +256,7 @@
           <button
             class="py-2 px-6 rounded bg-primary text-white"
             @click="submitGeneralInformation"
+            v-if="!isShowDuplicateName"
           >
             Save
           </button>
@@ -258,6 +294,7 @@ import {
   formattedActionType as fat,
 } from "../../constants/messageTemplate.js";
 import { codes, names } from "../../constants/languages.js";
+import { getFacebookTemplateLists } from "src/api/messageTemplate";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
@@ -278,16 +315,19 @@ const name = ref(null);
 const languageCodes = codes;
 const languageOptions = names;
 const isEmailOptions = ["Yes", "No"];
-const headerOptions = ["Text", "Media"];
+const headerOptions = ["TEXT", "MEDIA"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const actions = ref(Array(2).fill(null));
+const storedTemplateNames = ref([]);
+const isShowDuplicateName = ref(false);
 
 const isEmail = ref("No");
-const language = ref("English");
+const language = ref("English (United States)");
 const header = ref(null);
 const headerMessage = ref("");
 const media = ref(null);
 const bodyMessage = ref("");
+const customVariables = ref([]);
 const footerMessage = ref("");
 const isApproved = ref("No");
 const actionCategory = ref("None");
@@ -298,7 +338,10 @@ const read = ref(0);
 const replied = ref(0);
 const loading = ref(true);
 
-onMounted(() => {
+onMounted(async () => {
+  const responseFB = await getFacebookTemplateLists();
+  storedTemplateNames.value = responseFB.map((template) => template.name);
+
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
 
@@ -323,7 +366,7 @@ onMounted(() => {
       ? languageOptions[languageCodes.indexOf(tempData.language)]
       : tempData.language;
 
-    header.value = headerComponent?.format;
+    updateHeader(headerComponent?.format);
     if (header.value?.toUpperCase() === "TEXT") {
       headerMessage.value = headerComponent?.text;
     } else {
@@ -332,16 +375,29 @@ onMounted(() => {
 
     bodyMessage.value =
       bodyComponent?.text === undefined ? "" : bodyComponent?.text;
+
+    bodyMessageChange();
+
     footerMessage.value = footerComponent?.text;
     isApproved.value = tempData.is_approved ? "Yes" : "No";
 
-    updateActionCategory(buttonsComponent?.value?.category);
+    if (buttonsComponent?.buttons) {
+      const firstButton = buttonsComponent.buttons[0];
+
+      updateActionCategory(
+        firstButton.type === fat.CALL_PHONE || firstButton.type === fat.VIEW_WEB
+          ? ac.CALL_TO_ACTION
+          : ac.QUICK_REPLY
+      );
+    } else {
+      updateActionCategory("None");
+    }
 
     if (
       actionCategory.value !== ac.NONE &&
       actionCategory.value !== undefined
     ) {
-      const buttons = buttonsComponent?.value;
+      const buttons = buttonsComponent;
 
       if (buttons !== undefined && buttons !== "") {
         if (actionCategory.value === ac.CALL_TO_ACTION) {
@@ -353,15 +409,15 @@ onMounted(() => {
               if (btn.type === fat.CALL_PHONE) {
                 formatted.type = at.CALL_PHONE;
                 if (btn.phone_number?.indexOf(" ")) {
-                  formatted.value = btn.phone_number;
-                } else {
-                  const arrPhone = formatted.phone_number?.spllit(" ");
-                  formatted.countryOrWebtype = arrPhone[0];
+                  const arrPhone = btn.phone_number.split(" ");
+                  formatted.country = arrPhone[0];
                   formatted.value = arrPhone[1];
+                } else {
+                  formatted.value = btn.phone_number;
                 }
               } else {
                 formatted.type = at.VIEW_WEB;
-                formatted.countryOrWebtype = "Static";
+                formatted.country = "Static";
                 formatted.value = btn.url;
               }
               formatted.label = btn.text;
@@ -435,65 +491,131 @@ const checkName = (event) => {
   }
 };
 
+const changeDuplication = () => {
+  isShowDuplicateName.value = storedTemplateNames.value.includes(name.value);
+};
+
+const listNumbers = (str) => {
+  const regex = /{{\s*([\d]+)\s*}}/g;
+  let match;
+  const numbers = [];
+  while ((match = regex.exec(str)) !== null) {
+    numbers.push("{{" + Number(match[1]) + "}}");
+  }
+  return numbers;
+};
+
+const bodyMessageChange = () => {
+  if (props.formType !== "bots" && props.formType !== "customer-services") {
+    const customVariableCounted = listNumbers(bodyMessage.value);
+    customVariables.value = Array(customVariableCounted.length).fill("");
+  }
+};
+
 const submitGeneralInformation = () => {
-  let buttonValues = "";
+  let buttonValues = {};
   if (actionCategory.value !== ac.NONE) {
     if (actionCategory.value === ac.CALL_TO_ACTION) {
       buttonValues = actions.value?.map(function (btn) {
         const formatted = {};
         if (btn.type === at.CALL_PHONE) {
           formatted.type = fat.CALL_PHONE;
-          formatted.phone_number = btn.countryOrWebtype + " " + btn.value;
+          formatted.phone_number = btn.country.split(" ")[1] + " " + btn.value;
         } else {
           formatted.type = fat.VIEW_WEB;
           formatted.url = btn.value;
+          formatted.example = [btn.value];
         }
         formatted.text = btn.label;
         return formatted;
       });
     } else {
       buttonValues = replies.value?.map(function (text) {
-        return { type: "REPLY", text };
+        return { type: "QUICK_REPLY", text };
       });
     }
   }
 
   const formattedValueForEmit = (type) => {
     if (type === "language") {
+      console.log(languageOptions);
       return languageOptions.includes(language.value)
         ? languageCodes[languageOptions.indexOf(language.value)]
         : language.value;
     }
     if (type === "components") {
-      return [
-        {
-          type: "HEADER",
-          format: header.value.toUpperCase(),
-          text: header.value === "Text" ? headerMessage.value : media.value,
-        },
-        {
-          type: "BODY",
-          text: bodyMessage.value,
-        },
+      const componentsFormatted = [
         {
           type: "FOOTER",
           text: footerMessage.value,
         },
-        {
-          type: "BUTTONS",
-          value: {
-            category: actionCategory.value,
-            buttons: buttonValues,
-          },
-        },
       ];
+
+      const headerComponent = {
+        type: "HEADER",
+        format:
+          header.value.toUpperCase() === "TEXT"
+            ? "TEXT"
+            : media.value.toUpperCase(),
+      };
+
+      if (header.value.toUpperCase() === "TEXT") {
+        headerComponent.text = headerMessage.value;
+      } else {
+        headerComponent.example = {
+          header_handle: ["https://www.youtube.com"],
+        };
+      }
+
+      componentsFormatted.push(headerComponent);
+
+      const bodyComponent = {
+        type: "BODY",
+        text: bodyMessage.value,
+      };
+
+      if (customVariables.value.length > 0) {
+        bodyComponent.example = { body_text: [customVariables.value] };
+      }
+
+      componentsFormatted.push(bodyComponent);
+
+      if (actionCategory.value.toUpperCase() !== "NONE") {
+        componentsFormatted.push({
+          type: "BUTTONS",
+          buttons: buttonValues,
+        });
+      }
+
+      return componentsFormatted;
     }
 
     return "";
   };
 
+  console.log({
+    name: name.value,
+    is_approved: false,
+    category: "conversation",
+    is_email_template: isEmail.value === "Yes",
+    language: formattedValueForEmit("language"),
+    status: status.value,
+    components: formattedValueForEmit("components"),
+    messages_sent: delivered.value,
+    messages_opened: read.value,
+    top_block_reason: replied.value,
+    json: {
+      name: name.value,
+      category: "MARKETING",
+      language: formattedValueForEmit("language"),
+      components: formattedValueForEmit("components"),
+    },
+    created_by: userInfo.userProfile.id,
+  });
+
   emit("submitGeneralInformation", {
     name: name.value,
+    is_approved: false,
     category: "conversation",
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),

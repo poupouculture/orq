@@ -58,6 +58,7 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue";
 import { actionType as at } from "../../constants/messageTemplate.js";
 
 const props = defineProps({
@@ -93,5 +94,9 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+});
+
+onMounted(() => {
+  console.log(props.actions);
 });
 </script>
