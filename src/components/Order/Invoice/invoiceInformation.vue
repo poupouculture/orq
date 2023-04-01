@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { ref, reactive, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
 
-const { getInvoice } = useInvoice();
+const invoice = useInvoice();
+const { getInvoice, getTax, getTotalPrice, getDicount } = storeToRefs(invoice);
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 
 // Optional State
-const customDefault = reactive(getInvoice.optional.customField);
-const memo = reactive(getInvoice.optional.memo);
-const footer = reactive(getInvoice.optional.footer);
+const customDefault = reactive(getInvoice.value.optional.customField);
+const memo = reactive(getInvoice.value.optional.memo);
+const footer = reactive(getInvoice.value.optional.footer);
+const newTax = reactive({
+  name: "",
+  value: "",
+});
 const labelHead = ref([
   {
     label: "Items",
@@ -39,6 +45,12 @@ watchEffect(() => {
   if (memo.option) memo.active = true;
   else memo.active = false;
 });
+
+// Methods
+
+const addTax = () => {
+  invoice.addTax(newTax);
+};
 </script>
 
 <template>
@@ -204,19 +216,207 @@ watchEffect(() => {
       </div>
     </div>
 
+    <div class="mt-4">
+      <q-expansion-item
+        label="Tax"
+        icon="fa-solid fa-tag"
+        header-class="text-primary"
+        expand-icon-class="text-primary"
+        class="overflow-hidden"
+      >
+        <q-card>
+          <q-card-section class="flex flex-col">
+            <div class="grid grid-cols-6">
+              <div class="col-span-3">
+                <p class="font-semibold text-base">TAX Name</p>
+              </div>
+
+              <div class="col-span-2">
+                <p class="font-semibold text-center text-base">Percentage</p>
+              </div>
+
+              <div class="col-span-1 text-center">
+                <p class="font-semibold text-base">TAX</p>
+              </div>
+            </div>
+            <div
+              v-for="(item, index) in getTax"
+              :key="index"
+              class="grid mt-3 grid-cols-6"
+            >
+              <div class="col-span-3">
+                <p class="font-extralight text-[#2E2E3A] text-xs">
+                  {{ item.name }}
+                </p>
+              </div>
+
+              <div class="col-span-2">
+                <p class="font-extralight text-[#2E2E3A] text-center text-xs">
+                  {{ item.value }}%
+                </p>
+              </div>
+
+              <div class="col-span-1 text-center">
+                <p class="font-extralight text-[#2E2E3A] text-xs">
+                  {{ item.taxPrice.label }}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <q-btn size="sm" color="primary" label="Add tax">
+                <q-menu anchor="bottom right" self="top end">
+                  <q-banner class="bg-[#4B44F6]/10 p-4" dense rounded>
+                    <q-input
+                      class="bg-white rounded-xl mt-3"
+                      dense
+                      v-model="newTax.name"
+                      outlined
+                      type="text"
+                      placeholder="Tax"
+                    />
+                    <q-input
+                      class="bg-white rounded-xl mt-3"
+                      dense
+                      v-model="newTax.value"
+                      outlined
+                      type="text"
+                      placeholder="Value"
+                    />
+
+                    <div class="flex mt-3 justify-end gap-3">
+                      <button
+                        class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        @click="addTax"
+                        class="rounded-lg py-1 px-2 text-white bg-primary"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </q-banner>
+                </q-menu>
+              </q-btn>
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
+
+      <q-expansion-item
+        label="Discount"
+        icon="percent"
+        header-class="text-primary"
+        expand-icon-class="text-primary"
+        class="overflow-hidden"
+      >
+        <q-card>
+          <q-card-section class="flex flex-col">
+            <div class="grid grid-cols-6">
+              <div class="col-span-3">
+                <p class="font-semibold text-base"></p>
+              </div>
+
+              <div class="col-span-2">
+                <p class="font-semibold text-center text-base">Percentage</p>
+              </div>
+
+              <div class="col-span-1 text-center">
+                <p class="font-semibold text-base">Discount</p>
+              </div>
+            </div>
+
+            <div
+              v-for="(item, index) in getDicount"
+              :key="index"
+              class="grid mt-3 grid-cols-6"
+            >
+              <div class="col-span-3">
+                <p class="font-extralight text-[#2E2E3A] text-xs">
+                  {{ item.name }}
+                </p>
+              </div>
+
+              <div class="col-span-2">
+                <p class="font-extralight text-[#2E2E3A] text-center text-xs">
+                  {{ item.percentage }}%
+                </p>
+              </div>
+
+              <div class="col-span-1 text-center">
+                <p class="font-extralight text-[#2E2E3A] text-xs">
+                  {{ item.discountPrice.label }}
+                </p>
+              </div>
+            </div>
+
+            <div
+              v-for="(item, index) in getDicount"
+              :key="index"
+              class="grid mt-3 grid-cols-6"
+            >
+              <div class="col-span-3">
+                <p class="font-extralight text-[#2E2E3A] text-xs">
+                  {{ item.name }}
+                </p>
+              </div>
+
+              <div class="col-span-2">
+                <p class="font-extralight text-[#2E2E3A] text-center text-xs">
+                  {{ item.percentage }}%
+                </p>
+              </div>
+
+              <div class="col-span-1 text-center">
+                <p class="font-extralight text-[#2E2E3A] text-xs">
+                  {{ item.discountPrice.label }}
+                </p>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
+    </div>
+
     <div class="w-full flex justify-end mt-5">
-      <div class="flex text-primary gap-3 flex-col">
+      <div class="flex text-primary gap-1 w-[236px] flex-col">
         <div class="text-end flex gap-5">
-          <span class="w-[80px]">Total</span>
-          <span class="w-[80px]"> {{ getInvoice.totalPrice.label }} </span>
+          <span class="w-[100px]">Total</span>
+          <span class="w-[100px]"> {{ getInvoice.totalPrice.label }} </span>
         </div>
+        <template v-if="getTax.length > 0">
+          <div
+            v-for="(item, index) in getTax"
+            :key="index"
+            class="text-end flex gap-5"
+          >
+            <span class="w-[100px] cursor-pointer">
+              {{ item.taxName }} {{ item.percentage }}%
+            </span>
+            <span class="w-[100px]">{{ item.taxPrice.label }}</span>
+          </div>
+        </template>
+
+        <template v-if="getDicount.length > 0">
+          <div
+            v-for="(item, index) in getDicount"
+            :key="index"
+            class="text-end flex gap-5"
+          >
+            <span class="w-[100px] text-red-500 cursor-pointer">
+              {{ item.discountName }} {{ item.percentage }}%
+            </span>
+            <span class="w-[100px] text-red-500"
+              >- {{ item.discountPrice.label }}</span
+            >
+          </div>
+        </template>
+
         <div class="text-end flex gap-5">
-          <span class="w-[80px]">Add tax</span>
-          <span class="w-[80px]">$0</span>
-        </div>
-        <div class="text-end flex gap-5">
-          <span class="text-end">Add discount</span>
-          <span class="w-[80px]">$0</span>
+          <span class="w-[100px]">Amoun Due</span>
+          <span class="w-[100px]"> {{ getTotalPrice.label }} </span>
         </div>
       </div>
     </div>
@@ -366,4 +566,8 @@ watchEffect(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.tax-selected div) {
+  min-width: 100px;
+}
+</style>

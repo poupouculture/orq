@@ -122,6 +122,8 @@ const copyLink = () => {
   });
 };
 
+const onRowClick = (data: any) => console.log(data);
+
 onMounted(() => {
   const date = new Date();
 
