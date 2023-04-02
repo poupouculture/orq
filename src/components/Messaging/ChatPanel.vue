@@ -198,30 +198,34 @@ const chooseCustomer = async (user: any) => {
 };
 
 const initSocket = () => {
-  socket.value.on("connect", () => {
-    socket.value.emit("join_chat", userProfile?.value?.id);
-  });
-  socket.value.io.on("error", () => {
-    console.log("socket error");
-  });
-  socket.value.on("chat_updated", (data: any) => {
-    console.log("chat_updated", data);
-    const chat = chatsList.value.find(
-      (chat: IChat) => chat.id === data.document?.id
-    );
-    if (chat) {
-      messagingStore.updateChatsList(chat, data.update_fields?.status);
-    }
-  });
-  socket.value.on("message_created", (data: SocketMessage) => {
-    console.log("message_created", data);
-    const { document } = data;
-    messagingStore.setChatsLastMessage(document.chat_id as string, document);
-  });
-  socket.value.on("chat_created", (data: any) => {
-    console.log("chat_created", data);
-    messagingStore.chatCreate(data.status, data.id);
-  });
+  try {
+    socket.value.on("connect", () => {
+      socket.value.emit("join_chat", userProfile?.value?.id);
+    });
+    socket.value.io.on("error", () => {
+      console.log("socket error");
+    });
+    socket.value.on("chat_updated", (data: any) => {
+      console.log("chat_updated", data);
+      const chat = chatsList.value.find(
+        (chat: IChat) => chat.id === data.document?.id
+      );
+      if (chat) {
+        messagingStore.updateChatsList(chat, data.update_fields?.status);
+      }
+    });
+    socket.value.on("message_created", (data: SocketMessage) => {
+      console.log("message_created", data);
+      const { document } = data;
+      messagingStore.setChatsLastMessage(document.chat_id as string, document);
+    });
+    socket.value.on("chat_created", async (data: any) => {
+      console.log("chat_created", data);
+      chatsList.value.unshift({ members: "[]", ...data });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 onMounted(() => {
