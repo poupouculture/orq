@@ -1,6 +1,6 @@
 /* eslint-env node */
 const configPath =
-  process.env.NODE_ENV !== "development" ? ".env.development" : ".env";
+  process.env.NODE_ENV === "development" ? ".env.development" : ".env";
 require("dotenv").config({ path: configPath });
 /*
  * This file runs in a Node context (it's NOT transpiled by Babel), so use only

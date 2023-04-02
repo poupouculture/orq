@@ -53,7 +53,7 @@ const useUserInfoStore = defineStore("userInfo", {
           api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 
           const data = await api.get(
-            "/users/me?fields=*,role.description, role.name, role.tags, role.pages.pages_id.*,role.pages.pages_id.children.*"
+            "/users/me?fields=*,role.description,role.name,role.tags,role.pages.pages_id.*,role.pages.pages_id.children.*"
           );
           if (data) {
             const user = data.data.data;

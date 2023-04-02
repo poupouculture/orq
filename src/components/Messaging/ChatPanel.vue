@@ -98,15 +98,10 @@ import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat } from "src/types/MessagingTypes";
+import { IChat, SocketMessage } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-
-interface MessageCreate {
-  id: string;
-  messages: any[];
-}
 
 const ChatToggleLabel = {
   SHOW: {
@@ -211,15 +206,17 @@ const initSocket = () => {
   });
   socket.value.on("chat_updated", (data: any) => {
     console.log("chat_updated", data);
-    const chat = chatsList.value.find((chat: IChat) => chat.id === data.id);
+    const chat = chatsList.value.find(
+      (chat: IChat) => chat.id === data.document?.id
+    );
     if (chat) {
-      messagingStore.updateChatsList(chat, data.status);
+      messagingStore.updateChatsList(chat, data.update_fields?.status);
     }
   });
-  socket.value.on("message_created", (data: any) => {
+  socket.value.on("message_created", (data: SocketMessage) => {
     console.log("message_created", data);
-    const { id, messages } = data as MessageCreate;
-    messagingStore.setChatsLastMessage(id, messages[0]);
+    const { document } = data;
+    messagingStore.setChatsLastMessage(document.chat_id as string, document);
   });
   socket.value.on("message_updated", (data: any) => {
     console.log("message_updated", data);
