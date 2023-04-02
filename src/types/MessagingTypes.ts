@@ -49,6 +49,7 @@ export interface Message {
   isEmoticon?: boolean;
   waba_message_id?: string;
   waba_associated_message_id?: string;
+  chat_id?: string;
 }
 export interface IChat {
   id: string;
@@ -151,4 +152,7 @@ export interface ChatPayload {
   keyword: string;
   template_content?: string;
   waba_content: ChatPayloadWabaContent;
+}
+export interface SocketMessage {
+  document: Message;
 }
