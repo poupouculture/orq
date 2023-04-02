@@ -140,7 +140,7 @@ type ChatToggleType = {
 };
 const seachText = ref("");
 const userInfoStore = useUserInfoStore();
-const { userInfo } = storeToRefs(userInfoStore);
+const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
@@ -199,7 +199,7 @@ const chooseCustomer = async (user: any) => {
 
 const initSocket = () => {
   socket.value.on("connect", () => {
-    console.log("connect", socket.value.connected);
+    socket.value.emit("join_chat", userProfile?.value?.id);
   });
   socket.value.io.on("error", () => {
     console.log("socket error");
@@ -217,11 +217,6 @@ const initSocket = () => {
     console.log("message_created", data);
     const { document } = data;
     messagingStore.setChatsLastMessage(document.chat_id as string, document);
-  });
-  socket.value.on("message_updated", (data: any) => {
-    console.log("message_updated", data);
-    // const { id, messages } = data as MessageCreate;
-    // messagingStore.setChatsLastMessage(id, messages[0]);
   });
   socket.value.on("chat_created", (data: any) => {
     console.log("chat_created", data);
