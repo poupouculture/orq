@@ -40,7 +40,7 @@
           }"
           v-model="name"
           @keypress="checkName"
-          @change="changeDuplication"
+          @change="checkDuplication"
         />
 
         <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
@@ -103,7 +103,11 @@
           />
         </div>
 
-        <MediaChooser @updateMedia="updateMedia" v-if="header === 'Media'" />
+        <MediaChooser
+          @updateMedia="updateMedia"
+          :media="media"
+          v-if="header === 'MEDIA'"
+        />
 
         <div class="label flex flex-col">
           <p class="text-xl">Body</p>
@@ -366,17 +370,23 @@ onMounted(async () => {
       ? languageOptions[languageCodes.indexOf(tempData.language)]
       : tempData.language;
 
-    updateHeader(headerComponent?.format);
-    if (header.value?.toUpperCase() === "TEXT") {
-      headerMessage.value = headerComponent?.text;
+    const medias = ["VIDEO", "IMAGE", "DOCUMENT"];
+    if (medias.includes(headerComponent?.format)) {
+      updateHeader("MEDIA");
+      media.value = headerComponent?.format;
     } else {
-      media.value = headerComponent?.text;
+      updateHeader("TEXT");
+      headerMessage.value = headerComponent?.text;
     }
 
     bodyMessage.value =
       bodyComponent?.text === undefined ? "" : bodyComponent?.text;
 
     bodyMessageChange();
+
+    if (bodyComponent?.example?.body_text) {
+      customVariables.value = bodyComponent?.example?.body_text[0];
+    }
 
     footerMessage.value = footerComponent?.text;
     isApproved.value = tempData.is_approved ? "Yes" : "No";
@@ -491,7 +501,7 @@ const checkName = (event) => {
   }
 };
 
-const changeDuplication = () => {
+const checkDuplication = () => {
   isShowDuplicateName.value = storedTemplateNames.value.includes(name.value);
 };
 
@@ -562,9 +572,27 @@ const submitGeneralInformation = () => {
       if (header.value.toUpperCase() === "TEXT") {
         headerComponent.text = headerMessage.value;
       } else {
-        headerComponent.example = {
-          header_handle: ["https://www.youtube.com"],
-        };
+        if (media.value.toUpperCase() === "VIDEO") {
+          headerComponent.example = {
+            header_handle: [
+              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            ],
+          };
+        }
+        if (media.value.toUpperCase() === "IMAGE") {
+          headerComponent.example = {
+            header_handle: [
+              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            ],
+          };
+        }
+        if (media.value.toUpperCase() === "DOCUMENT") {
+          headerComponent.example = {
+            header_handle: [
+              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            ],
+          };
+        }
       }
 
       componentsFormatted.push(headerComponent);
@@ -596,7 +624,7 @@ const submitGeneralInformation = () => {
   console.log({
     name: name.value,
     is_approved: false,
-    category: "conversation",
+    category: "MARKETING",
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
@@ -616,7 +644,7 @@ const submitGeneralInformation = () => {
   emit("submitGeneralInformation", {
     name: name.value,
     is_approved: false,
-    category: "conversation",
+    category: "MARKETING",
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
@@ -626,6 +654,7 @@ const submitGeneralInformation = () => {
     top_block_reason: replied.value,
     json: {
       name: name.value,
+      category: "MARKETING",
       language: formattedValueForEmit("language"),
       components: formattedValueForEmit("components"),
     },
