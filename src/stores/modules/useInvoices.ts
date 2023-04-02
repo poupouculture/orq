@@ -153,7 +153,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
     getTax: (state) => {
       // var tax = (PRICE / 100) * TAX PRECENTAGE
-      if (state.invoice.tax.length === 0) return;
+      if (state.invoice.tax.length === 0) return 0;
 
       const totalPrice = state.invoice.items.reduce(
         (accumulator, currentValue) =>
@@ -261,6 +261,13 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
     deleteDiscount() {
       this.$state.invoice.discount = [];
+    },
+    deleteTax(index: number) {
+      this.$state.invoice.tax.splice(index, 1);
+    },
+    editTax(index: number, newTax: any) {
+      this.$state.invoice.tax[index].name = newTax.name;
+      this.$state.invoice.tax[index].value = newTax.value;
     },
   },
 });

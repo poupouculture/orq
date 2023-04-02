@@ -265,10 +265,54 @@ const editDiscount = (discount: number) => {
                 </p>
               </div>
 
-              <div class="col-span-1 text-center">
+              <div class="col-span-1 text-center relative">
                 <p class="font-extralight text-[#2E2E3A] text-xs">
                   {{ item.taxPrice.label }}
                 </p>
+
+                <div class="absolute -top-1 -right-4">
+                  <q-icon name="edit" class="cursor-pointer text-primary">
+                    <q-menu anchor="bottom right" self="top end">
+                      <q-banner class="bg-[#4B44F6]/10 p-4" dense rounded>
+                        <q-input
+                          class="bg-white rounded-xl mt-3"
+                          dense
+                          v-model="item.name"
+                          outlined
+                          type="text"
+                          placeholder="Tax"
+                        />
+                        <q-input
+                          class="bg-white rounded-xl mt-3"
+                          dense
+                          v-model="item.value"
+                          outlined
+                          type="number"
+                          placeholder="Value"
+                        />
+
+                        <div class="flex mt-3 justify-end gap-3">
+                          <button
+                            class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            @click="invoice.editTax(index, item)"
+                            class="rounded-lg py-1 px-2 text-white bg-primary"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </q-banner>
+                    </q-menu>
+                  </q-icon>
+                  <q-icon
+                    name="delete"
+                    @click="invoice.deleteTax(index)"
+                    class="cursor-pointer text-red-500"
+                  />
+                </div>
               </div>
             </div>
 
