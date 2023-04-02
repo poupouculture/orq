@@ -269,6 +269,17 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       this.$state.invoice.tax[index].name = newTax.name;
       this.$state.invoice.tax[index].value = newTax.value;
     },
+    addItems() {
+      this.$state.invoice.items.push({
+        item: "Helo",
+        qty: 250,
+        rate: 5.0,
+        amount: {
+          label: "",
+          totalPrice: 0,
+        },
+      });
+    },
   },
 });
 

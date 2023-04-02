@@ -11,6 +11,7 @@ const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 const customDefault = reactive(getInvoice.value.optional.customField);
 const memo = reactive(getInvoice.value.optional.memo);
 const footer = reactive(getInvoice.value.optional.footer);
+const addItem = ref(false);
 const newTax = reactive({
   name: "",
   value: "",
@@ -53,6 +54,16 @@ const addTax = () => {
   invoice.addTax(newTax);
   newTax.name = "";
   newTax.value = "";
+};
+
+const cancelAddItems = () => {
+  addItem.value = !addItem.value;
+};
+
+const addNewItem = (item: any) => {
+  invoice.addItems(item);
+
+  addItem.value = !addItem.value;
 };
 
 // Validation
@@ -171,69 +182,115 @@ const editDiscount = (discount: number) => {
         </div>
       </div>
 
-      <div class="col-span-2 mt-5">
-        <div class="grid grid-cols-6">
+      <template v-if="getInvoice.items.length > 0">
+        <div class="col-span-2 mt-5">
+          <div class="grid grid-cols-6">
+            <div
+              v-for="(item, index) in labelHead"
+              :key="index"
+              :class="item.class"
+            >
+              <p class="font-semibold text-base">{{ item.label }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-span-2">
           <div
-            v-for="(item, index) in labelHead"
+            v-for="(item, index) in getInvoice.items"
             :key="index"
-            :class="item.class"
+            class="grid grid-cols-6 mb-2"
           >
-            <p class="font-semibold text-base">{{ item.label }}</p>
+            <div class="col-span-3">
+              <p class="font-extralight text-[#2E2E3A] text-xs">
+                {{ item.item }}
+              </p>
+            </div>
+            <div class="col-span-1 text-center">
+              <p class="font-extralight text-[#2E2E3A] text-xs">
+                {{ item.qty }}
+              </p>
+            </div>
+            <div class="col-span-1 text-center">
+              <p class="font-extralight text-[#2E2E3A] text-xs">
+                {{ item.rate }}
+              </p>
+            </div>
+            <div class="col-span-1 text-center">
+              <p class="font-extralight text-[#2E2E3A] text-xs">
+                {{ item.amount.label }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
 
-      <div class="col-span-2">
-        <div
-          v-for="(item, index) in getInvoice.items"
-          :key="index"
-          class="grid grid-cols-6 mb-2"
-        >
-          <div class="col-span-3">
-            <p class="font-extralight text-[#2E2E3A] text-xs">
-              {{ item.item }}
-            </p>
+      <template v-if="addItem">
+        <div class="col-span-2 flex flex-col gap-3">
+          <div
+            v-for="(newItem, index) in getInvoice.form"
+            :key="index"
+            class="grid gap-5 grid-cols-6"
+          >
+            <div class="col-span-3">
+              <q-input
+                v-model="newItem.description"
+                placeholder="Add Description"
+                dense
+                outlined
+                :rules="required"
+              />
+            </div>
+            <div class="col-span-1 text-center px-2">
+              <q-input
+                v-model="newItem.qty"
+                placeholder="0"
+                dense
+                outlined
+                :rules="required"
+              />
+            </div>
+            <div class="col-span-1 text-center px-2">
+              <q-input
+                v-model="newItem.rate"
+                placeholder="0"
+                dense
+                outlined
+                :rules="required"
+              />
+            </div>
+            <div class="col-span-1 text-center px-2">
+              <q-input
+                v-model="newItem.amount"
+                placeholder="0"
+                dense
+                outlined
+                :rules="required"
+              />
+            </div>
           </div>
-          <div class="col-span-1 text-center">
-            <p class="font-extralight text-[#2E2E3A] text-xs">{{ item.qty }}</p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-extralight text-[#2E2E3A] text-xs">
-              {{ item.rate }}
-            </p>
-          </div>
-          <div class="col-span-1 text-center">
-            <p class="font-extralight text-[#2E2E3A] text-xs">
-              {{ item.amount.label }}
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div class="col-span-2 flex flex-col gap-3">
-        <div
-          v-for="(newItem, index) in getInvoice.form"
-          :key="index"
-          class="grid gap-5 grid-cols-6"
-        >
-          <div class="col-span-3">
-            <q-input
-              v-model="newItem.description"
-              placeholder="Add Description"
-              dense
-              outlined
-            />
-          </div>
-          <div class="col-span-1 text-center px-2">
-            <q-input v-model="newItem.qty" placeholder="0" dense outlined />
-          </div>
-          <div class="col-span-1 text-center px-2">
-            <q-input v-model="newItem.rate" placeholder="0" dense outlined />
-          </div>
-          <div class="col-span-1 text-center px-2">
-            <q-input v-model="newItem.amount" placeholder="0" dense outlined />
+          <div class="flex px-2 mt-3 gap-3 justify-end">
+            <button
+              @click="cancelAddItems"
+              class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+            >
+              Cancel
+            </button>
+            <button
+              @click="addNewItem(newItem)"
+              class="rounded-lg py-1 px-2 text-white bg-primary"
+            >
+              Save
+            </button>
           </div>
         </div>
+      </template>
+
+      <div v-else>
+        <q-btn size="sm" @click="addItem = !addItem" color="primary" class="">
+          Add item
+        </q-btn>
       </div>
     </div>
 
