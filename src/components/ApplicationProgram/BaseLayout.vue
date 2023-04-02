@@ -571,30 +571,29 @@ const submitGeneralInformation = () => {
 
       if (header.value.toUpperCase() === "TEXT") {
         headerComponent.text = headerMessage.value;
+      } else {
+        if (media.value.toUpperCase() === "VIDEO") {
+          headerComponent.example = {
+            header_handle: [
+              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            ],
+          };
+        }
+        if (media.value.toUpperCase() === "IMAGE") {
+          headerComponent.example = {
+            header_handle: [
+              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            ],
+          };
+        }
+        if (media.value.toUpperCase() === "DOCUMENT") {
+          headerComponent.example = {
+            header_handle: [
+              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            ],
+          };
+        }
       }
-      // else {
-      //   if (media.value.toUpperCase() === "VIDEO") {
-      //     headerComponent.example = {
-      //       video: [
-      //         "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      //       ],
-      //     };
-      //   }
-      //   if (media.value.toUpperCase() === "IMAGE") {
-      //     headerComponent.example = {
-      //       image: [
-      //         "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      //       ],
-      //     };
-      //   }
-      //   if (media.value.toUpperCase() === "DOCUMENT") {
-      //     headerComponent.example = {
-      //       document: [
-      //         "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      //       ],
-      //     };
-      //   }
-      // }
 
       componentsFormatted.push(headerComponent);
 
@@ -625,7 +624,7 @@ const submitGeneralInformation = () => {
   console.log({
     name: name.value,
     is_approved: false,
-    category: "TRANSACTIONAL",
+    category: "MARKETING",
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
@@ -635,7 +634,7 @@ const submitGeneralInformation = () => {
     top_block_reason: replied.value,
     json: {
       name: name.value,
-      category: "TRANSACTIONAL",
+      category: "MARKETING",
       language: formattedValueForEmit("language"),
       components: formattedValueForEmit("components"),
     },
@@ -645,7 +644,7 @@ const submitGeneralInformation = () => {
   emit("submitGeneralInformation", {
     name: name.value,
     is_approved: false,
-    category: "TRANSACTIONAL",
+    category: "MARKETING",
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
@@ -655,7 +654,7 @@ const submitGeneralInformation = () => {
     top_block_reason: replied.value,
     json: {
       name: name.value,
-      category: "TRANSACTIONAL",
+      category: "MARKETING",
       language: formattedValueForEmit("language"),
       components: formattedValueForEmit("components"),
     },
