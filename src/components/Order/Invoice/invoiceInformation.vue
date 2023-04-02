@@ -51,7 +51,15 @@ watchEffect(() => {
 
 const addTax = () => {
   invoice.addTax(newTax);
+  newTax.name = "";
+  newTax.value = "";
 };
+
+// Validation
+
+const number = reactive([
+  (val) => (val !== null && val !== "") || "Please type Percentage",
+]);
 
 const addDiscount = () => {
   invoice.addDiscount(discountPercentage.value);
@@ -289,10 +297,13 @@ const editDiscount = (discount: number) => {
                           outlined
                           type="number"
                           placeholder="Value"
+                          lazy-rules
+                          :rules="number"
                         />
 
                         <div class="flex mt-3 justify-end gap-3">
                           <button
+                            v-close-popup
                             class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
                           >
                             Cancel
@@ -335,10 +346,13 @@ const editDiscount = (discount: number) => {
                       outlined
                       type="text"
                       placeholder="Value"
+                      lazy-rules
+                      :rules="number"
                     />
 
                     <div class="flex mt-3 justify-end gap-3">
                       <button
+                        v-close-popup
                         class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
                       >
                         Cancel
@@ -442,10 +456,13 @@ const editDiscount = (discount: number) => {
                       outlined
                       type="number"
                       placeholder="Percentage"
+                      lazy-rules
+                      :rules="number"
                     />
 
                     <div class="flex mt-3 justify-end gap-3">
                       <button
+                        v-close-popup
                         class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
                       >
                         Cancel
@@ -565,6 +582,7 @@ const editDiscount = (discount: number) => {
             />
             <div class="flex justify-end gap-3">
               <button
+                v-close-popup
                 class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
               >
                 Cancel
@@ -597,6 +615,7 @@ const editDiscount = (discount: number) => {
             />
             <div class="flex justify-end gap-3">
               <button
+                v-close-popup
                 class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
               >
                 Cancel
@@ -629,6 +648,7 @@ const editDiscount = (discount: number) => {
             />
             <div class="flex justify-end gap-3">
               <button
+                v-close-popup
                 class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
               >
                 Cancel
