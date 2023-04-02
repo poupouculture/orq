@@ -387,7 +387,7 @@ const mappingCustomerGroups = () => {
           </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
+          <!-- <div class="col">
             <p class="label-style">Contact Number</p>
             <q-input
               v-model="idNumber"
@@ -398,7 +398,7 @@ const mappingCustomerGroups = () => {
               :disable="mode == 'show'"
               dense
             />
-          </div>
+          </div> -->
           <div class="col">
             <p class="label-style">Customer Code</p>
             <q-input
