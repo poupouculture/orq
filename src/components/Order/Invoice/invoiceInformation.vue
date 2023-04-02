@@ -58,7 +58,11 @@ const addTax = () => {
 // Validation
 
 const number = reactive([
-  (val) => (val !== null && val !== "") || "Please type Percentage",
+  (val: any) => (val !== null && val !== "") || "Please type Percentage",
+]);
+
+const required = reactive([
+  (val: string) => (val !== null && val !== "") || "This field is required",
 ]);
 
 const addDiscount = () => {
@@ -336,6 +340,8 @@ const editDiscount = (discount: number) => {
                       dense
                       v-model="newTax.name"
                       outlined
+                      lazy-rules
+                      :rules="required"
                       type="text"
                       placeholder="Tax"
                     />
