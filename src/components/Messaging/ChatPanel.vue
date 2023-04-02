@@ -98,15 +98,10 @@ import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat } from "src/types/MessagingTypes";
+import { IChat, SocketMessage } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-
-interface MessageCreate {
-  id: string;
-  messages: any[];
-}
 
 const ChatToggleLabel = {
   SHOW: {
@@ -145,7 +140,7 @@ type ChatToggleType = {
 };
 const seachText = ref("");
 const userInfoStore = useUserInfoStore();
-const { userInfo } = storeToRefs(userInfoStore);
+const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
@@ -178,7 +173,9 @@ watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
 });
 
-socket.value = io("https://beams.synque.ca", {
+const socketUrl = process.env.SOCKETS_URL as string;
+console.log(socketUrl);
+socket.value = io(socketUrl, {
   reconnectionDelayMax: 30000,
   extraHeaders: {
     authorization: `${userInfo.value.access_token}`,
@@ -201,33 +198,34 @@ const chooseCustomer = async (user: any) => {
 };
 
 const initSocket = () => {
-  socket.value.on("connect", () => {
-    console.log("connect", socket.value.connected);
-  });
-  socket.value.io.on("error", () => {
-    console.log("socket error");
-  });
-  socket.value.on("chat_updated", (data: any) => {
-    console.log("chat_updated", data);
-    const chat = chatsList.value.find((chat: IChat) => chat.id === data.id);
-    if (chat) {
-      messagingStore.updateChatsList(chat, data.status);
-    }
-  });
-  socket.value.on("message_created", (data: any) => {
-    console.log("message_created", data);
-    const { id, messages } = data as MessageCreate;
-    messagingStore.setChatsLastMessage(id, messages[0]);
-  });
-  socket.value.on("message_updated", (data: any) => {
-    console.log("message_updated", data);
-    // const { id, messages } = data as MessageCreate;
-    // messagingStore.setChatsLastMessage(id, messages[0]);
-  });
-  socket.value.on("chat_created", (data: any) => {
-    console.log("chat_created", data);
-    messagingStore.chatCreate(data.status, data.id);
-  });
+  try {
+    socket.value.on("connect", () => {
+      socket.value.emit("join_chat", userProfile?.value?.id);
+    });
+    socket.value.io.on("error", () => {
+      console.log("socket error");
+    });
+    socket.value.on("chat_updated", (data: any) => {
+      console.log("chat_updated", data);
+      const chat = chatsList.value.find(
+        (chat: IChat) => chat.id === data.document?.id
+      );
+      if (chat) {
+        messagingStore.updateChatsList(chat, data.update_fields?.status);
+      }
+    });
+    socket.value.on("message_created", (data: SocketMessage) => {
+      console.log("message_created", data);
+      const { document } = data;
+      messagingStore.setChatsLastMessage(document.chat_id as string, document);
+    });
+    socket.value.on("chat_created", async (data: any) => {
+      console.log("chat_created", data);
+      chatsList.value.unshift({ members: "[]", ...data });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 onMounted(() => {
