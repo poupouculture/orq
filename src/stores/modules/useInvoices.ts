@@ -280,6 +280,16 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         },
       });
     },
+    deleteItems(index: number) {
+      this.$state.invoice.items.splice(index, 1);
+    },
+    editItems(index: number, item: any) {
+      this.$state.invoice.items[index].item = item.item;
+      this.$state.invoice.items[index].qty = item.qty;
+      this.$state.invoice.items[index].rate = item.rate;
+      this.$state.invoice.items[index].amount.totalPrice =
+        item.amount.totalPrice;
+    },
   },
 });
 

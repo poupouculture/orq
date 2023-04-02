@@ -211,10 +211,68 @@ const editDiscount = (discount: number) => {
                 {{ item.qty }}
               </p>
             </div>
-            <div class="col-span-1 text-center">
+            <div class="col-span-1 text-center relative">
               <p class="font-extralight text-[#2E2E3A] text-xs">
                 {{ item.rate }}
               </p>
+
+              <div class="absolute -top-1 -right-24 z-50">
+                <q-icon name="edit" class="cursor-pointer text-primary">
+                  <q-menu anchor="bottom right" self="top end">
+                    <q-banner class="bg-[#4B44F6]/10 p-4" dense rounded>
+                      <q-input
+                        class="bg-white rounded-xl mt-3"
+                        dense
+                        v-model="item.item"
+                        outlined
+                        type="text"
+                        placeholder="Item Name"
+                      />
+                      <q-input
+                        class="bg-white rounded-xl mt-3"
+                        dense
+                        v-model="item.qty"
+                        outlined
+                        type="number"
+                        placeholder="Qty"
+                        lazy-rules
+                        :rules="number"
+                      />
+                      <q-input
+                        class="bg-white rounded-xl mt-3"
+                        dense
+                        v-model="item.amount.totalPrice"
+                        outlined
+                        type="number"
+                        placeholder="Rate"
+                        lazy-rules
+                        :rules="number"
+                      />
+
+                      <div class="flex mt-3 justify-end gap-3">
+                        <button
+                          v-close-popup
+                          class="rounded-lg py-1 px-2 border-dotted border-2 text-primary border-primary"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          v-close-popup
+                          @click="invoice.editItems(index, item)"
+                          class="rounded-lg py-1 px-2 text-white bg-primary"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </q-banner>
+                  </q-menu>
+                </q-icon>
+                <q-icon
+                  @click="invoice.deleteItems()"
+                  name="delete"
+                  class="text-red-500 cursor-pointer"
+                />
+              </div>
             </div>
             <div class="col-span-1 text-center">
               <p class="font-extralight text-[#2E2E3A] text-xs">
