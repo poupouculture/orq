@@ -134,12 +134,12 @@ const closeConversation = async () => {
       Loading.show();
       closeConversationLoading.value = true;
       closeChat(chatId);
-      Notify.create({
-        message: "Conversation closed",
-        type: "positive",
-        position: "top",
-        color: "primary",
-      });
+      // Notify.create({
+      //   message: "Conversation closed",
+      //   type: "positive",
+      //   position: "top",
+      //   color: "primary",
+      // });
       closeConversationLoading.value = false;
       messagingStore.setSelectedTab(ChatTypes.CLOSED);
 

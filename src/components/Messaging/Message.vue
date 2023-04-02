@@ -449,16 +449,16 @@ const activateChat = async () => {
     const userId: any | null = userInfoStore.getUserProfile;
     Loading.show();
     await updateChatStatus(chatId, userId?.id);
-    Notify.create({
-      position: "top",
-      message:
-        "The chat has been taken by you, now you can message the customer",
-      color: "primary",
-      type: "positive",
-    });
+    // Notify.create({
+    //   position: "top",
+    //   message:
+    //     "The chat has been taken by you, now you can message the customer",
+    //   color: "primary",
+    //   type: "positive",
+    // });
     Loading.hide();
     messagingStore.setSelectedTab(ChatTypes.ONGOING);
-    messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
+    // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
     // emit("newChatCreated", ChatTypes.ONGOING);
   } catch (e) {
     Loading.hide();
