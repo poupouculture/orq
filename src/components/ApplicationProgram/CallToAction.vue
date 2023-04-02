@@ -108,6 +108,8 @@ onMounted(() => {
     actionText.value = props.action.label;
     actionCountry.value = props.action.country;
     actionValue.value = props.action.value;
+
+    handleAllChange();
   }
 });
 </script>

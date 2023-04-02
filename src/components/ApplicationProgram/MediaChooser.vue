@@ -100,8 +100,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, onUpdated, ref } from "vue";
 const emit = defineEmits(["updateMedia"]);
+
+const props = defineProps({
+  media: {
+    type: String,
+    default: () => "",
+  },
+});
 
 const media = ref(null);
 
@@ -109,4 +116,17 @@ const setMedia = (value) => {
   media.value = value;
   emit("updateMedia", value);
 };
+
+onMounted(() => {
+  if (props.media !== undefined && props.media !== null) {
+    setMedia(props.media.toLowerCase());
+  }
+});
+
+onUpdated(() => {
+  console.log(props.media);
+  if (props.media !== undefined && props.media !== null) {
+    setMedia(props.media.toLowerCase());
+  }
+});
 </script>
