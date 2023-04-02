@@ -30,3 +30,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 .vercel
+
+# environment files
+.env.*
