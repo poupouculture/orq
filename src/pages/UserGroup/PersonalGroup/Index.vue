@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive, computed, ref } from "vue";
+import { onMounted, reactive, computed, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
@@ -7,17 +7,32 @@ import { PersonalItem } from "src/types/PersonalGroups";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
+import { deleteRelationship, getRelationship } from "src/api/PersonalGroup";
+enum DrawerTypeEnum {
+  MAP = "map",
+  DELETE = "delete",
+}
 
 // State
 const personalGroupStore = userPersonalGroup();
 const { personalGroups, customerGroups } = storeToRefs(personalGroupStore);
-
+const drawerLis = reactive([
+  {
+    text: "Map Customer Group",
+    type: DrawerTypeEnum.MAP,
+  },
+  {
+    text: "Delete Customer Relationship",
+    type: DrawerTypeEnum.DELETE,
+  },
+]);
 const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
 const userGroupId = ref("");
 const tableSelected: Ref<PersonalItem[]> = ref([]);
 const drawer = ref(false);
+const drawerType = ref("");
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -41,7 +56,9 @@ const selectedUserGroup = computed(() => {
 
 const remainingGroups = computed(() =>
   customerGroups.value.filter(
-    (item) => !selectedUserGroup.value.includes(item.id)
+    (item) =>
+      selectedUserGroup.value.includes(item.id) ===
+      (drawerType.value === DrawerTypeEnum.DELETE)
   )
 );
 
@@ -67,9 +84,10 @@ const changePage = (val: number) => {
   getPersonalGroupData();
 };
 
-const openDrawer = (id: string) => {
+const openDrawer = (id: string, type: string) => {
   userGroupId.value = id;
-  drawer.value = !drawer.value;
+  drawer.value = true;
+  drawerType.value = type;
 };
 
 const closeDrawer = () => {
@@ -79,6 +97,10 @@ const closeDrawer = () => {
 };
 
 const newRelations = async () => {
+  if (drawerType.value === DrawerTypeEnum.DELETE) {
+    deleteRelations();
+    return;
+  }
   await personalGroupStore.addRelation(
     userGroupId.value,
     tableSelected.value[0].id
@@ -91,13 +113,29 @@ const newRelations = async () => {
     color: "primary",
   });
   // if (!data.status) {
-  //   Notify.create({
-  //     message: data.message,
-  //     type: "negative",
-  //     color: "purple",
-  //     position: "top",
-  //   });
+  // Notify.create({
+  //   message: data.message,
+  //   type: "negative",
+  //   color: "purple",
+  //   position: "top",
+  // });
   // }
+};
+
+const deleteRelations = async () => {
+  const { data } = await getRelationship(userGroupId.value);
+  const { id } =
+    data.find(
+      (item: any) => item.customer_groups_id === tableSelected.value[0]?.id
+    ) || {};
+  await deleteRelationship(id);
+  await getPersonalGroupData();
+  Notify.create({
+    message: "success",
+    type: "positive",
+    color: "primary",
+    position: "top",
+  });
 };
 
 const getPersonalGroupData = async () => {
@@ -138,6 +176,10 @@ const headerColumns = [
     classes: "text-black capitalize",
   },
 ];
+
+watch(drawerType, () => {
+  tableSelected.value = [];
+});
 </script>
 
 <template>
@@ -206,8 +248,13 @@ const headerColumns = [
                         auto-close
                       >
                         <q-list>
-                          <q-item clickable @click="openDrawer(group.id)">
-                            <q-item-section>Map Customer Group</q-item-section>
+                          <q-item
+                            v-for="item in drawerLis"
+                            :key="item.type"
+                            clickable
+                            @click="openDrawer(group.id, item.type)"
+                          >
+                            <q-item-section>{{ item.text }}</q-item-section>
                           </q-item>
                         </q-list>
                       </q-menu>
@@ -276,11 +323,7 @@ const headerColumns = [
       <div class="h-full flex justify-center items-center">
         <div class="h-[90vh] w-full flex flex-col p-10">
           <div class="flex items-center justify-between">
-            <SearchTableInput
-              :loading="searchLoading"
-              @search="searchHandler"
-              @reset="resetSearch"
-            />
+            <SearchTableInput :loading="searchLoading" />
             <q-btn
               :disable="tableSelected.length <= 0"
               @click="newRelations"
