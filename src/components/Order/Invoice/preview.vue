@@ -213,7 +213,15 @@ const {
         </span>
       </div>
 
-      <div class=""></div>
+      <div
+        v-if="getInvoice.optional.footer.option"
+        class="flex gap-2 mt-3 flex-col"
+      >
+        <p class="font-semibold text-sm">Footer</p>
+        <span class="text-xs text-gray-500">
+          {{ getInvoice.optional.footer.value }}
+        </span>
+      </div>
 
       <div class="flex mt-3 justify-between">
         <div class="font-bold gap-10 flex flex-col py-3">
@@ -222,7 +230,7 @@ const {
           </div>
 
           <div class="text-sm text-slate-400 border-t">
-            <p class="pt-2">Buyer company name</p>
+            <p class="pt-2">{{ getCompany.companyName }}</p>
           </div>
         </div>
 
@@ -232,7 +240,7 @@ const {
           </div>
 
           <div class="text-sm text-slate-400 border-t">
-            <p class="pt-2">Supplier company name</p>
+            <p class="pt-2">{{ getCompany.companyName }}</p>
           </div>
         </div>
       </div>

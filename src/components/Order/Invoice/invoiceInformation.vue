@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watchEffect } from "vue";
+import { ref, reactive, watchEffect, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
 
@@ -10,7 +10,6 @@ const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 // Optional State
 const customDefault = reactive(getInvoice.value.optional.customField);
 const memo = reactive(getInvoice.value.optional.memo);
-const footer = reactive(getInvoice.value.optional.footer);
 const addItem = ref(false);
 const newTax = reactive({
   name: "",
@@ -38,11 +37,13 @@ const labelHead = ref([
 
 //  Watch
 watchEffect(() => {
+  // getInvoice.optional.footer.option
   if (customDefault.option) customDefault.active = true;
   else customDefault.active = false;
 
-  if (footer.option) footer.active = true;
-  else footer.active = false;
+  if (getInvoice.value.optional.footer.option)
+    getInvoice.value.optional.footer.active = true;
+  else getInvoice.value.optional.footer.active = false;
 
   if (memo.option) memo.active = true;
   else memo.active = false;
@@ -83,6 +84,12 @@ const addDiscount = () => {
 const editDiscount = (discount: number) => {
   invoice.editDiscount(discount);
 };
+
+onMounted(() => {
+  const getPanel = document.querySelector(".q-panel.scroll");
+
+  getPanel?.classList.remove("scroll");
+});
 </script>
 
 <template>
@@ -749,20 +756,24 @@ const editDiscount = (discount: number) => {
         </q-menu>
       </div>
       <div class="flex items-center">
-        <q-checkbox size="xs" val="footer" v-model="footer.option" />
+        <q-checkbox
+          size="xs"
+          :val="true"
+          v-model="getInvoice.optional.footer.option"
+        />
         <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
-        <q-menu no-parent-event v-model="footer.active">
+        <q-menu no-parent-event v-model="getInvoice.optional.footer.active">
           <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
             <label>Footer</label>
             <q-input
               class="rounded-xl bg-white mt-3"
               outlined
-              v-model="footer.value"
+              v-model="getInvoice.optional.footer.value"
               type="textarea"
               placeholder="Some Text"
             />
             <q-checkbox
-              v-model="footer.active"
+              v-model="getInvoice.optional.footer.active"
               class="text-[#94A3B8] text-xs"
               size="xs"
               label="set as default for future invoices"
@@ -774,7 +785,10 @@ const editDiscount = (discount: number) => {
               >
                 Cancel
               </button>
-              <button class="rounded-lg py-1 px-2 text-white bg-primary">
+              <button
+                v-close-popup
+                class="rounded-lg py-1 px-2 text-white bg-primary"
+              >
                 Save
               </button>
             </div>
@@ -796,5 +810,9 @@ const editDiscount = (discount: number) => {
 <style scoped>
 :deep(.tax-selected div) {
   min-width: 100px;
+}
+
+:deep(.q-panel) {
+  overflow-x: hidden !important;
 }
 </style>
