@@ -95,7 +95,7 @@ onMounted(() => {
 <template>
   <div class="mt-5">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Invoice Number</p>
           <q-input
@@ -106,7 +106,7 @@ onMounted(() => {
           />
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Status</p>
           <q-select
@@ -123,7 +123,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Date Issue</p>
           <q-input
@@ -151,7 +151,7 @@ onMounted(() => {
           </q-input>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Due Date</p>
           <q-input
@@ -180,7 +180,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class="col-span-1" v-if="customDefault.option">
+      <div class="col-span-2 sm:col-span-1" v-if="customDefault.option">
         <div class="w-full">
           <p class="label-style capitalize mb-2">
             {{ customDefault.fieldName }}
@@ -652,7 +652,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col mt-4 gap-3">
       <div class="w-full">
         <p class="label-style mb-2">Notes (Optional)</p>
         <q-input
