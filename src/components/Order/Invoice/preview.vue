@@ -214,12 +214,12 @@ const {
       </div>
 
       <div
-        v-if="getInvoice.optional.footer.option"
+        v-if="getInvoice.optional.memo.option"
         class="flex gap-2 mt-3 flex-col"
       >
-        <p class="font-semibold text-sm">Footer</p>
+        <p class="font-semibold text-sm">Memo</p>
         <span class="text-xs text-gray-500">
-          {{ getInvoice.optional.footer.value }}
+          {{ getInvoice.optional.memo.memo }}
         </span>
       </div>
 
@@ -243,6 +243,12 @@ const {
             <p class="pt-2">{{ getCompany.companyName }}</p>
           </div>
         </div>
+      </div>
+
+      <div v-if="getInvoice.optional.footer.option">
+        <p class="text-xs text-gray-500">
+          {{ getInvoice.optional.footer.value }}
+        </p>
       </div>
     </div>
   </div>
