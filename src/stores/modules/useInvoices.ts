@@ -52,24 +52,24 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         setDefault: false,
       },
       items: [
-        {
-          item: "hand Bag",
-          qty: 25,
-          rate: 2.0,
-          amount: {
-            label: "",
-            totalPrice: 0,
-          },
-        },
-        {
-          item: "hand Bag 2",
-          qty: 250,
-          rate: 5.0,
-          amount: {
-            label: "",
-            totalPrice: 0,
-          },
-        },
+        // {
+        //   item: "hand Bag",
+        //   qty: 25,
+        //   rate: 2.0,
+        //   amount: {
+        //     label: "",
+        //     totalPrice: 0,
+        //   },
+        // },
+        // {
+        //   item: "hand Bag 2",
+        //   qty: 250,
+        //   rate: 5.0,
+        //   amount: {
+        //     label: "",
+        //     totalPrice: 0,
+        //   },
+        // },
       ],
       optional: {
         notes: "Please check your email",

@@ -352,7 +352,7 @@ onMounted(() => {
         </div>
       </template>
 
-      <div v-else>
+      <div class="col-span-2" v-else>
         <q-btn size="sm" @click="addItem = !addItem" color="primary" class="">
           Add item
         </q-btn>
