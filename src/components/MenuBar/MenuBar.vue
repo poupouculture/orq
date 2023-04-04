@@ -62,7 +62,9 @@
                 <q-item-section avatar>
                   <q-icon name="business" />
                 </q-item-section>
-                <q-item-section>About WABA</q-item-section>
+                <q-item-section href="https://synque.ca/chaQ" target="_blank"
+                  >About WABA</q-item-section
+                >
               </q-item>
 
               <q-separator />
