@@ -101,7 +101,7 @@
                 @click="selectCustomer(customer)"
               >
                 <q-item-section>
-                  {{ customer.first_name }} {{ customer.last_name }} -
+                  {{ customer.customer_company_name_en }} -
                   {{ customer.customer_code }}
                 </q-item-section>
               </q-item>
@@ -164,6 +164,7 @@ const searchHandler = debounce(async function () {
     if (data.data.length > 0) {
       openSearchResult.value = true;
       customers.value = data.data;
+      console.log(222, data.data);
     } else {
       Notify.create({
         message: "No customer found.",
