@@ -40,7 +40,7 @@
           <q-separator />
           <div>
             <q-list>
-              <q-item clickable v-close-popup>
+              <q-item to="/me" clickable v-close-popup>
                 <q-item-section avatar>
                   <q-icon name="assignment" />
                 </q-item-section>
@@ -58,13 +58,16 @@
                 </q-item-section>
                 <q-item-section>Privacy</q-item-section>
               </q-item>
-              <q-item clickable v-close-popup>
+              <q-item
+                href="https://synque.ca/chaQ"
+                target="_blank"
+                clickable
+                v-close-popup
+              >
                 <q-item-section avatar>
                   <q-icon name="business" />
                 </q-item-section>
-                <q-item-section href="https://synque.ca/chaQ" target="_blank"
-                  >About WABA</q-item-section
-                >
+                <q-item-section> About WABA </q-item-section>
               </q-item>
 
               <q-separator />
