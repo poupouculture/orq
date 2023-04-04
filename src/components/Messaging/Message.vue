@@ -28,27 +28,51 @@
         icon="close"
       />
     </header>
-    <div class="p-2 text-gray-400">Members</div>
-    <div class="flex justify-between p-2">
-      <div class="flex">
-        <div
-          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
-          v-for="(member, index) of members.slice(0, 3)"
-          :key="index"
-        >
-          {{ initialName(member?.name) }}
+    <template v-if="isBot">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3 cursor-pointer p-2">
+          <q-avatar size="md" class="rounded-avatar">
+            <img src="~assets/images/bot.svg" />
+          </q-avatar>
+          <div class="flex flex-col">
+            <p class="font-semibold text-lg">Chatbot</p>
+            <p class="flex items-center text-gray-500">
+              <q-badge
+                class="mr-1 scale-75 origin-center"
+                rounded
+                color="green"
+              />
+              oneline
+            </p>
+          </div>
         </div>
-        <div
-          class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
-          v-if="members.length > 3"
-        >
-          {{ members.length - 3 }} +
-        </div>
+        <q-btn color="primary" label="End Bot" @click="oncloseBot" />
       </div>
-      <ChatConversationButton
-        v-if="getSelectedChat.status !== ChatTypes.CLOSED"
-      />
-    </div>
+    </template>
+    <template v-else>
+      <div class="p-2 text-gray-400">Members</div>
+      <div class="flex justify-between p-2">
+        <div class="flex">
+          <div
+            class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
+            v-for="(member, index) of members.slice(0, 3)"
+            :key="index"
+          >
+            {{ initialName(member?.name) }}
+          </div>
+          <div
+            class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
+            v-if="members.length > 3"
+          >
+            {{ members.length - 3 }} +
+          </div>
+        </div>
+        <ChatConversationButton
+          v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+        />
+      </div>
+    </template>
+
     <q-separator class="mx-2" size="1px" inset />
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full">
@@ -115,9 +139,23 @@
             >{{ time }} ms</span
           >
         </div>
+
         <div class="row justify-end">
           <q-btn flat round size="md" class="q-mt-md">
             <img src="~assets/images/bot.svg" />
+            <q-menu>
+              <q-list dense style="min-width: 100px">
+                <q-item
+                  v-for="item in botList"
+                  :key="item.text"
+                  clickable
+                  v-close-popup
+                  @click="selectBot(item)"
+                >
+                  <q-item-section>{{ item.name }}</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
           <q-btn
             flat
@@ -204,6 +242,7 @@ import {
   watch,
   nextTick,
   onBeforeUnmount,
+  onMounted,
   reactive,
   inject,
 } from "vue";
@@ -222,7 +261,13 @@ import {
   uuid,
   blobToBase64,
 } from "src/utils/trim-word";
-import { updateChatStatus, uploadMedia } from "src/api/messaging";
+import {
+  updateChatStatus,
+  uploadMedia,
+  chatbots,
+  initiateBot,
+  closeBot,
+} from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import ChatConversationButton from "./ChatConversationButton.vue";
 import {
@@ -265,6 +310,8 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
+const isBot = ref(false);
+const botList: Ref<any[]> = ref([]);
 const {
   getSelectedChat,
   getSelectedChatId,
@@ -322,11 +369,15 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   done(!hasmore);
 };
 
+watch(getSelectedChatId, () => {
+  messagingStore.setReplayMessage();
+  message.value = "";
+  isBot.value = false;
+});
+
 watch(
   () => getSelectedChat.value?.last_message,
   async (val) => {
-    message.value = "";
-    messagingStore.setReplayMessage();
     const createDate = val?.date_created;
     if (createDate) {
       isChatExpired.value =
@@ -614,6 +665,26 @@ const imageSizeFilter = (files: any[]) => {
 
   return filterFiles;
 };
+
+const selectBot = async (bot: any) => {
+  isBot.value = !isBot.value;
+  initiateBot(getSelectedChatId.value, bot.trigger_intent);
+};
+
+const getChatbots = async () => {
+  const { data } = await chatbots();
+  botList.value = data;
+};
+
+const oncloseBot = async () => {
+  const data = await closeBot(getSelectedChatId.value);
+  isBot.value = false;
+  console.log(data);
+};
+
+onMounted(() => {
+  getChatbots();
+});
 
 onBeforeUnmount(() => {
   recClose();
