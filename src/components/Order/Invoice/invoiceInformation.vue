@@ -9,6 +9,8 @@ const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
 
 // Optional State
 const customDefault = reactive(getInvoice.value.optional.customField);
+const memo = reactive(getInvoice.value.optional.memo);
+const footer = reactive(getInvoice.value.optional.footer);
 const addItem = ref(false);
 const newTax = reactive({
   name: "",
@@ -36,17 +38,14 @@ const labelHead = ref([
 
 //  Watch
 watchEffect(() => {
-  // getInvoice.optional.footer.option
   if (customDefault.option) customDefault.active = true;
   else customDefault.active = false;
 
-  if (getInvoice.value.optional.footer.option)
-    getInvoice.value.optional.footer.active = true;
-  else getInvoice.value.optional.footer.active = false;
+  if (footer.option) footer.active = true;
+  else footer.active = false;
 
-  if (getInvoice.value.optional.memo.option)
-    getInvoice.value.optional.memo.active = true;
-  else getInvoice.value.optional.footer.active = false;
+  if (memo.option) memo.active = true;
+  else memo.active = false;
 });
 
 // Methods
@@ -715,32 +714,32 @@ onMounted(() => {
               >
                 Cancel
               </button>
-              <button class="rounded-lg py-1 px-2 text-white bg-primary">
+              <button
+                v-close-popup
+                class="rounded-lg py-1 px-2 text-white bg-primary"
+              >
                 Save
               </button>
             </div>
           </q-banner>
         </q-menu>
       </div>
+
       <div class="flex items-center">
-        <q-checkbox
-          size="xs"
-          val="memo"
-          v-model="getInvoice.optional.memo.option"
-        />
+        <q-checkbox size="xs" val="memo" v-model="memo.option" />
         <span class="text-sm font-normal text-[#9A9AAF]"> Memo </span>
-        <q-menu no-parent-event v-model="getInvoice.optional.memo.active">
+        <q-menu no-parent-event v-model="memo.active">
           <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
             <label>Memo</label>
             <q-input
               class="rounded-xl bg-white mt-3"
               outlined
-              v-model="getInvoice.optional.memo.memo"
+              v-model="memo.memo"
               type="textarea"
               placeholder="Some Text"
             />
             <q-checkbox
-              v-model="getInvoice.optional.memo.setDefault"
+              v-model="memo.setDefault"
               class="text-[#94A3B8] text-xs"
               size="xs"
               label="set as default for future invoices"
@@ -763,24 +762,20 @@ onMounted(() => {
         </q-menu>
       </div>
       <div class="flex items-center">
-        <q-checkbox
-          size="xs"
-          :val="true"
-          v-model="getInvoice.optional.footer.option"
-        />
+        <q-checkbox size="xs" :val="true" v-model="footer.option" />
         <span class="text-sm font-normal text-[#9A9AAF]"> Footer </span>
-        <q-menu no-parent-event v-model="getInvoice.optional.footer.active">
+        <q-menu no-parent-event v-model="footer.active">
           <q-banner dense rounded class="w-64 bg-[#4B44F6]/10 p-4">
             <label>Footer</label>
             <q-input
               class="rounded-xl bg-white mt-3"
               outlined
-              v-model="getInvoice.optional.footer.value"
+              v-model="footer.value"
               type="textarea"
               placeholder="Some Text"
             />
             <q-checkbox
-              v-model="getInvoice.optional.footer.active"
+              v-model="footer.active"
               class="text-[#94A3B8] text-xs"
               size="xs"
               label="set as default for future invoices"

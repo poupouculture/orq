@@ -70,6 +70,17 @@ const {
               <span class=""> {{ getCustomer.phone }} </span>
             </div>
           </div>
+          <div
+            v-if="getInvoice.optional.customField.option"
+            class="flex gap-2 flex-col"
+          >
+            <p class="font-semibold capitalize text-sm">
+              {{ getInvoice.optional.customField.fieldName }}
+            </p>
+            <span id="name" class="text-xs text-gray-500">
+              {{ getInvoice.optional.customField.fieldValue }}
+            </span>
+          </div>
         </div>
       </div>
 
