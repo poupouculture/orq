@@ -46,7 +46,6 @@
                       {{ props.row.first_name }}
                       {{ props.row.last_name }}
                     </p>
-                    <p class="subheadingtext">2022-8-10</p>
                   </div>
                 </div>
                 <p></p>
