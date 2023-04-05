@@ -36,10 +36,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       dateIssue: null,
       dueDate: null,
       discount: [
-        {
-          name: "Discount",
-          value: 20,
-        },
+        // {
+        //   name: "Discount",
+        //   value: 20,
+        // },
       ],
       discountOptions: [
         {
@@ -52,24 +52,24 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         setDefault: false,
       },
       items: [
-        {
-          item: "hand Bag",
-          qty: 25,
-          rate: 2.0,
-          amount: {
-            label: "",
-            totalPrice: 0,
-          },
-        },
-        {
-          item: "hand Bag 2",
-          qty: 250,
-          rate: 5.0,
-          amount: {
-            label: "",
-            totalPrice: 0,
-          },
-        },
+        // {
+        //   item: "hand Bag",
+        //   qty: 25,
+        //   rate: 2.0,
+        //   amount: {
+        //     label: "",
+        //     totalPrice: 0,
+        //   },
+        // },
+        // {
+        //   item: "hand Bag 2",
+        //   qty: 250,
+        //   rate: 5.0,
+        //   amount: {
+        //     label: "",
+        //     totalPrice: 0,
+        //   },
+        // },
       ],
       optional: {
         notes: "Please check your email",
@@ -119,13 +119,17 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           value: 40,
         },
       ],
+      totalPrice: {
+        label: "",
+        value: 0,
+      },
     },
   }),
   getters: {
     getCompany: (state) => state.company,
     getCustomer: (state) => state.customer,
-    getDicount: (state) => {
-      if (state.invoice.discount.length === 0) return;
+    getDiscount: (state) => {
+      if (state.invoice.discount.length === 0) return 0;
 
       const totalPrice = state.invoice.items.reduce(
         (accumulator, currentValue) =>
@@ -149,7 +153,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
     getTax: (state) => {
       // var tax = (PRICE / 100) * TAX PRECENTAGE
-      if (state.invoice.tax.length === 0) return;
+      if (state.invoice.tax.length === 0) return 0;
 
       const totalPrice = state.invoice.items.reduce(
         (accumulator, currentValue) =>
@@ -245,12 +249,48 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
 
       this.$state.invoice.tax.push(newTax);
     },
-  },
-  // actions: {
-  //   taxProccess() {
 
-  //   }
-  // }
+    addDiscount(discount: number) {
+      this.$state.invoice.discount.push({
+        name: "Discount",
+        value: discount,
+      });
+    },
+    editDiscount(discount: number) {
+      this.$state.invoice.discount[0].value = discount;
+    },
+    deleteDiscount() {
+      this.$state.invoice.discount = [];
+    },
+    deleteTax(index: number) {
+      this.$state.invoice.tax.splice(index, 1);
+    },
+    editTax(index: number, newTax: any) {
+      this.$state.invoice.tax[index].name = newTax.name;
+      this.$state.invoice.tax[index].value = newTax.value;
+    },
+    addItems() {
+      this.$state.invoice.items.push({
+        item: "Helo",
+        qty: 250,
+        rate: 5.0,
+        amount: {
+          label: "",
+          totalPrice: 0,
+        },
+      });
+    },
+    deleteItems(index: number) {
+      this.$state.invoice.items.splice(index, 1);
+    },
+    editItems(index: number, item: any) {
+      this.$state.invoice.items[index].item = item.item;
+      this.$state.invoice.items[index].qty = item.qty;
+      this.$state.invoice.items[index].rate = item.rate;
+      this.$state.invoice.items[index].amount.totalPrice =
+        item.amount.totalPrice;
+    },
+  },
 });
 
 export default useInvoiceRecord;
