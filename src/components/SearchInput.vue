@@ -1,9 +1,28 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+interface Props {
+  search: string;
+}
+
+interface Emit {
+  (e: "update:input", value: string): void;
+}
+
+const props = defineProps<Props>();
+defineEmits<Emit>();
+
+const value = ref(props.search);
+</script>
+
 <template>
   <q-input
     placeholder="Search"
     bg-color="dark"
     outlined
     dense
+    v-model="value"
+    @update:model-value="$emit('update:input', value)"
     class="search-field"
   >
     <template v-slot:prepend>
