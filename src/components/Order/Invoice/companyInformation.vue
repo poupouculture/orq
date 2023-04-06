@@ -12,6 +12,7 @@ const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
 const phoneOptions = ref(phone);
 const countryOptions = ref(country);
 const { getCompany } = useInvoice();
+const companyName = ref("");
 
 // Function
 
@@ -61,9 +62,9 @@ const filterCountry = (val: any, update: any) => {
 
         <div class="w-full lg:w-[375px] mt-3 lg:mt-0">
           <p class="label-style mb-2">Company Name</p>
-          <q-input
-            v-model="getCompany.companyName"
+          <q-select
             placeholder="Company Name"
+            v-model="companyName"
             dense
             outlined
           />
