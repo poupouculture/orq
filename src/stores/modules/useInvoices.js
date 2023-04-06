@@ -289,6 +289,8 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
 
         data.forEach((item) => {
           this.$state.allCompanies.push(item);
+
+          console.log(item.customers);
         });
       });
     },
