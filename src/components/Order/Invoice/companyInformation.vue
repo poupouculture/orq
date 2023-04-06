@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<script setup>
+import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
 import { ref } from "vue";
 
@@ -11,12 +12,13 @@ const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
 
 const phoneOptions = ref(phone);
 const countryOptions = ref(country);
-const { getCompany } = useInvoice();
+const invoice = useInvoice();
+const { getCompany, getCompanies } = storeToRefs(invoice);
 const companyName = ref("");
 
 // Function
 
-const filterPhone = (val: any, update: any) => {
+const filterPhone = (val, update) => {
   if (val === "") {
     update(() => {
       phoneOptions.value = phone;
@@ -32,7 +34,7 @@ const filterPhone = (val: any, update: any) => {
   });
 };
 
-const filterCountry = (val: any, update: any) => {
+const filterCountry = (val, update) => {
   if (val === "") {
     update(() => {
       countryOptions.value = country;
@@ -66,6 +68,9 @@ const filterCountry = (val: any, update: any) => {
             placeholder="Company Name"
             v-model="companyName"
             dense
+            :options="getCompanies"
+            option-label="name_english"
+            option-value="company_number"
             outlined
           />
         </div>

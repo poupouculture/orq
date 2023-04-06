@@ -37,7 +37,7 @@ const switchComponent = (componentName: string) => {
 };
 
 onMounted(() => {
-  invoice.getAllCompanies();
+  invoice.init();
 });
 </script>
 

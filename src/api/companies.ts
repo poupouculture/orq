@@ -10,3 +10,14 @@ export const getCompanies = async () => {
   });
   return result;
 };
+
+export const getCustomer = async () => {
+  const field = "*";
+  const result = await api.get("items/customers", {
+    params: {
+      field,
+    },
+  });
+
+  return result;
+};

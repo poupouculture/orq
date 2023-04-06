@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getCompanies } from "src/api/companies";
+import { getCompanies, getCustomer } from "src/api/companies";
 
 const dollarFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -8,6 +8,8 @@ const dollarFormat = new Intl.NumberFormat("en-US", {
 
 const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
+    allCustomer: [],
+    allCompanies: [],
     company: {
       companyName: "Apple Inc",
       address1: "Nyc 1",
@@ -36,12 +38,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       invoiceNumber: "INV-1322525",
       dateIssue: null,
       dueDate: null,
-      discount: [
-        // {
-        //   name: "Discount",
-        //   value: 20,
-        // },
-      ],
+      discount: [],
       discountOptions: [
         {
           name: "Discount",
@@ -52,26 +49,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         value: "Draft",
         setDefault: false,
       },
-      items: [
-        // {
-        //   item: "hand Bag",
-        //   qty: 25,
-        //   rate: 2.0,
-        //   amount: {
-        //     label: "",
-        //     totalPrice: 0,
-        //   },
-        // },
-        // {
-        //   item: "hand Bag 2",
-        //   qty: 250,
-        //   rate: 5.0,
-        //   amount: {
-        //     label: "",
-        //     totalPrice: 0,
-        //   },
-        // },
-      ],
+      items: [],
       optional: {
         notes: "Please check your email",
         terms: "Over Due",
@@ -129,6 +107,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
   getters: {
     getCompany: (state) => state.company,
     getCustomer: (state) => state.customer,
+    getCompanies: (state) => state.allCompanies,
     getDiscount: (state) => {
       if (state.invoice.discount.length === 0) return 0;
 
@@ -214,7 +193,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
 
     getInvoice: (state) => {
-      const formatItem: any[] = state.invoice.items.map((item) => {
+      const formatItem = state.invoice.items.map((item) => {
         return {
           ...item,
           rate: dollarFormat.format(item.rate),
@@ -242,7 +221,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
   },
   actions: {
-    addTax(tax: { name: string; value: string }) {
+    addTax(tax) {
       const newTax = {
         name: tax.name,
         value: parseInt(tax.value),
@@ -251,22 +230,22 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       this.$state.invoice.tax.push(newTax);
     },
 
-    addDiscount(discount: number) {
+    addDiscount(discount) {
       this.$state.invoice.discount.push({
         name: "Discount",
         value: discount,
       });
     },
-    editDiscount(discount: number) {
+    editDiscount(discount) {
       this.$state.invoice.discount[0].value = discount;
     },
     deleteDiscount() {
       this.$state.invoice.discount = [];
     },
-    deleteTax(index: number) {
+    deleteTax(index) {
       this.$state.invoice.tax.splice(index, 1);
     },
-    editTax(index: number, newTax: any) {
+    editTax(index, newTax) {
       this.$state.invoice.tax[index].name = newTax.name;
       this.$state.invoice.tax[index].value = newTax.value;
     },
@@ -281,10 +260,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         },
       });
     },
-    deleteItems(index: number) {
+    deleteItems(index) {
       this.$state.invoice.items.splice(index, 1);
     },
-    editItems(index: number, item: any) {
+    editItems(index, item) {
       this.$state.invoice.items[index].item = item.item;
       this.$state.invoice.items[index].qty = item.qty;
       this.$state.invoice.items[index].rate = item.rate;
@@ -295,6 +274,22 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       getCompanies().then((res) => {
         const { data } = res.data;
         console.log(data);
+      });
+    },
+
+    async init() {
+      await getCustomer().then((res) => {
+        const { data } = res.data;
+
+        this.$state.allCustomer = data;
+      });
+
+      await getCompanies().then((res) => {
+        const { data } = res.data;
+
+        data.forEach((item) => {
+          this.$state.allCompanies.push(item);
+        });
       });
     },
   },
