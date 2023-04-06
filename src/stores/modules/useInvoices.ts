@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { getCompanies } from "src/api/companies";
 
 const dollarFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -289,6 +290,12 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       this.$state.invoice.items[index].rate = item.rate;
       this.$state.invoice.items[index].amount.totalPrice =
         item.amount.totalPrice;
+    },
+    getAllCompanies() {
+      getCompanies().then((res) => {
+        const { data } = res.data;
+        console.log(data);
+      });
     },
   },
 });

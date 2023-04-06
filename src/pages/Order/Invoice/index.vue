@@ -4,9 +4,11 @@ import CustomerInformation from "components/Order/Invoice/customerInformation.vu
 import InvoiceInformation from "components/Order/Invoice/invoiceInformation.vue";
 import Preview from "components/Order/Invoice/preview.vue";
 import SendPdf from "components/Order/Invoice/SendPdf.vue";
-import { computed, ref } from "vue";
+import useInvoice from "src/stores/modules/useInvoices";
+import { computed, ref, onMounted } from "vue";
 
 const activeTabs = ref("companyInformation");
+const invoice = useInvoice();
 
 const rightSideComponent = ref("sendPdf");
 
@@ -33,6 +35,10 @@ const tabs = computed(() => {
 const switchComponent = (componentName: string) => {
   rightSideComponent.value = componentName;
 };
+
+onMounted(() => {
+  invoice.getAllCompanies();
+});
 </script>
 
 <template>
