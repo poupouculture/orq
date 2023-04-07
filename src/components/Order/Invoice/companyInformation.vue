@@ -49,6 +49,10 @@ const filterCountry = (val, update) => {
     );
   });
 };
+
+const selectCompanies = ($event) => {
+  invoice.selectedCompany($event);
+};
 </script>
 
 <template>
@@ -72,6 +76,7 @@ const filterCountry = (val, update) => {
             option-label="name_english"
             option-value="company_number"
             outlined
+            @update:model-value="selectCompanies"
           />
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getCompanies, getCustomer } from "src/api/companies";
+import { getCompanies } from "src/api/companies";
 
 const dollarFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -8,16 +8,16 @@ const dollarFormat = new Intl.NumberFormat("en-US", {
 
 const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
-    allCustomer: [],
     allCompanies: [],
     company: {
-      companyName: "Apple Inc",
-      address1: "Nyc 1",
-      address2: "Nyc 2",
-      country: "United State",
-      phone: "Indonesia (+62)",
-      zip: "12345",
-      city: "NYC",
+      companyName: "",
+      address1: "",
+      address2: "",
+      country: "",
+      phone: "",
+      zip: "",
+      city: "",
+      show: false,
     },
     customer: {
       firstName: {
@@ -105,9 +105,14 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
   }),
   getters: {
-    getCompany: (state) => state.company,
+    getCompany: (state) => {
+      const newCompanyObject = {
+        ...state.company,
+        companyName: state.name_english,
+      };
+      return newCompanyObject;
+    },
     getCustomer: (state) => state.customer,
-    getCompanies: (state) => state.allCompanies,
     getDiscount: (state) => {
       if (state.invoice.discount.length === 0) return 0;
 
@@ -191,7 +196,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         value: subtotal,
       };
     },
-
+    getCompanies: (state) => state.allCompanies,
     getInvoice: (state) => {
       const formatItem = state.invoice.items.map((item) => {
         return {
@@ -270,40 +275,17 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       this.$state.invoice.items[index].amount.totalPrice =
         item.amount.totalPrice;
     },
-    getAllCompanies() {
-      getCompanies().then((res) => {
-        const { data } = res.data;
-        console.log(data);
-      });
+
+    selectedCompany(company) {
+      this.$state.company = company;
+      this.$state.company.show = true;
     },
 
     async init() {
-      await getCustomer().then((res) => {
-        const { data } = res.data;
-
-        this.$state.allCustomer = data;
-      });
-
       await getCompanies().then((res) => {
         const { data } = res.data;
-        const developArray = [];
 
-        data.forEach((item) => {
-          this.$state.allCompanies.push(item);
-
-          // developArray.push( {
-          //   ...item,
-          //   customers: item.customers.map( element => {
-          //     console.log( element.customers_id )
-          //     console.log(this.$state.allCustomer)
-          //     let dataCustomer=this.$state.allCustomer.find( customer => customer.id==element.customers_id )
-
-          //     if (dataCustomer) return dataCustomer
-          //   })
-          // })
-        });
-
-        console.log(developArray);
+        this.$state.allCompanies = data;
       });
     },
   },
