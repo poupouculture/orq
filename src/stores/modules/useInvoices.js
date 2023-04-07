@@ -286,12 +286,24 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
 
       await getCompanies().then((res) => {
         const { data } = res.data;
+        const developArray = [];
 
         data.forEach((item) => {
           this.$state.allCompanies.push(item);
 
-          console.log(item.customers);
+          // developArray.push( {
+          //   ...item,
+          //   customers: item.customers.map( element => {
+          //     console.log( element.customers_id )
+          //     console.log(this.$state.allCustomer)
+          //     let dataCustomer=this.$state.allCustomer.find( customer => customer.id==element.customers_id )
+
+          //     if (dataCustomer) return dataCustomer
+          //   })
+          // })
         });
+
+        console.log(developArray);
       });
     },
   },
