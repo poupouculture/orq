@@ -6,7 +6,7 @@
   "author": "mac <mac@synque.io>",
   "private": true,
   "scripts": {
-    "dev": "quasar dev",
+    "dev": "quasar dev -- --mode development",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
     "lint": "eslint --ext .js,.ts,.vue ./",

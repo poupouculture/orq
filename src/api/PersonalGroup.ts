@@ -52,6 +52,22 @@ export const addRelationship = async (
   return results;
 };
 
+export const deleteRelationship = async (id: string) => {
+  const results = await api.delete(`/items/customer_groups_user_groups/${id}`);
+  return results;
+};
+
+export const getRelationship = async (id: string) => {
+  const params = {
+    fields: "*",
+    "filter[user_groups_id][_eq]": id,
+  };
+  const { data } = await api.get(`/items/customer_groups_user_groups`, {
+    params,
+  });
+  return data;
+};
+
 export const getPersonalGroup = async (id: string) => {
   const PersonalGroup = await api.get("/items/user_groups/" + id, {
     params: {
