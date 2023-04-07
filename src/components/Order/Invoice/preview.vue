@@ -55,7 +55,7 @@ const {
           <div class="flex gap-2 flex-col">
             <p class="font-semibold text-sm">Bill To</p>
             <span id="name" class="text-xs text-gray-500">
-              {{ `${getCustomer.firstName.value} ${getCustomer.lastName}` }}
+              {{ `${getCustomer.firstName.value} ${getCustomer.last_name}` }}
             </span>
             <span id="email" class="text-xs text-gray-500">
               {{ getCustomer.email }}

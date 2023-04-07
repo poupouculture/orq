@@ -80,7 +80,7 @@ watch(getCompany, () => {
           <div class="w-full sm:w-[226px]">
             <q-select
               @update:model-value="getSelectecCustomer"
-              option-label="customer_company_name_en"
+              option-label="fullName"
               :options="getSelectedCustomers"
               option-value="customer_code"
               v-model="selectCustomer"
@@ -117,7 +117,7 @@ watch(getCompany, () => {
         <div class="w-full">
           <p class="label-style mb-2">Last Name</p>
           <q-input
-            v-model="getCustomer.lastName"
+            v-model="getCustomer.last_name"
             placeholder="Last Name"
             dense
             outlined

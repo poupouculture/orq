@@ -123,7 +123,14 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         },
       };
     },
-    getSelectedCustomers: (state) => state.selectedCustomers,
+    getSelectedCustomers: (state) => {
+      return state.selectedCustomers.map((item) => {
+        return {
+          ...item,
+          fullName: `${item.first_name} ${item.last_name}`,
+        };
+      });
+    },
     getDiscount: (state) => {
       if (state.invoice.discount.length === 0) return 0;
 
