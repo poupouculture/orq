@@ -196,8 +196,20 @@ export const uploadMedia = async (chatId: string, payload: any) => {
 };
 
 export const chatbots = async () => {
-  const data = await api.get(`/items/chatbots`, {
+  const { data } = await api.get(`/items/chatbots`, {
     params: { status: "published" },
   });
+  return data;
+};
+
+export const initiateBot = async (chatId: string, intent: string) => {
+  const { data } = await api.get(
+    `/dialogflow/initiate-bot/${chatId}/${intent}`
+  );
+  return data;
+};
+
+export const closeBot = async (chatId: string) => {
+  const { data } = await api.get(`/dialogflow/close-bot/${chatId}`);
   return data;
 };

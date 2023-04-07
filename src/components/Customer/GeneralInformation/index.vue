@@ -17,7 +17,7 @@ import { api } from "src/boot/axios";
 import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
-import { date } from "quasar";
+// import { date } from "quasar";
 
 interface Option {
   value: string | number;
@@ -74,7 +74,7 @@ const lastName = ref("");
 const idNumber = ref("");
 const customerCode = ref("");
 const gender: Ref<Gender | undefined> = ref(undefined);
-const dateOfBirth = ref("");
+// const dateOfBirth = ref("");
 const position: Ref<Position | undefined> = ref(undefined);
 const companies: Ref<Option[]> = ref([]);
 const customerGroups: Ref<Option[]> = ref([]);
@@ -116,9 +116,9 @@ onMounted(async () => {
   if (customer) {
     firstName.value = customer.first_name;
     lastName.value = customer.last_name;
-    idNumber.value = customer.id_number;
+    // idNumber.value = customer.id_number;
     customerCode.value = customer.customer_code;
-    dateOfBirth.value = customer.dob;
+    // dateOfBirth.value = customer.dob;
     isActive.value = customer.is_active || false;
     companyCd.value = customer.company_cd;
     position.value = positionOptions.find(
@@ -156,9 +156,9 @@ watch(getCustomer, () => {
   mode.value = "show";
   firstName.value = getCustomer.value.first_name;
   lastName.value = getCustomer.value.last_name;
-  idNumber.value = getCustomer.value.id_number;
+  // idNumber.value = getCustomer.value.id_number;
   customerCode.value = getCustomer.value.customer_code;
-  dateOfBirth.value = getCustomer.value.dob;
+  // dateOfBirth.value = getCustomer.value.dob;
   isActive.value = getCustomer.value.is_active;
   companyCd.value = getCustomer.value.company_cd;
   position.value = positionOptions.find(
@@ -242,11 +242,11 @@ const onSubmit = async () => {
     const payload = {
       first_name: firstName.value,
       last_name: lastName.value,
-      id_number: idNumber.value,
+      // id_number: idNumber.value,
       customer_code: customerCode.value,
       gender: gender.value?.value,
       isActive: isActive.value,
-      dob: dateOfBirth.value,
+      // dob: dateOfBirth.value,
       position: position.value?.value,
       customer_groups: transforCustomerGroupPayload(
         getCustomer.value,
@@ -285,9 +285,9 @@ const discardChanges = () => {
   emit("discard");
 };
 
-const optionDateFn = (qdate: string) => {
-  return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
-};
+// const optionDateFn = (qdate: string) => {
+//   return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
+// };
 
 const mappingCompanies = () => {
   return getCustomer.value.companies
@@ -411,6 +411,18 @@ const mappingCustomerGroups = () => {
               dense
             />
           </div>
+          <div class="col">
+            <BaseMultiOptions
+              v-model="customerGroups"
+              label="Customer Groups"
+              filter-url="/items/customer_groups"
+              :options="options.customerGroups"
+              option-variable-name="customerGroups"
+              :mode="mode"
+              @filter="filter"
+              @update:multi-options="updateMultiOptions"
+            />
+          </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
           <div class="col">
@@ -466,16 +478,17 @@ const mappingCustomerGroups = () => {
 
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <BaseMultiOptions
-              v-model="customerGroups"
-              label="Customer Groups"
-              filter-url="/items/customer_groups"
-              :options="options.customerGroups"
-              option-variable-name="customerGroups"
-              :mode="mode"
-              @filter="filter"
-              @update:multi-options="updateMultiOptions"
-            />
+            <p class="label-style">Salesman Code</p>
+            <div class="flex flex-col gap-4">
+              <q-input
+                v-model="salesmanCd"
+                class="indi"
+                outlined
+                lazy-rules
+                :disable="mode == 'show'"
+                dense
+              />
+            </div>
           </div>
           <div class="col">
             <p class="label-style">Gender</p>
@@ -541,51 +554,6 @@ const mappingCustomerGroups = () => {
                 dense
               />
             </div>
-          </div>
-        </div>
-
-        <div class="row q-mb-lg q-gutter-xl">
-          <div class="col">
-            <p class="label-style">Salesman Code</p>
-            <div class="flex flex-col gap-4">
-              <q-input
-                v-model="salesmanCd"
-                class="indi"
-                outlined
-                lazy-rules
-                :disable="mode == 'show'"
-                dense
-              />
-            </div>
-          </div>
-          <div class="col">
-            <p class="label-style">Date Of Birth</p>
-            <q-input
-              v-model="dateOfBirth"
-              mask="####-##-##"
-              lazy-rules
-              dense
-              outlined
-              :disable="mode == 'show'"
-              bg-color="white"
-            >
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy
-                    ref="qDateProxy"
-                    transition-show="scale"
-                    transition-hide="scale"
-                  >
-                    <q-date
-                      v-model="dateOfBirth"
-                      :options="optionDateFn"
-                      mask="YYYY-MM-DD"
-                      @input="() => $refs.qDateProxy.hide()"
-                    />
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
           </div>
         </div>
 

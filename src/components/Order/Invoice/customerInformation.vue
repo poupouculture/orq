@@ -65,8 +65,8 @@ const filterPhone = (val: any, update: any) => {
   <div class="mt-5">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
       <div class="col-span-2 grid grid-cols-2 mb-[30px]">
-        <div class="col-span-1">
-          <div class="w-[226px]">
+        <div class="col-span-2 sm:col-span-1">
+          <div class="w-full sm:w-[226px]">
             <q-input placeholder="Search" dense outlined>
               <template v-slot:prepend>
                 <q-icon name="search" />
@@ -75,7 +75,7 @@ const filterPhone = (val: any, update: any) => {
           </div>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">First Name</p>
           <q-input
@@ -92,7 +92,7 @@ const filterPhone = (val: any, update: any) => {
           </div>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Last Name</p>
           <q-input
@@ -103,7 +103,7 @@ const filterPhone = (val: any, update: any) => {
           />
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Email</p>
           <q-input
@@ -114,7 +114,7 @@ const filterPhone = (val: any, update: any) => {
           />
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Language</p>
           <q-select
@@ -135,7 +135,7 @@ const filterPhone = (val: any, update: any) => {
           </q-select>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Country</p>
           <q-select
@@ -156,7 +156,7 @@ const filterPhone = (val: any, update: any) => {
           </q-select>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">City</p>
           <q-input
@@ -167,7 +167,7 @@ const filterPhone = (val: any, update: any) => {
           />
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">ZIP/Province</p>
           <q-input
@@ -178,7 +178,7 @@ const filterPhone = (val: any, update: any) => {
           />
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Phone</p>
           <q-select
@@ -199,7 +199,7 @@ const filterPhone = (val: any, update: any) => {
           </q-select>
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Address 1</p>
           <q-input
@@ -210,7 +210,7 @@ const filterPhone = (val: any, update: any) => {
           />
         </div>
       </div>
-      <div class="col-span-1">
+      <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Address 2</p>
           <q-input

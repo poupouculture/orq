@@ -80,7 +80,7 @@ const switchComponent = (componentName: string) => {
       </div>
     </div>
 
-    <div class="flex flex-col pl-10 py-16 w-full lg:w-1/2">
+    <div class="flex flex-col lg:pl-10 py-16 w-full lg:w-1/2">
       <p class="font-semibold capitalize text-2xl tetx-[#111827]">preview</p>
 
       <div class="flex justify-center items-center w-full mt-6 gap-6">
