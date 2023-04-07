@@ -1,6 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import useInvoice from "src/stores/modules/useInvoices";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 
 const country = ["United State", "Indonesia", "China"];
 const language = ["English", "Germany"];
@@ -10,9 +11,11 @@ const languageOptions = ref(language);
 const countryOptions = ref(country);
 const phoneOptions = ref(phone);
 
-const { getCustomer } = useInvoice();
+const invoice = useInvoice();
+const { getSelectedCustomers, getCustomer, getCompany } = storeToRefs(invoice);
 
-const filterCountry = (val: any, update: any) => {
+const selectCustomer = ref();
+const filterCountry = (val, update) => {
   if (val === "") {
     update(() => {
       countryOptions.value = country;
@@ -28,7 +31,7 @@ const filterCountry = (val: any, update: any) => {
   });
 };
 
-const filterLanguage = (val: any, update: any) => {
+const filterLanguage = (val, update) => {
   if (val === "") {
     update(() => {
       languageOptions.value = language;
@@ -44,7 +47,7 @@ const filterLanguage = (val: any, update: any) => {
   });
 };
 
-const filterPhone = (val: any, update: any) => {
+const filterPhone = (val, update) => {
   if (val === "") {
     update(() => {
       phoneOptions.value = phone;
@@ -59,6 +62,14 @@ const filterPhone = (val: any, update: any) => {
     );
   });
 };
+
+const getSelectecCustomer = (value) => {
+  invoice.selectedCustomer(value);
+};
+
+watch(getCompany, () => {
+  selectCustomer.value = "";
+});
 </script>
 
 <template>
@@ -67,11 +78,21 @@ const filterPhone = (val: any, update: any) => {
       <div class="col-span-2 grid grid-cols-2 mb-[30px]">
         <div class="col-span-2 sm:col-span-1">
           <div class="w-full sm:w-[226px]">
-            <q-input placeholder="Search" dense outlined>
+            <q-select
+              @update:model-value="getSelectecCustomer"
+              option-label="customer_company_name_en"
+              :options="getSelectedCustomers"
+              option-value="customer_code"
+              v-model="selectCustomer"
+              input-debounce="0"
+              placeholder="Search"
+              dense
+              outlined
+            >
               <template v-slot:prepend>
                 <q-icon name="search" />
               </template>
-            </q-input>
+            </q-select>
           </div>
         </div>
       </div>

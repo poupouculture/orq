@@ -9,6 +9,7 @@ const dollarFormat = new Intl.NumberFormat("en-US", {
 const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
     allCompanies: [],
+    selectedCustomers: [],
     company: {
       companyName: "",
       address1: "",
@@ -21,18 +22,19 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
     customer: {
       firstName: {
-        value: "john",
-        setDefault: true,
+        value: "",
+        setDefault: false,
       },
-      lastName: "Doe",
-      email: "johndoe@mail.com",
+      lastName: "",
+      email: "",
       language: "English",
-      country: "United State",
-      city: "Nyc",
-      zip: "1234",
-      phone: "Indonesia (+62)",
-      address1: "Ycn 1",
-      address2: "Ycn 2",
+      country: "",
+      city: "",
+      zip: "",
+      phone: "",
+      address1: "",
+      address2: "",
+      // first_name
     },
     invoice: {
       invoiceNumber: "INV-1322525",
@@ -112,7 +114,16 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       };
       return newCompanyObject;
     },
-    getCustomer: (state) => state.customer,
+    getCustomer: (state) => {
+      return {
+        ...state.customer,
+        firstName: {
+          value: state.customer.first_name,
+          setDefault: false,
+        },
+      };
+    },
+    getSelectedCustomers: (state) => state.selectedCustomers,
     getDiscount: (state) => {
       if (state.invoice.discount.length === 0) return 0;
 
@@ -276,9 +287,17 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         item.amount.totalPrice;
     },
 
+    selectedCustomer(customer) {
+      console.log(customer);
+      this.$state.customer = customer;
+    },
+
     selectedCompany(company) {
       this.$state.company = company;
       this.$state.company.show = true;
+      this.$state.selectedCustomers = company.customers.map(
+        (item) => item.customers_id
+      );
     },
 
     async init() {
