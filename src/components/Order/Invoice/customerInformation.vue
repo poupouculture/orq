@@ -12,7 +12,7 @@ const countryOptions = ref(country);
 const phoneOptions = ref(phone);
 
 const invoice = useInvoice();
-const { getSelectedCustomers, getCustomer, getCompany } = storeToRefs(invoice);
+const { getSelectedCustomers, getCompany, customer } = storeToRefs(invoice);
 
 const selectCustomer = ref();
 const filterCountry = (val, update) => {
@@ -100,13 +100,13 @@ watch(getCompany, () => {
         <div class="w-full">
           <p class="label-style mb-2">First Name</p>
           <q-input
-            v-model="getCustomer.firstName.value"
+            v-model="customer.firstName.value"
             placeholder="First Name"
             dense
             outlined
           />
           <div class="flex items-center mt-2">
-            <q-checkbox size="xs" v-model="getCustomer.firstName.setDefault" />
+            <q-checkbox size="xs" v-model="customer.firstName.setDefault" />
             <span class="text-xs font-normal text-[#9A9AAF]">
               set as default for future invoices
             </span>
@@ -117,7 +117,7 @@ watch(getCompany, () => {
         <div class="w-full">
           <p class="label-style mb-2">Last Name</p>
           <q-input
-            v-model="getCustomer.last_name"
+            v-model="customer.last_name"
             placeholder="Last Name"
             dense
             outlined
@@ -128,7 +128,7 @@ watch(getCompany, () => {
         <div class="w-full">
           <p class="label-style mb-2">Email</p>
           <q-input
-            v-model="getCustomer.email"
+            v-model="customer.email"
             placeholder="Email"
             dense
             outlined
@@ -141,7 +141,7 @@ watch(getCompany, () => {
           <q-select
             outlined
             dense
-            v-model="getCustomer.language"
+            v-model="customer.language"
             use-input
             input-debounce="0"
             :options="languageOptions"
@@ -162,7 +162,7 @@ watch(getCompany, () => {
           <q-select
             outlined
             dense
-            v-model="getCustomer.country"
+            v-model="customer.country"
             use-input
             input-debounce="0"
             :options="countryOptions"
@@ -180,12 +180,7 @@ watch(getCompany, () => {
       <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">City</p>
-          <q-input
-            placeholder="City"
-            v-model="getCustomer.city"
-            dense
-            outlined
-          />
+          <q-input placeholder="City" v-model="customer.city" dense outlined />
         </div>
       </div>
       <div class="col-span-2 sm:col-span-1">
@@ -193,7 +188,7 @@ watch(getCompany, () => {
           <p class="label-style mb-2">ZIP/Province</p>
           <q-input
             placeholder="ZIP/Province"
-            v-model="getCustomer.zip"
+            v-model="customer.zip"
             dense
             outlined
           />
@@ -205,7 +200,7 @@ watch(getCompany, () => {
           <q-select
             outlined
             dense
-            v-model="getCustomer.phone"
+            v-model="customer.phone"
             use-input
             input-debounce="0"
             :options="phoneOptions"
@@ -225,7 +220,7 @@ watch(getCompany, () => {
           <p class="label-style mb-2">Address 1</p>
           <q-input
             placeholder="Address 1"
-            v-model="getCustomer.address1"
+            v-model="customer.address1"
             dense
             outlined
           />
@@ -236,7 +231,7 @@ watch(getCompany, () => {
           <p class="label-style mb-2">Address 2</p>
           <q-input
             placeholder="Address 2"
-            v-model="getCustomer.address2"
+            v-model="customer.address2"
             dense
             outlined
           />

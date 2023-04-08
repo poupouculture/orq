@@ -114,15 +114,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       };
       return newCompanyObject;
     },
-    getCustomer: (state) => {
-      return {
-        ...state.customer,
-        firstName: {
-          value: state.customer.first_name,
-          setDefault: false,
-        },
-      };
-    },
+    getCustomer: (state) => state.customer,
     getSelectedCustomers: (state) => {
       return state.selectedCustomers.map((item) => {
         return {
@@ -295,8 +287,13 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
 
     selectedCustomer(customer) {
-      console.log(customer);
-      this.$state.customer = customer;
+      this.$state.customer = {
+        ...customer,
+        firstName: {
+          value: customer.first_name,
+          setDefault: false,
+        },
+      };
     },
 
     selectedCompany(company) {

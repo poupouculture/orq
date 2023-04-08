@@ -13,7 +13,7 @@ const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
 const phoneOptions = ref(phone);
 const countryOptions = ref(country);
 const invoice = useInvoice();
-const { getCompany, getCompanies } = storeToRefs(invoice);
+const { company, getCompanies } = storeToRefs(invoice);
 const companyName = ref("");
 
 // Function
@@ -86,7 +86,7 @@ const selectCompanies = ($event) => {
           <div class="w-full">
             <p class="label-style mb-2">Address 1</p>
             <q-input
-              v-model="getCompany.address1"
+              v-model="company.address1"
               placeholder="Address 1"
               dense
               outlined
@@ -98,7 +98,7 @@ const selectCompanies = ($event) => {
           <div class="w-full">
             <p class="label-style mb-2">Address 2</p>
             <q-input
-              v-model="getCompany.address2"
+              v-model="company.address2"
               placeholder="Address 2"
               dense
               outlined
@@ -113,7 +113,7 @@ const selectCompanies = ($event) => {
             <q-select
               outlined
               dense
-              v-model="getCompany.country"
+              v-model="company.country"
               use-input
               input-debounce="0"
               :options="countryOptions"
@@ -137,7 +137,7 @@ const selectCompanies = ($event) => {
             <q-select
               outlined
               dense
-              v-model="getCompany.phone"
+              v-model="company.phone"
               use-input
               input-debounce="0"
               :options="phoneOptions"
@@ -161,7 +161,7 @@ const selectCompanies = ($event) => {
             <p class="label-style mb-2">ZIP/Province</p>
             <q-input
               placeholder="ZIP/Province"
-              v-model="getCompany.zip"
+              v-model="company.zip"
               dense
               outlined
             />
@@ -171,12 +171,7 @@ const selectCompanies = ($event) => {
         <div class="col-span-1">
           <div class="w-full">
             <p class="label-style mb-2">City</p>
-            <q-input
-              placeholder="City"
-              v-model="getCompany.city"
-              dense
-              outlined
-            />
+            <q-input placeholder="City" v-model="company.city" dense outlined />
           </div>
         </div>
       </div>
