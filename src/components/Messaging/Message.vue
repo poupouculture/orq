@@ -198,6 +198,23 @@
             />
           </q-btn>
           <q-btn
+            flat
+            round
+            color="grey"
+            size="md"
+            class="q-mt-md"
+            :disable="isChatExpired"
+            @click="fileUplader?.pickFiles"
+          >
+            <img src="~assets/images/pin.svg" />
+            <q-uploader
+              ref="fileUplader"
+              accept="*"
+              class="hidden invisible"
+              @added="uploadFile"
+            />
+          </q-btn>
+          <q-btn
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
@@ -301,6 +318,7 @@ const showMessageTemplate: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const uplader: any = ref(null);
+const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
 const waveRef: any = ref(null);
@@ -608,7 +626,7 @@ function recClose() {
   showAudio.value = false;
 }
 
-const upload = async (fileList: File[]) => {
+const upload = async (fileList: readonly File[]) => {
   const file = fileList[0];
   const url = await blobToBase64(file);
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
@@ -631,13 +649,19 @@ const upload = async (fileList: File[]) => {
   const bodyFormData = new FormData();
   // bodyFormData.append("caption", file.name);
   bodyFormData.append("file", file);
-  uplader.value.reset();
+  uplader.value.removeQueuedFiles();
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
 
-const imageSizeFilter = (files: any[]) => {
-  const filterFiles = files.filter((file) => file.size <= 1024 * 1024 * 5);
+const imageSizeFilter = (files: readonly any[] | FileList) => {
+  const filterFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.size <= 1024 * 1024 * 5) {
+      filterFiles.push(file);
+    }
+  }
   if (!filterFiles.length) {
     Notify.create({
       message: "Image cannot exceed 5M",
@@ -648,6 +672,11 @@ const imageSizeFilter = (files: any[]) => {
   }
 
   return filterFiles;
+};
+
+const uploadFile = (files: readonly File[]) => {
+  console.log(files);
+  fileUplader.value?.removeQueuedFiles();
 };
 
 const selectBot = async (bot: any) => {
