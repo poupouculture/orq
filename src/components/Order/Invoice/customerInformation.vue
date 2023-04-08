@@ -7,15 +7,32 @@ const country = ["United State", "Indonesia", "China"];
 const language = ["English", "Germany"];
 const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
 
+const invoice = useInvoice();
+const { getSelectedCustomers, getCompany, customer } = storeToRefs(invoice);
+
 const languageOptions = ref(language);
 const countryOptions = ref(country);
 const phoneOptions = ref(phone);
 const drawer = ref(false);
-
-const invoice = useInvoice();
-const { getSelectedCustomers, getCompany, customer } = storeToRefs(invoice);
-
 const selectCustomer = ref();
+const tableSelected = ref([]);
+
+// Table
+const tableHead = ref([
+  {
+    name: "fullName",
+    label: "Full Name",
+    field: "fullName",
+    align: "left",
+  },
+  {
+    name: "customer_code",
+    label: "Customer Code",
+    field: "customer_code",
+    align: "left",
+  },
+]);
+
 const filterCountry = (val, update) => {
   if (val === "") {
     update(() => {
@@ -280,24 +297,22 @@ watch(getCompany, () => {
       <div class="h-full flex justify-center items-center">
         <div class="h-[90vh] w-full flex flex-col p-10">
           <div class="flex items-center justify-between">
-            <!-- <SearchTableInput :loading="searchLoading" />
             <q-btn
-              :disable="tableSelected.length <= 0"
-              @click="newRelations"
+              :disable="tableSelected.length == 0"
               round
               color="primary"
               size="md"
               icon="done"
-            /> -->
+            />
           </div>
           <div class="mt-10">
-            <!-- <q-table
+            <q-table
               v-model:selected="tableSelected"
-              :rows="remainingGroups"
-              :columns="headerColumns"
+              :rows="getSelectedCustomers"
+              :columns="tableHead"
               selection="single"
               row-key="name"
-            /> -->
+            />
           </div>
         </div>
       </div>
