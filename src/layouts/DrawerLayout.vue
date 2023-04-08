@@ -1,3 +1,58 @@
+<script setup>
+import "../components/SideDrawer/drawer.scss";
+import "./DrawerLayout.scss";
+import { computed, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import MenuBar from "src/components/MenuBar/MenuBar.vue";
+import SearchInput from "src/components/SearchInput.vue";
+import useUserInfoStore from "stores/modules/userInfo";
+import { pageCodes } from "../utils/page-codes";
+
+const userInfo = useUserInfoStore();
+const drawer = ref(true);
+const router = useRouter();
+const route = useRoute();
+const searchInput = ref("");
+
+const menus = computed(() => {
+  const pages = userInfo.userProfile?.role.pages || [];
+
+  const menus = pages
+    .filter((page) => {
+      if (
+        page.pages_id &&
+        !page.pages_id.parent_id &&
+        page.pages_id.status === "published"
+      ) {
+        page.pages_id.children = page.pages_id.children.filter(
+          (child) => child.status === "published"
+        );
+        // no parent_id
+        return pageCodes.some((f) => f.id === page.pages_id.id);
+      }
+      return false;
+    })
+    .map((page) => {
+      const code = pageCodes.find((code) => code.id === page.pages_id.id);
+      page.icon = code.icon;
+      return page;
+    });
+
+  if (searchInput.value) {
+    const getMenu = menus.filter((item) => {
+      return item.pages_id.children.find((element) =>
+        element.name
+          .toLowerCase()
+          .startsWith(searchInput.value.toLocaleLowerCase())
+      );
+    });
+    if (getMenu.length > 0) return getMenu;
+    else return menus;
+  }
+  return menus;
+});
+</script>
+
 <template>
   <q-layout view="hHh LpR fFf">
     <q-drawer
@@ -15,7 +70,10 @@
             <p class="font-[800] text-white text-2xl">ChaQ</p>
           </div>
           <div class="input-holder">
-            <SearchInput />
+            <SearchInput
+              @update:input="searchInput = $event"
+              :search="searchInput"
+            />
           </div>
         </div>
 
@@ -107,49 +165,6 @@
     </q-page-sticky>
   </q-layout>
 </template>
-
-<script setup>
-import "../components/SideDrawer/drawer.scss";
-import "./DrawerLayout.scss";
-import { computed, ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import MenuBar from "src/components/MenuBar/MenuBar.vue";
-import SearchInput from "src/components/SearchInput.vue";
-import useUserInfoStore from "stores/modules/userInfo";
-import { pageCodes } from "../utils/page-codes";
-
-const userInfo = useUserInfoStore();
-const drawer = ref(true);
-const router = useRouter();
-const route = useRoute();
-
-const menus = computed(() => {
-  const pages = userInfo.userProfile?.role.pages || [];
-
-  const menus = pages
-    .filter((page) => {
-      if (
-        page.pages_id &&
-        !page.pages_id.parent_id &&
-        page.pages_id.status === "published"
-      ) {
-        page.pages_id.children = page.pages_id.children.filter(
-          (child) => child.status === "published"
-        );
-        // no parent_id
-        return pageCodes.some((f) => f.id === page.pages_id.id);
-      }
-      return false;
-    })
-    .map((page) => {
-      const code = pageCodes.find((code) => code.id === page.pages_id.id);
-      page.icon = code.icon;
-      return page;
-    });
-
-  return menus;
-});
-</script>
 
 <style scoped>
 .input-holder {

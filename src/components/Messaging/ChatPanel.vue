@@ -211,7 +211,7 @@ const initSocket = () => {
         (chat: IChat) => chat.id === data.document?.id
       );
       if (chat) {
-        messagingStore.updateChatsList(chat, data.update_fields?.status);
+        messagingStore.updateChatsList(chat, data.document?.status);
       }
     });
     socket.value.on("message_created", (data: SocketMessage) => {
