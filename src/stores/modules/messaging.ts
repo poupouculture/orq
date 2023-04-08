@@ -138,6 +138,7 @@ const useMessagingStore = defineStore("messaging", {
           date_created: item.date_created,
           waba_message_id: item.waba_message_id,
           waba_associated_message_id: item.waba_associated_message_id,
+          mode: item.mode,
         }));
         this.cachedChatMessages[chatId] = [
           ...messages,

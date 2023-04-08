@@ -27,6 +27,13 @@
       <div
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"
       >
+        <q-avatar
+          v-if="message.mode === 'Bot'"
+          size="xs"
+          class="rounded-avatar mr-1"
+        >
+          <img src="~assets/images/bot.svg" />
+        </q-avatar>
         <small class="text-[#9A9AAF]">
           {{ stamp }}
         </small>
