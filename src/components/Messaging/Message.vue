@@ -141,7 +141,7 @@
         </div>
 
         <div class="row justify-end">
-          <q-btn flat round size="md" class="q-mt-md">
+          <q-btn flat round size="md" class="q-mt-md" :disable="isChatExpired">
             <img src="~assets/images/bot.svg" />
             <q-menu>
               <q-list dense style="min-width: 100px">
@@ -163,6 +163,7 @@
             color="grey"
             icon="mic"
             size="md"
+            :disable="isChatExpired"
             class="q-mt-md active:bg-primary mic-recorder"
             @touchstart.prevent="recStart"
             @touchend.prevent="recStop"
@@ -185,6 +186,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
+            :disable="isChatExpired"
             @click="uplader?.pickFiles"
           >
             <q-uploader
@@ -288,7 +290,7 @@ interface HasMore {
   [key: string]: boolean;
 }
 const scrollAreaRef = ref<HTMLDivElement>();
-const infiniteScrollRef = ref<HTMLDivElement>();
+const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
 const isChatExpired: Ref<boolean> = ref(true);
 const isTemplate: Ref<boolean> = ref(false);
@@ -384,20 +386,6 @@ watch(
         differenceInDays(new Date(), new Date(createDate)) > 0;
     } else {
       isChatExpired.value = true;
-    }
-  }
-);
-
-watch(
-  () => getSelectedChat.value?.status,
-  async (val) => {
-    if (val === ChatTypes.ONGOING) {
-      await nextTick();
-      wave.value = Recorder.WaveSurferView({
-        elem: waveRef.value,
-        scale: 1,
-      });
-      recOpen();
     }
   }
 );
@@ -563,8 +551,14 @@ const sendMedia = async (blob: Blob) => {
   messageCallback(data, newMessage);
 };
 
-const recOpen = function (success?: () => void) {
-  if (rec.value) return;
+const recStart = function () {
+  showAudio.value = true;
+  if (!wave.value) {
+    wave.value = Recorder.WaveSurferView({
+      elem: waveRef.value,
+      scale: 1,
+    });
+  }
   rec.value = Recorder({
     type: "mp3",
     sampleRate: 16000,
@@ -573,36 +567,18 @@ const recOpen = function (success?: () => void) {
       buffers: Buffer,
       powerLevel: number,
       bufferDuration: number,
-      sampleRate: number // buffers: Buffer, // powerLevel: number, // bufferDuration: number, // bufferSampleRate: number, // newBufferIdx: Buffer, // asyncEnd: any
+      sampleRate: number
     ) => {
       wave.value.input(buffers[buffers.length - 1], powerLevel, sampleRate);
       time.value = bufferDuration;
     },
   });
 
-  rec.value.open(
-    function () {
-      success && success();
-    },
-    function (msg: string, isUserNotAllow: string) {
-      Notify.create({
-        message: isUserNotAllow
-          ? "Please turn on the recording permission of the browser"
-          : msg,
-        type: "negative",
-        color: "purple",
-      });
-    }
-  );
+  rec.value.open(function () {
+    rec.value.start();
+  });
 };
 
-/** start recorder **/
-function recStart() {
-  showAudio.value = true;
-  rec.value.start();
-}
-
-/** stop recorder **/
 function recStop() {
   rec.value.stop(
     function (blob: Blob, duration: number) {
@@ -610,9 +586,16 @@ function recStop() {
       time.value = duration;
       audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
       sendMedia(blob);
+      rec.value.close();
+      wave.value?.ctx2.clearRect(
+        0,
+        0,
+        wave.value?.canvas2.width,
+        wave.value?.canvas2.height
+      );
     },
-    function (msg: string) {
-      console.log("recording error:" + msg);
+    function () {
+      showAudio.value = false;
       rec.value.close();
       rec.value = null;
     }
@@ -622,6 +605,7 @@ function recStop() {
 function recClose() {
   rec.value && rec.value.close();
   rec.value = null;
+  showAudio.value = false;
 }
 
 const upload = async (fileList: File[]) => {
@@ -677,9 +661,8 @@ const getChatbots = async () => {
 };
 
 const oncloseBot = async () => {
-  const data = await closeBot(getSelectedChatId.value);
+  await closeBot(getSelectedChatId.value);
   isBot.value = false;
-  console.log(data);
 };
 
 onMounted(() => {

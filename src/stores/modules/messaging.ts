@@ -118,23 +118,11 @@ const useMessagingStore = defineStore("messaging", {
       this.selectedTab = newchat.status;
     },
     async fetchChats() {
-      const ongoingPromise = getChats(ChatTypes.ONGOING);
-      const waitingPromise = getChats(ChatTypes.PENDING);
-      const closedPromise = getChats(ChatTypes.CLOSED);
-      const ongoing = await ongoingPromise;
-      const waiting = await waitingPromise;
-      const closed = await closedPromise;
-      const chatsList = [...ongoing, ...waiting, ...closed];
-      this.chatsList = chatsList.map((item) => {
+      const chatsList = await getChats();
+      this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
         return item;
       });
-    },
-
-    async chatCreate(type: ChatTypes, id: string) {
-      const chats: IChat[] = await getChats(type);
-      const newChat = chats.find((item) => item.id === id) as IChat;
-      this.chatsList.unshift(newChat);
     },
 
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
