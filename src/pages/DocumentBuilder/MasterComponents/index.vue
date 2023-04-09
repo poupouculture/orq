@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <p class="header-text">Document Template</p>
+    <p class="header-text">Master Components</p>
     <div class="row justify-between">
       <SearchTableInput
         :loading="loading"
@@ -15,7 +15,7 @@
           color="primary"
           label="Add"
           class="q-mr-sm"
-          @click="router.push('/document-builders/create')"
+          @click="router.push('/document-components/create')"
         />
         <q-btn
           icon="archive"
@@ -47,11 +47,6 @@
             {{ col.label }}
           </q-th>
         </q-tr>
-        <template #body-cell-name="props">
-          <q-td :props="props">
-            {{ props.row.name }}
-          </q-td>
-        </template>
         <template #body-cell-status="props">
           <q-td :props="props">
             <span
@@ -69,7 +64,7 @@
         <template #body-cell-action="props">
           <q-td :props="props">
             <router-link
-              :to="`/document-builders/${props.row.id}`"
+              :to="`/document-components/${props.row.id}`"
               style="text-decoration: none; color: inherit"
             >
               <p class="edit-button">Edit</p>
@@ -83,9 +78,9 @@
 
 <script setup>
 import {
-  getDocumentTemplates,
-  updateDocumentTemplate,
-} from "src/api/documentTemplate";
+  getDocumentComponents,
+  updateDocumentComponent,
+} from "src/api/documentComponents";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { dateFormatter } from "src/helpers";
@@ -147,7 +142,7 @@ const data = reactive({
 const fetchApplicationPrograms = async () => {
   const {
     data: { data: applicationPrograms, meta },
-  } = await getDocumentTemplates({
+  } = await getDocumentComponents({
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
@@ -165,7 +160,7 @@ const changePage = (val) => {
 const archiveSelected = () => {
   selected.value.forEach(async (data) => {
     data.status = "archive";
-    await updateDocumentTemplate(data.id, data);
+    await updateDocumentComponent(data.id, data);
   });
 };
 
@@ -184,4 +179,4 @@ onMounted(() => {
   fetchApplicationPrograms();
 });
 </script>
-<style scoped src="./style.scss" />
+<style scoped src="../style.scss" />

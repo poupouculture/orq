@@ -121,6 +121,21 @@ const routes = [
         component: () => import("pages/DocumentBuilder/edit.vue"),
       },
       {
+        path: "document-components",
+        component: () =>
+          import("pages/DocumentBuilder/MasterComponents/index.vue"),
+      },
+      {
+        path: "document-components/create",
+        component: () =>
+          import("pages/DocumentBuilder/MasterComponents/create.vue"),
+      },
+      {
+        path: "document-components/:id",
+        component: () =>
+          import("pages/DocumentBuilder/MasterComponents/edit.vue"),
+      },
+      {
         path: "calendar",
         component: () => import("pages/Calendar.vue"),
       },
