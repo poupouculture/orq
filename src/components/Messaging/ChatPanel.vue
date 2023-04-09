@@ -92,6 +92,7 @@ import {
   watch,
 } from "vue";
 import { storeToRefs } from "pinia";
+import Swal from "sweetalert2";
 import { io } from "socket.io-client";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -222,6 +223,14 @@ const initSocket = () => {
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
       chatsList.value.unshift({ members: "[]", ...data });
+    });
+    socket.value.on("botsession_created", async (data: any) => {
+      console.log("botsession_created", data);
+      Swal.fire({
+        icon: "info",
+        title: "User Message",
+        text: `${data.document?.summary?.customer_name}-${data.document?.summary?.customer_code}-${data.document?.summary?.location_code}`,
+      });
     });
   } catch (error) {
     console.log(error);

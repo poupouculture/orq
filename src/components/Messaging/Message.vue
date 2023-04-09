@@ -336,7 +336,7 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
-const isBot = ref(false);
+// const isBot = ref(false);
 const botList: Ref<any[]> = ref([]);
 const {
   getSelectedChat,
@@ -382,6 +382,8 @@ const messages = computed<Message[]>(() => {
   );
 });
 
+const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
+
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
@@ -398,7 +400,7 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 watch(getSelectedChatId, () => {
   messagingStore.setReplayMessage();
   message.value = "";
-  isBot.value = false;
+  // isBot.value = false;
 });
 
 watch(
@@ -454,11 +456,9 @@ const messageCallback = async (data: any, newMessage: any) => {
       cachedMessage.splice(index, 1);
     }
     if (cachedMessage) data = data.data || data;
-    newMessage.aaaa = 123;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
-    console.log(cachedMessage);
   }
 };
 
@@ -670,25 +670,25 @@ const upload = async (fileList: readonly File[], caption: string) => {
   messageCallback(data, newMessage);
 };
 
-const imageSizeFilter = (files: readonly any[] | FileList) => {
-  const filterFiles = [];
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (file.size <= 1024 * 1024 * 5) {
-      filterFiles.push(file);
-    }
-  }
-  if (!filterFiles.length) {
-    Notify.create({
-      message: "Image cannot exceed 5M",
-      type: "negative",
-      color: "purple",
-      position: "top",
-    });
-  }
+// const imageSizeFilter = (files: readonly any[] | FileList) => {
+//   const filterFiles = [];
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size <= 1024 * 1024 * 5) {
+//       filterFiles.push(file);
+//     }
+//   }
+//   if (!filterFiles.length) {
+//     Notify.create({
+//       message: "Image cannot exceed 5M",
+//       type: "negative",
+//       color: "purple",
+//       position: "top",
+//     });
+//   }
 
-  return filterFiles;
-};
+//   return filterFiles;
+// };
 
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
@@ -719,7 +719,7 @@ const uploadFile = async (files: readonly File[]) => {
 };
 
 const selectBot = async (bot: any) => {
-  isBot.value = !isBot.value;
+  // isBot.value = !isBot.value;
   initiateBot(getSelectedChatId.value, bot.trigger_intent);
 };
 
@@ -730,7 +730,7 @@ const getChatbots = async () => {
 
 const oncloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  isBot.value = false;
+  // isBot.value = false;
 };
 
 onMounted(() => {
