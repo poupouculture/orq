@@ -187,16 +187,16 @@
             size="md"
             class="q-mt-md"
             :disable="isChatExpired"
-            @click="uplader?.pickFiles"
-          >
-            <q-uploader
-              ref="uplader"
-              accept=".gif, .jpg, .jpeg, .png, image/*"
-              class="hidden invisible"
-              :filter="imageSizeFilter"
-              @added="upload"
-            />
-          </q-btn>
+            @click="showMessageImage = true"
+          />
+          <!-- @click="uplader?.pickFiles" -->
+          <!-- <q-uploader
+            ref="uplader"
+            accept=".gif, .jpg, .jpeg, .png, image/*"
+            class="hidden invisible"
+            :filter="imageSizeFilter"
+            @added="upload"
+          /> -->
           <q-btn
             flat
             round
@@ -252,6 +252,11 @@
     @hide="showMessageTemplate = false"
     @send="sendMessageTemplate"
   />
+  <MessageImageDialog
+    v-model="showMessageImage"
+    @hide="showMessageImage = false"
+    @send="upload"
+  />
 </template>
 
 <script setup lang="ts">
@@ -298,9 +303,10 @@ import {
   MessageStatus,
   SendMessageStatus,
 } from "src/types/MessagingTypes";
-import { Loading, Notify } from "quasar";
+import { Loading } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
+import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
 interface HasMore {
@@ -315,9 +321,9 @@ const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
+const showMessageImage: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
-const uplader: any = ref(null);
 const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -626,7 +632,7 @@ function recClose() {
   showAudio.value = false;
 }
 
-const upload = async (fileList: readonly File[]) => {
+const upload = async (fileList: readonly File[], caption: string) => {
   const file = fileList[0];
   const url = await blobToBase64(file);
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
@@ -647,31 +653,11 @@ const upload = async (fileList: readonly File[]) => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   const bodyFormData = new FormData();
-  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("caption", caption);
   bodyFormData.append("file", file);
-  uplader.value.removeQueuedFiles();
+  // uplader.value.removeQueuedFiles();
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
-};
-
-const imageSizeFilter = (files: readonly any[] | FileList) => {
-  const filterFiles = [];
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (file.size <= 1024 * 1024 * 5) {
-      filterFiles.push(file);
-    }
-  }
-  if (!filterFiles.length) {
-    Notify.create({
-      message: "Image cannot exceed 5M",
-      type: "negative",
-      color: "purple",
-      position: "top",
-    });
-  }
-
-  return filterFiles;
 };
 
 const uploadFile = (files: readonly File[]) => {

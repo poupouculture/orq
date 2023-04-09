@@ -4,19 +4,48 @@
       <div class="w-10/12 flex flex-col bg-primary rounded-lg p-4 text-white">
         <div
           class="w-full bg-gray-300 py-8 flex justify-center"
-          v-if="props.header === 'Media'"
+          v-if="
+            medias.includes(props.header.toUpperCase()) &&
+            props.filePreview === null
+          "
         >
           <img
             src="../../assets/images/image-active.svg"
-            v-if="props.media === 'image'"
+            v-if="
+              props.media.toUpperCase() === 'IMAGE' ||
+              props.header.toUpperCase() === 'IMAGE'
+            "
           />
           <img
             src="../../assets/images/video-active.svg"
-            v-if="props.media === 'video'"
+            v-if="
+              props.media.toUpperCase() === 'VIDEO' ||
+              props.header.toUpperCase() === 'VIDEO'
+            "
           />
           <img
             src="../../assets/images/document-active.svg"
-            v-if="props.media === 'document'"
+            v-if="
+              props.media.toUpperCase() === 'DOCUMENT' ||
+              props.header.toUpperCase() === 'DOCUMENT'
+            "
+          />
+        </div>
+        <div class="w-full py-2 flex justify-center" v-else>
+          <video
+            id="video-preview"
+            controls
+            v-if="
+              props.media.toUpperCase() === 'VIDEO' ||
+              props.header.toUpperCase() === 'VIDEO'
+            "
+          />
+          <img
+            id="image-preview"
+            v-if="
+              props.media.toUpperCase() === 'IMAGE' ||
+              props.header.toUpperCase() === 'IMAGE'
+            "
           />
         </div>
         <h5 class="font-semibold">{{ props.headerMessage }}</h5>
@@ -58,8 +87,10 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, onUpdated } from "vue";
 import { actionType as at } from "../../constants/messageTemplate.js";
+
+const medias = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
 
 const props = defineProps({
   header: {
@@ -94,9 +125,40 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  filePreview: {
+    type: Object,
+    default: () => null,
+  },
 });
 
 onMounted(() => {
-  console.log(props.actions);
+  console.log("parse param to props", props);
+});
+
+onUpdated(() => {
+  console.log("updated", props.filePreview);
+
+  if (props.filePreview !== null) {
+    let fileTag = null;
+    if (
+      props.media.toUpperCase() === "VIDEO" ||
+      props.header.toUpperCase() === "VIDEO"
+    ) {
+      fileTag = document.getElementById("video-preview");
+    }
+    if (
+      props.media.toUpperCase() === "IMAGE" ||
+      props.header.toUpperCase() === "IMAGE"
+    ) {
+      fileTag = document.getElementById("image-preview");
+    }
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(props.filePreview);
+    reader.addEventListener("load", function () {
+      fileTag.src = reader.result;
+    });
+  }
 });
 </script>

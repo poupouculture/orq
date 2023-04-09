@@ -5,6 +5,7 @@
       :is="componentName"
       :src="content.url"
       :name="content.media_id"
+      :caption="content.caption"
     />
     <div
       v-if="messageTemplateHeader(content) !== null"

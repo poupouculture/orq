@@ -76,7 +76,13 @@
                 file
                 <q-uploader
                   ref="uplader"
-                  accept=".gif, .jpg, .jpeg, .png, image/*, .mp4, .mov"
+                  :accept="
+                    header.toUpperCase() === 'IMAGE'
+                      ? '.gif, .jpg, .jpeg, .png, image/*'
+                      : header.toUpperCase() === 'VIDEO'
+                      ? '.mp4, .mov'
+                      : '.pdf'
+                  "
                   class="hidden invisible"
                   @added="upload"
                 />
@@ -112,6 +118,7 @@
               :actionCategory="actionCategory"
               :actions="actions"
               :replies="replies"
+              :file-preview="filePreview"
               v-if="!loading"
             />
           </div>
@@ -177,6 +184,7 @@ const actions = ref(Array(2).fill(null));
 const customVariables = ref([]);
 const isPreview = ref(false);
 const uplader: any = ref(null);
+const filePreview: any = ref(null);
 
 const data = reactive({
   applicationPrograms: [],
@@ -257,6 +265,7 @@ const listNumbers = (str: string) => {
 };
 
 const previewTemplate = (val: any) => {
+  filePreview.value = null;
   usedTemplate.value = val;
   isPreview.value = true;
 
@@ -264,6 +273,7 @@ const previewTemplate = (val: any) => {
 };
 
 const useTemplate = (val: any) => {
+  filePreview.value = null;
   customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
@@ -317,6 +327,6 @@ const resetSearch = () => {
 
 const upload = async (fileList: any) => {
   const file = fileList[0];
-  console.log(file);
+  filePreview.value = file;
 };
 </script>
