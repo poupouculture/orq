@@ -34,7 +34,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       phone: "",
       address1: "",
       address2: "",
-      // first_name
+      show: false,
     },
     invoice: {
       invoiceNumber: "INV-1322525",
@@ -293,6 +293,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
           value: customer.first_name,
           setDefault: false,
         },
+        show: true,
       };
     },
 

@@ -52,7 +52,7 @@ const {
             </span>
           </div>
 
-          <div class="flex gap-2 flex-col">
+          <div v-if="getCustomer.show" class="flex gap-2 flex-col">
             <p class="font-semibold text-sm">Bill To</p>
             <span id="name" class="text-xs text-gray-500">
               {{ `${getCustomer.firstName.value} ${getCustomer.last_name}` }}
@@ -70,6 +70,7 @@ const {
               <span class=""> {{ getCustomer.phone }} </span>
             </div>
           </div>
+
           <div
             v-if="getInvoice.optional.customField.option"
             class="flex gap-2 flex-col"
@@ -241,7 +242,7 @@ const {
           </div>
 
           <div class="text-sm text-slate-400 border-t">
-            <p class="pt-2">{{ getCompany.companyName }}</p>
+            <p class="pt-2">{{ getCompany[0]?.companyName }}</p>
           </div>
         </div>
 
@@ -251,7 +252,7 @@ const {
           </div>
 
           <div class="text-sm text-slate-400 border-t">
-            <p class="pt-2">{{ getCompany.companyName }}</p>
+            <p class="pt-2">{{ getCompany[0]?.companyName }}</p>
           </div>
         </div>
       </div>

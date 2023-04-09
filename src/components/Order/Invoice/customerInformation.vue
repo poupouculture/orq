@@ -81,8 +81,9 @@ const filterPhone = (val, update) => {
   });
 };
 
-const getSelectecCustomer = (value) => {
-  invoice.selectedCustomer(value);
+const selectedUser = () => {
+  drawer.value = !drawer.value;
+  invoice.selectedCustomer(tableSelected.value[0]);
 };
 
 watch(getCompany, () => {
@@ -98,22 +99,6 @@ watch(getCompany, () => {
           <div class="col-span-2 grid grid-cols-2 mb-[30px]">
             <div class="col-span-2 sm:col-span-1">
               <div class="w-full sm:w-[226px]">
-                <q-select
-                  @update:model-value="getSelectecCustomer"
-                  option-label="fullName"
-                  :options="getSelectedCustomers"
-                  option-value="customer_code"
-                  v-model="selectCustomer"
-                  input-debounce="0"
-                  placeholder="Search"
-                  dense
-                  outlined
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-select>
-
                 <q-btn @click="drawer = true" color="primary" class="mt-4">
                   Open Drawer
                 </q-btn>
@@ -296,10 +281,11 @@ watch(getCompany, () => {
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center">
         <div class="h-[90vh] w-full flex flex-col p-10">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-end">
             <q-btn
               :disable="tableSelected.length == 0"
               round
+              @click="selectedUser"
               color="primary"
               size="md"
               icon="done"
@@ -311,7 +297,7 @@ watch(getCompany, () => {
               :rows="getSelectedCustomers"
               :columns="tableHead"
               selection="single"
-              row-key="name"
+              row-key="fullName"
             />
           </div>
         </div>
