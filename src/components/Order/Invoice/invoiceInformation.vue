@@ -122,6 +122,19 @@ onMounted(() => {
           </div>
         </div>
       </div>
+
+      <div class="col-span-2">
+        <div class="">
+          <p class="label-style mb-2">Upload File</p>
+          <q-uploader
+            url="http://localhost:4444/upload"
+            class="w-1/2"
+            square
+            color="primary"
+            flat
+          />
+        </div>
+      </div>
       <div class="col-span-2 sm:col-span-1">
         <div class="w-full">
           <p class="label-style mb-2">Date Issue</p>
