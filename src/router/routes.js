@@ -11,6 +11,11 @@ const routes = [
     ],
   },
   {
+    path: "/me",
+    name: "me",
+    component: () => import("pages/Me.vue"),
+  },
+  {
     path: "/",
     component: () => import("layouts/DrawerLayout.vue"),
     meta: {

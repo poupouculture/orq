@@ -21,7 +21,7 @@ export const dateFormatter = (dateCreated: string) => {
   const dateFormat = new Date(dateCreated);
 
   return `${days[dateFormat.getDay()]}, ${dateFormat.getDate()} ${
-    months[dateFormat.getMonth() - 1]
+    months[dateFormat.getMonth()]
   } ${dateFormat.getFullYear()} • ${("0" + dateFormat.getHours()).slice(-2)}:${(
     "0" + dateFormat.getMinutes()
   ).slice(-2)}:${("0" + dateFormat.getSeconds()).slice(-2)}`;

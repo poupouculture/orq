@@ -5,8 +5,7 @@ import useInvoice from "src/stores/modules/useInvoices";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
 const invoice = useInvoice();
-const { getInvoice, getCustomer, getTotalPrice, getTax, getDicount } =
-  storeToRefs(invoice);
+const { getInvoice, getCustomer, getTotalPrice } = storeToRefs(invoice);
 const shareInvoice = reactive({
   via: "Email",
   setDefault: true,
@@ -39,110 +38,64 @@ const shareInvoice = reactive({
 
         <div class="flex py-4 gap-3 flex-col">
           <div class="flex gap-3 justify-between">
-            <div class="w-[100px]">
+            <div class="w-[66px] lg:w-[100px]">
               <p class="text-sm font-normal">Invoice</p>
             </div>
-            <div class="flex w-[100px] items-center">
+            <div class="flex w-[66px] lg:w-[100px] items-center">
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
-            <div class="w-[100px] ml-4">
+            <div class="w-[66px] lg:w-[100px] ml-4">
               <p class="text-sm font-normal">{{ getInvoice.invoiceNumber }}</p>
             </div>
           </div>
 
           <div class="flex gap-3 justify-between">
-            <div class="w-[100px]">
+            <div class="w-[66px] lg:w-[100px]">
               <p class="text-sm font-normal">Due</p>
             </div>
-            <div class="flex w-[100px] items-center">
+            <div class="flex w-[66px] lg:w-[100px] items-center">
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
-            <div class="w-[100px] ml-4">
+            <div class="w-[66px] lg:w-[100px] ml-4">
               <p class="text-sm font-normal">{{ getInvoice.dueDate }}</p>
             </div>
           </div>
 
           <div class="flex gap-3 justify-between">
-            <div class="w-[100px]">
+            <div class="w-[66px] lg:w-[100px]">
               <p class="text-sm font-normal">Total</p>
             </div>
-            <div class="flex w-[100px] items-center">
+            <div class="flex w-[66px] lg:w-[100px] items-center">
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
-            <div class="w-[100px] ml-4">
+            <div class="w-[66px] lg:w-[100px] ml-4">
               <p class="text-sm font-normal">
                 {{ getInvoice.totalPrice.label }}
               </p>
             </div>
           </div>
 
-          <template v-if="getTax.length > 0">
-            <div
-              v-for="(item, index) in getTax"
-              :key="index"
-              class="flex gap-3 justify-between"
-            >
-              <div class="w-[100px]">
-                <p class="text-sm font-normal">
-                  {{ item.taxName }}
-                  <span class="text-primary">{{ item.percentage }}%</span>
-                </p>
-              </div>
-              <div class="flex w-[100px] items-center">
-                <div class="border-b-4 border-dotted w-full"></div>
-              </div>
-              <div class="w-[100px] ml-4">
-                <p class="text-sm font-normal">
-                  {{ item.taxPrice.label }}
-                </p>
-              </div>
-            </div>
-          </template>
-
-          <template v-if="getDicount.length > 0">
-            <div
-              v-for="(item, index) in getDicount"
-              :key="index"
-              class="flex gap-3 justify-between"
-            >
-              <div class="w-[100px]">
-                <p class="text-sm font-normal">
-                  {{ item.discountName }}
-                  <span class="text-red-500">{{ item.percentage }}%</span>
-                </p>
-              </div>
-              <div class="flex w-[100px] items-center">
-                <div class="border-b-4 border-dotted w-full"></div>
-              </div>
-              <div class="w-[100px] ml-4">
-                <p class="text-sm font-normal text-red-500">
-                  - {{ item.discountPrice.label }}
-                </p>
-              </div>
-            </div>
-          </template>
-
           <div class="flex gap-3 justify-between">
-            <div class="w-[100px]">
+            <div class="w-[66px] lg:w-[100px]">
               <p class="text-sm font-normal">Balance</p>
             </div>
-            <div class="flex w-[100px] items-center">
+            <div class="flex w-[66px] lg:w-[100px] items-center">
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
-            <div class="w-[100px] ml-4">
+            <div class="w-[66px] lg:w-[100px] ml-4">
               <p class="text-sm font-normal">
                 {{ getTotalPrice.label }}
               </p>
             </div>
           </div>
           <div class="flex gap-3 justify-between">
-            <div class="w-[100px]">
+            <div class="w-[66px] lg:w-[100px]">
               <p class="text-sm font-normal">Status</p>
             </div>
-            <div class="flex w-[100px] items-center">
+            <div class="flex w-[66px] lg:w-[100px] items-center">
               <div class="border-b-4 border-dotted w-full"></div>
             </div>
-            <div class="w-[100px] ml-4">
+            <div class="w-[66px] lg:w-[100px] ml-4">
               <p class="text-sm font-normal">{{ getInvoice.status.value }}</p>
             </div>
           </div>

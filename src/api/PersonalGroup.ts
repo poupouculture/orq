@@ -1,6 +1,7 @@
 import { api } from "src/boot/axios";
 import { IUserTransform } from "src/types/TransformObjectType";
 import { userCreate } from "src/utils/transform-object";
+import { getCustomerGroups } from "./customerGroup";
 
 export const searchPersonalGroup = async (query: string) => {
   const data = await api.get("/items/user_groups", {
@@ -15,14 +16,15 @@ export const searchPersonalGroup = async (query: string) => {
 export const getPersonalGroups = async (
   limit: number = 10,
   page: number = 1,
-  search?: string
+  search?: string,
+  type?: string
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const PersonalGroup = await api.get("/items/user_groups", {
     params: {
       limit,
       search,
-      "filter[type][_eq]": "personal",
+      "filter[type][_eq]": type,
       offset,
       fields:
         "id,name,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id",
@@ -32,12 +34,23 @@ export const getPersonalGroups = async (
   return PersonalGroup;
 };
 
-export const getCustomerGroup = async () => {
-  const customerGroup = await api.get(
-    "/items/customer_groups?limit=-1&fields=id,name,status"
-  );
+export const getCustomerGroup = async (
+  rowsPerPage = 10,
+  page = 1,
+  search?: string
+) => {
+  // const customerGroup = await api.get(
+  //   "/items/customer_groups?limit=-1&fields=id,name,status"
+  // );
 
-  return customerGroup;
+  const customerGroups = await getCustomerGroups({
+    limit: rowsPerPage,
+    page,
+    search,
+  });
+  console.log(customerGroups);
+
+  return customerGroups;
 };
 
 export const addRelationship = async (

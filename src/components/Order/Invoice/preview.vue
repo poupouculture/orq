@@ -9,7 +9,7 @@ const {
   getCompany,
   getTax,
   getTotalPrice,
-  getDicount,
+  getDiscount,
 } = storeToRefs(invoice);
 </script>
 
@@ -69,6 +69,17 @@ const {
             <div class="flex gap-1 text-xs text-gray-500">
               <span class=""> {{ getCustomer.phone }} </span>
             </div>
+          </div>
+          <div
+            v-if="getInvoice.optional.customField.option"
+            class="flex gap-2 flex-col"
+          >
+            <p class="font-semibold capitalize text-sm">
+              {{ getInvoice.optional.customField.fieldName }}
+            </p>
+            <span id="name" class="text-xs text-gray-500">
+              {{ getInvoice.optional.customField.fieldValue }}
+            </span>
           </div>
         </div>
       </div>
@@ -139,79 +150,63 @@ const {
         </div>
       </div>
 
-      <div class="grid items-center mt-3 w-full grid-cols-6 h-[30px]">
-        <div class="col-span-4"></div>
-        <div class="col-span-1 text-center">
-          <p class="font-semibold text-sm">Sub total:</p>
-        </div>
+      <div class="w-full flex justify-end mt-5">
+        <div class="flex gap-1 w-[236px] flex-col">
+          <div class="text-end flex gap-5">
+            <span class="w-[100px] font-semibold text-sm"> Sub total: </span>
+            <span class="w-[100px]">
+              {{ getInvoice.totalPrice.label }}
+            </span>
+          </div>
 
-        <div class="col-span-1 text-center">
-          <p>{{ getInvoice.totalPrice.label }}</p>
-        </div>
-      </div>
-
-      <template v-if="getInvoice.tax.length > 0">
-        <div
-          v-for="(tax, index) in getTax"
-          :key="index"
-          class="grid items-center w-full grid-cols-6 h-[30px]"
-        >
-          <div class="col-span-4"></div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-sm">
-              {{ tax.taxName }}
-              <span class="text-primary">
-                {{ `${tax.percentage}%` }}
+          <template v-if="getInvoice.tax.length > 0">
+            <div
+              v-for="(tax, index) in getTax"
+              :key="index"
+              class="text-end flex gap-5"
+            >
+              <span class="w-[100px] font-semibold text-sm">
+                {{ tax.taxName }}
+                <span class="text-primary"> {{ `${tax.percentage}%` }}</span
+                >:
               </span>
-            </p>
-          </div>
-
-          <div class="col-span-1 text-center">
-            <p>{{ tax.taxPrice.label }}</p>
-          </div>
-        </div>
-      </template>
-
-      <template v-if="getDicount.length > 0">
-        <div
-          v-for="(item, index) in getDicount"
-          :key="index"
-          class="grid items-center w-full grid-cols-6 h-[30px]"
-        >
-          <div class="col-span-4"></div>
-          <div class="col-span-1 text-center">
-            <p class="font-semibold text-sm">
-              {{ item.discountName }}
-              <span class="text-red-500">
-                {{ `${item.percentage}%` }}
+              <span class="w-[100px]">
+                {{ tax.taxPrice.label }}
               </span>
-            </p>
+            </div>
+          </template>
+
+          <template v-if="getDiscount.length > 0">
+            <div
+              v-for="(discount, index) in getDiscount"
+              :key="index"
+              class="text-end flex gap-5"
+            >
+              <span class="w-[100px] font-semibold text-sm">
+                {{ discount.discountName }}
+                <span class="text-red-500">
+                  {{ `${discount.percentage}%` }}</span
+                >:
+              </span>
+              <span class="w-[100px] text-red-500">
+                -{{ discount.discountPrice.label }}
+              </span>
+            </div>
+          </template>
+
+          <div class="text-end flex gap-5">
+            <span class="w-[100px] font-semibold text-sm"> Total: </span>
+            <span class="w-[100px]">
+              {{ getTotalPrice.label }}
+            </span>
           </div>
 
-          <div class="col-span-1 text-red-500 text-center">
-            <p>-{{ item.discountPrice.label }}</p>
+          <div class="text-end bg-primary text-white py-2 flex gap-5">
+            <span class="w-[100px] font-semibold text-sm"> Balance Due: </span>
+            <span class="w-[100px]">
+              {{ getTotalPrice.label }}
+            </span>
           </div>
-        </div>
-      </template>
-
-      <div class="grid items-center w-full grid-cols-6 h-[30px]">
-        <div class="col-span-4"></div>
-        <div class="col-span-1 text-center">
-          <p class="font-semibold text-sm">Total:</p>
-        </div>
-        <div class="col-span-1 text-center">
-          <p>{{ getTotalPrice.label }}</p>
-        </div>
-      </div>
-      <div class="grid items-center w-full grid-cols-6 h-[30px]">
-        <div class="col-span-3"></div>
-        <div class="flex justify-end text-white col-span-2">
-          <div class="bg-primary py-2 w-[63%] text-end">
-            <p class="font-semibold text-sm">Balance Due:</p>
-          </div>
-        </div>
-        <div class="bg-primary py-2 text-white col-span-1 text-center">
-          <p class="font-semibold text-sm">{{ getTotalPrice.label }}</p>
         </div>
       </div>
 
@@ -227,6 +222,44 @@ const {
         <span class="text-xs text-gray-500">
           {{ getInvoice.optional.terms }}
         </span>
+      </div>
+
+      <div
+        v-if="getInvoice.optional.memo.option"
+        class="flex gap-2 mt-3 flex-col"
+      >
+        <p class="font-semibold text-sm">Memo</p>
+        <span class="text-xs text-gray-500">
+          {{ getInvoice.optional.memo.memo }}
+        </span>
+      </div>
+
+      <div class="flex mt-3 justify-between">
+        <div class="font-bold gap-10 flex flex-col py-3">
+          <div class="border-b">
+            <p class="pb-2">For and on behalf of the buyer:</p>
+          </div>
+
+          <div class="text-sm text-slate-400 border-t">
+            <p class="pt-2">{{ getCompany.companyName }}</p>
+          </div>
+        </div>
+
+        <div class="font-bold gap-10 flex flex-col py-3">
+          <div class="border-b">
+            <p class="pb-2">Confirmed by the supplier:</p>
+          </div>
+
+          <div class="text-sm text-slate-400 border-t">
+            <p class="pt-2">{{ getCompany.companyName }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="getInvoice.optional.footer.option">
+        <p class="text-xs text-gray-500">
+          {{ getInvoice.optional.footer.value }}
+        </p>
       </div>
     </div>
   </div>
