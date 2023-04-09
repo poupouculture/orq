@@ -108,11 +108,10 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
   }),
   getters: {
     getCompany: (state) => {
-      const newCompanyObject = {
+      return {
         ...state.company,
-        companyName: state.name_english,
+        companyName: state.company.name_english,
       };
-      return newCompanyObject;
     },
     getCustomer: (state) => state.customer,
     getSelectedCustomers: (state) => {

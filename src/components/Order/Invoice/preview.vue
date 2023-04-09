@@ -90,7 +90,28 @@ const {
           <q-icon size="32px" color="primary" name="rocket_launch" />
 
           <div class="flex gap-2 flex-col">
-            <p
+            <p class="font-semibold text-sm">
+              {{ getCompany.companyName }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.address1 }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.address2 }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.city }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.country }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.zip }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.phone }}
+            </p>
+            <!-- <p
               v-for="(company, index) in getCompany"
               :key="index"
               :class="[
@@ -101,7 +122,7 @@ const {
               class=""
             >
               {{ company }}
-            </p>
+            </p> -->
           </div>
         </div>
       </div>
