@@ -165,10 +165,10 @@
             size="md"
             :disable="isChatExpired"
             class="q-mt-md active:bg-primary mic-recorder"
+            @mousedown.prevent="recStart"
             @touchstart.prevent="recStart"
+            @mouseup.prevent="recStop"
             @touchend.prevent="recStop"
-            @mousedown="recStart"
-            @mouseup="recStop"
           />
           <q-btn
             :flat="!isChatExpired"
@@ -448,10 +448,17 @@ const messageCallback = async (data: any, newMessage: any) => {
       text: data.message,
     });
   } else {
-    data = data.data || data;
+    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+    const index = cachedMessage.findIndex((item) => item.id === data.id);
+    if (index !== -1) {
+      cachedMessage.splice(index, 1);
+    }
+    if (cachedMessage) data = data.data || data;
+    newMessage.aaaa = 123;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
+    console.log(cachedMessage);
   }
 };
 
@@ -580,7 +587,6 @@ const recStart = function () {
   if (!wave.value) {
     wave.value = Recorder.WaveSurferView({
       elem: waveRef.value,
-      scale: 1,
     });
   }
   rec.value = Recorder({
@@ -593,12 +599,15 @@ const recStart = function () {
       bufferDuration: number,
       sampleRate: number
     ) => {
+      console.log(11111);
+
       wave.value.input(buffers[buffers.length - 1], powerLevel, sampleRate);
       time.value = bufferDuration;
     },
   });
 
   rec.value.open(function () {
+    console.log(22222);
     rec.value.start();
   });
 };
@@ -606,17 +615,18 @@ const recStart = function () {
 function recStop() {
   rec.value.stop(
     function (blob: Blob, duration: number) {
+      rec.value.close();
       showAudio.value = false;
+      if (duration < 500) return;
       time.value = duration;
       audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
       sendMedia(blob);
-      rec.value.close();
-      wave.value?.ctx2.clearRect(
-        0,
-        0,
-        wave.value?.canvas2.width,
-        wave.value?.canvas2.height
-      );
+      // wave.value?.ctx2.clearRect(
+      //   0,
+      //   0,
+      //   wave.value?.canvas2.width,
+      //   wave.value?.canvas2.height
+      // );
     },
     function () {
       showAudio.value = false;
@@ -660,9 +670,52 @@ const upload = async (fileList: readonly File[], caption: string) => {
   messageCallback(data, newMessage);
 };
 
-const uploadFile = (files: readonly File[]) => {
-  console.log(files);
+const imageSizeFilter = (files: readonly any[] | FileList) => {
+  const filterFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.size <= 1024 * 1024 * 5) {
+      filterFiles.push(file);
+    }
+  }
+  if (!filterFiles.length) {
+    Notify.create({
+      message: "Image cannot exceed 5M",
+      type: "negative",
+      color: "purple",
+      position: "top",
+    });
+  }
+
+  return filterFiles;
+};
+
+const uploadFile = async (files: readonly File[]) => {
+  const file = files[0];
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const newMessage = reactive({
+    id: Date.now(),
+    content: {
+      url: "",
+      type: MessageType.DOCUMENT,
+      duration: time.value,
+      local: true,
+      media_id: file.name,
+    },
+    status: MessageStatus.SENT,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  });
+  cachedMessage.push(newMessage);
+  scrollToBottom();
+  messagingStore.setReplayMessage();
+  const bodyFormData = new FormData();
+  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("file", file);
   fileUplader.value?.removeQueuedFiles();
+  const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+  messageCallback(data, newMessage);
 };
 
 const selectBot = async (bot: any) => {
@@ -692,6 +745,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .mic-recorder {
   -webkit-touch-callout: none !important;
+  user-select: none;
   -webkit-user-select: none;
 }
 </style>
