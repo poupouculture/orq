@@ -13,6 +13,7 @@ enum DrawerTypeEnum {
   DELETE = "delete",
 }
 
+const userGroupOptions = ["personal", "group"];
 // State
 const personalGroupStore = userPersonalGroup();
 const { personalGroups, customerGroups } = storeToRefs(personalGroupStore);
@@ -27,6 +28,7 @@ const drawerLis = reactive([
   },
 ]);
 const query = ref("");
+const queryCustomers = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
 const userGroupId = ref("");
@@ -39,12 +41,45 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 4,
 });
+const paginationCustomers = reactive({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+});
+const userGroupType = ref("personal");
+console.log(userGroupType.value);
 
 const allPersonalGroups = computed(() => personalGroups.value.data);
+const allCustomerGroups = computed(() => customerGroups.value.data);
+console.log("allPersonalGroups:");
+console.log(allPersonalGroups.value);
+console.log("allCustomerGroups:");
+console.log(allCustomerGroups.value);
+// const allCustomerGroups = computed(() => personalGroups.value.data);
 const meta = computed(() => personalGroups.value.meta);
+const metaCustomerGroups = computed(() => customerGroups.value.meta);
+
 const totalPage = computed(() =>
   Math.ceil(meta.value.filter_count / pagination.rowsPerPage)
 );
+console.log(totalPage.value);
+console.log(metaCustomerGroups.value);
+// let metaCustomerGroups = "";
+// const totalPageCustomers = ref(0);
+
+// const totalPageCustomers = computed(() =>
+//   Math.ceil(
+//     metaCustomerGroups.value.filter_count / paginationCustomers.rowsPerPage
+//   )
+// );
+const totalPageCustomers = () => {
+  if (metaCustomerGroups.value) {
+    return Math.ceil(
+      metaCustomerGroups.value.filter_count / paginationCustomers.rowsPerPage
+    );
+  }
+};
 const selectedUserGroup = computed(() => {
   const userGroup = allPersonalGroups.value.find(
     (item) => item.id === userGroupId.value
@@ -54,13 +89,24 @@ const selectedUserGroup = computed(() => {
   );
 });
 
-const remainingGroups = computed(() =>
-  customerGroups.value.filter(
+// const remainingGroups = computed(() =>
+//   allCustomerGroups.value.filter(
+//     (item) =>
+//       selectedUserGroup.value.includes(item.id) ===
+//       (drawerType.value === DrawerTypeEnum.DELETE)
+//   )
+// );
+
+const remainingGroups = computed(() => {
+  console.log("remaining:");
+  console.log(allCustomerGroups.value);
+  const items = allCustomerGroups.value.filter(
     (item) =>
       selectedUserGroup.value.includes(item.id) ===
       (drawerType.value === DrawerTypeEnum.DELETE)
-  )
-);
+  );
+  return items;
+});
 
 // Methods
 const searchHandler = async (searchValue = "") => {
@@ -74,9 +120,25 @@ const searchHandler = async (searchValue = "") => {
   }
 };
 
+const searchHandlerCustomers = async (searchValue = "") => {
+  queryCustomers.value = searchValue;
+  searchLoading.value = true;
+  try {
+    await getCustomerGroupData();
+    searchLoading.value = false;
+  } catch (error) {
+    searchLoading.value = false;
+  }
+};
+
 const resetSearch = () => {
   query.value = "";
   searchHandler();
+};
+
+const resetSearchCustomers = () => {
+  queryCustomers.value = "";
+  searchHandlerCustomers();
 };
 
 const changePage = (val: number) => {
@@ -84,7 +146,13 @@ const changePage = (val: number) => {
   getPersonalGroupData();
 };
 
+const changePageCustomers = (val: number) => {
+  paginationCustomers.page = val;
+  getCustomerGroupData();
+};
+
 const openDrawer = (id: string, type: string) => {
+  // getCustomerGroupData();
   userGroupId.value = id;
   drawer.value = true;
   drawerType.value = type;
@@ -143,17 +211,29 @@ const getPersonalGroupData = async () => {
   await personalGroupStore.getAll(
     pagination.rowsPerPage,
     pagination.page,
-    query.value
+    query.value,
+    userGroupType.value
   );
   loading.value = false;
 };
 const getCustomerGroupData = async () => {
-  personalGroupStore.getCustomerGroup();
+  await personalGroupStore.getCustomerGroup(
+    paginationCustomers.rowsPerPage,
+    paginationCustomers.page,
+    queryCustomers.value
+  );
 };
 
 onMounted(() => {
+  loading.value = true;
   getPersonalGroupData();
   getCustomerGroupData();
+
+  // totalPageCustomers.value = computed(() =>
+  //   Math.ceil(
+  //     metaCustomerGroups.value.filter_count / paginationCustomers.rowsPerPage
+  //   )
+  // );
 });
 
 // Table
@@ -170,7 +250,7 @@ const headerColumns = [
   {
     name: "status",
     align: "left",
-    label: "Role",
+    label: "Status",
     field: "status",
     sortable: true,
     classes: "text-black capitalize",
@@ -179,6 +259,10 @@ const headerColumns = [
 
 watch(drawerType, () => {
   tableSelected.value = [];
+});
+watch(userGroupType, () => {
+  changePage(1);
+  getPersonalGroupData();
 });
 </script>
 
@@ -190,10 +274,16 @@ watch(drawerType, () => {
           class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5"
         >
           <q-icon name="keyboard_backspace" />
-          <span>Personal Groups </span>
+          <span>Relationship Mapping </span>
         </div>
         <!-- Search and Add -->
         <div class="flex items-center justify-between">
+          <q-select
+            standout
+            v-model="userGroupType"
+            :options="userGroupOptions"
+            label="Type"
+          />
           <div class="w-52 ml-3">
             <SearchTableInput
               :loading="searchLoading"
@@ -323,7 +413,11 @@ watch(drawerType, () => {
       <div class="h-full flex justify-center items-center">
         <div class="h-[90vh] w-full flex flex-col p-10">
           <div class="flex items-center justify-between">
-            <SearchTableInput :loading="searchLoading" />
+            <SearchTableInput
+              :loading="searchLoading"
+              @search="searchHandlerCustomers"
+              @reset="resetSearchCustomers"
+            />
             <q-btn
               :disable="tableSelected.length <= 0"
               @click="newRelations"
@@ -340,6 +434,13 @@ watch(drawerType, () => {
               :columns="headerColumns"
               selection="single"
               row-key="name"
+              v-if="remainingGroups.length"
+            />
+            <BasePagination
+              :max="totalPageCustomers()"
+              :max-pages="10"
+              @update-model="changePageCustomers"
+              v-model="paginationCustomers.page"
             />
           </div>
         </div>

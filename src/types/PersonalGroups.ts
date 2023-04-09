@@ -13,6 +13,12 @@ export interface Customer {
   customer_groups_id: PersonalItem;
 }
 
+export interface CustomerGroup {
+  id: string;
+  name: string;
+  status: string;
+}
+
 export interface Personal extends PersonalItem {
   customer_groups: Customer[];
 }
@@ -22,7 +28,12 @@ export interface PersonalGroups {
   meta: Meta;
 }
 
+export interface CustomerGroups {
+  data: CustomerGroup[];
+  meta: Meta;
+}
+
 export interface PState {
   personalGroups: PersonalGroups;
-  customerGroups: PersonalItem[];
+  customerGroups: CustomerGroups;
 }

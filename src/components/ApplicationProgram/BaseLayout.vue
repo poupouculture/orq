@@ -13,7 +13,7 @@
       >
         <span class="text-gray-400 cursor-pointer">
           <q-icon name="fa-solid fa-arrow-left" />
-          Application program /
+          Application programs /
         </span>
       </router-link>
       {{
