@@ -328,6 +328,5 @@ const resetSearch = () => {
 const upload = async (fileList: any) => {
   const file = fileList[0];
   filePreview.value = file;
-  console.log(filePreview.value);
 };
 </script>
