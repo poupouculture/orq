@@ -50,6 +50,7 @@ export interface Message {
   waba_message_id?: string;
   waba_associated_message_id?: string;
   chat_id?: string;
+  mode?: string;
 }
 export interface IChat {
   id: string;
