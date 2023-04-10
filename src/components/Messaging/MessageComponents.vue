@@ -2,9 +2,11 @@
   <div class="message-item relative">
     <!-- <q-btn class="absolute top-0 right-0" round dense size="xs" icon="close" /> -->
     <component
+      ref="component"
       :is="componentName"
       :src="content.url"
       :name="content.media_id"
+      :caption="content.caption"
     />
     <div
       v-if="messageTemplateHeader(content) !== null"
@@ -42,10 +44,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, shallowReactive } from "vue";
+import { computed, shallowReactive, ref } from "vue";
 import { MessageType } from "src/types/MessagingTypes";
 import MessageImage from "./MessageImage.vue";
 import MessageAudio from "./MessageAudio.vue";
+import MessageDocument from "./MessageDocument.vue";
 
 interface Props {
   content: any;
@@ -54,6 +57,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
 });
+
+const component = ref("");
 
 const messageTemplate = (content: any) => {
   const components = content?.template?.components ?? content?.components;
@@ -80,16 +85,25 @@ const messageTemplateHeader = (content: any) => {
   return null;
 };
 
-const components = shallowReactive({ MessageImage, MessageAudio });
+const components = shallowReactive({
+  MessageImage,
+  MessageAudio,
+  MessageDocument,
+});
 const componentName = computed(() => {
   switch (props.content?.type) {
     case MessageType.IMAGE:
       return components.MessageImage;
     case MessageType.AUDIO:
       return components.MessageAudio;
+    case MessageType.DOCUMENT:
+      return components.MessageDocument;
     default:
       return null;
   }
+});
+defineExpose({
+  component,
 });
 </script>
 <style lang="scss" scoped>

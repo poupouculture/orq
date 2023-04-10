@@ -74,6 +74,7 @@ const useMessagingStore = defineStore("messaging", {
 
         if (index !== -1) {
           const [chat] = this.chatsList.splice(index, 1);
+          // chat.mode = lastmessage.mode;
           this.chatsList.unshift(chat);
           const cachedMessage = this.cachedChatMessages[chatId]?.find(
             (item) => item.id === lastmessage.id
@@ -118,23 +119,11 @@ const useMessagingStore = defineStore("messaging", {
       this.selectedTab = newchat.status;
     },
     async fetchChats() {
-      const ongoingPromise = getChats(ChatTypes.ONGOING);
-      const waitingPromise = getChats(ChatTypes.PENDING);
-      const closedPromise = getChats(ChatTypes.CLOSED);
-      const ongoing = await ongoingPromise;
-      const waiting = await waitingPromise;
-      const closed = await closedPromise;
-      const chatsList = [...ongoing, ...waiting, ...closed];
-      this.chatsList = chatsList.map((item) => {
+      const chatsList = await getChats();
+      this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
         return item;
       });
-    },
-
-    async chatCreate(type: ChatTypes, id: string) {
-      const chats: IChat[] = await getChats(type);
-      const newChat = chats.find((item) => item.id === id) as IChat;
-      this.chatsList.unshift(newChat);
     },
 
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
@@ -150,6 +139,7 @@ const useMessagingStore = defineStore("messaging", {
           date_created: item.date_created,
           waba_message_id: item.waba_message_id,
           waba_associated_message_id: item.waba_associated_message_id,
+          mode: item.mode,
         }));
         this.cachedChatMessages[chatId] = [
           ...messages,

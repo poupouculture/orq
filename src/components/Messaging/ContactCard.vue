@@ -74,6 +74,8 @@ const message = computed<string>(() => {
       return lastMessage?.content?.text;
     case MessageType.TEMPLATE:
       return messageTemplate(lastMessage.content);
+    case MessageType.DOCUMENT:
+      return "[file]";
     default:
       return lastMessage?.content?.file_name;
   }

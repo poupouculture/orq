@@ -21,7 +21,10 @@ const usePersonalGroupStore = defineStore("personalGroup", {
         data: [],
         meta: { total_count: 0, filter_count: 0 },
       },
-      customerGroups: [],
+      customerGroups: {
+        data: [],
+        meta: { total_count: 0, filter_count: 0 },
+      },
     } as PState),
 
   // getters: {
@@ -29,28 +32,50 @@ const usePersonalGroupStore = defineStore("personalGroup", {
   // },
 
   actions: {
-    async getAll(rowsPerPage: number = 4, page: number = 1, search?: string) {
+    async getAll(
+      rowsPerPage: number = 4,
+      page: number = 1,
+      search?: string,
+      type?: string
+    ) {
       try {
         const {
           data: { data = [], meta },
-        } = await getPersonalGroups(rowsPerPage, page, search);
+        } = await getPersonalGroups(rowsPerPage, page, search, type);
         this.personalGroups.data = data;
         this.personalGroups.meta = meta || {
           // page: 0,
           total_count: 0,
           filter_count: 0,
         };
+        console.log("this.personalGroups:");
+        console.log(this.personalGroups);
         // this.setMeta(fetchMeta);
       } catch (error) {
         console.log(error);
       }
     },
 
-    async getCustomerGroup() {
-      const {
-        data: { data },
-      } = await getCustomerGroup();
-      this.customerGroups = data;
+    async getCustomerGroup(
+      rowsPerPage: number = 10,
+      page: number = 1,
+      search?: string
+    ) {
+      try {
+        const {
+          data: { data = [], meta },
+        } = await getCustomerGroup(rowsPerPage, page, search);
+        this.customerGroups.data = data;
+        this.customerGroups.meta = meta || {
+          // page: 0,
+          total_count: 0,
+          filter_count: 0,
+        };
+        console.log("this.customerGroups");
+        console.log(this.customerGroups);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     // async get(id: any) {

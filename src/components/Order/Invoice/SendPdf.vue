@@ -1,31 +1,13 @@
 <script setup lang="ts">
-import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
-import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
 const invoice = useInvoice();
 const { getInvoice, getCustomer, getTotalPrice } = storeToRefs(invoice);
-const shareInvoice = reactive({
-  via: "Email",
-  setDefault: true,
-});
 </script>
 
 <template>
   <div class="p-5 mt-5 w-full">
-    <div class="flex mb-5 justify-between items-center">
-      <div class="flex items-center w-1/2">
-        <ShareButton
-          v-model:shareInvoice="shareInvoice"
-          @update:via="(newValue) => (shareInvoice.via = newValue)"
-          @update:setDefault="
-            (newValue) => (shareInvoice.setDefault = newValue)
-          "
-        />
-      </div>
-      <q-icon size="25px" color="primary" name="cloud_download" />
-    </div>
     <div class="bg-white w-full rounded-lg p-5">
       <p class="font-medium">
         TO: <span class="font-bold pl-2">{{ getCustomer.email }}</span>

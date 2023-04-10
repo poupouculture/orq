@@ -127,6 +127,7 @@
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
             :disable="isChatExpired"
+            @paste="onPast"
           />
           <div
             ref="waveRef"
@@ -141,7 +142,7 @@
         </div>
 
         <div class="row justify-end">
-          <q-btn flat round size="md" class="q-mt-md">
+          <q-btn flat round size="md" class="q-mt-md" :disable="isChatExpired">
             <img src="~assets/images/bot.svg" />
             <q-menu>
               <q-list dense style="min-width: 100px">
@@ -163,11 +164,12 @@
             color="grey"
             icon="mic"
             size="md"
+            :disable="isChatExpired"
             class="q-mt-md active:bg-primary mic-recorder"
+            @mousedown.prevent="recStart"
             @touchstart.prevent="recStart"
+            @mouseup.prevent="recStop"
             @touchend.prevent="recStop"
-            @mousedown="recStart"
-            @mouseup="recStop"
           />
           <q-btn
             :flat="!isChatExpired"
@@ -185,14 +187,32 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            @click="uplader?.pickFiles"
+            :disable="isChatExpired"
+            @click="showMessageImage = true"
+          />
+          <!-- @click="uplader?.pickFiles" -->
+          <!-- <q-uploader
+            ref="uplader"
+            accept=".gif, .jpg, .jpeg, .png, image/*"
+            class="hidden invisible"
+            :filter="imageSizeFilter"
+            @added="upload"
+          /> -->
+          <q-btn
+            flat
+            round
+            color="grey"
+            size="md"
+            class="q-mt-md"
+            :disable="isChatExpired"
+            @click="fileUplader?.pickFiles"
           >
+            <img src="~assets/images/pin.svg" />
             <q-uploader
-              ref="uplader"
-              accept=".gif, .jpg, .jpeg, .png, image/*"
+              ref="fileUplader"
+              accept="*"
               class="hidden invisible"
-              :filter="imageSizeFilter"
-              @added="upload"
+              @added="uploadFile"
             />
           </q-btn>
           <q-btn
@@ -232,6 +252,12 @@
     v-model="showMessageTemplate"
     @hide="showMessageTemplate = false"
     @send="sendMessageTemplate"
+  />
+  <MessageImageDialog
+    ref="messageImageDialogRef"
+    v-model="showMessageImage"
+    @hide="showMessageImage = false"
+    @send="upload"
   />
 </template>
 
@@ -279,16 +305,17 @@ import {
   MessageStatus,
   SendMessageStatus,
 } from "src/types/MessagingTypes";
-import { Loading, Notify } from "quasar";
+import { Loading } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
+import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
 interface HasMore {
   [key: string]: boolean;
 }
 const scrollAreaRef = ref<HTMLDivElement>();
-const infiniteScrollRef = ref<HTMLDivElement>();
+const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
 const isChatExpired: Ref<boolean> = ref(true);
 const isTemplate: Ref<boolean> = ref(false);
@@ -296,9 +323,10 @@ const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
+const showMessageImage: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
-const uplader: any = ref(null);
+const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
 const waveRef: any = ref(null);
@@ -310,8 +338,9 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
-const isBot = ref(false);
+// const isBot = ref(false);
 const botList: Ref<any[]> = ref([]);
+const messageImageDialogRef = ref();
 const {
   getSelectedChat,
   getSelectedChatId,
@@ -356,6 +385,8 @@ const messages = computed<Message[]>(() => {
   );
 });
 
+const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
+
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
@@ -372,7 +403,7 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 watch(getSelectedChatId, () => {
   messagingStore.setReplayMessage();
   message.value = "";
-  isBot.value = false;
+  // isBot.value = false;
 });
 
 watch(
@@ -384,20 +415,6 @@ watch(
         differenceInDays(new Date(), new Date(createDate)) > 0;
     } else {
       isChatExpired.value = true;
-    }
-  }
-);
-
-watch(
-  () => getSelectedChat.value?.status,
-  async (val) => {
-    if (val === ChatTypes.ONGOING) {
-      await nextTick();
-      wave.value = Recorder.WaveSurferView({
-        elem: waveRef.value,
-        scale: 1,
-      });
-      recOpen();
     }
   }
 );
@@ -436,7 +453,12 @@ const messageCallback = async (data: any, newMessage: any) => {
       text: data.message,
     });
   } else {
-    data = data.data || data;
+    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+    const index = cachedMessage.findIndex((item) => item.id === data.id);
+    if (index !== -1) {
+      cachedMessage.splice(index, 1);
+    }
+    if (cachedMessage) data = data.data || data;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
@@ -563,8 +585,13 @@ const sendMedia = async (blob: Blob) => {
   messageCallback(data, newMessage);
 };
 
-const recOpen = function (success?: () => void) {
-  if (rec.value) return;
+const recStart = function () {
+  showAudio.value = true;
+  if (!wave.value) {
+    wave.value = Recorder.WaveSurferView({
+      elem: waveRef.value,
+    });
+  }
   rec.value = Recorder({
     type: "mp3",
     sampleRate: 16000,
@@ -573,46 +600,39 @@ const recOpen = function (success?: () => void) {
       buffers: Buffer,
       powerLevel: number,
       bufferDuration: number,
-      sampleRate: number // buffers: Buffer, // powerLevel: number, // bufferDuration: number, // bufferSampleRate: number, // newBufferIdx: Buffer, // asyncEnd: any
+      sampleRate: number
     ) => {
+      console.log(11111);
+
       wave.value.input(buffers[buffers.length - 1], powerLevel, sampleRate);
       time.value = bufferDuration;
     },
   });
 
-  rec.value.open(
-    function () {
-      success && success();
-    },
-    function (msg: string, isUserNotAllow: string) {
-      Notify.create({
-        message: isUserNotAllow
-          ? "Please turn on the recording permission of the browser"
-          : msg,
-        type: "negative",
-        color: "purple",
-      });
-    }
-  );
+  rec.value.open(function () {
+    console.log(22222);
+    rec.value.start();
+  });
 };
 
-/** start recorder **/
-function recStart() {
-  showAudio.value = true;
-  rec.value.start();
-}
-
-/** stop recorder **/
 function recStop() {
   rec.value.stop(
     function (blob: Blob, duration: number) {
+      rec.value.close();
       showAudio.value = false;
+      if (duration < 500) return;
       time.value = duration;
       audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
       sendMedia(blob);
+      // wave.value?.ctx2.clearRect(
+      //   0,
+      //   0,
+      //   wave.value?.canvas2.width,
+      //   wave.value?.canvas2.height
+      // );
     },
-    function (msg: string) {
-      console.log("recording error:" + msg);
+    function () {
+      showAudio.value = false;
       rec.value.close();
       rec.value = null;
     }
@@ -622,9 +642,10 @@ function recStop() {
 function recClose() {
   rec.value && rec.value.close();
   rec.value = null;
+  showAudio.value = false;
 }
 
-const upload = async (fileList: File[]) => {
+const upload = async (fileList: readonly File[], caption: string) => {
   const file = fileList[0];
   const url = await blobToBase64(file);
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
@@ -645,29 +666,63 @@ const upload = async (fileList: File[]) => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   const bodyFormData = new FormData();
-  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("caption", caption);
   bodyFormData.append("file", file);
-  uplader.value.reset();
+  // uplader.value.removeQueuedFiles();
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
 
-const imageSizeFilter = (files: any[]) => {
-  const filterFiles = files.filter((file) => file.size <= 1024 * 1024 * 5);
-  if (!filterFiles.length) {
-    Notify.create({
-      message: "Image cannot exceed 5M",
-      type: "negative",
-      color: "purple",
-      position: "top",
-    });
-  }
+// const imageSizeFilter = (files: readonly any[] | FileList) => {
+//   const filterFiles = [];
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size <= 1024 * 1024 * 5) {
+//       filterFiles.push(file);
+//     }
+//   }
+//   if (!filterFiles.length) {
+//     Notify.create({
+//       message: "Image cannot exceed 5M",
+//       type: "negative",
+//       color: "purple",
+//       position: "top",
+//     });
+//   }
 
-  return filterFiles;
+//   return filterFiles;
+// };
+
+const uploadFile = async (files: readonly File[]) => {
+  const file = files[0];
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const newMessage = reactive({
+    id: Date.now(),
+    content: {
+      url: "",
+      type: MessageType.DOCUMENT,
+      duration: time.value,
+      local: true,
+      media_id: file.name,
+    },
+    status: MessageStatus.SENT,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  });
+  cachedMessage.push(newMessage);
+  scrollToBottom();
+  messagingStore.setReplayMessage();
+  const bodyFormData = new FormData();
+  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("file", file);
+  fileUplader.value?.removeQueuedFiles();
+  const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+  messageCallback(data, newMessage);
 };
 
 const selectBot = async (bot: any) => {
-  isBot.value = !isBot.value;
+  // isBot.value = !isBot.value;
   initiateBot(getSelectedChatId.value, bot.trigger_intent);
 };
 
@@ -677,9 +732,21 @@ const getChatbots = async () => {
 };
 
 const oncloseBot = async () => {
-  const data = await closeBot(getSelectedChatId.value);
-  isBot.value = false;
-  console.log(data);
+  await closeBot(getSelectedChatId.value);
+  // isBot.value = false;
+};
+
+const onPast = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items || [];
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf("image") !== -1) {
+      const file = items[i].getAsFile();
+      showMessageImage.value = true;
+      nextTick(() => {
+        messageImageDialogRef.value.preview([file]);
+      });
+    }
+  }
 };
 
 onMounted(() => {
@@ -694,6 +761,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .mic-recorder {
   -webkit-touch-callout: none !important;
+  user-select: none;
   -webkit-user-select: none;
 }
 </style>

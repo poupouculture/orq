@@ -1,5 +1,4 @@
 <template>
-  <!-- devider -->
   <div
     v-if="message.label"
     class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
@@ -8,8 +7,10 @@
       {{ message.label }}
     </div>
   </div>
-
-  <div class="flex pb-6" :class="{ 'flex-row-reverse': isSend }">
+  <div
+    class="flex"
+    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-6': !isReply }"
+  >
     <div
       class="relative rounded max-w-[60%]"
       :class="[
@@ -23,10 +24,28 @@
           : '',
       ]"
     >
-      <MessageComponents :content="message.content" />
+      <q-btn
+        v-if="isReply"
+        class="absolute -top-4 -right-6"
+        round
+        dense
+        size="xs"
+        icon="close"
+        color="primary"
+        @click="closeReply"
+      />
+      <MessageComponents ref="image" :content="message.content" />
       <div
+        v-if="!isReply"
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"
       >
+        <q-avatar
+          v-if="message.mode === 'Bot'"
+          size="xs"
+          class="rounded-avatar mr-1"
+        >
+          <img src="~assets/images/bot.svg" />
+        </q-avatar>
         <small class="text-[#9A9AAF]">
           {{ stamp }}
         </small>
@@ -66,6 +85,19 @@
         color="negative"
         size="1.2rem"
       />
+      <q-menu touch-position context-menu>
+        <q-list dense style="min-width: 100px">
+          <q-item
+            v-for="item in menuList"
+            :key="item.text"
+            clickable
+            v-close-popup
+            @click="onhandleClick(item.text)"
+          >
+            <q-item-section>{{ item.text }}</q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
     </div>
   </div>
   <div class="w-full flex justify-center py-3" v-if="message.isEmoticon">
@@ -106,7 +138,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import {
   Message,
   Direction,
@@ -115,7 +147,12 @@ import {
 } from "src/types/MessagingTypes";
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
-const props = defineProps<{ message: Message }>();
+import useMessagingStore from "src/stores/modules/messaging";
+
+const props = defineProps<{ message: Message; isReply?: boolean }>();
+const operationType = ref("");
+const image = ref();
+const messagingStore = useMessagingStore();
 const isSend = computed(() => props.message.direction === Direction.OUTGOING);
 const showBackground = computed(
   () => props.message.content.type !== MessageType.IMAGE
@@ -123,4 +160,31 @@ const showBackground = computed(
 const stamp = computed(() => {
   return format(new Date(props.message.date_created), "p");
 });
+const list = [
+  { text: "Reply" },
+  { text: "Download", visible: ["image", "document"] },
+];
+
+const menuList = computed(() =>
+  list.filter(
+    (item) =>
+      !item.visible || item.visible.includes(props.message?.content?.type)
+  )
+);
+const onhandleClick = (type: string) => {
+  operationType.value = type;
+  switch (type) {
+    case "Reply":
+      messagingStore.setReplayMessage(props.message);
+      break;
+    case "Download":
+      image.value.component.download();
+      break;
+    default:
+      break;
+  }
+};
+const closeReply = () => {
+  messagingStore.setReplayMessage();
+};
 </script>

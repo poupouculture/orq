@@ -142,7 +142,7 @@
           >
             <div class="icon-text">
               <img src="../../assets/images/Applicationform.png" />
-              <p class="drawer-text">Application Program</p>
+              <p class="drawer-text">Application Programs</p>
             </div>
           </router-link>
           <router-link to="/Stow" style="text-decoration: none; color: inherit">
