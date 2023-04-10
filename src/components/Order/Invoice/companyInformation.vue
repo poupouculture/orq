@@ -15,6 +15,7 @@ const countryOptions = ref(country);
 const invoice = useInvoice();
 const { company, getCompanies } = storeToRefs(invoice);
 const companyName = ref("");
+const edit = ref(false);
 
 // Function
 
@@ -58,6 +59,11 @@ const selectCompanies = ($event) => {
 <template>
   <div class="mt-5 rounded-lg">
     <div class="flex flex-col">
+      <div class="w-full flex pb-4 justify-end">
+        <q-btn @click="edit = !edit" color="primary">
+          {{ edit ? "cancel" : "edit" }}
+        </q-btn>
+      </div>
       <div class="flex flex-col lg:flex-row justify-between">
         <div class="col-span-1 flex items-end">
           <div
@@ -89,6 +95,7 @@ const selectCompanies = ($event) => {
               v-model="company.address1"
               placeholder="Address 1"
               dense
+              :disable="!edit"
               outlined
             />
           </div>
@@ -101,6 +108,7 @@ const selectCompanies = ($event) => {
               v-model="company.address2"
               placeholder="Address 2"
               dense
+              :disable="!edit"
               outlined
             />
           </div>
@@ -113,6 +121,7 @@ const selectCompanies = ($event) => {
             <q-select
               outlined
               dense
+              :disable="!edit"
               v-model="company.country"
               use-input
               input-debounce="0"
@@ -137,6 +146,7 @@ const selectCompanies = ($event) => {
             <q-select
               outlined
               dense
+              :disable="!edit"
               v-model="company.phone"
               use-input
               input-debounce="0"
@@ -163,6 +173,7 @@ const selectCompanies = ($event) => {
               placeholder="ZIP/Province"
               v-model="company.zip"
               dense
+              :disable="!edit"
               outlined
             />
           </div>
@@ -171,12 +182,18 @@ const selectCompanies = ($event) => {
         <div class="col-span-1">
           <div class="w-full">
             <p class="label-style mb-2">City</p>
-            <q-input placeholder="City" v-model="company.city" dense outlined />
+            <q-input
+              :disable="!edit"
+              placeholder="City"
+              v-model="company.city"
+              dense
+              outlined
+            />
           </div>
         </div>
       </div>
 
-      <div class="flex justify-end mt-16 gap-3">
+      <div v-if="edit" class="flex justify-end mt-16 gap-3">
         <button
           class="rounded-lg py-2 px-4 border-dotted border-2 text-primary border-primary"
         >
