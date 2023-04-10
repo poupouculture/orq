@@ -122,4 +122,8 @@ onMounted(() => {
 onUpdated(() => {
   selectedImage.value = null;
 });
+
+defineExpose({
+  preview,
+});
 </script>

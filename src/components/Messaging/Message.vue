@@ -127,6 +127,7 @@
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
             :disable="isChatExpired"
+            @paste="onPast"
           />
           <div
             ref="waveRef"
@@ -253,6 +254,7 @@
     @send="sendMessageTemplate"
   />
   <MessageImageDialog
+    ref="messageImageDialogRef"
     v-model="showMessageImage"
     @hide="showMessageImage = false"
     @send="upload"
@@ -338,6 +340,7 @@ const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 // const isBot = ref(false);
 const botList: Ref<any[]> = ref([]);
+const messageImageDialogRef = ref();
 const {
   getSelectedChat,
   getSelectedChatId,
@@ -731,6 +734,19 @@ const getChatbots = async () => {
 const oncloseBot = async () => {
   await closeBot(getSelectedChatId.value);
   // isBot.value = false;
+};
+
+const onPast = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items || [];
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf("image") !== -1) {
+      const file = items[i].getAsFile();
+      showMessageImage.value = true;
+      nextTick(() => {
+        messageImageDialogRef.value.preview([file]);
+      });
+    }
+  }
 };
 
 onMounted(() => {
