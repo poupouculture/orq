@@ -16,6 +16,7 @@ const phoneOptions = ref(phone);
 const drawer = ref(false);
 const selectCustomer = ref();
 const tableSelected = ref([]);
+const search = ref("");
 
 // Table
 const tableHead = ref([
@@ -100,7 +101,7 @@ watch(getCompany, () => {
             <div class="col-span-2 sm:col-span-1">
               <div class="w-full sm:w-[226px]">
                 <q-btn @click="drawer = true" color="primary" class="mt-4">
-                  Open Drawer
+                  add customer
                 </q-btn>
               </div>
             </div>
@@ -281,7 +282,14 @@ watch(getCompany, () => {
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center">
         <div class="h-[90vh] w-full flex flex-col p-10">
-          <div class="flex items-center justify-end">
+          <div class="flex items-center justify-between">
+            <div>
+              <q-input placeholder="Search" v-model="search" dense outlined>
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
             <q-btn
               :disable="tableSelected.length == 0"
               round
@@ -296,6 +304,7 @@ watch(getCompany, () => {
               v-model:selected="tableSelected"
               :rows="getSelectedCustomers"
               :columns="tableHead"
+              :filter="search"
               selection="single"
               row-key="fullName"
             />
