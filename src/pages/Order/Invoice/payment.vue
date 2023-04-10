@@ -266,7 +266,7 @@ const availablePayment = computed(() =>
             </div>
 
             <div class="flex items-center justify-evenly">
-              <div>
+              <div class="cursor-pointer">
                 <img class="w-20" src="/src/assets/images/receipt.png" alt="" />
               </div>
               <p class="text-[40px] text-[#4B44F6] font-semibold">
