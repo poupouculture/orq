@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<script setup>
+import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
 import { ref } from "vue";
 
@@ -11,11 +12,13 @@ const phone = ["Afghanistan(+93)", "Indonesia(+62)"];
 
 const phoneOptions = ref(phone);
 const countryOptions = ref(country);
-const { getCompany } = useInvoice();
+const invoice = useInvoice();
+const { company, getCompanies } = storeToRefs(invoice);
+const companyName = ref("");
 
 // Function
 
-const filterPhone = (val: any, update: any) => {
+const filterPhone = (val, update) => {
   if (val === "") {
     update(() => {
       phoneOptions.value = phone;
@@ -31,7 +34,7 @@ const filterPhone = (val: any, update: any) => {
   });
 };
 
-const filterCountry = (val: any, update: any) => {
+const filterCountry = (val, update) => {
   if (val === "") {
     update(() => {
       countryOptions.value = country;
@@ -45,6 +48,10 @@ const filterCountry = (val: any, update: any) => {
       (v) => v.toLowerCase().indexOf(needle) > -1
     );
   });
+};
+
+const selectCompanies = ($event) => {
+  invoice.selectedCompany($event);
 };
 </script>
 
@@ -61,11 +68,15 @@ const filterCountry = (val: any, update: any) => {
 
         <div class="w-full lg:w-[375px] mt-3 lg:mt-0">
           <p class="label-style mb-2">Company Name</p>
-          <q-input
-            v-model="getCompany.companyName"
+          <q-select
             placeholder="Company Name"
+            v-model="companyName"
             dense
+            :options="getCompanies"
+            option-label="name_english"
+            option-value="company_number"
             outlined
+            @update:model-value="selectCompanies"
           />
         </div>
       </div>
@@ -75,7 +86,7 @@ const filterCountry = (val: any, update: any) => {
           <div class="w-full">
             <p class="label-style mb-2">Address 1</p>
             <q-input
-              v-model="getCompany.address1"
+              v-model="company.address1"
               placeholder="Address 1"
               dense
               outlined
@@ -87,7 +98,7 @@ const filterCountry = (val: any, update: any) => {
           <div class="w-full">
             <p class="label-style mb-2">Address 2</p>
             <q-input
-              v-model="getCompany.address2"
+              v-model="company.address2"
               placeholder="Address 2"
               dense
               outlined
@@ -102,7 +113,7 @@ const filterCountry = (val: any, update: any) => {
             <q-select
               outlined
               dense
-              v-model="getCompany.country"
+              v-model="company.country"
               use-input
               input-debounce="0"
               :options="countryOptions"
@@ -126,7 +137,7 @@ const filterCountry = (val: any, update: any) => {
             <q-select
               outlined
               dense
-              v-model="getCompany.phone"
+              v-model="company.phone"
               use-input
               input-debounce="0"
               :options="phoneOptions"
@@ -150,7 +161,7 @@ const filterCountry = (val: any, update: any) => {
             <p class="label-style mb-2">ZIP/Province</p>
             <q-input
               placeholder="ZIP/Province"
-              v-model="getCompany.zip"
+              v-model="company.zip"
               dense
               outlined
             />
@@ -160,12 +171,7 @@ const filterCountry = (val: any, update: any) => {
         <div class="col-span-1">
           <div class="w-full">
             <p class="label-style mb-2">City</p>
-            <q-input
-              placeholder="City"
-              v-model="getCompany.city"
-              dense
-              outlined
-            />
+            <q-input placeholder="City" v-model="company.city" dense outlined />
           </div>
         </div>
       </div>

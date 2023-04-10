@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { getCompanies } from "src/api/companies";
 
 const dollarFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -7,40 +8,39 @@ const dollarFormat = new Intl.NumberFormat("en-US", {
 
 const useInvoiceRecord = defineStore("invoiceRecord", {
   state: () => ({
+    allCompanies: [],
+    selectedCustomers: [],
     company: {
-      companyName: "Apple Inc",
-      address1: "Nyc 1",
-      address2: "Nyc 2",
-      country: "United State",
-      phone: "Indonesia (+62)",
-      zip: "12345",
-      city: "NYC",
+      companyName: "",
+      address1: "",
+      address2: "",
+      country: "",
+      phone: "",
+      zip: "",
+      city: "",
+      show: false,
     },
     customer: {
       firstName: {
-        value: "john",
-        setDefault: true,
+        value: "",
+        setDefault: false,
       },
-      lastName: "Doe",
-      email: "johndoe@mail.com",
+      lastName: "",
+      email: "",
       language: "English",
-      country: "United State",
-      city: "Nyc",
-      zip: "1234",
-      phone: "Indonesia (+62)",
-      address1: "Ycn 1",
-      address2: "Ycn 2",
+      country: "",
+      city: "",
+      zip: "",
+      phone: "",
+      address1: "",
+      address2: "",
+      show: false,
     },
     invoice: {
       invoiceNumber: "INV-1322525",
       dateIssue: null,
       dueDate: null,
-      discount: [
-        // {
-        //   name: "Discount",
-        //   value: 20,
-        // },
-      ],
+      discount: [],
       discountOptions: [
         {
           name: "Discount",
@@ -51,26 +51,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         value: "Draft",
         setDefault: false,
       },
-      items: [
-        // {
-        //   item: "hand Bag",
-        //   qty: 25,
-        //   rate: 2.0,
-        //   amount: {
-        //     label: "",
-        //     totalPrice: 0,
-        //   },
-        // },
-        // {
-        //   item: "hand Bag 2",
-        //   qty: 250,
-        //   rate: 5.0,
-        //   amount: {
-        //     label: "",
-        //     totalPrice: 0,
-        //   },
-        // },
-      ],
+      items: [],
       optional: {
         notes: "Please check your email",
         terms: "Over Due",
@@ -126,8 +107,21 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
   }),
   getters: {
-    getCompany: (state) => state.company,
+    getCompany: (state) => {
+      return {
+        ...state.company,
+        companyName: state.company.name_english,
+      };
+    },
     getCustomer: (state) => state.customer,
+    getSelectedCustomers: (state) => {
+      return state.selectedCustomers.map((item) => {
+        return {
+          ...item,
+          fullName: `${item.first_name} ${item.last_name}`,
+        };
+      });
+    },
     getDiscount: (state) => {
       if (state.invoice.discount.length === 0) return 0;
 
@@ -211,9 +205,9 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         value: subtotal,
       };
     },
-
+    getCompanies: (state) => state.allCompanies,
     getInvoice: (state) => {
-      const formatItem: any[] = state.invoice.items.map((item) => {
+      const formatItem = state.invoice.items.map((item) => {
         return {
           ...item,
           rate: dollarFormat.format(item.rate),
@@ -241,7 +235,7 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
     },
   },
   actions: {
-    addTax(tax: { name: string; value: string }) {
+    addTax(tax) {
       const newTax = {
         name: tax.name,
         value: parseInt(tax.value),
@@ -250,22 +244,22 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
       this.$state.invoice.tax.push(newTax);
     },
 
-    addDiscount(discount: number) {
+    addDiscount(discount) {
       this.$state.invoice.discount.push({
         name: "Discount",
         value: discount,
       });
     },
-    editDiscount(discount: number) {
+    editDiscount(discount) {
       this.$state.invoice.discount[0].value = discount;
     },
     deleteDiscount() {
       this.$state.invoice.discount = [];
     },
-    deleteTax(index: number) {
+    deleteTax(index) {
       this.$state.invoice.tax.splice(index, 1);
     },
-    editTax(index: number, newTax: any) {
+    editTax(index, newTax) {
       this.$state.invoice.tax[index].name = newTax.name;
       this.$state.invoice.tax[index].value = newTax.value;
     },
@@ -280,15 +274,42 @@ const useInvoiceRecord = defineStore("invoiceRecord", {
         },
       });
     },
-    deleteItems(index: number) {
+    deleteItems(index) {
       this.$state.invoice.items.splice(index, 1);
     },
-    editItems(index: number, item: any) {
+    editItems(index, item) {
       this.$state.invoice.items[index].item = item.item;
       this.$state.invoice.items[index].qty = item.qty;
       this.$state.invoice.items[index].rate = item.rate;
       this.$state.invoice.items[index].amount.totalPrice =
         item.amount.totalPrice;
+    },
+
+    selectedCustomer(customer) {
+      this.$state.customer = {
+        ...customer,
+        firstName: {
+          value: customer.first_name,
+          setDefault: false,
+        },
+        show: true,
+      };
+    },
+
+    selectedCompany(company) {
+      this.$state.company = company;
+      this.$state.company.show = true;
+      this.$state.selectedCustomers = company.customers.map(
+        (item) => item.customers_id
+      );
+    },
+
+    async init() {
+      await getCompanies().then((res) => {
+        const { data } = res.data;
+
+        this.$state.allCompanies = data;
+      });
     },
   },
 });

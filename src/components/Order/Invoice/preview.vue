@@ -52,10 +52,10 @@ const {
             </span>
           </div>
 
-          <div class="flex gap-2 flex-col">
+          <div v-if="getCustomer.show" class="flex gap-2 flex-col">
             <p class="font-semibold text-sm">Bill To</p>
             <span id="name" class="text-xs text-gray-500">
-              {{ `${getCustomer.firstName.value} ${getCustomer.lastName}` }}
+              {{ `${getCustomer.firstName.value} ${getCustomer.last_name}` }}
             </span>
             <span id="email" class="text-xs text-gray-500">
               {{ getCustomer.email }}
@@ -70,6 +70,7 @@ const {
               <span class=""> {{ getCustomer.phone }} </span>
             </div>
           </div>
+
           <div
             v-if="getInvoice.optional.customField.option"
             class="flex gap-2 flex-col"
@@ -89,7 +90,28 @@ const {
           <q-icon size="32px" color="primary" name="rocket_launch" />
 
           <div class="flex gap-2 flex-col">
-            <p
+            <p class="font-semibold text-sm">
+              {{ getCompany.companyName }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.address1 }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.address2 }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.city }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.country }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.zip }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ getCompany.phone }}
+            </p>
+            <!-- <p
               v-for="(company, index) in getCompany"
               :key="index"
               :class="[
@@ -100,7 +122,7 @@ const {
               class=""
             >
               {{ company }}
-            </p>
+            </p> -->
           </div>
         </div>
       </div>
@@ -241,7 +263,7 @@ const {
           </div>
 
           <div class="text-sm text-slate-400 border-t">
-            <p class="pt-2">{{ getCompany.companyName }}</p>
+            <p class="pt-2">{{ getCompany[0]?.companyName }}</p>
           </div>
         </div>
 
@@ -251,7 +273,7 @@ const {
           </div>
 
           <div class="text-sm text-slate-400 border-t">
-            <p class="pt-2">{{ getCompany.companyName }}</p>
+            <p class="pt-2">{{ getCompany[0]?.companyName }}</p>
           </div>
         </div>
       </div>

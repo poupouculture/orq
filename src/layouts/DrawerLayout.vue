@@ -97,6 +97,7 @@ const menus = computed(() => {
             <q-expansion-item
               expand-separator
               :icon="menu.icon"
+              expand-icon-class="text-white"
               :label="menu.pages_id.name"
               style="color: #fff"
               v-if="menu.pages_id.name !== 'Application Programs'"
@@ -120,6 +121,7 @@ const menus = computed(() => {
             </q-expansion-item>
             <q-expansion-item
               :icon="menu.icon"
+              expand-icon-class="text-white"
               :label="menu.pages_id.name"
               style="color: #fff"
               @click="router.push(menu.pages_id.url)"
