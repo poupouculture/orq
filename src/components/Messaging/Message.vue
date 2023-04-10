@@ -670,26 +670,6 @@ const upload = async (fileList: readonly File[], caption: string) => {
   messageCallback(data, newMessage);
 };
 
-const imageSizeFilter = (files: readonly any[] | FileList) => {
-  const filterFiles = [];
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (file.size <= 1024 * 1024 * 5) {
-      filterFiles.push(file);
-    }
-  }
-  if (!filterFiles.length) {
-    Notify.create({
-      message: "Image cannot exceed 5M",
-      type: "negative",
-      color: "purple",
-      position: "top",
-    });
-  }
-
-  return filterFiles;
-};
-
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
