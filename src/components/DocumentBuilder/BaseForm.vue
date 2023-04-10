@@ -429,7 +429,7 @@
       </Vue3DraggableResizable>
     </div>
     <div class="w-3/12 flex flex-col bg-gray-100 p-4">
-      <div class="w-full flex justify-end gap-2">
+      <div class="w-full flex justify-end gap-2 mb-2">
         <button
           class="px-6 py-2 bg-gray-300 font-semibold rounded-md"
           @click="submit"
@@ -440,6 +440,13 @@
           Download
         </button>
       </div>
+      <InputSelect
+        :options="documentTypesLabel"
+        :default="documentType"
+        :value="documentType"
+        @input="updateDocumentType"
+        class="bg-white mt-2"
+      />
       <h4 class="font-semibold">Customise Invoice</h4>
       <span class="mt-4 font-semibold">Invoice currency</span>
       <span class="text-xs">
@@ -607,6 +614,9 @@ export default defineComponent({
       },
       currencies: ["Hong Kong Dollar"],
       currency: "Hong Kong Dollar",
+      documentTypesLabel: ["Invoice", "Sales Order", "Purchase Order"],
+      documentTypeValues: ["invoice", "order_sales", "order_purchase"],
+      documentType: "invoice",
       acceptedMethod: false,
     };
   },
@@ -682,12 +692,17 @@ export default defineComponent({
     updateCurrency(val) {
       this.currency = val;
     },
+    updateDocumentType(val) {
+      this.documentType =
+        this.documentTypeValues[this.documentTypesLabel.indexOf(val)];
+    },
     toggleAcceptMethod() {
       this.acceptedMethod = !this.acceptedMethod;
     },
     submit() {
       this.$emit("submit", {
         invoice_currency: this.currency,
+        type: this.documentType,
         payment_methods: this.acceptedMethod ? { type: "Credit Card" } : null,
         fee_issued_to: it.CUSTOMER,
         components: [
