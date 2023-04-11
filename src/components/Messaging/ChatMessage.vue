@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="message.label"
+    v-if="message.label && !isReply"
     class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
   >
     <div class="text-center inline-block text-xs px-1.5 text-[#9A9AAF]">
@@ -40,7 +40,7 @@
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"
       >
         <q-avatar
-          v-if="message.mode === 'Bot'"
+          v-if="message.mode === 'Bot' && isSend"
           size="xs"
           class="rounded-avatar mr-1"
         >

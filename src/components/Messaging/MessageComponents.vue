@@ -1,6 +1,5 @@
 <template>
   <div class="message-item relative">
-    <!-- <q-btn class="absolute top-0 right-0" round dense size="xs" icon="close" /> -->
     <component
       ref="component"
       :is="componentName"

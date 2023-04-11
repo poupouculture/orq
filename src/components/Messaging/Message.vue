@@ -480,7 +480,8 @@ const sendMessage = async () => {
     waba_message_id: "",
   });
   cachedMessage.push(newMessage);
-  const wabaMessageId = replayMessage.value?.waba_message_id;
+  const wabaMessageId =
+    replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
 
   scrollToBottom();
   messagingStore.setReplayMessage();
