@@ -60,7 +60,7 @@ const selectCompanies = ($event) => {
   <div class="mt-5 rounded-lg">
     <div class="flex flex-col">
       <div class="w-full flex pb-4 justify-end">
-        <q-btn @click="edit = !edit" color="primary">
+        <q-btn @click="edit = !edit" :color="edit ? 'red' : 'primary'">
           {{ edit ? "cancel" : "edit" }}
         </q-btn>
       </div>
@@ -195,11 +195,17 @@ const selectCompanies = ($event) => {
 
       <div v-if="edit" class="flex justify-end mt-16 gap-3">
         <button
+          @click="edit = !edit"
           class="rounded-lg py-2 px-4 border-dotted border-2 text-primary border-primary"
         >
           Cancel
         </button>
-        <button class="rounded-lg py-2 px-4 text-white bg-primary">Save</button>
+        <button
+          @click="edit = !edit"
+          class="rounded-lg py-2 px-4 text-white bg-primary"
+        >
+          Save
+        </button>
       </div>
     </div>
   </div>
