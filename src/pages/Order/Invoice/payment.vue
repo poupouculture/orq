@@ -4,6 +4,7 @@ import useInvoice from "src/stores/modules/useInvoices";
 import Visa from "src/assets/images/visa-logo.png";
 import WeChatPay from "src/assets/images/WeChatPay.png";
 import Atome from "src/assets/images/atome.png";
+import Receipt from "src/assets/images/receipt.png";
 import AliPay from "src/assets/images/alipay.png";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 
@@ -267,7 +268,7 @@ const availablePayment = computed(() =>
 
             <div class="flex items-center justify-evenly">
               <div class="cursor-pointer">
-                <img class="w-20" src="/src/assets/images/receipt.png" alt="" />
+                <img class="w-20" :src="Receipt" alt="" />
               </div>
               <p class="text-[40px] text-[#4B44F6] font-semibold">
                 {{ getInvoice.totalPrice.label }}
