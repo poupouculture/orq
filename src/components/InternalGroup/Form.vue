@@ -480,6 +480,6 @@ const paginationCustomerGroup = reactive({
 });
 
 const dialogSubmit = async () => {
-  router.push({ name: "customergroups" });
+  router.push({ name: "internal-group" });
 };
 </script>

@@ -43,6 +43,7 @@
           v-if="props.message.content?.type === MessageType.IMAGE"
           :src="message.content.url"
           :name="message.content.media_id"
+          :caption="message.content.caption"
         />
         <MessageAudio
           v-if="props.message.content?.type === MessageType.AUDIO"

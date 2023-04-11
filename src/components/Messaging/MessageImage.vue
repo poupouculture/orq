@@ -25,6 +25,7 @@
       >
       </q-btn>
     </span>
+    <span>{{ caption }}</span>
     <q-spinner
       v-if="!originSrc"
       class="absolute"
@@ -44,12 +45,14 @@ interface Props {
   src?: string;
   height?: number;
   name?: string;
+  caption?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   src: "",
   height: 128,
   name: "",
+  caption: "",
 });
 
 const visible = ref(false);

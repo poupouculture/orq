@@ -10,6 +10,7 @@ export const enum MessageType {
   IMAGE = "image",
   AUDIO = "audio",
   MEDIA = "media",
+  DOCUMENT = "document",
 }
 
 export const enum MessageStatus {
@@ -50,6 +51,7 @@ export interface Message {
   waba_message_id?: string;
   waba_associated_message_id?: string;
   chat_id?: string;
+  mode?: string;
 }
 export interface IChat {
   id: string;
@@ -64,6 +66,7 @@ export interface IChat {
   totalUnread?: number;
   expiration_timestamp: number;
   customer_company_name_en: string | null;
+  mode?: string;
 }
 
 export interface CachedChatMessages {
