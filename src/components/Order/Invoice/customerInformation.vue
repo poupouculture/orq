@@ -108,10 +108,8 @@ watch(getCompany, () => {
             </div>
 
             <div class="col-span-1">
-              <div class="w-full text-end sm:w-[226px]">
-                <q-btn @click="edit = !edit" :color="edit ? 'red' : 'primary'">
-                  {{ edit ? "cancel" : "edit" }}
-                </q-btn>
+              <div v-if="!edit" class="w-full flex pb-4 justify-end">
+                <q-btn @click="edit = !edit" color="primary"> edit </q-btn>
               </div>
             </div>
           </div>
@@ -285,7 +283,13 @@ watch(getCompany, () => {
         <div v-if="edit" class="flex justify-end mt-16 gap-3">
           <button
             @click="edit = !edit"
-            class="rounded-lg py-2 px-4 border-dotted border-2 text-primary border-primary"
+            :class="[
+              `rounded-lg py-2 px-4 border-dotted border-2 ${
+                edit
+                  ? 'text-[#f44336] border-[#f44336]'
+                  : 'text-primary border-primary'
+              } `,
+            ]"
           >
             Cancel
           </button>
