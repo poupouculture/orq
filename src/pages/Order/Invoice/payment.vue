@@ -3,7 +3,6 @@ import { ref, computed, reactive } from "vue";
 import useInvoice from "src/stores/modules/useInvoices";
 import Visa from "src/assets/images/visa-logo.png";
 import WeChatPay from "src/assets/images/WeChatPay.png";
-import Atome from "src/assets/images/atome.png";
 import Receipt from "src/assets/images/receipt.png";
 import AliPay from "src/assets/images/alipay.png";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
@@ -35,13 +34,6 @@ const paymentOptions = ref([
     text: "WeChat Pay",
     value: "weChatPay",
     img: WeChatPay,
-    active: true,
-    status: false,
-  },
-  {
-    text: "Atome",
-    value: "atome",
-    img: Atome,
     active: true,
     status: false,
   },
