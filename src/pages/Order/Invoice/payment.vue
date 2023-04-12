@@ -11,11 +11,6 @@ const { getInvoice, getCompany } = useInvoice();
 
 const payment = ref("creditCard");
 const firstTab = ref(true);
-const secondTab = ref(false);
-const setAsDefault = ref(false);
-const cardNumber = ref("");
-const mmYY = ref("");
-const vcc = ref("");
 const paymentMethod = ref(false);
 const newCard = ref(false);
 const shareInvoice = reactive({
@@ -126,81 +121,6 @@ const availablePayment = computed(() =>
                         flat
                         color="primary"
                         label="Add payment method"
-                      />
-                    </div>
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
-
-              <q-separator />
-
-              <q-expansion-item
-                group="somegroup"
-                v-model="secondTab"
-                hide-expand-icon
-              >
-                <template #header>
-                  <q-item-section avatar>
-                    <q-icon
-                      name="check_circle"
-                      :style="`color: ${
-                        secondTab ? '#4B44F6' : '#ccc'
-                      } ; font-size: 1.4em;`"
-                    />
-                  </q-item-section>
-
-                  <q-item-section class="capitalize font-semibold">
-                    autocharge customer
-                  </q-item-section>
-                </template>
-
-                <q-card>
-                  <q-card-section>
-                    <div class="grid gap-3 grid-cols-6">
-                      <div class="col-span-3">
-                        <q-input
-                          v-model="cardNumber"
-                          dense
-                          outlined
-                          label="Card Number"
-                          mask="card"
-                          fill-mask
-                        />
-                      </div>
-                      <div class="col-span-2">
-                        <q-input
-                          dense
-                          v-model="mmYY"
-                          outlined
-                          label="MM/YY"
-                          mask="##/##"
-                          fill-mask
-                        />
-                      </div>
-                      <div class="col-span-1">
-                        <q-input
-                          dense
-                          v-model="vcc"
-                          outlined
-                          label="CVV"
-                          mask="###"
-                          fill-mask
-                        />
-                      </div>
-                    </div>
-                    <div class="flex mt-3 items-center justify-end gap-3">
-                      <q-btn
-                        @click="newCard = !newCard"
-                        flat
-                        color="primary"
-                        class="p-0 text-xs"
-                        label="add new card"
-                      />
-                      <q-checkbox
-                        size="xs"
-                        v-model="setAsDefault"
-                        val="xs"
-                        label="Set as default"
                       />
                     </div>
                   </q-card-section>
