@@ -160,11 +160,18 @@ const newRelations = async () => {
 
 const deleteRelations = async () => {
   const { data } = await getRelationship(userGroupId.value);
-  const { id } =
-    data.find(
-      (item: any) => item.customer_groups_id === tableSelected.value[0]?.id
-    ) || {};
-  await deleteRelationship(id);
+
+  const getDataArray: [] = [];
+
+  tableSelected.value.forEach((element) => {
+    const getData = data.find(
+      (item: any) => item.customer_groups_id === element.id
+    );
+
+    if (getData) getDataArray.push(getData);
+  });
+
+  await deleteRelationship(getDataArray);
   await getPersonalGroupData();
   Notify.create({
     message: "success",
@@ -241,7 +248,8 @@ watch(userGroupType, () => {
         <!-- Search and Add -->
         <div class="flex items-center justify-between">
           <q-select
-            standout
+            dense
+            outlined
             v-model="userGroupType"
             :options="userGroupOptions"
             label="Type"
@@ -394,7 +402,7 @@ watch(userGroupType, () => {
               v-model:selected="tableSelected"
               :rows="remainingGroups"
               :columns="headerColumns"
-              selection="single"
+              selection="multiple"
               row-key="name"
               class="mb-3"
               v-if="remainingGroups.length"

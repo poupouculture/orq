@@ -65,8 +65,10 @@ export const addRelationship = async (
   return results;
 };
 
-export const deleteRelationship = async (id: string) => {
-  const results = await api.delete(`/items/customer_groups_user_groups/${id}`);
+export const deleteRelationship = async (payload: []) => {
+  const results = await api.delete(`/items/customer_groups_user_groups`, {
+    data: payload,
+  });
   return results;
 };
 
