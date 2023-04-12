@@ -48,31 +48,17 @@ const paginationCustomers = reactive({
   rowsPerPage: 10,
 });
 const userGroupType = ref("personal");
-console.log(userGroupType.value);
 
 const allPersonalGroups = computed(() => personalGroups.value.data);
 const allCustomerGroups = computed(() => customerGroups.value.data);
-console.log("allPersonalGroups:");
-console.log(allPersonalGroups.value);
-console.log("allCustomerGroups:");
-console.log(allCustomerGroups.value);
-// const allCustomerGroups = computed(() => personalGroups.value.data);
+
 const meta = computed(() => personalGroups.value.meta);
 const metaCustomerGroups = computed(() => customerGroups.value.meta);
 
 const totalPage = computed(() =>
   Math.ceil(meta.value.filter_count / pagination.rowsPerPage)
 );
-console.log(totalPage.value);
-console.log(metaCustomerGroups.value);
-// let metaCustomerGroups = "";
-// const totalPageCustomers = ref(0);
 
-// const totalPageCustomers = computed(() =>
-//   Math.ceil(
-//     metaCustomerGroups.value.filter_count / paginationCustomers.rowsPerPage
-//   )
-// );
 const totalPageCustomers = () => {
   if (metaCustomerGroups.value) {
     return Math.ceil(
@@ -89,17 +75,7 @@ const selectedUserGroup = computed(() => {
   );
 });
 
-// const remainingGroups = computed(() =>
-//   allCustomerGroups.value.filter(
-//     (item) =>
-//       selectedUserGroup.value.includes(item.id) ===
-//       (drawerType.value === DrawerTypeEnum.DELETE)
-//   )
-// );
-
 const remainingGroups = computed(() => {
-  console.log("remaining:");
-  console.log(allCustomerGroups.value);
   const items = allCustomerGroups.value.filter(
     (item) =>
       selectedUserGroup.value.includes(item.id) ===
@@ -180,14 +156,6 @@ const newRelations = async () => {
     position: "top",
     color: "primary",
   });
-  // if (!data.status) {
-  // Notify.create({
-  //   message: data.message,
-  //   type: "negative",
-  //   color: "purple",
-  //   position: "top",
-  // });
-  // }
 };
 
 const deleteRelations = async () => {
@@ -228,12 +196,6 @@ onMounted(() => {
   loading.value = true;
   getPersonalGroupData();
   getCustomerGroupData();
-
-  // totalPageCustomers.value = computed(() =>
-  //   Math.ceil(
-  //     metaCustomerGroups.value.filter_count / paginationCustomers.rowsPerPage
-  //   )
-  // );
 });
 
 // Table
@@ -411,7 +373,7 @@ watch(userGroupType, () => {
     >
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center">
-        <div class="h-[90vh] w-full flex flex-col p-10">
+        <div class="min-h-[90vh] w-full flex flex-col p-10">
           <div class="flex items-center justify-between">
             <SearchTableInput
               :loading="searchLoading"
@@ -434,6 +396,7 @@ watch(userGroupType, () => {
               :columns="headerColumns"
               selection="single"
               row-key="name"
+              class="mb-3"
               v-if="remainingGroups.length"
             />
             <BasePagination

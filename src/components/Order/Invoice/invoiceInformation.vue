@@ -2,11 +2,9 @@
 import { ref, reactive, watchEffect, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
-
 const invoice = useInvoice();
 const { getInvoice, getTax, getTotalPrice, getDiscount } = storeToRefs(invoice);
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
-
 // Optional State
 const customDefault = reactive(getInvoice.value.optional.customField);
 const memo = reactive(getInvoice.value.optional.memo);
@@ -41,75 +39,57 @@ const labelHead = ref([
     class: "col-span-1 text-center",
   },
 ]);
-
 //  Watch
 watchEffect(() => {
   if (customDefault.option) customDefault.active = true;
   else customDefault.active = false;
-
   if (footer.option) footer.active = true;
   else footer.active = false;
-
   if (memo.option) memo.active = true;
   else memo.active = false;
 });
-
 // Methods
-
 const addTax = () => {
   invoice.addTax(newTax);
   newTax.name = "";
   newTax.value = "";
 };
-
 const cancelAddItems = () => {
   addItem.value = !addItem.value;
 };
-
 const addNewItem = () => {
   invoice.addItems(newForm);
   addItem.value = !addItem.value;
-
   resetItem();
 };
-
 const resetItem = () => {
   newForm.description = "";
   newForm.qty = "";
   newForm.rate = "";
-
   newForm.description.resetValidation();
   newForm.qty.resetValidation();
   newForm.rate.resetValidation();
 };
-
 // Validation
-
 const number = reactive([
   (val: any) => (val !== null && val !== "") || "Please type Percentage",
 ]);
 const reg = /^\d+$/;
-
 const requiredNumber = reactive([
   (val: string) => (val !== null && val !== "") || "This field is required",
   (val: string) => reg.test(val) || "This field is number",
 ]);
-
 const required = reactive([
   (val: string) => (val !== null && val !== "") || "This field is required",
 ]);
-
 const addDiscount = () => {
   invoice.addDiscount(discountPercentage.value);
 };
-
 const editDiscount = (discount: number) => {
   invoice.editDiscount(discount);
 };
-
 onMounted(() => {
   const getPanel = document.querySelector(".q-panel.scroll");
-
   getPanel?.classList.remove("scroll");
 });
 </script>
@@ -839,7 +819,6 @@ onMounted(() => {
 :deep(.tax-selected div) {
   min-width: 100px;
 }
-
 :deep(.q-panel) {
   overflow-x: hidden !important;
 }

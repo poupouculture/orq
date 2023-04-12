@@ -17,7 +17,6 @@ const drawer = ref(false);
 const selectCustomer = ref();
 const tableSelected = ref([]);
 const search = ref("");
-const edit = ref(false);
 
 // Table
 const tableHead = ref([
@@ -99,17 +98,11 @@ watch(getCompany, () => {
       <div class="mt-5">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div class="col-span-2 grid grid-cols-2 mb-[30px]">
-            <div class="col-span-1">
+            <div class="col-span-2 sm:col-span-1">
               <div class="w-full sm:w-[226px]">
-                <q-btn @click="drawer = true" color="primary">
+                <q-btn @click="drawer = true" color="primary" class="mt-4">
                   add customer
                 </q-btn>
-              </div>
-            </div>
-
-            <div class="col-span-1">
-              <div v-if="!edit" class="w-full flex pb-4 justify-end">
-                <q-btn @click="edit = !edit" color="primary"> edit </q-btn>
               </div>
             </div>
           </div>
@@ -121,14 +114,9 @@ watch(getCompany, () => {
                 placeholder="First Name"
                 dense
                 outlined
-                :disable="!edit"
               />
               <div class="flex items-center mt-2">
-                <q-checkbox
-                  :disable="!edit"
-                  size="xs"
-                  v-model="customer.firstName.setDefault"
-                />
+                <q-checkbox size="xs" v-model="customer.firstName.setDefault" />
                 <span class="text-xs font-normal text-[#9A9AAF]">
                   set as default for future invoices
                 </span>
@@ -139,7 +127,6 @@ watch(getCompany, () => {
             <div class="w-full">
               <p class="label-style mb-2">Last Name</p>
               <q-input
-                :disable="!edit"
                 v-model="customer.last_name"
                 placeholder="Last Name"
                 dense
@@ -151,7 +138,6 @@ watch(getCompany, () => {
             <div class="w-full">
               <p class="label-style mb-2">Email</p>
               <q-input
-                :disable="!edit"
                 v-model="customer.email"
                 placeholder="Email"
                 dense
@@ -171,7 +157,6 @@ watch(getCompany, () => {
                 :options="languageOptions"
                 @filter="filterLanguage"
                 behavior="menu"
-                :disable="!edit"
               >
                 <template v-slot:no-option>
                   <q-item>
@@ -189,7 +174,6 @@ watch(getCompany, () => {
               <q-select
                 outlined
                 dense
-                :disable="!edit"
                 v-model="customer.country"
                 use-input
                 input-debounce="0"
@@ -214,7 +198,6 @@ watch(getCompany, () => {
                 placeholder="City"
                 v-model="customer.city"
                 dense
-                :disable="!edit"
                 outlined
               />
             </div>
@@ -226,7 +209,6 @@ watch(getCompany, () => {
                 placeholder="ZIP/Province"
                 v-model="customer.zip"
                 dense
-                :disable="!edit"
                 outlined
               />
             </div>
@@ -237,7 +219,6 @@ watch(getCompany, () => {
               <q-select
                 outlined
                 dense
-                :disable="!edit"
                 v-model="customer.phone"
                 use-input
                 input-debounce="0"
@@ -262,7 +243,6 @@ watch(getCompany, () => {
                 placeholder="Address 1"
                 v-model="customer.address1"
                 dense
-                :disable="!edit"
                 outlined
               />
             </div>
@@ -274,29 +254,18 @@ watch(getCompany, () => {
                 placeholder="Address 2"
                 v-model="customer.address2"
                 dense
-                :disable="!edit"
                 outlined
               />
             </div>
           </div>
         </div>
-        <div v-if="edit" class="flex justify-end mt-16 gap-3">
+        <div class="flex justify-end mt-16 gap-3">
           <button
-            @click="edit = !edit"
-            :class="[
-              `rounded-lg py-2 px-4 border-dotted border-2 ${
-                edit
-                  ? 'text-[#f44336] border-[#f44336]'
-                  : 'text-primary border-primary'
-              } `,
-            ]"
+            class="rounded-lg py-2 px-4 border-dotted border-2 text-primary border-primary"
           >
             Cancel
           </button>
-          <button
-            @click="edit = !edit"
-            class="rounded-lg py-2 px-4 text-white bg-primary"
-          >
+          <button class="rounded-lg py-2 px-4 text-white bg-primary">
             Save
           </button>
         </div>
