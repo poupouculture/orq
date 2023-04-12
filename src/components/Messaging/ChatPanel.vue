@@ -229,7 +229,16 @@ const initSocket = () => {
       Swal.fire({
         icon: "info",
         title: "User Message",
-        text: `${data.document?.summary?.customer_name}-${data.document?.summary?.customer_code}-${data.document?.summary?.location_code}`,
+        html:
+          "customer name: " +
+          data.document?.summary?.customer_name +
+          "</br>" +
+          "customer code: " +
+          data.document?.summary?.customer_code +
+          "</br>" +
+          "location code: " +
+          data.document?.summary?.location_code,
+        // text: `${data.document?.summary?.customer_name}-${data.document?.summary?.customer_code}-${data.document?.summary?.location_code}`,
       });
     });
   } catch (error) {
