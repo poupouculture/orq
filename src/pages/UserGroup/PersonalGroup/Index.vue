@@ -35,6 +35,7 @@ const userGroupId = ref("");
 const tableSelected: Ref<PersonalItem[]> = ref([]);
 const drawer = ref(false);
 const drawerType = ref("");
+const relationLoading = ref(false);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -145,17 +146,24 @@ const newRelations = async () => {
     deleteRelations();
     return;
   }
-  await personalGroupStore.addRelation(
-    userGroupId.value,
-    tableSelected.value[0].id
-  );
-  await getPersonalGroupData();
-  Notify.create({
-    message: "success",
-    type: "positive",
-    position: "top",
-    color: "primary",
-  });
+  try {
+    relationLoading.value = true;
+    await personalGroupStore.addRelation(
+      userGroupId.value,
+      tableSelected.value[0].id
+    );
+    relationLoading.value = false;
+    tableSelected.value = [];
+    await getPersonalGroupData();
+    Notify.create({
+      message: "success",
+      type: "positive",
+      position: "top",
+      color: "primary",
+    });
+  } catch (e) {
+    relationLoading.value = false;
+  }
 };
 
 const deleteRelations = async () => {
@@ -164,14 +172,21 @@ const deleteRelations = async () => {
     data.find(
       (item: any) => item.customer_groups_id === tableSelected.value[0]?.id
     ) || {};
-  await deleteRelationship(id);
-  await getPersonalGroupData();
-  Notify.create({
-    message: "success",
-    type: "positive",
-    color: "primary",
-    position: "top",
-  });
+  try {
+    relationLoading.value = true;
+    await deleteRelationship(id);
+    relationLoading.value = false;
+    tableSelected.value = [];
+    await getPersonalGroupData();
+    Notify.create({
+      message: "success",
+      type: "positive",
+      color: "primary",
+      position: "top",
+    });
+  } catch (e) {
+    relationLoading.value = false;
+  }
 };
 
 const getPersonalGroupData = async () => {
@@ -383,6 +398,7 @@ watch(userGroupType, () => {
             <q-btn
               :disable="tableSelected.length <= 0"
               @click="newRelations"
+              :loading="relationLoading"
               round
               color="primary"
               size="md"
