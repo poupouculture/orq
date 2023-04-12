@@ -168,7 +168,7 @@ const deleteRelations = async () => {
       (item: any) => item.customer_groups_id === element.id
     );
 
-    if (getData) getDataArray.push(getData);
+    if (getData) getDataArray.push(getData.id);
   });
 
   await deleteRelationship(getDataArray);
