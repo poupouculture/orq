@@ -53,14 +53,8 @@ export const getCustomerGroup = async (
   return customerGroups;
 };
 
-export const addRelationship = async (
-  userGroupId: string,
-  customerGroupId: string
-) => {
-  const results = await api.post("/items/customer_groups_user_groups", {
-    user_groups_id: userGroupId,
-    customer_groups_id: customerGroupId,
-  });
+export const addRelationship = async (payload: any[]) => {
+  const results = await api.post("/items/customer_groups_user_groups", payload);
 
   return results;
 };

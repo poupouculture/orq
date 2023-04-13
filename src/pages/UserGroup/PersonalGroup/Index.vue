@@ -7,7 +7,11 @@ import { PersonalItem } from "src/types/PersonalGroups";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import { deleteRelationship, getRelationship } from "src/api/PersonalGroup";
+import {
+  deleteRelationship,
+  getRelationship,
+  addRelationship,
+} from "src/api/PersonalGroup";
 enum DrawerTypeEnum {
   MAP = "map",
   DELETE = "delete",
@@ -145,10 +149,15 @@ const newRelations = async () => {
     deleteRelations();
     return;
   }
-  await personalGroupStore.addRelation(
-    userGroupId.value,
-    tableSelected.value[0].id
-  );
+
+  const populateCustomerGroupId = tableSelected.value.map((item) => {
+    return {
+      customer_groups_id: item.id,
+      user_groups_id: userGroupId.value,
+    };
+  });
+
+  await addRelationship(populateCustomerGroupId);
   await getPersonalGroupData();
   Notify.create({
     message: "success",
