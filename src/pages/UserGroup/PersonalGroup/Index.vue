@@ -39,6 +39,7 @@ const userGroupId = ref("");
 const tableSelected: Ref<PersonalItem[]> = ref([]);
 const drawer = ref(false);
 const drawerType = ref("");
+const relationLoading = ref(false);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -400,6 +401,7 @@ watch(userGroupType, () => {
             <q-btn
               :disable="tableSelected.length <= 0"
               @click="newRelations"
+              :loading="relationLoading"
               round
               color="primary"
               size="md"

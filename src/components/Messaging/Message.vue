@@ -212,6 +212,7 @@
               ref="fileUplader"
               accept="*"
               class="hidden invisible"
+              :filter="fileFilter"
               @added="uploadFile"
             />
           </q-btn>
@@ -305,15 +306,41 @@ import {
   MessageStatus,
   SendMessageStatus,
 } from "src/types/MessagingTypes";
-import { Loading } from "quasar";
+import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
+
 interface HasMore {
   [key: string]: boolean;
 }
+
+const FileLimit = [
+  {
+    name: "Image",
+    type: "image/",
+    limit: 5,
+  },
+  {
+    name: "Video",
+    type: "video/",
+    limit: 16,
+  },
+  {
+    name: "Audio",
+    type: "audio/",
+    limit: 16,
+  },
+  // others
+  // {
+  //   name: "Document",
+  //   type: "document",
+  //   limit: 100,
+  // },
+];
+
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
@@ -338,7 +365,6 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
-// const isBot = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -403,7 +429,6 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 watch(getSelectedChatId, () => {
   messagingStore.setReplayMessage();
   message.value = "";
-  // isBot.value = false;
 });
 
 watch(
@@ -696,6 +721,10 @@ const upload = async (fileList: readonly File[], caption: string) => {
 
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
+  console.log(file.name, file.type);
+  getLimitByType(file.type);
+  if (file) return;
+
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
     id: Date.now(),
@@ -722,9 +751,46 @@ const uploadFile = async (files: readonly File[]) => {
   messageCallback(data, newMessage);
 };
 
+const getLimitByType = (type: string) => {
+  const fileData = FileLimit.find((item) => type.startsWith(item.type)) || {
+    name: "Document",
+    type: "document",
+    limit: 100,
+  };
+  return fileData;
+};
+
+const fileFilter = (files: readonly any[] | FileList) => {
+  const filterFiles = [];
+  let fileData;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    fileData = getLimitByType(file.type);
+    if (file.size <= fileData.limit * 1024 * 1024) {
+      filterFiles.push(file);
+    }
+  }
+
+  if (!filterFiles.length) {
+    Notify.create({
+      message: `${fileData?.name} cannot exceed ${fileData?.limit}MB`,
+      type: "negative",
+      color: "purple",
+      position: "top",
+    });
+  }
+
+  return filterFiles;
+};
+
 const selectBot = async (bot: any) => {
-  // isBot.value = !isBot.value;
-  initiateBot(getSelectedChatId.value, bot.trigger_intent);
+  const { status } = await initiateBot(
+    getSelectedChatId.value,
+    bot.trigger_intent
+  );
+  if (status) {
+    getSelectedChat.value.mode = "Bot";
+  }
 };
 
 const getChatbots = async () => {
@@ -734,7 +800,7 @@ const getChatbots = async () => {
 
 const oncloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  // isBot.value = false;
+  getSelectedChat.value.mode = "";
 };
 
 const onPast = (e: ClipboardEvent) => {
