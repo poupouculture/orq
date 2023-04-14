@@ -24,6 +24,12 @@
           : '',
       ]"
     >
+      <span
+        v-if="!isSend"
+        class="absolute bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
+      >
+        {{ message.contact }}
+      </span>
       <q-btn
         v-if="isReply"
         class="absolute -top-4 -right-6"
