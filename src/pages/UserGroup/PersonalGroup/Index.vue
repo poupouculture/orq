@@ -408,7 +408,7 @@ watch(userGroupType, () => {
               icon="done"
             />
           </div>
-          <div class="mt-10">
+          <div class="mt-10" v-if="remainingGroups.length > 0">
             <q-table
               v-model:selected="tableSelected"
               :rows="remainingGroups"
@@ -424,6 +424,9 @@ watch(userGroupType, () => {
               @update-model="changePageCustomers"
               v-model="paginationCustomers.page"
             />
+          </div>
+          <div v-else class="h-[50vh] flex justify-center items-center">
+            No Data Available
           </div>
         </div>
       </div>
