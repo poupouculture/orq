@@ -7,7 +7,11 @@ import { PersonalItem } from "src/types/PersonalGroups";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import { deleteRelationship, getRelationship } from "src/api/PersonalGroup";
+import {
+  deleteRelationship,
+  getRelationship,
+  addRelationship,
+} from "src/api/PersonalGroup";
 enum DrawerTypeEnum {
   MAP = "map",
   DELETE = "delete",
@@ -146,47 +150,45 @@ const newRelations = async () => {
     deleteRelations();
     return;
   }
-  try {
-    relationLoading.value = true;
-    await personalGroupStore.addRelation(
-      userGroupId.value,
-      tableSelected.value[0].id
-    );
-    relationLoading.value = false;
-    tableSelected.value = [];
-    await getPersonalGroupData();
-    Notify.create({
-      message: "success",
-      type: "positive",
-      position: "top",
-      color: "primary",
-    });
-  } catch (e) {
-    relationLoading.value = false;
-  }
+
+  const populateCustomerGroupId = tableSelected.value.map((item) => {
+    return {
+      customer_groups_id: item.id,
+      user_groups_id: userGroupId.value,
+    };
+  });
+
+  await addRelationship(populateCustomerGroupId);
+  await getPersonalGroupData();
+  Notify.create({
+    message: "success",
+    type: "positive",
+    position: "top",
+    color: "primary",
+  });
 };
 
 const deleteRelations = async () => {
   const { data } = await getRelationship(userGroupId.value);
-  const { id } =
-    data.find(
-      (item: any) => item.customer_groups_id === tableSelected.value[0]?.id
-    ) || {};
-  try {
-    relationLoading.value = true;
-    await deleteRelationship(id);
-    relationLoading.value = false;
-    tableSelected.value = [];
-    await getPersonalGroupData();
-    Notify.create({
-      message: "success",
-      type: "positive",
-      color: "primary",
-      position: "top",
-    });
-  } catch (e) {
-    relationLoading.value = false;
-  }
+
+  const getDataArray: [] = [];
+
+  tableSelected.value.forEach((element) => {
+    const getData = data.find(
+      (item: any) => item.customer_groups_id === element.id
+    );
+
+    if (getData) getDataArray.push(getData.id);
+  });
+
+  await deleteRelationship(getDataArray);
+  await getPersonalGroupData();
+  Notify.create({
+    message: "success",
+    type: "positive",
+    color: "primary",
+    position: "top",
+  });
 };
 
 const getPersonalGroupData = async () => {
@@ -256,7 +258,8 @@ watch(userGroupType, () => {
         <!-- Search and Add -->
         <div class="flex items-center justify-between">
           <q-select
-            standout
+            dense
+            outlined
             v-model="userGroupType"
             :options="userGroupOptions"
             label="Type"
@@ -410,7 +413,7 @@ watch(userGroupType, () => {
               v-model:selected="tableSelected"
               :rows="remainingGroups"
               :columns="headerColumns"
-              selection="single"
+              selection="multiple"
               row-key="name"
               class="mb-3"
               v-if="remainingGroups.length"
