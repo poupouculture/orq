@@ -195,9 +195,7 @@ export const uploadMedia = async (chatId: string, payload: any) => {
 };
 
 export const chatbots = async () => {
-  const { data } = await api.get(`/items/chatbots`, {
-    params: { status: "published" },
-  });
+  const { data } = await api.get(`/items/chatbots?filter[status]=published`);
   return data;
 };
 
