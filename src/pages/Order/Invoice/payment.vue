@@ -12,7 +12,6 @@ const { getInvoice, getCompany } = useInvoice();
 const payment = ref("creditCard");
 const firstTab = ref(true);
 const paymentMethod = ref(false);
-const newCard = ref(false);
 const shareInvoice = reactive({
   via: "Email",
   setDefault: true,
@@ -42,6 +41,10 @@ const paymentOptions = ref([
 ]);
 const availablePayment = computed(() =>
   paymentOptions.value.filter((item) => item.active)
+);
+
+const unavailablePayment = computed(() =>
+  paymentOptions.value.filter((item) => !item.active)
 );
 </script>
 
@@ -90,6 +93,7 @@ const availablePayment = computed(() =>
                 <q-card class="flex justify-center">
                   <q-card-section class="w-96">
                     <div
+                      v-if="availablePayment.length > 0"
                       class="bg-white divide-y divide-slate-300 gap-3 flex flex-col p-4 drop-shadow-xl rounded-lg"
                     >
                       <div
@@ -108,6 +112,7 @@ const availablePayment = computed(() =>
                         <div>
                           <q-btn
                             flat
+                            @click="payment.active = !payment.active"
                             round
                             color="blue-grey-11"
                             icon="delete"
@@ -189,6 +194,7 @@ const availablePayment = computed(() =>
           </div>
 
           <div
+            v-if="availablePayment.length > 0"
             class="flex flex-col gap-4 p-5 bg-white drop-shadow-xl rounded-lg"
           >
             <div>
@@ -199,7 +205,7 @@ const availablePayment = computed(() =>
 
             <div class="flex flex-col gap-5">
               <q-item
-                v-for="(item, index) in paymentOptions"
+                v-for="(item, index) in availablePayment"
                 :key="index"
                 :class="[
                   payment == item.value ? 'border-2 border-primary' : '',
@@ -246,7 +252,7 @@ const availablePayment = computed(() =>
 
         <div class="flex mt-5 flex-col gap-4">
           <div class="flex flex-col gap-3">
-            <div>
+            <div v-if="availablePayment.length > 0">
               <div class="w-2/3">
                 <p class="capitalize border-b-2 pb-2">
                   available for this invoice
@@ -262,7 +268,7 @@ const availablePayment = computed(() =>
                   class="flex mt-3 items-center gap-10"
                 >
                   <q-toggle
-                    v-model="item.status"
+                    v-model="item.active"
                     checked-icon="check"
                     color="primary"
                     unchecked-icon="clear"
@@ -275,7 +281,7 @@ const availablePayment = computed(() =>
               </div>
             </div>
 
-            <div>
+            <div v-if="unavailablePayment.length > 0">
               <div class="w-2/3">
                 <p class="capitalize border-b-2 pb-2">
                   unavailable for this invoice
@@ -291,7 +297,7 @@ const availablePayment = computed(() =>
                   class="flex mt-3 items-center gap-10"
                 >
                   <q-toggle
-                    v-model="item.status"
+                    v-model="item.active"
                     checked-icon="check"
                     color="primary"
                     unchecked-icon="clear"
@@ -312,7 +318,7 @@ const availablePayment = computed(() =>
                 outline
                 >cancel</q-btn
               >
-              <q-btn color="primary"> Save </q-btn>
+              <q-btn v-close-popup color="primary"> Save </q-btn>
             </div>
           </div>
         </div>
@@ -320,7 +326,7 @@ const availablePayment = computed(() =>
     </q-dialog>
 
     <!-- add new card -->
-    <q-dialog v-model="newCard">
+    <!-- <q-dialog v-model="newCard">
       <div class="rounded-2xl bg-white py-10 px-7 w-[800px]">
         <q-form>
           <label for="number" class="text-xs capitalize"> Card Number </label>
@@ -372,10 +378,10 @@ const availablePayment = computed(() =>
           >
             cancel
           </q-btn>
-          <q-btn color="primary"> Save </q-btn>
+          <q-btn v-close-popup color="primary"> Save </q-btn>
         </div>
       </div>
-    </q-dialog>
+    </q-dialog> -->
   </div>
 </template>
 
