@@ -13,13 +13,7 @@ const { getCompany, getInvoice } = storeToRefs(invoice);
 
 const payment = ref("creditCard");
 const firstTab = ref(true);
-const secondTab = ref(false);
-const setAsDefault = ref(false);
-const cardNumber = ref("");
-const mmYY = ref("");
-const vcc = ref("");
 const paymentMethod = ref(false);
-const newCard = ref(false);
 const shareInvoice = reactive({
   via: "Email",
   setDefault: true,
@@ -49,6 +43,10 @@ const paymentOptions = ref([
 ]);
 const availablePayment = computed(() =>
   paymentOptions.value.filter((item) => item.active)
+);
+
+const unavailablePayment = computed(() =>
+  paymentOptions.value.filter((item) => !item.active)
 );
 </script>
 
@@ -97,6 +95,7 @@ const availablePayment = computed(() =>
                 <q-card class="flex justify-center">
                   <q-card-section class="w-96">
                     <div
+                      v-if="availablePayment.length > 0"
                       class="bg-white divide-y divide-slate-300 gap-3 flex flex-col p-4 drop-shadow-xl rounded-lg"
                     >
                       <div
@@ -115,6 +114,7 @@ const availablePayment = computed(() =>
                         <div>
                           <q-btn
                             flat
+                            @click="payment.active = !payment.active"
                             round
                             color="blue-grey-11"
                             icon="delete"
@@ -128,81 +128,6 @@ const availablePayment = computed(() =>
                         flat
                         color="primary"
                         label="Add payment method"
-                      />
-                    </div>
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
-
-              <q-separator />
-
-              <q-expansion-item
-                group="somegroup"
-                v-model="secondTab"
-                hide-expand-icon
-              >
-                <template #header>
-                  <q-item-section avatar>
-                    <q-icon
-                      name="check_circle"
-                      :style="`color: ${
-                        secondTab ? '#4B44F6' : '#ccc'
-                      } ; font-size: 1.4em;`"
-                    />
-                  </q-item-section>
-
-                  <q-item-section class="capitalize font-semibold">
-                    autocharge customer
-                  </q-item-section>
-                </template>
-
-                <q-card>
-                  <q-card-section>
-                    <div class="grid gap-3 grid-cols-6">
-                      <div class="col-span-3">
-                        <q-input
-                          v-model="cardNumber"
-                          dense
-                          outlined
-                          label="Card Number"
-                          mask="card"
-                          fill-mask
-                        />
-                      </div>
-                      <div class="col-span-2">
-                        <q-input
-                          dense
-                          v-model="mmYY"
-                          outlined
-                          label="MM/YY"
-                          mask="##/##"
-                          fill-mask
-                        />
-                      </div>
-                      <div class="col-span-1">
-                        <q-input
-                          dense
-                          v-model="vcc"
-                          outlined
-                          label="CVV"
-                          mask="###"
-                          fill-mask
-                        />
-                      </div>
-                    </div>
-                    <div class="flex mt-3 items-center justify-end gap-3">
-                      <q-btn
-                        @click="newCard = !newCard"
-                        flat
-                        color="primary"
-                        class="p-0 text-xs"
-                        label="add new card"
-                      />
-                      <q-checkbox
-                        size="xs"
-                        v-model="setAsDefault"
-                        val="xs"
-                        label="Set as default"
                       />
                     </div>
                   </q-card-section>
@@ -271,6 +196,7 @@ const availablePayment = computed(() =>
           </div>
 
           <div
+            v-if="availablePayment.length > 0"
             class="flex flex-col gap-4 p-5 bg-white drop-shadow-xl rounded-lg"
           >
             <div>
@@ -281,7 +207,7 @@ const availablePayment = computed(() =>
 
             <div class="flex flex-col gap-5">
               <q-item
-                v-for="(item, index) in paymentOptions"
+                v-for="(item, index) in availablePayment"
                 :key="index"
                 :class="[
                   payment == item.value ? 'border-2 border-primary' : '',
@@ -328,7 +254,7 @@ const availablePayment = computed(() =>
 
         <div class="flex mt-5 flex-col gap-4">
           <div class="flex flex-col gap-3">
-            <div>
+            <div v-if="availablePayment.length > 0">
               <div class="w-2/3">
                 <p class="capitalize border-b-2 pb-2">
                   available for this invoice
@@ -344,7 +270,7 @@ const availablePayment = computed(() =>
                   class="flex mt-3 items-center gap-10"
                 >
                   <q-toggle
-                    v-model="item.status"
+                    v-model="item.active"
                     checked-icon="check"
                     color="primary"
                     unchecked-icon="clear"
@@ -357,7 +283,7 @@ const availablePayment = computed(() =>
               </div>
             </div>
 
-            <div>
+            <div v-if="unavailablePayment.length > 0">
               <div class="w-2/3">
                 <p class="capitalize border-b-2 pb-2">
                   unavailable for this invoice
@@ -373,7 +299,7 @@ const availablePayment = computed(() =>
                   class="flex mt-3 items-center gap-10"
                 >
                   <q-toggle
-                    v-model="item.status"
+                    v-model="item.active"
                     checked-icon="check"
                     color="primary"
                     unchecked-icon="clear"
@@ -394,7 +320,7 @@ const availablePayment = computed(() =>
                 outline
                 >cancel</q-btn
               >
-              <q-btn color="primary"> Save </q-btn>
+              <q-btn v-close-popup color="primary"> Save </q-btn>
             </div>
           </div>
         </div>
@@ -402,7 +328,7 @@ const availablePayment = computed(() =>
     </q-dialog>
 
     <!-- add new card -->
-    <q-dialog v-model="newCard">
+    <!-- <q-dialog v-model="newCard">
       <div class="rounded-2xl bg-white py-10 px-7 w-[800px]">
         <q-form>
           <label for="number" class="text-xs capitalize"> Card Number </label>
@@ -454,10 +380,10 @@ const availablePayment = computed(() =>
           >
             cancel
           </q-btn>
-          <q-btn color="primary"> Save </q-btn>
+          <q-btn v-close-popup color="primary"> Save </q-btn>
         </div>
       </div>
-    </q-dialog>
+    </q-dialog> -->
   </div>
 </template>
 
