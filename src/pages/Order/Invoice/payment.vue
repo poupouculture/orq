@@ -9,7 +9,14 @@ import ShareButton from "src/components/Order/Invoice/shareButton.vue";
 import { storeToRefs } from "pinia";
 
 const invoice = useInvoice();
-const { getCompany, getInvoice } = storeToRefs(invoice);
+const {
+  getCompany,
+  getInvoice,
+  getCustomer,
+  getTax,
+  getDiscount,
+  getTotalPrice,
+} = storeToRefs(invoice);
 
 const payment = ref("creditCard");
 const firstTab = ref(true);
@@ -341,7 +348,7 @@ const unavailablePayment = computed(() =>
 
     <q-drawer
       overlay
-      :width="800"
+      :width="600"
       :breakpoint="500"
       v-model="drawer"
       bordered
@@ -349,13 +356,118 @@ const unavailablePayment = computed(() =>
     >
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center">
-        <div class="h-[90vh] w-full flex flex-col py-10">
+        <div class="min-h-[90vh] w-full flex flex-col py-10">
           <div
             class="flex border border-b pb-2 border-t-0 border-l-0 border-r-0 items-center justify-between"
           >
             <div class="text-capitalize px-10">summary</div>
           </div>
-          <div class="mt-10"></div>
+          <div class="mt-10 px-10 flex flex-col gap-5 w-1/2">
+            <div class="grid grid-cols-2">
+              <p class="text-[#111827] capitalize text-sm font-semibold">to</p>
+              <p class="text-black text-sm font-normal">
+                {{ getCustomer.email }}
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2">
+              <p class="text-[#111827] capitalize text-sm font-semibold">
+                from
+              </p>
+              <p class="text-black text-sm font-normal">
+                {{ getCompany.companyName }}
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2">
+              <p class="text-[#111827] capitalize text-sm font-semibold">
+                invoice
+              </p>
+              <p class="text-black text-sm font-normal">
+                {{ getInvoice.invoiceNumber }}
+              </p>
+            </div>
+
+            <p class="text-[#111827] mt-20 capitalize text-lg font-semibold">
+              Due On {{ getInvoice.dueDate }}
+            </p>
+          </div>
+
+          <div class="mt-10 px-10">
+            <p
+              class="uppercase font-bold border border-b border-t-0 border-l-0 border-r-0 pb-4"
+            >
+              items
+            </p>
+
+            <div
+              class="mt-10 border pb-10 border-b border-t-0 border-l-0 border-r-0"
+            >
+              <div class="grid grid-cols-3">
+                <p class="font-bold">Item</p>
+                <p class="font-bold">Qty</p>
+                <p class="font-bold">Amount</p>
+              </div>
+
+              <div
+                v-for="(item, index) in getInvoice.items"
+                :key="index"
+                class="grid mt-4 text-gray-500 grid-cols-3"
+              >
+                <p class="">{{ item.item }}</p>
+                <p class="">{{ item.qty }}</p>
+                <p class="">{{ item.amount.label }}</p>
+              </div>
+            </div>
+
+            <div class="mt-10 flex flex-col">
+              <div class="grid grid-cols-3">
+                <p class="font-bold col-span-2">Sub total</p>
+
+                <p class="font-bold">{{ getInvoice.totalPrice.label }}</p>
+              </div>
+
+              <template v-if="getInvoice.tax.length > 0">
+                <div
+                  v-for="(tax, index) in getTax"
+                  :key="index"
+                  class="grid grid-cols-3"
+                >
+                  <p class="font-bold col-span-2">
+                    {{ tax.taxName }}
+                    <span class="text-primary">{{ `${tax.percentage}%` }}</span>
+                  </p>
+
+                  <p class="font-bold">{{ tax.taxPrice.label }}</p>
+                </div>
+              </template>
+
+              <template v-if="getDiscount.length > 0">
+                <div
+                  v-for="(discount, index) in getDiscount"
+                  :key="index"
+                  class="grid grid-cols-3"
+                >
+                  <p class="font-bold col-span-2">
+                    {{ discount.discountName }}
+                    <span class="text-red-500">{{
+                      `${discount.percentage}%`
+                    }}</span>
+                  </p>
+
+                  <p class="font-bold text-red-500">
+                    -{{ discount.discountPrice.label }}
+                  </p>
+                </div>
+              </template>
+
+              <div class="grid grid-cols-3">
+                <p class="font-bold col-span-2">Balance Due</p>
+
+                <p class="font-bold">{{ getTotalPrice?.label }}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
