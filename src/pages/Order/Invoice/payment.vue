@@ -6,8 +6,10 @@ import WeChatPay from "src/assets/images/WeChatPay.png";
 import Receipt from "src/assets/images/receipt.png";
 import AliPay from "src/assets/images/alipay.png";
 import ShareButton from "src/components/Order/Invoice/shareButton.vue";
+import { storeToRefs } from "pinia";
 
-const { getInvoice, getCompany } = useInvoice();
+const invoice = useInvoice();
+const { getCompany, getInvoice } = storeToRefs(invoice);
 
 const payment = ref("creditCard");
 const firstTab = ref(true);
@@ -231,17 +233,17 @@ const availablePayment = computed(() =>
             class="flex flex-col gap-4 p-5 bg-white drop-shadow-xl rounded-lg"
           >
             <div class="">
-              <div class="grid grid-cols-2">
-                <div class="">
+              <div class="grid grid-rows-2">
+                <div class="grid grid-cols-2">
                   <p class="text-[#111827] text-base font-semibold">
                     Company Name
                   </p>
-                  <p class="text-[#111827] text-base font-semibold">Invoice</p>
-                </div>
-                <div class="">
                   <p class="text-black text-sm font-normal">
                     {{ getCompany.companyName }}
                   </p>
+                </div>
+                <div class="grid grid-cols-2">
+                  <p class="text-[#111827] text-base font-semibold">Invoice</p>
                   <p class="text-black text-sm font-normal">
                     {{ getInvoice.invoiceNumber }}
                   </p>
