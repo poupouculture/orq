@@ -7,7 +7,11 @@ import { PersonalItem } from "src/types/PersonalGroups";
 import userPersonalGroup from "src/stores/modules/personalGroup";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import { deleteRelationship, getRelationship } from "src/api/PersonalGroup";
+import {
+  deleteRelationship,
+  getRelationship,
+  addRelationship,
+} from "src/api/PersonalGroup";
 enum DrawerTypeEnum {
   MAP = "map",
   DELETE = "delete",
@@ -35,6 +39,7 @@ const userGroupId = ref("");
 const tableSelected: Ref<PersonalItem[]> = ref([]);
 const drawer = ref(false);
 const drawerType = ref("");
+const relationLoading = ref(false);
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
@@ -71,7 +76,9 @@ const selectedUserGroup = computed(() => {
     (item) => item.id === userGroupId.value
   );
   return (
-    userGroup?.customer_groups.map((item) => item.customer_groups_id.id) || []
+    userGroup?.customer_groups
+      .filter((item) => item.customer_groups_id != null)
+      .map((item) => item.customer_groups_id.id) || []
   );
 });
 
@@ -145,10 +152,15 @@ const newRelations = async () => {
     deleteRelations();
     return;
   }
-  await personalGroupStore.addRelation(
-    userGroupId.value,
-    tableSelected.value[0].id
-  );
+
+  const populateCustomerGroupId = tableSelected.value.map((item) => {
+    return {
+      customer_groups_id: item.id,
+      user_groups_id: userGroupId.value,
+    };
+  });
+
+  await addRelationship(populateCustomerGroupId);
   await getPersonalGroupData();
   Notify.create({
     message: "success",
@@ -160,11 +172,18 @@ const newRelations = async () => {
 
 const deleteRelations = async () => {
   const { data } = await getRelationship(userGroupId.value);
-  const { id } =
-    data.find(
-      (item: any) => item.customer_groups_id === tableSelected.value[0]?.id
-    ) || {};
-  await deleteRelationship(id);
+
+  const getDataArray: [] = [];
+
+  tableSelected.value.forEach((element) => {
+    const getData = data.find(
+      (item: any) => item.customer_groups_id === element.id
+    );
+
+    if (getData) getDataArray.push(getData.id);
+  });
+
+  await deleteRelationship(getDataArray);
   await getPersonalGroupData();
   Notify.create({
     message: "success",
@@ -241,7 +260,8 @@ watch(userGroupType, () => {
         <!-- Search and Add -->
         <div class="flex items-center justify-between">
           <q-select
-            standout
+            dense
+            outlined
             v-model="userGroupType"
             :options="userGroupOptions"
             label="Type"
@@ -383,18 +403,19 @@ watch(userGroupType, () => {
             <q-btn
               :disable="tableSelected.length <= 0"
               @click="newRelations"
+              :loading="relationLoading"
               round
               color="primary"
               size="md"
               icon="done"
             />
           </div>
-          <div class="mt-10">
+          <div class="mt-10" v-if="remainingGroups.length > 0">
             <q-table
               v-model:selected="tableSelected"
               :rows="remainingGroups"
               :columns="headerColumns"
-              selection="single"
+              selection="multiple"
               row-key="name"
               class="mb-3"
               v-if="remainingGroups.length"
@@ -405,6 +426,9 @@ watch(userGroupType, () => {
               @update-model="changePageCustomers"
               v-model="paginationCustomers.page"
             />
+          </div>
+          <div v-else class="h-[50vh] flex justify-center items-center">
+            No Data Available
           </div>
         </div>
       </div>

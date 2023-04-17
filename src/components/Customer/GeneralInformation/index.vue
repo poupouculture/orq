@@ -299,7 +299,11 @@ const mappingCompanies = () => {
 };
 const mappingCustomerGroups = () => {
   return getCustomer.value.customer_groups
-    .filter((data: any) => data.customer_groups_id !== null)
+    .filter(
+      (data: any) =>
+        data.customer_groups_id !== null &&
+        data.customer_groups_id.type !== "personal"
+    )
     .map((data: any) => ({
       label: data.customer_groups_id.name,
       value: data.customer_groups_id.id,

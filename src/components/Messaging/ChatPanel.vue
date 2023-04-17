@@ -90,6 +90,7 @@ import {
   computed,
   onBeforeUnmount,
   watch,
+  inject,
 } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
@@ -103,6 +104,8 @@ import { IChat, SocketMessage } from "src/types/MessagingTypes";
 import { startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
+import { searchCustomers } from "src/api/customers";
+const rightDrawerOpen: any = inject("rightDrawerOpen");
 
 const ChatToggleLabel = {
   SHOW: {
@@ -198,6 +201,19 @@ const chooseCustomer = async (user: any) => {
   }
 };
 
+const onSearchCustomers = async (
+  customerCode: string,
+  locationCode: string
+) => {
+  const params = {
+    fields: "*",
+    "filter[customer_code][_eq]": customerCode,
+    "filter[location_code][_eq]": locationCode,
+  };
+  const { data } = await searchCustomers(params);
+  return data.data?.[0];
+};
+
 const initSocket = () => {
   try {
     socket.value.on("connect", () => {
@@ -215,7 +231,7 @@ const initSocket = () => {
         messagingStore.updateChatsList(chat, data.document?.status);
       }
     });
-    socket.value.on("message_created", (data: SocketMessage) => {
+    socket.value.on("message_created", async (data: SocketMessage) => {
       console.log("message_created", data);
       const { document } = data;
       messagingStore.setChatsLastMessage(document.chat_id as string, document);
@@ -226,11 +242,35 @@ const initSocket = () => {
     });
     socket.value.on("botsession_created", async (data: any) => {
       console.log("botsession_created", data);
-      Swal.fire({
+      const { document } = data;
+      const { isConfirmed } = await Swal.fire({
         icon: "info",
         title: "User Message",
-        text: `${data.document?.summary?.customer_name}-${data.document?.summary?.customer_code}-${data.document?.summary?.location_code}`,
+        html:
+          "customer name: " +
+          document?.summary?.customer_name +
+          "</br>" +
+          "customer code: " +
+          document?.summary?.customer_code +
+          "</br>" +
+          "location code: " +
+          document?.summary?.location_code,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: "Load Customer",
       });
+
+      if (isConfirmed) {
+        const chat = (await onSearchCustomers(
+          document?.summary?.customer_code,
+          document?.summary?.location_code
+        )) as any;
+        if (chat?.id) {
+          await customerStore.fetchCustomer(chat.id);
+          rightDrawerOpen.value = true;
+        }
+      }
     });
   } catch (error) {
     console.log(error);
