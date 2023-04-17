@@ -76,7 +76,9 @@ const selectedUserGroup = computed(() => {
     (item) => item.id === userGroupId.value
   );
   return (
-    userGroup?.customer_groups.map((item) => item.customer_groups_id.id) || []
+    userGroup?.customer_groups
+      .filter((item) => item.customer_groups_id != null)
+      .map((item) => item.customer_groups_id.id) || []
   );
 });
 
