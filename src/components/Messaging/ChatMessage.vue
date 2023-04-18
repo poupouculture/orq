@@ -24,6 +24,13 @@
           : '',
       ]"
     >
+      <span
+        v-if="!isSend"
+        class="absolute bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
+      >
+        {{ customer.first_name }}
+        {{ `${customer.first_name} ${customer.last_name}` }}
+      </span>
       <q-btn
         v-if="isReply"
         class="absolute -top-4 -right-6"
@@ -148,6 +155,12 @@ import {
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
+import useCustomerStore from "src/stores/modules/customer";
+import { storeToRefs } from "pinia";
+
+const customerStore = useCustomerStore();
+
+const { customer } = storeToRefs(customerStore);
 
 const props = defineProps<{ message: Message; isReply?: boolean }>();
 const operationType = ref("");
