@@ -190,14 +190,7 @@
             :disable="isChatExpired"
             @click="showMessageImage = true"
           />
-          <!-- @click="uplader?.pickFiles" -->
-          <!-- <q-uploader
-            ref="uplader"
-            accept=".gif, .jpg, .jpeg, .png, image/*"
-            class="hidden invisible"
-            :filter="imageSizeFilter"
-            @added="upload"
-          /> -->
+
           <q-btn
             flat
             round

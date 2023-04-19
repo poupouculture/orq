@@ -168,6 +168,8 @@ const newRelations = async () => {
     position: "top",
     color: "primary",
   });
+
+  tableSelected.value = [];
 };
 
 const deleteRelations = async () => {
@@ -401,7 +403,7 @@ watch(userGroupType, () => {
               @reset="resetSearchCustomers"
             />
             <q-btn
-              :disable="tableSelected.length <= 0"
+              :disable="tableSelected.length === 0"
               @click="newRelations"
               :loading="relationLoading"
               round
