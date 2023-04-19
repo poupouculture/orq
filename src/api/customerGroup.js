@@ -9,7 +9,7 @@ const customerCreate = ({ id = "+", customers }) => {
 };
 
 export const getCustomerGroups = async (
-  { limit = 10, page = 1, search = undefined },
+  { limit = 10, page = 1, search = undefined, type = undefined },
   id = null
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -18,14 +18,18 @@ export const getCustomerGroups = async (
   const companies = "customers.customers_id.companies.companies_id.*";
   const userGroups = "user_groups.*, user_groups.user_groups_id.*";
   const tags = "tags.*, tags.*.*";
+  const param = {
+    limit,
+    offset,
+    search,
+    fields: `id,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
+    meta: "*",
+  };
+  if (type) {
+    param["filter[type][_eq]"] = type;
+  }
   const customerGroups = await api.get(url, {
-    params: {
-      limit,
-      offset,
-      search,
-      fields: `id,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
-      meta: "*",
-    },
+    params: param,
   });
   return customerGroups;
 };

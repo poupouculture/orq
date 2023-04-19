@@ -23,7 +23,7 @@
       </q-btn>
     </div>
     <!-- Content -->
-    <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
+    <h5 class="uppercase mt-6 text-gray-500">Pinned</h5>
     <div v-if="loading" class="flex justify-center">
       <q-circular-progress indeterminate rounded size="30px" color="primary" />
     </div>
