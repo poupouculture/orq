@@ -716,7 +716,7 @@ const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
   console.log(file.name, file.type);
   getLimitByType(file.type);
-  if (file) return;
+  if (!file) return;
 
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
