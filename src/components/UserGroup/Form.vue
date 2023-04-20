@@ -60,7 +60,7 @@
             >
               <div class="flex items-center justify-between">
                 <span
-                  >{{ customer.first_name }} {{ customer.last_name }}
+                  >{{ customer.customer_company_name_en }}
                   {{
                     (customer.companies.length &&
                       `/ ${customer.companies[0].companies_id.name_english}`) ||
