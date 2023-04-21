@@ -2,6 +2,7 @@ export interface PersonalItem {
   id: string;
   name: string;
   status: string;
+  avatar: string;
 }
 
 export interface Meta {
