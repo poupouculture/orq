@@ -14,7 +14,6 @@ const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
 if (userinfo) {
   axios.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
 }
-
 const api = axios.create({
   baseURL: process.env.BACKEND_URL,
   withCredentials: true,

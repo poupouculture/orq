@@ -26,7 +26,7 @@
         </q-btn>
       </div>
       <!-- Content -->
-      <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
+      <h5 class="uppercase mt-6 text-gray-500">Pinned</h5>
       <div v-if="loading" class="flex justify-center">
         <q-circular-progress
           indeterminate
@@ -36,7 +36,7 @@
         />
       </div>
       <template v-else-if="customerGroups.length">
-        <div class="grid lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <!-- Projects -->
           <div
             class="flex flex-col gap-y-2"
@@ -87,7 +87,7 @@
                 />
                 <div class="truncate">
                   <div class="relative truncate">
-                    {{ customers_id.first_name }} {{ customers_id.last_name }}
+                    {{ customers_id.customer_company_name_en }}
                     <span
                       v-if="group.name == 'VIP'"
                       class="absolute top-0 -right-10 bg-primary rounded-xl text-white px-2 py-0.5 text-xs"
@@ -169,6 +169,7 @@ const searchHandler = async (searchValue = "") => {
       rowsPerPage: 4,
       page: 1,
       search: search.query.length ? search.query : undefined,
+      type: "group",
     });
     search.loading = false;
   } catch (error) {
@@ -194,6 +195,7 @@ const fetchCustomerGroups = async () => {
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
     search: search.query.length ? search.query : undefined,
+    type: "group",
   });
 };
 </script>

@@ -5,7 +5,7 @@ import {
   addRelationship,
   getCustomerGroup,
 } from "src/api/PersonalGroup";
-import { PState } from "src/types/PersonalGroups";
+import { CustomerGroup, PState } from "src/types/PersonalGroups";
 
 const usePersonalGroupStore = defineStore("personalGroup", {
   state: () =>
@@ -59,12 +59,20 @@ const usePersonalGroupStore = defineStore("personalGroup", {
     async getCustomerGroup(
       rowsPerPage: number = 10,
       page: number = 1,
-      search?: string
+      search?: string,
+      selectedCustomerGroups?: CustomerGroup[],
+      customerFilter?: string
     ) {
       try {
         const {
           data: { data = [], meta },
-        } = await getCustomerGroup(rowsPerPage, page, search);
+        } = await getCustomerGroup(
+          rowsPerPage,
+          page,
+          search,
+          selectedCustomerGroups,
+          customerFilter
+        );
         this.customerGroups.data = data;
         this.customerGroups.meta = meta || {
           // page: 0,
