@@ -2,6 +2,7 @@ import { api } from "src/boot/axios";
 import { IUserTransform } from "src/types/TransformObjectType";
 import { userCreate } from "src/utils/transform-object";
 import { getCustomerGroups } from "./customerGroup";
+import { CustomerGroup } from "src/types/PersonalGroups";
 
 export const searchPersonalGroup = async (query: string) => {
   const data = await api.get("/items/user_groups", {
@@ -37,7 +38,9 @@ export const getPersonalGroups = async (
 export const getCustomerGroup = async (
   rowsPerPage = 10,
   page = 1,
-  search?: string
+  search?: string,
+  selectedCustomerGroups?: CustomerGroup[],
+  customerFilter?: string
 ) => {
   // const customerGroup = await api.get(
   //   "/items/customer_groups?limit=-1&fields=id,name,status"
@@ -47,6 +50,8 @@ export const getCustomerGroup = async (
     limit: rowsPerPage,
     page,
     search,
+    customerIds: selectedCustomerGroups?.map((item) => item.id),
+    customerFilter,
   });
   console.log(customerGroups);
 

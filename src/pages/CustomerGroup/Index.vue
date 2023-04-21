@@ -36,7 +36,7 @@
         />
       </div>
       <template v-else-if="customerGroups.length">
-        <div class="grid lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <!-- Projects -->
           <div
             class="flex flex-col gap-y-2"
