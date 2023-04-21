@@ -2,6 +2,7 @@ export interface PersonalItem {
   id: string;
   name: string;
   status: string;
+  type: string;
   avatar: string;
 }
 
@@ -17,6 +18,7 @@ export interface Customer {
 export interface CustomerGroup {
   id: string;
   name: string;
+  customer_code: string;
   status: string;
 }
 
