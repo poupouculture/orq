@@ -2,6 +2,7 @@
 import Navbar from "./navbar.vue";
 import Hero from "./hero.vue";
 import Section1 from "./section1.vue";
+import Section2 from "./section2.vue";
 </script>
 
 <template>
@@ -17,6 +18,8 @@ import Section1 from "./section1.vue";
     <div class="min-h-screen flex flex-col items-center w-full p-10">
       <div class="container">
         <Section1 />
+
+        <Section2 />
       </div>
     </div>
   </div>
