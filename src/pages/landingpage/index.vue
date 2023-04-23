@@ -7,6 +7,7 @@ import Section3 from "./section3.vue";
 import Section4 from "./section4.vue";
 import Section5 from "./section5.vue";
 import Section6 from "./section6.vue";
+import Section7 from "./section7.vue";
 </script>
 
 <template>
@@ -31,6 +32,7 @@ import Section6 from "./section6.vue";
         <Section5 />
 
         <Section6 />
+        <Section7 />
       </div>
     </div>
   </div>
