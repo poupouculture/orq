@@ -38,6 +38,7 @@ export const getPersonalGroups = async (
 export const getCustomerGroup = async (
   rowsPerPage = 10,
   page = 1,
+  type = "personal",
   search?: string,
   selectedCustomerGroups?: CustomerGroup[],
   customerFilter?: string
@@ -49,6 +50,7 @@ export const getCustomerGroup = async (
   const customerGroups = await getCustomerGroups({
     limit: rowsPerPage,
     page,
+    type,
     search,
     customerIds: selectedCustomerGroups?.map((item) => item.id),
     customerFilter,
