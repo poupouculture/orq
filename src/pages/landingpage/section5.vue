@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import dashboardAssigned from "src/assets/images/dashboardAssigned.png";
+import payment from "src/assets/images/payment.png";
 
 const chatFeatures = ref([
-  "Create chats with any business",
-  "Fully integrated with your favorite chat apps",
-  "Real-time messages and alerts",
+  "Instantly create and confirm purchase orders with our user-Friendly platform",
+  "Optimize your inventory management with real-time details and availability",
+  "Get 24/7 order insights and data reports",
 ]);
 </script>
 
@@ -15,7 +15,7 @@ const chatFeatures = ref([
       <div class="grid pl-5 grid-cols-1 lg:grid-cols-2">
         <div class="flex flex-col gap-5 pl-20 py-7 border-l-8 border-[#4B44F6]">
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
-            CHAT
+            PAYMENT
           </span>
 
           <p class="font-bold text-[40px]">
@@ -29,13 +29,14 @@ const chatFeatures = ref([
             </span>
           </div>
         </div>
-
         <div class="flex justify-center px-3 items-center">
-          <img class="" :src="dashboardAssigned" alt="" />
+          <img class="" :src="payment" alt="" />
         </div>
       </div>
-      <div class="pl-5 w-1/2 mt-4 flex justify-center">
-        <div class="h-5 w-96 bg-[#E12179]"></div>
+      <div class="pl-5 mt-4 flex justify-start">
+        <div class="w-1/2 flex justify-center">
+          <div class="h-5 w-96 bg-[#E12179]" />
+        </div>
       </div>
     </div>
   </div>
