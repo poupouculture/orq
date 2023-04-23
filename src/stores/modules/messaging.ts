@@ -132,7 +132,10 @@ const useMessagingStore = defineStore("messaging", {
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
         const messages = data.messages.map((item: any) => ({
           id: item.id,
+          tracking_id: item.tracking_id,
           content: item.content,
+          contact_name: item.contact_name,
+          user_name: item.user_name,
           status: item.status,
           type: item.type,
           direction: item.direction,
@@ -141,6 +144,8 @@ const useMessagingStore = defineStore("messaging", {
           waba_associated_message_id: item.waba_associated_message_id,
           mode: item.mode,
           contact: item.contact,
+          channel: item.channel,
+          conversation_id: item.conversation_id,
         }));
         this.cachedChatMessages[chatId] = [
           ...messages,

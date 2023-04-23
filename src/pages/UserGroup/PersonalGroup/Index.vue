@@ -44,7 +44,7 @@ const pagination = reactive({
   sortBy: "desc",
   descending: false,
   page: 1,
-  rowsPerPage: 4,
+  rowsPerPage: 5,
 });
 const paginationCustomers = reactive({
   sortBy: "desc",
@@ -78,17 +78,8 @@ const selectedUserGroup = computed(() => {
   return (
     userGroup?.customer_groups
       .filter((item) => item.customer_groups_id != null)
-      .map((item) => item.customer_groups_id.id) || []
+      .map((item) => item.customer_groups_id) || []
   );
-});
-
-const remainingGroups = computed(() => {
-  const items = allCustomerGroups.value.filter(
-    (item) =>
-      selectedUserGroup.value.includes(item.id) ===
-      (drawerType.value === DrawerTypeEnum.DELETE)
-  );
-  return items;
 });
 
 // Methods
@@ -134,11 +125,12 @@ const changePageCustomers = (val: number) => {
   getCustomerGroupData();
 };
 
-const openDrawer = (id: string, type: string) => {
-  // getCustomerGroupData();
+const openDrawer = async (id: string, type: string) => {
   userGroupId.value = id;
   drawer.value = true;
   drawerType.value = type;
+  paginationCustomers.page = 1;
+  await getCustomerGroupData();
 };
 
 const closeDrawer = () => {
@@ -162,6 +154,8 @@ const newRelations = async () => {
 
   await addRelationship(populateCustomerGroupId);
   await getPersonalGroupData();
+  paginationCustomers.page = 1;
+  await getCustomerGroupData();
   Notify.create({
     message: "success",
     type: "positive",
@@ -187,6 +181,8 @@ const deleteRelations = async () => {
 
   await deleteRelationship(getDataArray);
   await getPersonalGroupData();
+  paginationCustomers.page = 1;
+  await getCustomerGroupData();
   Notify.create({
     message: "success",
     type: "positive",
@@ -209,7 +205,11 @@ const getCustomerGroupData = async () => {
   await personalGroupStore.getCustomerGroup(
     paginationCustomers.rowsPerPage,
     paginationCustomers.page,
-    queryCustomers.value
+    queryCustomers.value,
+    selectedUserGroup.value,
+    drawerType.value === DrawerTypeEnum.DELETE
+      ? "filter[id][_in]"
+      : "filter[id][_nin]"
   );
 };
 
@@ -231,13 +231,21 @@ const headerColumns = [
     sortable: true,
   },
   {
-    name: "status",
+    name: "type",
     align: "left",
-    label: "Status",
-    field: "status",
+    label: "Type",
+    field: "type",
     sortable: true,
     classes: "text-black capitalize",
   },
+  // {
+  //   name: "customer_code",
+  //   align: "left",
+  //   label: "Customer Code",
+  //   field: "customers[0].customers_id.customer_code",
+  //   sortable: true,
+  //   classes: "text-black capitalize",
+  // },
 ];
 
 watch(drawerType, () => {
@@ -248,7 +256,6 @@ watch(userGroupType, () => {
   getPersonalGroupData();
 });
 </script>
-
 <template>
   <q-layout view="hHh lpR fFf" class="mt-10">
     <q-page-container>
@@ -276,8 +283,17 @@ watch(userGroupType, () => {
             />
           </div>
         </div>
+        <!-- Pagination -->
+        <div class="flex items-center justify-center mt-4">
+          <BasePagination
+            :max="totalPage"
+            :max-pages="10"
+            @update-model="changePage"
+            v-model="pagination.page"
+          />
+        </div>
         <!-- Content -->
-        <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
+        <h5 class="uppercase mt-6 text-gray-500">User Groups</h5>
         <div v-if="loading" class="flex justify-center">
           <q-circular-progress
             indeterminate
@@ -288,7 +304,7 @@ watch(userGroupType, () => {
         </div>
         <div v-else>
           <template v-if="allPersonalGroups.length">
-            <div class="grid lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
               <!-- Projects -->
               <div
                 class="flex flex-col gap-y-2"
@@ -296,24 +312,22 @@ watch(userGroupType, () => {
                 :key="group.id"
               >
                 <div
-                  class="grid grid-cols-12 h-16 rounded-lg overflow-hidden bg-white border-gray-300 border w-full"
+                  class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
                 >
                   <div
-                    class="col-span-2 flex text-white items-center justify-center bg-primary"
+                    class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                   >
-                    {{ group.name }}
+                    <div
+                      class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
+                    >
+                      <!-- {{ group.type == "personal" ? "Individual" : "Grp" }} -->
+                    </div>
+                    <div class="truncate">
+                      <div class="truncate">{{ group.name }}</div>
+                    </div>
                   </div>
 
-                  <div
-                    class="col-span-8 px-3 flex justify-center items-start flex-col"
-                  >
-                    <div class="truncate w-full">{{ group.name }}</div>
-                    <!-- <p class="text-gray-400">
-                      {{ group.customer_groups.length }} Members
-                    </p> -->
-                  </div>
-
-                  <div class="col-span-2 flex items-center">
+                  <div class="w-2/12 grow-0 flex items-center">
                     <q-btn color="grey-7" round flat icon="more_vert">
                       <q-menu
                         fit
@@ -338,7 +352,7 @@ watch(userGroupType, () => {
 
                 <!-- customers -->
                 <div
-                  class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
+                  class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
                   v-for="(personal, index) in group.customer_groups"
                   :key="index"
                 >
@@ -346,8 +360,10 @@ watch(userGroupType, () => {
                     class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                   >
                     <img
-                      :src="// personal.customer_groups_id.avatar ||
-                      'src/assets/images/profileavatar.png'"
+                      :src="
+                        personal.customer_groups_id?.avatar ||
+                        'src/assets/images/profileicon.svg'
+                      "
                       class="w-10 h-10 rounded-full mx-3"
                     />
                     <div class="truncate">
@@ -355,20 +371,16 @@ watch(userGroupType, () => {
                         {{ personal.customer_groups_id?.name }}
                       </div>
                       <div class="text-gray-400 cursor-pointer truncate">
-                        {{ personal.customer_groups_id?.status }}
+                        {{
+                          personal.customer_groups_id?.type === "personal"
+                            ? "individual"
+                            : "group"
+                        }}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="flex items-center justify-center mt-20">
-              <BasePagination
-                :max="totalPage"
-                :max-pages="10"
-                @update-model="changePage"
-                v-model="pagination.page"
-              />
             </div>
           </template>
           <div v-else class="text-center text-gray-700">
@@ -412,19 +424,22 @@ watch(userGroupType, () => {
               icon="done"
             />
           </div>
-          <div class="mt-10" v-if="remainingGroups.length > 0">
+          <div class="mt-10" v-if="allCustomerGroups.length > 0">
             <q-table
               v-model:selected="tableSelected"
-              :rows="remainingGroups"
+              :rows="allCustomerGroups"
               :columns="headerColumns"
               selection="multiple"
-              row-key="name"
+              row-key="id"
               class="mb-3"
-              v-if="remainingGroups.length"
+              :pagination="{
+                rowsPerPage: 10,
+              }"
+              v-if="allCustomerGroups.length"
             />
             <BasePagination
               :max="totalPageCustomers()"
-              :max-pages="10"
+              :max-pages="5"
               @update-model="changePageCustomers"
               v-model="paginationCustomers.page"
             />
