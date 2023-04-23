@@ -9,7 +9,7 @@
   </div>
   <div
     class="flex"
-    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-6': !isReply }"
+    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
     <div
       class="relative rounded max-w-[60%]"
@@ -24,6 +24,18 @@
           : '',
       ]"
     >
+      <span
+        v-if="!isSend"
+        class="bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
+      >
+        {{ message.contact_name }}
+      </span>
+      <span
+        v-if="isSend"
+        class="bottom-full left-0 scale-90 origin-right text-[#9A9AAF]"
+      >
+        {{ message.user_name }}
+      </span>
       <q-btn
         v-if="isReply"
         class="absolute -top-4 -right-6"
@@ -47,7 +59,7 @@
           <img src="~assets/images/bot.svg" />
         </q-avatar>
         <small class="text-[#9A9AAF]">
-          {{ stamp }}
+          {{ timestamp }}
         </small>
         <svg
           v-if="isSend"
@@ -157,7 +169,7 @@ const isSend = computed(() => props.message.direction === Direction.OUTGOING);
 const showBackground = computed(
   () => props.message.content.type !== MessageType.IMAGE
 );
-const stamp = computed(() => {
+const timestamp = computed(() => {
   return format(new Date(props.message.date_created), "p");
 });
 const list = [

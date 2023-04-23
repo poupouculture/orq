@@ -38,7 +38,12 @@ export enum SendMessageStatus {
 
 export interface Message {
   id: number;
+  contact_name?: string;
+  user_name?: string;
+  contact?: string;
   content: any;
+  contact_company_name: string;
+  contact_customer_name: string;
   direction?: string;
   status: MessageStatus;
   old_date_created?: string | null;
@@ -52,6 +57,7 @@ export interface Message {
   waba_associated_message_id?: string;
   chat_id?: string;
   mode?: string;
+  channel?: string;
 }
 export interface IChat {
   id: string;

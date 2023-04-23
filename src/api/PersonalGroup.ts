@@ -28,7 +28,7 @@ export const getPersonalGroups = async (
       "filter[type][_eq]": type,
       offset,
       fields:
-        "id,name,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id",
+        "id,name,type,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id, customer_groups.customer_groups_id.type",
       meta: "*",
     },
   });
