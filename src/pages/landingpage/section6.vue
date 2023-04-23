@@ -1,4 +1,20 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import angliss from "src/assets/images/angliss.png";
+import eatonclub from "src/assets/images/eatonclub.png";
+import digitalinstitute from "src/assets/images/digitalinstitute.png";
+import tasteofasia from "src/assets/images/tasteofasia.png";
+import kaiasia from "src/assets/images/kaiasia.png";
+import { ref } from "vue";
+
+const clients = ref([
+  angliss,
+  eatonclub,
+  digitalinstitute,
+  tasteofasia,
+  kaiasia,
+  tasteofasia,
+]);
+</script>
 
 <template>
   <div class="mt-36">
@@ -11,32 +27,16 @@
         Selected Clients
       </p>
     </div>
-    <!-- 
-    <div class="w-full mt-20 flex justify-center">
-      <div class="grid gap-10 lg:grid-cols-3">
-        <div
-          v-for="(data, index) in weDo"
-          :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-[380px] py-10 px- gap-10 items-center flex-col"
-        >
-          <span
-            class="font-semibold mt-10 bg-[#4B44F6] text-white text-[40px] rounded-full w-20 h-20 ring-[20px] ring-[#4B44F680] flex justify-center items-center"
-          >
-            {{ index + 1 }}
-          </span>
 
-          <p class="mb-0 text-[#403F3F] uppercase text-[32px]">
-            {{ data.title }}
-          </p>
-
-          <span
-            class="font-normal w-[221px] text-[#5C5A8F] text-center leading-10 text-lg"
-          >
-            {{ data.subtitle }}
-          </span>
-        </div>
+    <div class="grid grid-cols-1 mt-10 sm:grid-cols-3 gap-16">
+      <div
+        v-for="(client, index) in clients"
+        :key="index"
+        class="flex justify-center"
+      >
+        <img :src="client" class="w-32" alt="" />
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
