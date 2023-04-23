@@ -204,16 +204,20 @@ const getPersonalGroupData = async () => {
   );
   loading.value = false;
 };
+const cgType = ref("personal");
 const getCustomerGroupData = async () => {
+  tableLoading.value = true;
   await personalGroupStore.getCustomerGroup(
     paginationCustomers.rowsPerPage,
     paginationCustomers.page,
+    cgType.value,
     queryCustomers.value,
     selectedUserGroup.value,
     drawerType.value === DrawerTypeEnum.DELETE
       ? "filter[id][_in]"
       : "filter[id][_nin]"
   );
+  tableLoading.value = false;
 };
 
 onMounted(() => {
@@ -257,6 +261,13 @@ watch(drawerType, () => {
 watch(userGroupType, () => {
   changePage(1);
   getPersonalGroupData();
+});
+const tableLoading = ref(false);
+watch(cgType, () => {
+  tableLoading.value = true;
+  paginationCustomers.page = 1;
+  tableSelected.value = [];
+  getCustomerGroupData();
 });
 </script>
 <template>
@@ -417,21 +428,31 @@ watch(userGroupType, () => {
               @search="searchHandlerCustomers"
               @reset="resetSearchCustomers"
             />
-            <q-btn
-              :disable="tableSelected.length === 0"
-              @click="newRelations"
-              :loading="relationLoading"
-              round
-              color="primary"
-              size="md"
-              icon="done"
-            />
+            <div class="flex items-center space-x-5">
+              <q-select
+                dense
+                outlined
+                v-model="cgType"
+                :options="userGroupOptions"
+                label="Type"
+              />
+              <q-btn
+                :disable="tableSelected.length === 0"
+                @click="newRelations"
+                :loading="relationLoading"
+                round
+                color="primary"
+                size="md"
+                icon="done"
+              />
+            </div>
           </div>
           <div class="mt-10" v-if="allCustomerGroups.length > 0">
             <q-table
               v-model:selected="tableSelected"
               :rows="allCustomerGroups"
               :columns="headerColumns"
+              :loading="tableLoading"
               selection="multiple"
               row-key="id"
               class="mb-3"
@@ -439,7 +460,11 @@ watch(userGroupType, () => {
                 rowsPerPage: 10,
               }"
               v-if="allCustomerGroups.length"
-            />
+            >
+              <template v-slot:loading>
+                <q-inner-loading showing color="primary" />
+              </template>
+            </q-table>
             <BasePagination
               :max="totalPageCustomers()"
               :max-pages="5"
