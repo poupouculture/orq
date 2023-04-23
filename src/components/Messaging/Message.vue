@@ -385,6 +385,7 @@ const members = computed<Member[]>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  console.log("scroll");
   scrollToBottom();
   return (
     cachedMessage?.map((message, index) => {
