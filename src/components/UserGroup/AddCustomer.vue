@@ -17,7 +17,7 @@
             class="w-10 h-10 rounded-full mr-3"
           />
           <div class="flex flex-col">
-            <p>{{ props.row.first_name }} {{ props.row.last_name }}</p>
+            <p>{{ props.row.customer_company_name_en }}</p>
             <div class="space-x-2 text-sm text-[#9A9AAF]">
               <span v-if="props.row.gender">{{
                 gender(props.row.gender)
@@ -29,9 +29,14 @@
         </div>
       </q-td>
     </template>
-    <template #body-cell-companies="props">
+    <!-- <template #body-cell-companies="props">
       <q-td :props="props" :class="{ 'cursor-pointer': props.isSimple }">
         {{ groupedCompanies(props.row.companies) }}
+      </q-td>
+    </template> -->
+    <template #body-cell-companies="props">
+      <q-td :props="props" :class="{ 'cursor-pointer': props.isSimple }">
+        {{ props.row.location_code }}
       </q-td>
     </template>
     <template #body-cell-customer_code="props">
@@ -62,12 +67,19 @@ const headerColumns = ref([
     classes: "text-black",
   },
   {
-    name: "companies",
+    name: "location_code",
     align: "left",
-    label: "Companies",
-    field: "companies",
+    label: "Location Code",
+    field: "location_code",
     classes: "text-black",
   },
+  // {
+  //   name: "companies",
+  //   align: "left",
+  //   label: "Companies",
+  //   field: "companies",
+  //   classes: "text-black",
+  // },
   {
     name: "customer_code",
     align: "left",
@@ -76,10 +88,10 @@ const headerColumns = ref([
     classes: "text-black",
   },
 ]);
-const groupedCompanies = (companies) => {
-  const grouped = companies.map((company) => company.companies_id.name_english);
-  return grouped.join(", ");
-};
+// const groupedCompanies = (companies) => {
+//   const grouped = companies.map((company) => company.companies_id.name_english);
+//   return grouped.join(", ");
+// };
 const gender = (gender) => {
   let result;
   if (gender === "f") result = "Female";
