@@ -1,4 +1,21 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
+const weDo = ref([
+  {
+    title: "Chat",
+    subtitle: "Create chats with anyone with  business",
+  },
+  {
+    title: "order",
+    subtitle: "Create or confirm purchase with just a single click",
+  },
+  {
+    title: "payment",
+    subtitle:
+      "Streamline your invoicing process and reconcile payments in dashboard",
+  },
+]);
+</script>
 
 <template>
   <div class="mt-36">
@@ -12,10 +29,28 @@
       </p>
     </div>
 
-    <div class="w-full mt-6 flex justify-center">
-      <div class="grid-rows-3 grid lg:grid-cols-3">
-        <div class="flex rounded-lg items-center flex-col">
-          <span>1</span>
+    <div class="w-full mt-20 flex justify-center">
+      <div class="grid gap-10 lg:grid-cols-3">
+        <div
+          v-for="(data, index) in weDo"
+          :key="index"
+          class="flex rounded-lg drop-shadow-2xl bg-white w-[380px] py-10 px- gap-10 items-center flex-col"
+        >
+          <span
+            class="font-semibold mt-10 bg-[#4B44F6] text-white text-[40px] rounded-full w-20 h-20 ring-[20px] ring-[#4B44F680] flex justify-center items-center"
+          >
+            {{ index + 1 }}
+          </span>
+
+          <p class="mb-0 text-[#403F3F] uppercase text-[32px]">
+            {{ data.title }}
+          </p>
+
+          <span
+            class="font-normal w-[221px] text-[#5C5A8F] text-center leading-10 text-lg"
+          >
+            {{ data.subtitle }}
+          </span>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import Section2 from "./section2.vue";
 </script>
 
 <template>
-  <div>
+  <div class="bg-white">
     <div class="min-h-screen home flex flex-col items-center w-full p-10">
       <div class="container">
         <Navbar />
