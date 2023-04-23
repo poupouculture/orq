@@ -34,7 +34,7 @@ const weDo = ref([
         <div
           v-for="(data, index) in weDo"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-[380px] py-10 px- gap-10 items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl bg-white w-[380px] py-10 gap-10 items-center flex-col"
         >
           <span
             class="font-semibold mt-10 bg-[#4B44F6] text-white text-[40px] rounded-full w-20 h-20 ring-[20px] ring-[#4B44F680] flex justify-center items-center"
