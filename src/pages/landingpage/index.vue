@@ -1,5 +1,6 @@
 <script setup>
 import Navbar from "./navbar.vue";
+import logo from "assets/images/logo.svg";
 import Hero from "./hero.vue";
 import Section1 from "./section1.vue";
 import Section2 from "./section2.vue";
@@ -33,6 +34,29 @@ import Section7 from "./section7.vue";
 
         <Section6 />
         <Section7 />
+      </div>
+    </div>
+
+    <div class="w-full flex bg-[#4B44F6] justify-center">
+      <div class="container flex items-center justify-between py-6">
+        <div class="flex justify-center items-center gap-3">
+          <img class="w-[40px]" :src="logo" alt="logo" />
+          <p class="font-[800] text-white text-2xl">ChaQ</p>
+        </div>
+
+        <span class="text-white">
+          Copyright {{ new Date().getFullYear() }} Synque.io
+        </span>
+
+        <div class="flex text-[#4B44F6] justify-center gap-5">
+          <div class="rounded-full flex items-center p-1 bg-white">
+            <q-icon size="20px" name="fa-brands fa-facebook-f" />
+          </div>
+
+          <div class="rounded-full flex items-center p-1 bg-white">
+            <q-icon size="20px" name="fa-brands fa-instagram" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
