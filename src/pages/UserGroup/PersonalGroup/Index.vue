@@ -140,8 +140,10 @@ const closeDrawer = () => {
 };
 
 const newRelations = async () => {
+  relationLoading.value = true;
   if (drawerType.value === DrawerTypeEnum.DELETE) {
-    deleteRelations();
+    await deleteRelations();
+    relationLoading.value = false;
     return;
   }
 
@@ -156,14 +158,14 @@ const newRelations = async () => {
   await getPersonalGroupData();
   paginationCustomers.page = 1;
   await getCustomerGroupData();
+  tableSelected.value = [];
+  relationLoading.value = false;
   Notify.create({
     message: "success",
     type: "positive",
     position: "top",
     color: "primary",
   });
-
-  tableSelected.value = [];
 };
 
 const deleteRelations = async () => {
@@ -183,6 +185,7 @@ const deleteRelations = async () => {
   await getPersonalGroupData();
   paginationCustomers.page = 1;
   await getCustomerGroupData();
+  tableSelected.value = [];
   Notify.create({
     message: "success",
     type: "positive",
