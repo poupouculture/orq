@@ -3,6 +3,7 @@ import Navbar from "./navbar.vue";
 import Hero from "./hero.vue";
 import Section1 from "./section1.vue";
 import Section2 from "./section2.vue";
+import Section3 from "./section3.vue";
 </script>
 
 <template>
@@ -20,6 +21,8 @@ import Section2 from "./section2.vue";
         <Section1 />
 
         <Section2 />
+
+        <Section3 />
       </div>
     </div>
   </div>
