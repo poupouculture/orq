@@ -234,13 +234,21 @@ const headerColumns = [
     sortable: true,
   },
   {
-    name: "status",
+    name: "type",
     align: "left",
-    label: "Status",
-    field: "status",
+    label: "Type",
+    field: "type",
     sortable: true,
     classes: "text-black capitalize",
   },
+  // {
+  //   name: "customer_code",
+  //   align: "left",
+  //   label: "Customer Code",
+  //   field: "customers[0].customers_id.customer_code",
+  //   sortable: true,
+  //   classes: "text-black capitalize",
+  // },
 ];
 
 watch(drawerType, () => {
@@ -288,7 +296,7 @@ watch(userGroupType, () => {
           />
         </div>
         <!-- Content -->
-        <h5 class="uppercase mt-6 text-gray-500">Pinned Projects</h5>
+        <h5 class="uppercase mt-6 text-gray-500">User Groups</h5>
         <div v-if="loading" class="flex justify-center">
           <q-circular-progress
             indeterminate
@@ -315,7 +323,7 @@ watch(userGroupType, () => {
                     <div
                       class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
                     >
-                      {{ group.name }}
+                      <!-- {{ group.type == "personal" ? "Individual" : "Grp" }} -->
                     </div>
                     <div class="truncate">
                       <div class="truncate">{{ group.name }}</div>
@@ -366,7 +374,11 @@ watch(userGroupType, () => {
                         {{ personal.customer_groups_id?.name }}
                       </div>
                       <div class="text-gray-400 cursor-pointer truncate">
-                        {{ personal.customer_groups_id?.status }}
+                        {{
+                          personal.customer_groups_id?.type === "personal"
+                            ? "individual"
+                            : "group"
+                        }}
                       </div>
                     </div>
                   </div>

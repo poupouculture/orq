@@ -9,7 +9,7 @@
   </div>
   <div
     class="flex"
-    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-6': !isReply }"
+    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
     <div
       class="relative rounded max-w-[60%]"
@@ -26,10 +26,15 @@
     >
       <span
         v-if="!isSend"
-        class="absolute bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
+        class="bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
       >
-        {{ customer.first_name }}
-        {{ `${customer.first_name} ${customer.last_name}` }}
+        {{ message.contact_name }}
+      </span>
+      <span
+        v-if="isSend"
+        class="bottom-full left-0 scale-90 origin-right text-[#9A9AAF]"
+      >
+        {{ message.user_name }}
       </span>
       <q-btn
         v-if="isReply"
@@ -54,7 +59,7 @@
           <img src="~assets/images/bot.svg" />
         </q-avatar>
         <small class="text-[#9A9AAF]">
-          {{ stamp }}
+          {{ timestamp }}
         </small>
         <svg
           v-if="isSend"
@@ -155,12 +160,12 @@ import {
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
-import useCustomerStore from "src/stores/modules/customer";
-import { storeToRefs } from "pinia";
+// import useCustomerStore from "src/stores/modules/customer";
+// import { storeToRefs } from "pinia";
 
-const customerStore = useCustomerStore();
+// const customerStore = useCustomerStore();
 
-const { customer } = storeToRefs(customerStore);
+// const { customer } = storeToRefs(customerStore);
 
 const props = defineProps<{ message: Message; isReply?: boolean }>();
 const operationType = ref("");
@@ -170,7 +175,7 @@ const isSend = computed(() => props.message.direction === Direction.OUTGOING);
 const showBackground = computed(
   () => props.message.content.type !== MessageType.IMAGE
 );
-const stamp = computed(() => {
+const timestamp = computed(() => {
   return format(new Date(props.message.date_created), "p");
 });
 const list = [
