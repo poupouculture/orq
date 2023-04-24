@@ -428,31 +428,6 @@ const mappingCustomerGroups = () => {
             />
           </div>
         </div>
-        <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
-            <p class="label-style">First Name</p>
-            <q-input
-              v-model="firstName"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Last Name</p>
-            <q-input
-              v-model="lastName"
-              class="indi"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-        </div>
         <div class="row q-gutter-xl">
           <div class="col">
             <p class="label-style">Division No.</p>
