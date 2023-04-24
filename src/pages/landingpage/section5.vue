@@ -21,9 +21,7 @@ const chatFeatures = ref([
           <p class="font-bold text-[40px]">
             Accelerates Transactions, making it easier for you to get paid
           </p>
-          <div
-            class="flex gap-4 flex-col font-normal text-[26px] text-[#5C5A8F]"
-          >
+          <div class="flex gap-4 flex-col font-normal text-lg text-[#5C5A8F]">
             <span v-for="(data, index) in chatFeatures" :key="index" class="">
               {{ data }}
             </span>

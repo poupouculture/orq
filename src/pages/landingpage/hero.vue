@@ -2,7 +2,7 @@
 
 <template>
   <div class="min-h-[90vh] w-full flex flex-col mt-7 px-20 items-start">
-    <div class="w-100">
+    <div class="w-100 pl-36">
       <div
         class="flex flex-col font-['Inter'] capitalize text-[70px] font-black text-white"
       >
@@ -13,7 +13,7 @@
       </div>
 
       <div
-        class="flex flex-col mt-5 gap-5 font-['Red_Hat_Display'] text-white text-[22px] font-normal w-4/5"
+        class="flex flex-col mt-5 gap-5 font-['Red_Hat_Display'] text-white text-lg font-normal w-4/5"
       >
         <span class="">
           Streamline your workflow with our web app that includes messaging.

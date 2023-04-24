@@ -21,7 +21,7 @@ const customersRelationship = ref([
 <template>
   <div class="mt-36">
     <div class="flex mt-20 flex-col">
-      <div class="pl-5 mb-10 flex flex-col">
+      <div class="pl-5 mb-10 flex gap-7 flex-col">
         <span class="text-[#E12179] tracking-wide text-[23px] font-normal">
           HOW IT WORKS
         </span>
@@ -50,7 +50,7 @@ const customersRelationship = ref([
             Connect with Your Customers in Real-Time with Our Messaging Feature
           </p>
           <div
-            class="flex gap-4 w-[22rem] flex-col font-normal text-[26px] font-['Red_Hat_Display'] text-[#5C5A8F]"
+            class="flex gap-4 w-[22rem] flex-col font-normal text-lg font-['Red_Hat_Display'] text-[#5C5A8F]"
           >
             <span v-for="(data, index) in chatFeatures" :key="index" class="">
               {{ data }}
@@ -73,7 +73,7 @@ const customersRelationship = ref([
 
           <p class="font-bold text-[40px]">Customer Profiling</p>
           <div
-            class="flex gap-4 flex-col font-normal text-[26px] font-['Red_Hat_Display'] text-[#5C5A8F]"
+            class="flex gap-4 flex-col font-normal text-lg font-['Red_Hat_Display'] text-[#5C5A8F]"
           >
             <span
               v-for="(data, index) in customersRelationship"

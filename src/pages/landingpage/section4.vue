@@ -21,16 +21,14 @@ const chatFeatures = ref([
           class="flex flex-col gap-5 pr-20 pl-3 py-7 border-r-8 border-[#4B44F6]"
         >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
-            ORDER/ INVOICE
+            ORDER / INVOICE
           </span>
 
           <p class="font-bold text-[40px]">
             Invoice creation and fulfillment, ensuring timely delivery to
             customers
           </p>
-          <div
-            class="flex gap-4 flex-col font-normal text-[26px] text-[#5C5A8F]"
-          >
+          <div class="flex gap-4 flex-col font-normal text-lg text-[#5C5A8F]">
             <span v-for="(data, index) in chatFeatures" :key="index" class="">
               {{ data }}
             </span>
