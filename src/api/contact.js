@@ -14,3 +14,9 @@ export const getContact = async (id) => {
 
   return contact;
 };
+
+export const updateContact = async (id, payload) => {
+  const contact = await api.patch(`items/contacts/${id}`, payload);
+
+  return contact;
+};

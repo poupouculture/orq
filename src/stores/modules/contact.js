@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-
-import { getContact } from "src/api/contact";
+import { Loading } from "quasar";
+import { getContact, updateContact } from "src/api/contact";
 
 const useContactStore = defineStore("useContact", {
   state() {
@@ -18,6 +18,14 @@ const useContactStore = defineStore("useContact", {
       const { data } = result.data;
 
       this.contact = data[0];
+    },
+    async updateContact(payload) {
+      Loading.show();
+      const result = await updateContact(payload.id, payload);
+      const { data } = result.data;
+
+      this.contact = data[0];
+      Loading.hide();
     },
   },
 });

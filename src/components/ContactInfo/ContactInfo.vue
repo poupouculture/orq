@@ -11,7 +11,9 @@ const statusOptions = ref(["Active"]);
 const contacts = useContactStore();
 const { getContacts } = storeToRefs(contacts);
 
-console.log(getContacts.value);
+const updateContacts = () => {
+  contacts.updateContact(getContacts.value);
+};
 </script>
 
 <template>
@@ -109,7 +111,7 @@ console.log(getContacts.value);
     </div>
 
     <div v-if="editMode" class="flex justify-end">
-      <q-btn color="primary" label="Save" />
+      <q-btn @click="updateContacts" color="primary" label="Save" />
     </div>
   </div>
 </template>
