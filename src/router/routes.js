@@ -11,6 +11,17 @@ const routes = [
     ],
   },
   {
+    path: "/landingpage",
+    component: () => import("pages/landingpage/index.vue"),
+    children: [
+      {
+        path: "",
+        name: "landingpage",
+        component: () => import("pages/landingpage/index.vue"),
+      },
+    ],
+  },
+  {
     path: "/me",
     name: "me",
     component: () => import("pages/Me.vue"),
