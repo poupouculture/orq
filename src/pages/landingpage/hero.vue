@@ -3,12 +3,17 @@
 <template>
   <div class="min-h-[90vh] w-full flex flex-col mt-7 px-20 items-start">
     <div class="w-100">
-      <p class="text-white capitalize font-black w-[80px] text-[70px]">
-        we provide business solution
-      </p>
+      <div
+        class="flex flex-col font-['Inter'] capitalize text-[70px] font-black text-white"
+      >
+        <p class="">Let Technology</p>
+        <p>Handle the</p>
+        <p>Heavy</p>
+        <p>Lifting</p>
+      </div>
 
       <div
-        class="flex flex-col mt-5 gap-5 text-white text-2xl font-normal w-4/5"
+        class="flex flex-col mt-5 gap-5 font-['Red_Hat_Display'] text-white text-[22px] font-normal w-4/5"
       >
         <span class="">
           Streamline your workflow with our web app that includes messaging.

@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import chatIcon from "src/assets/images/chatIcon.png";
+import orderIcon from "src/assets/images/orderIcon.png";
+import paymentIcon from "src/assets/images/paymentIcon.png";
 const weDo = ref([
   {
     title: "Chat",
-    subtitle: "Create chats with anyone with  business",
+    icon: chatIcon,
+    subtitle: "Create chats with customers and Build customer profiles",
   },
   {
     title: "order",
-    subtitle: "Create or confirm purchase with just a single click",
+    icon: orderIcon,
+    subtitle:
+      "create and manage invoices. We customize and integrate into your ordering system.",
   },
   {
     title: "payment",
+    icon: paymentIcon,
     subtitle:
-      "Streamline your invoicing process and reconcile payments in dashboard",
+      "Customers pay with Ease. process and reconcile payments in dashboard",
   },
 ]);
 </script>
@@ -42,12 +49,15 @@ const weDo = ref([
             {{ index + 1 }}
           </span>
 
-          <p class="mb-0 text-[#403F3F] uppercase text-[32px]">
-            {{ data.title }}
+          <p
+            class="mb-0 text-[#403F3F] flex gap-3 items-center uppercase text-[32px]"
+          >
+            <img :src="data.icon" class="w-7 h-7" alt="" />
+            <span>{{ data.title }}</span>
           </p>
 
           <span
-            class="font-normal w-[221px] text-[#5C5A8F] text-center leading-10 text-lg"
+            class="font-normal w-[243px] capitalize text-[#5C5A8F] text-center leading-10 text-lg"
           >
             {{ data.subtitle }}
           </span>
