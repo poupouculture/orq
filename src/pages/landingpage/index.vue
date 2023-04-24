@@ -8,11 +8,10 @@ import Section3 from "./section3.vue";
 import Section4 from "./section4.vue";
 import Section5 from "./section5.vue";
 import Section6 from "./section6.vue";
-import Section7 from "./section7.vue";
 </script>
 
 <template>
-  <div class="bg-white">
+  <div class="bg-white font-['Red_Hat_Display']">
     <div class="min-h-screen home flex flex-col items-center w-full p-10">
       <div class="container">
         <Navbar />
@@ -33,7 +32,6 @@ import Section7 from "./section7.vue";
         <Section5 />
 
         <Section6 />
-        <Section7 />
       </div>
     </div>
 

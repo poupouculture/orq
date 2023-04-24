@@ -1,19 +1,11 @@
 <script setup lang="ts">
 import angliss from "src/assets/images/angliss.png";
-import eatonclub from "src/assets/images/eatonclub.png";
-import digitalinstitute from "src/assets/images/digitalinstitute.png";
 import tasteofasia from "src/assets/images/tasteofasia.png";
-import kaiasia from "src/assets/images/kaiasia.png";
+import fitmax from "src/assets/images/fitmax.png";
+
 import { ref } from "vue";
 
-const clients = ref([
-  angliss,
-  eatonclub,
-  digitalinstitute,
-  tasteofasia,
-  kaiasia,
-  tasteofasia,
-]);
+const clients = ref([angliss, fitmax, tasteofasia]);
 </script>
 
 <template>

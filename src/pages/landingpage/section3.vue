@@ -73,7 +73,7 @@ const customersRelationship = ref([
 
           <p class="font-bold text-[40px]">Customer Profiling</p>
           <div
-            class="flex gap-4 w-[22rem] flex-col font-normal text-[26px] font-['Red_Hat_Display'] text-[#5C5A8F]"
+            class="flex gap-4 flex-col font-normal text-[26px] font-['Red_Hat_Display'] text-[#5C5A8F]"
           >
             <span
               v-for="(data, index) in customersRelationship"

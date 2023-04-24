@@ -3,8 +3,8 @@ import { ref } from "vue";
 import payment from "src/assets/images/payment.png";
 
 const chatFeatures = ref([
-  "Instantly create and confirm purchase orders with our user-Friendly platform",
-  "Optimize your inventory management with real-time details and availability",
+  "Payments settlement and reconciliation",
+  "Get paid FAST & more efficiently with our invoicing and payment tracking feature.",
   "Get 24/7 order insights and data reports",
 ]);
 </script>
@@ -15,14 +15,14 @@ const chatFeatures = ref([
       <div class="grid pl-5 grid-cols-1 lg:grid-cols-2">
         <div class="flex flex-col gap-5 pl-20 py-7 border-l-8 border-[#4B44F6]">
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
-            PAYMENT
+            PAYMENT-LINK
           </span>
 
           <p class="font-bold text-[40px]">
-            Connect with Your Customers in Real-Time with Our Messaging Feature
+            Accelerates Transactions, making it easier for you to get paid
           </p>
           <div
-            class="flex gap-4 w-[22rem] flex-col font-normal text-2xl text-[#5C5A8F]"
+            class="flex gap-4 flex-col font-normal text-[26px] text-[#5C5A8F]"
           >
             <span v-for="(data, index) in chatFeatures" :key="index" class="">
               {{ data }}
