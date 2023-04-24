@@ -17,7 +17,16 @@ enum DrawerTypeEnum {
   DELETE = "delete",
 }
 
-const userGroupOptions = ["personal", "group"];
+const userGroupOptions = [
+  {
+    label: "Individual",
+    value: "personal",
+  },
+  {
+    label: "Group",
+    value: "group",
+  },
+];
 // State
 const personalGroupStore = userPersonalGroup();
 const { personalGroups, customerGroups } = storeToRefs(personalGroupStore);
@@ -286,7 +295,11 @@ watch(cgType, () => {
             dense
             outlined
             v-model="userGroupType"
+            option-value="value"
+            option-label="label"
             :options="userGroupOptions"
+            map-options
+            emit-value
             label="Type"
           />
           <div class="w-52 ml-3">
@@ -334,7 +347,7 @@ watch(cgType, () => {
                     <div
                       class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
                     >
-                      <!-- {{ group.type == "personal" ? "Individual" : "Grp" }} -->
+                      {{ group.name }}
                     </div>
                     <div class="truncate">
                       <div class="truncate">{{ group.name }}</div>
