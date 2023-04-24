@@ -22,6 +22,7 @@ export const getInternalGroups = async ({
   const params = {
     limit,
     search,
+    "filter[type][_neq]": "personal",
     offset,
     fields:
       "id,customer_groups.*,customer_groups.*.*,name,type,status,users.*.id,users.*.avatar,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
