@@ -214,6 +214,11 @@ const routes = [
         component: () => import("pages/CustomerGroup/Index.vue"),
       },
       {
+        path: "customer-groups/summary",
+        name: "customergroups.summary",
+        component: () => import("pages/CustomerGroup/Index.vue"),
+      },
+      {
         path: "customer-groups/create",
         name: "customergroups.create",
         component: () => import("pages/CustomerGroup/Create.vue"),
