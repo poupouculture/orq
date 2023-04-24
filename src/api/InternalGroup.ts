@@ -16,22 +16,22 @@ export const getInternalGroups = async ({
   limit = 10,
   page = 1,
   search = undefined,
+  type = undefined,
 }) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const internalGroups = await api.get("/items/user_groups", {
-    params: {
-      limit,
-      search,
-      "filter[type][_neq]": "personal",
-      "filter[status][_eq]": "published",
-      offset,
-      fields:
-        "id,customer_groups.*,customer_groups.*.*,name,type,status,users.*.id,users.*.avatar,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
-      meta: "*",
-    },
-  });
-  console.log(internalGroups.data);
-
+  const params = {
+    limit,
+    search,
+    "filter[type][_neq]": "personal",
+    offset,
+    fields:
+      "id,customer_groups.*,customer_groups.*.*,name,type,status,users.*.id,users.*.avatar,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
+    meta: "*",
+  } as any;
+  if (type) {
+    params["filter[type][_eq]"] = type;
+  }
+  const internalGroups = await api.get("/items/user_groups", { params });
   return internalGroups;
 };
 
