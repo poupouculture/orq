@@ -22,16 +22,16 @@ import Section6 from "./section6.vue";
 
     <div class="min-h-screen flex flex-col items-center w-full p-10">
       <div class="container">
-        <Section1 />
+        <Section1 id="" />
 
-        <Section2 />
+        <Section2 id="service" />
 
         <Section3 />
 
-        <Section4 />
+        <Section4 id="contact" />
         <Section5 />
 
-        <Section6 />
+        <Section6 id="aboutus" />
       </div>
     </div>
 
