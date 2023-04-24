@@ -33,6 +33,7 @@ console.log(getContacts.value);
           outlined
           :disable="!editMode"
           dense
+          v-model="getContacts.category"
           lazy-rules
           :options="categoryOptions"
         />
@@ -40,25 +41,46 @@ console.log(getContacts.value);
 
       <div class="flex flex-col">
         <p class="label-style">Extension</p>
-        <q-input outlined :disable="!editMode" dense />
+        <q-input
+          v-model="getContacts.extension"
+          outlined
+          :disable="!editMode"
+          dense
+        />
       </div>
 
       <div class="flex flex-col">
         <p class="label-style">First Name</p>
-        <q-input outlined :disable="!editMode" dense />
+        <q-input
+          outlined
+          v-model="getContacts.first_name"
+          :disable="!editMode"
+          dense
+        />
       </div>
 
       <div class="flex flex-col">
         <p class="label-style">Last Name</p>
-        <q-input outlined :disable="!editMode" dense />
+        <q-input
+          outlined
+          v-model="getContacts.last_name"
+          :disable="!editMode"
+          dense
+        />
       </div>
 
       <div class="flex flex-col">
         <p class="label-style">Number</p>
-        <q-input outlined :disable="!editMode" dense />
+        <q-input
+          outlined
+          v-model="getContacts.number"
+          :disable="!editMode"
+          dense
+        />
         <q-checkbox
           :disable="!editMode"
           :true-value="true"
+          v-model="getContacts.is_active"
           :false-value="false"
           label="Contact is Active"
         />
@@ -66,12 +88,18 @@ console.log(getContacts.value);
 
       <div class="flex flex-col">
         <p class="label-style">Remarks</p>
-        <q-input outlined :disable="!editMode" dense />
+        <q-input
+          v-model="getContacts.remarks"
+          outlined
+          :disable="!editMode"
+          dense
+        />
       </div>
 
       <div class="flex flex-col">
         <p class="label-style">Status</p>
         <q-select
+          v-model="getContacts.status"
           :options="statusOptions"
           dense
           outlined
