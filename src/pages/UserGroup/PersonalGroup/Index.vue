@@ -139,6 +139,9 @@ const openDrawer = async (id: string, type: string) => {
   drawer.value = true;
   drawerType.value = type;
   paginationCustomers.page = 1;
+  if (type === DrawerTypeEnum.DELETE && selectedUserGroup.value.length < 1) {
+    return personalGroupStore.resetCustomerGroup();
+  }
   await getCustomerGroupData();
 };
 
@@ -435,7 +438,8 @@ watch(cgType, () => {
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center">
         <div class="min-h-[90vh] w-full flex flex-col p-10">
-          <div class="flex items-center justify-between">
+          <h5 class="text-lg">Customer Group</h5>
+          <div class="flex items-center justify-between mt-3">
             <SearchTableInput
               :loading="searchLoading"
               @search="searchHandlerCustomers"
@@ -447,6 +451,10 @@ watch(cgType, () => {
                 outlined
                 v-model="cgType"
                 :options="userGroupOptions"
+                option-value="value"
+                option-label="label"
+                map-options
+                emit-value
                 label="Type"
               />
               <q-btn

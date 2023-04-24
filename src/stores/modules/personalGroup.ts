@@ -85,6 +85,12 @@ const usePersonalGroupStore = defineStore("personalGroup", {
         console.log(error);
       }
     },
+    resetCustomerGroup() {
+      this.customerGroups = {
+        data: [],
+        meta: { total_count: 0, filter_count: 0 },
+      };
+    },
 
     // async get(id: any) {
     //   const {
