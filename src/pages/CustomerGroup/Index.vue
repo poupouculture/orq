@@ -65,8 +65,8 @@
               </div>
               <div class="px-4 py-3 text-gray-500">
                 <div class="flex items-center justify-between mb-2">
-                  <p>Type</p>
-                  <p class="text-gray-800">{{ group.type }}</p>
+                  <p>Source</p>
+                  <p class="text-gray-800">{{ group.source }}</p>
                 </div>
                 <div class="flex items-center justify-between">
                   <p>Total Members</p>
