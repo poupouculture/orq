@@ -104,7 +104,6 @@ const useCustomerStore = defineStore("customer", {
           data: { data },
         } = await updateCustomer(id, payload);
 
-        this.customer = data;
         Notify.create({
           message: "Successful to update customer",
           position: "top",
@@ -126,12 +125,6 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addContact(customerId: string, payload: unknown) {
-      // const {
-      //   data: { data: contact },
-      // } = await addContact(payload);
-      // const { id: contactId } = contact;
-
-      // const result = await addCustomerContact(customerId, contactId);
       const result = await addCustomerContactAlong({
         contacts: {
           create: payload,

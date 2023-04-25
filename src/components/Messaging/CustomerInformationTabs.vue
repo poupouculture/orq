@@ -74,10 +74,7 @@ const tabs = ref([
     name: "general",
     label: "General Information",
   },
-  // {
-  //   name: "other",
-  //   label: "Other Information",
-  // },
+
   {
     name: "contact",
     label: "Contact",
