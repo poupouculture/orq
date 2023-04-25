@@ -20,7 +20,8 @@ const updateContacts = async () => {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex justify-end">
+    <div class="flex justify-between mb-4">
+      <q-btn label="dissociate contact" color="primary" />
       <q-btn
         @click="editMode = !editMode"
         :color="editMode ? 'red-6' : 'primary'"
