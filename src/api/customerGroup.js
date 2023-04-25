@@ -34,7 +34,11 @@ export const getCustomerGroups = async (
     meta: "*",
   };
   if (type) {
-    param["filter[type][_eq]"] = type;
+    if (id) {
+      param["filter[type][_eq]"] = type;
+    } else {
+      param.type = type;
+    }
   }
   if (customerIds) {
     param[customerFilter] = customerIds.join();
