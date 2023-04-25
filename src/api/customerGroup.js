@@ -19,21 +19,26 @@ export const getCustomerGroups = async (
   },
   id = null
 ) => {
-  const offset = page === 1 ? 0 : (page - 1) * limit;
   const url =
-    id !== null ? "/items/customer_groups/" + id : "/items/customer_groups";
+    id !== null
+      ? "/items/customer_groups/" + id
+      : "/waba/customers-groups/summary";
   const companies = "customers.customers_id.companies.companies_id.*";
   const userGroups = "user_groups.*, user_groups.user_groups_id.*";
   const tags = "tags.*, tags.*.*";
   const param = {
     limit,
-    offset,
+    page,
     search,
     fields: `id,type,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     meta: "*",
   };
   if (type) {
-    param["filter[type][_eq]"] = type;
+    if (id) {
+      param["filter[type][_eq]"] = type;
+    } else {
+      param.type = type;
+    }
   }
   if (customerIds) {
     param[customerFilter] = customerIds.join();

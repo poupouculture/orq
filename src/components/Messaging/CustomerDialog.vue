@@ -163,7 +163,7 @@ const fetchCustomers = async () => {
     search: search.value,
   });
 
-  data.customers = customers.customers;
+  data.customers = customers?.customers;
   data.totalCount = customers?.total_count;
   loading.value = false;
 };

@@ -10,6 +10,7 @@ export interface FormPayload {
   gender: string;
   isActive: boolean;
   dob: string;
+  remarks: string;
 }
 
 interface Contact {
