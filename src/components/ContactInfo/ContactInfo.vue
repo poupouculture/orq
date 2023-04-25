@@ -11,8 +11,10 @@ const statusOptions = ref(["Active"]);
 const contacts = useContactStore();
 const { getContacts } = storeToRefs(contacts);
 
-const updateContacts = () => {
-  contacts.updateContact(getContacts.value);
+const updateContacts = async () => {
+  await contacts.updateContact(getContacts.value);
+
+  editMode.value = false;
 };
 </script>
 
@@ -29,28 +31,6 @@ const updateContacts = () => {
     </div>
 
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      <div class="flex flex-col">
-        <p class="label-style">Category</p>
-        <q-select
-          outlined
-          :disable="!editMode"
-          dense
-          v-model="getContacts.category"
-          lazy-rules
-          :options="categoryOptions"
-        />
-      </div>
-
-      <div class="flex flex-col">
-        <p class="label-style">Extension</p>
-        <q-input
-          v-model="getContacts.extension"
-          outlined
-          :disable="!editMode"
-          dense
-        />
-      </div>
-
       <div class="flex flex-col">
         <p class="label-style">First Name</p>
         <q-input
@@ -89,6 +69,28 @@ const updateContacts = () => {
       </div>
 
       <div class="flex flex-col">
+        <p class="label-style">Category</p>
+        <q-select
+          outlined
+          :disable="!editMode"
+          dense
+          v-model="getContacts.category"
+          lazy-rules
+          :options="categoryOptions"
+        />
+      </div>
+
+      <!-- <div class="flex flex-col">
+        <p class="label-style">Extension</p>
+        <q-input
+          v-model="getContacts.extension"
+          outlined
+          :disable="!editMode"
+          dense
+        />
+      </div> -->
+
+      <!-- <div class="flex flex-col">
         <p class="label-style">Remarks</p>
         <q-input
           v-model="getContacts.remarks"
@@ -96,7 +98,7 @@ const updateContacts = () => {
           :disable="!editMode"
           dense
         />
-      </div>
+      </div> -->
 
       <div class="flex flex-col">
         <p class="label-style">Status</p>
