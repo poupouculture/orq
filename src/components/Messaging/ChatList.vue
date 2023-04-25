@@ -43,10 +43,17 @@ const leftDrawerOpen: any = inject("leftDrawerOpen");
 const { chatsList } = storeToRefs(messagingStore);
 const list = computed(() =>
   chatsList.value.filter((chat) => {
+    console.log("chat:", chat);
+
     const chatName = chat?.customers_id
-      ? `${chat.first_name?.toLowerCase()} ${chat.last_name?.toLowerCase()}`
+      ? chat?.customer_company_name_en?.toLowerCase()
       : "visitor".toLowerCase();
-    return chat.status === props.type && chatName.includes(props.filterText);
+
+    return (
+      chat.status === props.type &&
+      (chatName?.includes(props.filterText) ||
+        chat.name.includes(props.filterText))
+    );
   })
 );
 
