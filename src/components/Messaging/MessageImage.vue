@@ -1,38 +1,44 @@
 <template>
   <img
-    class="cursor-zoom-in h-32"
+    class="cursor-zoom-in h-36 w-64"
     ref="imageRef"
     @click.stop="visible = true"
   />
+  <span class="mt-4 font-bold text-[#9A9AAF] absolute -bottom-5">{{
+    caption
+  }}</span>
   <q-dialog v-model="visible" no-shake>
-    <span class="relative flex h-full w-full">
-      <img
-        class="pointer-events-auto block max-h-full max-w-full m-auto"
-        :src="originSrc || imageRef.src"
-        :style="styleObj"
-        alt="message_pic"
-        @click="scaleImage"
-      />
-      <q-btn
-        class="absolute pointer-events-auto"
-        :style="{ top: '5px', right: '5px' }"
-        dense
-        flat
-        color="white"
-        text-color="black"
-        icon="close"
-        v-close-popup
-      >
-      </q-btn>
-    </span>
-    <span>{{ caption }}</span>
-    <q-spinner
-      v-if="!originSrc"
-      class="absolute"
-      color="primary"
-      size="3em"
-      :thickness="2"
-    />
+    <q-card style="width: 1000px; max-width: 90vw">
+      <q-card-section>
+        <div>Image Mesage</div>
+      </q-card-section>
+
+      <q-card-section>
+        <div class="w-full relative flex flex-col h-full">
+          <img
+            class="pointer-events-auto block max-h-full max-w-full m-auto"
+            :src="originSrc || imageRef.src"
+            :style="styleObj"
+            alt="message_pic"
+            @click="scaleImage"
+          />
+
+          <span class="mt-4 font-bold">{{ caption }}</span>
+        </div>
+
+        <q-spinner
+          v-if="!originSrc"
+          class="absolute"
+          color="primary"
+          size="3em"
+          :thickness="2"
+        />
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="OK" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
   </q-dialog>
 </template>
 
