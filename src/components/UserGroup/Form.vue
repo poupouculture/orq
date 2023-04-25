@@ -5,7 +5,9 @@
       <div class="lg:w-10/12 mx-auto">
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Name <span class="text-red-600">*</span></p>
+            <p class="label-style mb-2">
+              Name <span class="text-red-600">*</span>
+            </p>
             <q-input
               v-model="form.name"
               :rules="[(val) => required(val)]"
@@ -15,7 +17,7 @@
             />
           </div>
           <div class="col">
-            <p class="label-style">Status</p>
+            <p class="label-style mb-2">Status</p>
             <q-select
               v-model="form.status"
               :options="statusOptions"
@@ -26,8 +28,22 @@
             />
           </div>
         </div>
-        <!-- Tags -->
+        <!-- Type & Tags -->
         <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style mb-2">Type</p>
+            <q-select
+              dense
+              outlined
+              v-model="type"
+              :options="typeOptions"
+              option-value="value"
+              option-label="label"
+              map-options
+              emit-value
+              label="Type"
+            />
+          </div>
           <div class="col">
             <BaseMultiOptions
               v-model="tags"
@@ -198,7 +214,6 @@
     @submit="dialogSubmit()"
   />
 </template>
-
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -242,6 +257,11 @@ const deletedCustomer = ref([]);
 const customersData = ref([]);
 const customerQuery = ref("");
 
+const type = ref("group");
+const typeOptions = [
+  { label: "Individual", value: "personal" },
+  { label: "Group", value: "group" },
+];
 const form = reactive({
   name: "",
   status: "",
@@ -339,6 +359,7 @@ const submit = async () => {
       await updateCustomerGroup(props.id, {
         ...form,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
+        type: type.value,
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
@@ -376,6 +397,7 @@ const submit = async () => {
     } else {
       await addCustomerGroup({
         ...form,
+        type: type.value,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: userGroupCreate(),
