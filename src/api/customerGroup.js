@@ -36,8 +36,10 @@ export const getCustomerGroups = async (
   if (type) {
     if (id) {
       param["filter[type][_eq]"] = type;
+      param["filter[type][_eq]"] = "published";
     } else {
       param.type = type;
+      param.status = "published";
     }
   }
   if (customerIds) {
