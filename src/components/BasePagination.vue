@@ -19,6 +19,7 @@ const props = defineProps({
   max: { type: [String, Number], required: true },
   modelValue: { type: [String, Number] },
 });
+const maxPages = window.innerWidth > 756 ? props.maxPages : 5;
 const emits = defineEmits(["updateModel", "update:modelValue"]);
 const pagination = ref(props.modelValue);
 const updateModel = (value) => {
