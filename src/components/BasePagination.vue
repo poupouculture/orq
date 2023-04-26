@@ -13,14 +13,17 @@
   />
 </template>
 <script setup>
-import { ref } from "vue";
+import { computed } from "vue";
 const props = defineProps({
   maxPages: { type: [String, Number], required: true },
   max: { type: [String, Number], required: true },
   modelValue: { type: [String, Number] },
 });
 const emits = defineEmits(["updateModel", "update:modelValue"]);
-const pagination = ref(props.modelValue);
+const pagination = computed({
+  set: (val) => emits("update:modelValue", val),
+  get: () => props.modelValue,
+});
 const updateModel = (value) => {
   emits("updateModel", value);
   emits("update:modelValue", value);
