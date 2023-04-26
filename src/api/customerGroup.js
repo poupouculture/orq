@@ -30,7 +30,7 @@ export const getCustomerGroups = async (
     limit,
     page,
     search,
-    fields: `id,type,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
+    fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     meta: "*",
   };
   if (type) {

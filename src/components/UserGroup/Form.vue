@@ -37,6 +37,7 @@
               outlined
               v-model="type"
               :options="typeOptions"
+              disabled
               option-value="value"
               option-label="label"
               map-options
@@ -44,6 +45,22 @@
               label="Type"
             />
           </div>
+          <div class="col">
+            <p class="label-style mb-2">Source</p>
+            <q-select
+              dense
+              outlined
+              v-model="source"
+              :options="sourceOptions"
+              option-value="value"
+              option-label="label"
+              map-options
+              emit-value
+              label="Source"
+            />
+          </div>
+        </div>
+        <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <BaseMultiOptions
               v-model="tags"
@@ -75,16 +92,16 @@
               :key="customer.id"
             >
               <div class="flex items-center justify-between">
-                <span
-                  >{{ customer.customer_company_name_en }}
+                <span>
+                  {{ customer.customer_company_name_en }}
                   {{
                     (customer.companies.length &&
                       `/ ${customer.companies[0].companies_id.name_english}`) ||
                     ""
                   }}
                   /
-                  {{ customer.position }}</span
-                >
+                  {{ customer.position }}
+                </span>
                 <svg
                   @click="deleteCustomer(i)"
                   xmlns="http://www.w3.org/2000/svg"
@@ -258,9 +275,11 @@ const customersData = ref([]);
 const customerQuery = ref("");
 
 const type = ref("group");
-const typeOptions = [
-  { label: "Individual", value: "personal" },
-  { label: "Group", value: "group" },
+const typeOptions = [{ label: "Group", value: "group" }];
+const source = ref("div_no");
+const sourceOptions = [
+  { label: "div_no", value: "div_no" },
+  { label: "salesman_code", value: "salesman_code" },
 ];
 const form = reactive({
   name: "",
@@ -271,6 +290,7 @@ onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
     form.status = data.value.status;
+    source.value = data.value.source;
     tags.value = data.value.tags.map((data) => ({
       label: data.tags_id.name,
       value: data.tags_id.id,
@@ -360,6 +380,7 @@ const submit = async () => {
         ...form,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         type: type.value,
+        source: source.value,
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
@@ -398,6 +419,7 @@ const submit = async () => {
       await addCustomerGroup({
         ...form,
         type: type.value,
+        source: source.value,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: userGroupCreate(),
