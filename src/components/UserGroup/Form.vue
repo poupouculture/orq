@@ -31,21 +31,6 @@
         <!-- Type & Tags -->
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style mb-2">Type</p>
-            <q-select
-              dense
-              outlined
-              v-model="type"
-              :options="typeOptions"
-              disabled
-              option-value="value"
-              option-label="label"
-              map-options
-              emit-value
-              label="Type"
-            />
-          </div>
-          <div class="col">
             <p class="label-style mb-2">Source</p>
             <q-select
               dense
@@ -59,8 +44,6 @@
               label="Source"
             />
           </div>
-        </div>
-        <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <BaseMultiOptions
               v-model="tags"
@@ -274,9 +257,7 @@ const deletedCustomer = ref([]);
 const customersData = ref([]);
 const customerQuery = ref("");
 
-const type = ref("group");
-const typeOptions = [{ label: "Group", value: "group" }];
-const source = ref("div_no");
+const source = ref(null);
 const sourceOptions = [
   { label: "div_no", value: "div_no" },
   { label: "salesman_code", value: "salesman_code" },
@@ -379,7 +360,7 @@ const submit = async () => {
       await updateCustomerGroup(props.id, {
         ...form,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
-        type: type.value,
+        type: "group",
         source: source.value,
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
@@ -418,7 +399,7 @@ const submit = async () => {
     } else {
       await addCustomerGroup({
         ...form,
-        type: type.value,
+        type: "group",
         source: source.value,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
