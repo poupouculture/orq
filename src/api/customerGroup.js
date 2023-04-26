@@ -16,6 +16,7 @@ export const getCustomerGroups = async (
     type = undefined,
     customerIds = undefined,
     customerFilter = "",
+    sourceType = "div_no",
   },
   id = null
 ) => {
@@ -32,6 +33,7 @@ export const getCustomerGroups = async (
     search,
     fields: `id,type,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     meta: "*",
+    source: sourceType,
   };
   if (type) {
     if (id) {
