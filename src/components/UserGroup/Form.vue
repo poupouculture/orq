@@ -5,7 +5,9 @@
       <div class="lg:w-10/12 mx-auto">
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Name <span class="text-red-600">*</span></p>
+            <p class="label-style mb-2">
+              Name <span class="text-red-600">*</span>
+            </p>
             <q-input
               v-model="form.name"
               :rules="[(val) => required(val)]"
@@ -15,7 +17,7 @@
             />
           </div>
           <div class="col">
-            <p class="label-style">Status</p>
+            <p class="label-style mb-2">Status</p>
             <q-select
               v-model="form.status"
               :options="statusOptions"
@@ -26,8 +28,22 @@
             />
           </div>
         </div>
-        <!-- Tags -->
+        <!-- Type & Tags -->
         <div class="row q-mb-lg q-gutter-xl">
+          <div class="col">
+            <p class="label-style mb-2">Source</p>
+            <q-select
+              dense
+              outlined
+              v-model="source"
+              :options="sourceOptions"
+              option-value="value"
+              option-label="label"
+              map-options
+              emit-value
+              label="Source"
+            />
+          </div>
           <div class="col">
             <BaseMultiOptions
               v-model="tags"
@@ -59,16 +75,16 @@
               :key="customer.id"
             >
               <div class="flex items-center justify-between">
-                <span
-                  >{{ customer.customer_company_name_en }}
+                <span>
+                  {{ customer.customer_company_name_en }}
                   {{
                     (customer.companies.length &&
                       `/ ${customer.companies[0].companies_id.name_english}`) ||
                     ""
                   }}
                   /
-                  {{ customer.position }}</span
-                >
+                  {{ customer.position }}
+                </span>
                 <svg
                   @click="deleteCustomer(i)"
                   xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +214,6 @@
     @submit="dialogSubmit()"
   />
 </template>
-
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -242,6 +257,11 @@ const deletedCustomer = ref([]);
 const customersData = ref([]);
 const customerQuery = ref("");
 
+const source = ref(null);
+const sourceOptions = [
+  { label: "div_no", value: "div_no" },
+  { label: "salesman_code", value: "salesman_code" },
+];
 const form = reactive({
   name: "",
   status: "",
@@ -251,6 +271,7 @@ onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
     form.status = data.value.status;
+    source.value = data.value.source;
     tags.value = data.value.tags.map((data) => ({
       label: data.tags_id.name,
       value: data.tags_id.id,
@@ -339,6 +360,8 @@ const submit = async () => {
       await updateCustomerGroup(props.id, {
         ...form,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
+        type: "group",
+        source: source.value,
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
@@ -376,6 +399,8 @@ const submit = async () => {
     } else {
       await addCustomerGroup({
         ...form,
+        type: "group",
+        source: source.value,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: userGroupCreate(),
