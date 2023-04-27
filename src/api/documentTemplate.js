@@ -17,6 +17,7 @@ export const getDocumentTemplates = async ({
       offset,
       search,
       meta: "*",
+      "filter[status][_neq]": "archived",
     },
   });
 
@@ -42,5 +43,17 @@ export const updateDocumentTemplate = async (id, payload) => {
     `/items/document_templates/${id}`,
     payload
   );
+  return documentTemplate;
+};
+
+export const getComponentsByType = async (type) => {
+  const params = {
+    fields: `*`,
+    sort: `-date_created`,
+    meta: "*",
+    "filter[type][_eq]": type,
+  };
+
+  const documentTemplate = await api.get(`/items/document_supported`, params);
   return documentTemplate;
 };

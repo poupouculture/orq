@@ -127,6 +127,7 @@
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
             :disable="isChatExpired"
+            @paste="onPast"
           />
           <div
             ref="waveRef"
@@ -189,14 +190,7 @@
             :disable="isChatExpired"
             @click="showMessageImage = true"
           />
-          <!-- @click="uplader?.pickFiles" -->
-          <!-- <q-uploader
-            ref="uplader"
-            accept=".gif, .jpg, .jpeg, .png, image/*"
-            class="hidden invisible"
-            :filter="imageSizeFilter"
-            @added="upload"
-          /> -->
+
           <q-btn
             flat
             round
@@ -211,6 +205,7 @@
               ref="fileUplader"
               accept="*"
               class="hidden invisible"
+              :filter="fileFilter"
               @added="uploadFile"
             />
           </q-btn>
@@ -253,6 +248,7 @@
     @send="sendMessageTemplate"
   />
   <MessageImageDialog
+    ref="messageImageDialogRef"
     v-model="showMessageImage"
     @hide="showMessageImage = false"
     @send="upload"
@@ -303,15 +299,41 @@ import {
   MessageStatus,
   SendMessageStatus,
 } from "src/types/MessagingTypes";
-import { Loading } from "quasar";
+import { Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
+
 interface HasMore {
   [key: string]: boolean;
 }
+
+const FileLimit = [
+  {
+    name: "Image",
+    type: "image/",
+    limit: 5,
+  },
+  {
+    name: "Video",
+    type: "video/",
+    limit: 16,
+  },
+  {
+    name: "Audio",
+    type: "audio/",
+    limit: 16,
+  },
+  // others
+  // {
+  //   name: "Document",
+  //   type: "document",
+  //   limit: 100,
+  // },
+];
+
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
@@ -336,8 +358,8 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
-const isBot = ref(false);
 const botList: Ref<any[]> = ref([]);
+const messageImageDialogRef = ref();
 const {
   getSelectedChat,
   getSelectedChatId,
@@ -363,6 +385,8 @@ const members = computed<Member[]>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  console.log("scroll");
+  scrollToBottom();
   return (
     cachedMessage?.map((message, index) => {
       return {
@@ -382,6 +406,8 @@ const messages = computed<Message[]>(() => {
   );
 });
 
+const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
+
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
@@ -398,7 +424,6 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 watch(getSelectedChatId, () => {
   messagingStore.setReplayMessage();
   message.value = "";
-  isBot.value = false;
 });
 
 watch(
@@ -454,11 +479,9 @@ const messageCallback = async (data: any, newMessage: any) => {
       cachedMessage.splice(index, 1);
     }
     if (cachedMessage) data = data.data || data;
-    newMessage.aaaa = 123;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
-    console.log(cachedMessage);
   }
 };
 
@@ -477,7 +500,8 @@ const sendMessage = async () => {
     waba_message_id: "",
   });
   cachedMessage.push(newMessage);
-  const wabaMessageId = replayMessage.value?.waba_message_id;
+  const wabaMessageId =
+    replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
 
   scrollToBottom();
   messagingStore.setReplayMessage();
@@ -670,8 +694,32 @@ const upload = async (fileList: readonly File[], caption: string) => {
   messageCallback(data, newMessage);
 };
 
+// const imageSizeFilter = (files: readonly any[] | FileList) => {
+//   const filterFiles = [];
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size <= 1024 * 1024 * 5) {
+//       filterFiles.push(file);
+//     }
+//   }
+//   if (!filterFiles.length) {
+//     Notify.create({
+//       message: "Image cannot exceed 5M",
+//       type: "negative",
+//       color: "purple",
+//       position: "top",
+//     });
+//   }
+
+//   return filterFiles;
+// };
+
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
+  console.log(file.name, file.type);
+  getLimitByType(file.type);
+  if (!file) return;
+
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
     id: Date.now(),
@@ -698,9 +746,46 @@ const uploadFile = async (files: readonly File[]) => {
   messageCallback(data, newMessage);
 };
 
+const getLimitByType = (type: string) => {
+  const fileData = FileLimit.find((item) => type.startsWith(item.type)) || {
+    name: "Document",
+    type: "document",
+    limit: 100,
+  };
+  return fileData;
+};
+
+const fileFilter = (files: readonly any[] | FileList) => {
+  const filterFiles = [];
+  let fileData;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    fileData = getLimitByType(file.type);
+    if (file.size <= fileData.limit * 1024 * 1024) {
+      filterFiles.push(file);
+    }
+  }
+
+  if (!filterFiles.length) {
+    Notify.create({
+      message: `${fileData?.name} cannot exceed ${fileData?.limit}MB`,
+      type: "negative",
+      color: "purple",
+      position: "top",
+    });
+  }
+
+  return filterFiles;
+};
+
 const selectBot = async (bot: any) => {
-  isBot.value = !isBot.value;
-  initiateBot(getSelectedChatId.value, bot.trigger_intent);
+  const { status } = await initiateBot(
+    getSelectedChatId.value,
+    bot.trigger_intent
+  );
+  if (status) {
+    getSelectedChat.value.mode = "Bot";
+  }
 };
 
 const getChatbots = async () => {
@@ -710,7 +795,20 @@ const getChatbots = async () => {
 
 const oncloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  isBot.value = false;
+  getSelectedChat.value.mode = "";
+};
+
+const onPast = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items || [];
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf("image") !== -1) {
+      const file = items[i].getAsFile();
+      showMessageImage.value = true;
+      nextTick(() => {
+        messageImageDialogRef.value.preview([file]);
+      });
+    }
+  }
 };
 
 onMounted(() => {

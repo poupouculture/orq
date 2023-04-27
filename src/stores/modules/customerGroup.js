@@ -20,13 +20,19 @@ const useCustomerGroupStore = defineStore("customerGroup", {
     getCustomer: (state) => state.customer,
   },
   actions: {
-    async getAll({ rowsPerPage = 4, page = 1, search = undefined }) {
+    async getAll({
+      rowsPerPage = 4,
+      page = 1,
+      search = undefined,
+      type = undefined,
+    }) {
       const {
         data: { data: customerGroups, meta },
       } = await getCustomerGroups({
         limit: rowsPerPage,
         page,
         search,
+        type,
       });
       this.items = customerGroups.filter((item) => item !== null);
       this.meta = {

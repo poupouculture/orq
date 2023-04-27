@@ -4,35 +4,53 @@ import CustomerInformation from "components/Order/Invoice/customerInformation.vu
 import InvoiceInformation from "components/Order/Invoice/invoiceInformation.vue";
 import Preview from "components/Order/Invoice/preview.vue";
 import SendPdf from "components/Order/Invoice/SendPdf.vue";
-import { computed, ref } from "vue";
+import useInvoice from "src/stores/modules/useInvoices";
+import { storeToRefs } from "pinia";
+import { computed, ref, onMounted } from "vue";
 
 const activeTabs = ref("companyInformation");
+const invoice = useInvoice();
+const { getCompany } = storeToRefs(invoice);
 
 const rightSideComponent = ref("sendPdf");
 
 const tabs = computed(() => {
-  return [
+  const tab = [
     {
       label: "Company",
       component: CompanyInformation,
       value: "companyInformation",
+      disable: false,
     },
     {
       label: "Customer",
       component: CustomerInformation,
       value: "customerInformation",
+      disable: true,
     },
     {
       label: "Invoice",
       component: InvoiceInformation,
       value: "invoiceInformation",
+      disable: true,
     },
   ];
+
+  if (getCompany.value.show) {
+    tab[1].disable = false;
+    tab[2].disable = false;
+  }
+
+  return tab;
 });
 
 const switchComponent = (componentName: string) => {
   rightSideComponent.value = componentName;
 };
+
+onMounted(() => {
+  invoice.init();
+});
 </script>
 
 <template>
@@ -61,6 +79,7 @@ const switchComponent = (componentName: string) => {
               :key="index"
               :name="tab.value"
               :label="tab.label"
+              :disable="tab.disable"
             />
           </q-tabs>
           <q-separator class="q-mt-none" />

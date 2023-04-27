@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="message.label"
+    v-if="message.label && !isReply"
     class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
   >
     <div class="text-center inline-block text-xs px-1.5 text-[#9A9AAF]">
@@ -9,7 +9,7 @@
   </div>
   <div
     class="flex"
-    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-6': !isReply }"
+    :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
     <div
       class="relative rounded max-w-[60%]"
@@ -24,6 +24,18 @@
           : '',
       ]"
     >
+      <span
+        v-if="!isSend"
+        class="bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
+      >
+        {{ message.contact_name }}
+      </span>
+      <span
+        v-if="isSend"
+        class="bottom-full left-0 scale-90 origin-right text-[#9A9AAF]"
+      >
+        {{ message.user_name }}
+      </span>
       <q-btn
         v-if="isReply"
         class="absolute -top-4 -right-6"
@@ -40,14 +52,14 @@
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"
       >
         <q-avatar
-          v-if="message.mode === 'Bot'"
+          v-if="message.mode === 'Bot' && isSend"
           size="xs"
           class="rounded-avatar mr-1"
         >
           <img src="~assets/images/bot.svg" />
         </q-avatar>
         <small class="text-[#9A9AAF]">
-          {{ stamp }}
+          {{ timestamp }}
         </small>
         <svg
           v-if="isSend"
@@ -148,6 +160,12 @@ import {
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
+// import useCustomerStore from "src/stores/modules/customer";
+// import { storeToRefs } from "pinia";
+
+// const customerStore = useCustomerStore();
+
+// const { customer } = storeToRefs(customerStore);
 
 const props = defineProps<{ message: Message; isReply?: boolean }>();
 const operationType = ref("");
@@ -157,7 +175,7 @@ const isSend = computed(() => props.message.direction === Direction.OUTGOING);
 const showBackground = computed(
   () => props.message.content.type !== MessageType.IMAGE
 );
-const stamp = computed(() => {
+const timestamp = computed(() => {
   return format(new Date(props.message.date_created), "p");
 });
 const list = [

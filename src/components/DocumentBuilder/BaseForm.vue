@@ -20,6 +20,7 @@
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
         class="text-center"
+        v-if="isComponentExist('LOGO')"
       >
         Upload your logo
         <div class="w-full border border-dashed mt-2 p-10">
@@ -47,6 +48,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('TITLE')"
       >
         <h1 class="text-3xl">Invoice</h1>
         <input
@@ -74,6 +76,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('BILL_TO')"
       >
         <span class="font-semibold"> Bill to </span>
         <p>Required before continuing the next step</p>
@@ -102,6 +105,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('SYNQUE')"
       >
         <span class="font-semibold"> Synque Limited </span>
       </Vue3DraggableResizable>
@@ -124,6 +128,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('TOTAL_AMOUNT')"
       >
         <span class="text-xl" style="font-weight: 100">HKD </span>
         <span class="text-xl font-semibold">0.00</span>
@@ -147,6 +152,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('INVOICE_NUMBER')"
       >
         <div class="w-full flex items-center">
           <div class="w-1/3 pr-2 text-right">Invoice no.</div>
@@ -178,6 +184,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('ISSUED_DATE')"
       >
         <div class="w-full flex items-center">
           <div class="w-1/3 pr-2 text-right">Invoice Issued</div>
@@ -209,6 +216,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('DUE_DATE')"
       >
         <div class="w-full flex items-center">
           <div class="w-1/3 pr-2 text-right">Due date</div>
@@ -240,6 +248,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('ITEMS')"
       >
         <div class="w-full flex flex-col">
           <div class="w-full flex gap-3">
@@ -314,6 +323,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('STAMP')"
       >
         <div class="w-full flex">
           <button class="border rounded-lg px-4 py-2">
@@ -341,6 +351,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('PAYMENT_INSTRUCTIONS')"
       >
         <div class="w-full flex flex-col">
           <div>
@@ -375,6 +386,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('NOTES')"
       >
         <div class="w-full flex flex-col">
           <div>
@@ -409,6 +421,7 @@
         @resizing="print('resizing')"
         @drag-end="print('drag-end')"
         @resize-end="print('resize-end')"
+        v-if="isComponentExist('AMOUNT_DUE')"
       >
         <div class="w-full flex flex-col">
           <div class="w-full flex border-b pb-2">
@@ -440,6 +453,12 @@
           Download
         </button>
       </div>
+      <input
+        type="text"
+        placeholder="Document Name"
+        class="w-full border rounded-lg mt-2 h-10 p-4"
+        v-model="name"
+      />
       <InputSelect
         :options="documentTypesLabel"
         :default="documentType"
@@ -505,11 +524,13 @@
 <script>
 import { defineComponent } from "vue";
 import Vue3DraggableResizable from "vue3-draggable-resizable";
-import InputSelect from "../../components/InputSelect.vue";
+import InputSelect from "src/components/InputSelect.vue";
 import {
   components as comp,
+  componentsObject as CObj,
   ISSUED_TO as it,
-} from "../../constants/documentTemplate.js";
+} from "src/constants/documentTemplate.js";
+import { getComponentsByType } from "src/api/documentTemplate";
 
 export default defineComponent({
   components: { Vue3DraggableResizable, InputSelect },
@@ -521,12 +542,14 @@ export default defineComponent({
   },
   data() {
     return {
+      componentDatas: [],
       logo: {
         x: 50,
         y: 100,
         w: 300,
         h: 200,
         active: false,
+        type: "media",
       },
       TitleAndRef: {
         x: 50,
@@ -534,6 +557,7 @@ export default defineComponent({
         h: 100,
         w: 300,
         active: false,
+        type: "string",
       },
       BillTo: {
         x: 50,
@@ -541,6 +565,7 @@ export default defineComponent({
         h: 100,
         w: 300,
         active: false,
+        type: "string",
       },
       SynqueTitle: {
         x: 690,
@@ -548,6 +573,7 @@ export default defineComponent({
         h: 30,
         w: 100,
         active: false,
+        type: "string",
       },
       TotalAmount: {
         x: 697,
@@ -555,6 +581,7 @@ export default defineComponent({
         h: 30,
         w: 100,
         active: false,
+        type: "number",
       },
       InvoiceNo: {
         x: 490,
@@ -562,6 +589,7 @@ export default defineComponent({
         h: 50,
         w: 300,
         active: false,
+        type: "string",
       },
       IssuedDate: {
         x: 490,
@@ -569,6 +597,7 @@ export default defineComponent({
         h: 50,
         w: 300,
         active: false,
+        type: "date",
       },
       DueDate: {
         x: 490,
@@ -576,6 +605,7 @@ export default defineComponent({
         h: 50,
         w: 300,
         active: false,
+        type: "date",
       },
       Items: {
         x: 50,
@@ -583,6 +613,7 @@ export default defineComponent({
         h: 240,
         w: 760,
         active: false,
+        type: "items",
       },
       Stamp: {
         x: 50,
@@ -590,6 +621,7 @@ export default defineComponent({
         h: 50,
         w: 240,
         active: false,
+        type: "media",
       },
       PaymentInstructions: {
         x: 50,
@@ -597,6 +629,7 @@ export default defineComponent({
         h: 120,
         w: 400,
         active: false,
+        type: "string",
       },
       Notes: {
         x: 50,
@@ -604,6 +637,7 @@ export default defineComponent({
         h: 120,
         w: 400,
         active: false,
+        type: "string",
       },
       AmountDue: {
         x: 540,
@@ -611,58 +645,64 @@ export default defineComponent({
         h: 80,
         w: 240,
         active: false,
+        type: "number",
       },
+      name: "",
       currencies: ["Hong Kong Dollar"],
       currency: "Hong Kong Dollar",
       documentTypesLabel: ["Invoice", "Sales Order", "Purchase Order"],
       documentTypeValues: ["invoice", "order_sales", "order_purchase"],
-      documentType: "invoice",
+      documentType: "Invoice",
       acceptedMethod: false,
     };
   },
-  mounted() {
+  async mounted() {
     if (this.documentTemplate) {
       const tempData = this.documentTemplate;
 
+      this.updateDocumentType(
+        this.documentTypesLabel[this.documentTypeValues.indexOf(tempData.type)]
+      );
+
       const logoComponent = tempData?.components?.find(
-        (c) => c.type === comp.LOGO
+        (c) => c.key === comp.LOGO
       );
 
       const TitleAndRefComponent = tempData?.components?.find(
-        (c) => c.type === comp.TITLE
+        (c) => c.key === comp.TITLE
       );
       const BillToComponent = tempData?.components?.find(
-        (c) => c.type === comp.BILL_TO
+        (c) => c.key === comp.BILL_TO
       );
       const SynqueTitleComponent = tempData?.components?.find(
-        (c) => c.type === comp.SYNQUE
+        (c) => c.key === comp.SYNQUE
       );
       const TotalAmountComponent = tempData?.components?.find(
-        (c) => c.type === comp.TOTAL_AMOUNT
+        (c) => c.key === comp.TOTAL_AMOUNT
       );
       const InvoiceNoComponent = tempData?.components?.find(
-        (c) => c.type === comp.INVOICE_NUMBER
+        (c) => c.key === comp.INVOICE_NUMBER
       );
       const IssuedDateComponent = tempData?.components?.find(
-        (c) => c.type === comp.ISSUED_DATE
+        (c) => c.key === comp.ISSUED_DATE
       );
       const DueDateComponent = tempData?.components?.find(
-        (c) => c.type === comp.DUE_DATE
+        (c) => c.key === comp.DUE_DATE
       );
       const ItemsComponent = tempData?.components?.find(
-        (c) => c.type === comp.ITEMS
+        (c) => c.key === comp.ITEMS
       );
       const StampComponent = tempData?.components?.find(
-        (c) => c.type === comp.STAMP
+        (c) => c.key === comp.STAMP
       );
       const PaymentInstructionsComponent = tempData?.components?.find(
-        (c) => c.type === comp.PAYMENT_INSTRUCTIONS
+        (c) => c.key === comp.PAYMENT_INSTRUCTIONS
       );
       const NotesComponent = tempData?.components?.find(
-        (c) => c.type === comp.NOTES
+        (c) => c.key === comp.NOTES
       );
       const AmountDueComponent = tempData?.components?.find(
-        (c) => c.type === comp.AMOUNT_DUE
+        (c) => c.key === comp.AMOUNT_DUE
       );
 
       this.logo = logoComponent;
@@ -683,6 +723,9 @@ export default defineComponent({
       this.acceptedMethod = !(
         tempData.payment_methods === null || tempData.payment_methods === []
       );
+    } else {
+      const result = await getComponentsByType(this.documentType);
+      this.componentDatas = result.data.data[0].specs;
     }
   },
   methods: {
@@ -693,72 +736,44 @@ export default defineComponent({
       this.currency = val;
     },
     updateDocumentType(val) {
-      this.documentType =
-        this.documentTypeValues[this.documentTypesLabel.indexOf(val)];
+      this.documentType = val;
     },
     toggleAcceptMethod() {
       this.acceptedMethod = !this.acceptedMethod;
     },
+    isComponentExist(componentName) {
+      return this.documentTemplate
+        ? this.documentTemplate.components.find((c) => c.key === componentName)
+        : this.componentDatas.find((c) => c.key === componentName);
+    },
     submit() {
+      const tempComponents = [
+        {
+          key: comp.TITLE,
+          type: "string",
+          ...this.TitleAndRef,
+        },
+      ];
+
+      const componentKeys = Object.keys(comp);
+      for (let index = 0; index < componentKeys.length; index++) {
+        if (this.isComponentExist(componentKeys[index])) {
+          tempComponents.push({
+            key: componentKeys[index],
+            ...this[CObj[componentKeys[index]]],
+          });
+        }
+      }
+
       this.$emit("submit", {
+        name: this.name,
         invoice_currency: this.currency,
-        type: this.documentType,
+        type: this.documentTypeValues[
+          this.documentTypesLabel.indexOf(this.documentType)
+        ],
         payment_methods: this.acceptedMethod ? { type: "Credit Card" } : null,
         fee_issued_to: it.CUSTOMER,
-        components: [
-          {
-            type: comp.LOGO,
-            ...this.logo,
-          },
-          {
-            type: comp.TITLE,
-            ...this.TitleAndRef,
-          },
-          {
-            type: comp.BILL_TO,
-            ...this.BillTo,
-          },
-          {
-            type: comp.SYNQUE,
-            ...this.SynqueTitle,
-          },
-          {
-            type: comp.TOTAL_AMOUNT,
-            ...this.TotalAmount,
-          },
-          {
-            type: comp.INVOICE_NUMBER,
-            ...this.InvoiceNo,
-          },
-          {
-            type: comp.ISSUED_DATE,
-            ...this.IssuedDate,
-          },
-          {
-            type: comp.DUE_DATE,
-            ...this.DueDate,
-          },
-          {
-            type: comp.ITEMS,
-            ...this.Items,
-          },
-          {
-            type: comp.STAMP,
-            ...this.Stamp,
-          },
-          {
-            type: comp.PAYMENT_INSTRUCTIONS,
-            ...this.PaymentInstructions,
-          },
-          {
-            type: comp.NOTES,
-            ...this.Notes,
-          },
-          {
-            type: comp.AMOUNT_DUE,
-            ...this.AmountDue,
-          },
-        ],
+        components: tempComponents,
       });
     },
   },

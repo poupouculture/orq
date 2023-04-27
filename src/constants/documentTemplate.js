@@ -14,6 +14,22 @@ export const components = {
   AMOUNT_DUE: "AMOUNT_DUE",
 };
 
+export const componentsObject = {
+  LOGO: "logo",
+  TITLE: "title",
+  BILL_TO: "BillTo",
+  SYNQUE: "SynqueTitle",
+  TOTAL_AMOUNT: "TotalAmount",
+  INVOICE_NUMBER: "InvoiceNo",
+  ISSUED_DATE: "IssuedDate",
+  DUE_DATE: "DueDate",
+  ITEMS: "Items",
+  STAMP: "Stamp",
+  PAYMENT_INSTRUCTIONS: "PaymentInstructions",
+  NOTES: "Notes",
+  AMOUNT_DUE: "AmountDue",
+};
+
 export const ISSUED_TO = {
   CUSTOMER: "CUSTOMER",
 };

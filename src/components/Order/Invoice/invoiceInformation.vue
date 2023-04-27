@@ -2,11 +2,9 @@
 import { ref, reactive, watchEffect, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useInvoice from "src/stores/modules/useInvoices";
-
 const invoice = useInvoice();
 const { getInvoice, getTax, getTotalPrice, getDiscount } = storeToRefs(invoice);
 const statusOptions = ref(["Pending", "Draft", "Paid", "Over Due"]);
-
 // Optional State
 const customDefault = reactive(getInvoice.value.optional.customField);
 const memo = reactive(getInvoice.value.optional.memo);
@@ -15,6 +13,12 @@ const addItem = ref(false);
 const newTax = reactive({
   name: "",
   value: "",
+});
+const newForm = reactive({
+  description: "",
+  qty: "",
+  rate: "",
+  amount: "",
 });
 const discountPercentage = ref(0);
 const labelHead = ref([
@@ -35,58 +39,57 @@ const labelHead = ref([
     class: "col-span-1 text-center",
   },
 ]);
-
 //  Watch
 watchEffect(() => {
   if (customDefault.option) customDefault.active = true;
   else customDefault.active = false;
-
   if (footer.option) footer.active = true;
   else footer.active = false;
-
   if (memo.option) memo.active = true;
   else memo.active = false;
 });
-
 // Methods
-
 const addTax = () => {
   invoice.addTax(newTax);
   newTax.name = "";
   newTax.value = "";
 };
-
 const cancelAddItems = () => {
   addItem.value = !addItem.value;
 };
-
-const addNewItem = (item: any) => {
-  invoice.addItems(item);
-
+const addNewItem = () => {
+  invoice.addItems(newForm);
   addItem.value = !addItem.value;
+  resetItem();
 };
-
+const resetItem = () => {
+  newForm.description = "";
+  newForm.qty = "";
+  newForm.rate = "";
+  newForm.description.resetValidation();
+  newForm.qty.resetValidation();
+  newForm.rate.resetValidation();
+};
 // Validation
-
 const number = reactive([
   (val: any) => (val !== null && val !== "") || "Please type Percentage",
 ]);
-
+const reg = /^\d+$/;
+const requiredNumber = reactive([
+  (val: string) => (val !== null && val !== "") || "This field is required",
+  (val: string) => reg.test(val) || "This field is number",
+]);
 const required = reactive([
   (val: string) => (val !== null && val !== "") || "This field is required",
 ]);
-
 const addDiscount = () => {
   invoice.addDiscount(discountPercentage.value);
 };
-
 const editDiscount = (discount: number) => {
   invoice.editDiscount(discount);
 };
-
 onMounted(() => {
   const getPanel = document.querySelector(".q-panel.scroll");
-
   getPanel?.classList.remove("scroll");
 });
 </script>
@@ -120,6 +123,19 @@ onMounted(() => {
               set as default
             </span>
           </div>
+        </div>
+      </div>
+
+      <div class="col-span-2">
+        <div class="">
+          <p class="label-style mb-2">Upload File</p>
+          <q-uploader
+            url="http://localhost:4444/upload"
+            class="w-1/2"
+            square
+            color="primary"
+            flat
+          />
         </div>
       </div>
       <div class="col-span-2 sm:col-span-1">
@@ -290,46 +306,36 @@ onMounted(() => {
       </template>
 
       <template v-if="addItem">
-        <div class="col-span-2 flex flex-col gap-3">
-          <div
-            v-for="(newItem, index) in getInvoice.form"
-            :key="index"
-            class="grid gap-5 grid-cols-6"
-          >
-            <div class="col-span-3">
+        <q-form
+          @submit.prevent.stop="addNewItem"
+          class="col-span-2 flex flex-col gap-3"
+        >
+          <div class="grid gap-2 grid-cols-6">
+            <div class="col-span-6">
               <q-input
-                v-model="newItem.description"
+                v-model="newForm.description"
                 placeholder="Add Description"
                 dense
                 outlined
                 :rules="required"
               />
             </div>
-            <div class="col-span-1 text-center px-2">
+            <div class="col-span-3 text-center">
               <q-input
-                v-model="newItem.qty"
-                placeholder="0"
+                v-model="newForm.qty"
+                placeholder="Qty"
                 dense
                 outlined
-                :rules="required"
+                :rules="requiredNumber"
               />
             </div>
-            <div class="col-span-1 text-center px-2">
+            <div class="col-span-3 text-center">
               <q-input
-                v-model="newItem.rate"
-                placeholder="0"
+                v-model="newForm.rate"
+                placeholder="Rate"
                 dense
                 outlined
-                :rules="required"
-              />
-            </div>
-            <div class="col-span-1 text-center px-2">
-              <q-input
-                v-model="newItem.amount"
-                placeholder="0"
-                dense
-                outlined
-                :rules="required"
+                :rules="requiredNumber"
               />
             </div>
           </div>
@@ -342,13 +348,13 @@ onMounted(() => {
               Cancel
             </button>
             <button
-              @click="addNewItem(newItem)"
+              type="submit"
               class="rounded-lg py-1 px-2 text-white bg-primary"
             >
               Save
             </button>
           </div>
-        </div>
+        </q-form>
       </template>
 
       <div class="col-span-2" v-else>
@@ -813,7 +819,6 @@ onMounted(() => {
 :deep(.tax-selected div) {
   min-width: 100px;
 }
-
 :deep(.q-panel) {
   overflow-x: hidden !important;
 }

@@ -2,6 +2,7 @@ import { api } from "src/boot/axios";
 import { IUserTransform } from "src/types/TransformObjectType";
 import { userCreate } from "src/utils/transform-object";
 import { getCustomerGroups } from "./customerGroup";
+import { CustomerGroup } from "src/types/PersonalGroups";
 
 export const searchPersonalGroup = async (query: string) => {
   const data = await api.get("/items/user_groups", {
@@ -27,7 +28,7 @@ export const getPersonalGroups = async (
       "filter[type][_eq]": type,
       offset,
       fields:
-        "id,name,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id",
+        "id,name,type,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id, customer_groups.customer_groups_id.type",
       meta: "*",
     },
   });
@@ -37,7 +38,9 @@ export const getPersonalGroups = async (
 export const getCustomerGroup = async (
   rowsPerPage = 10,
   page = 1,
-  search?: string
+  search?: string,
+  selectedCustomerGroups?: CustomerGroup[],
+  customerFilter?: string
 ) => {
   // const customerGroup = await api.get(
   //   "/items/customer_groups?limit=-1&fields=id,name,status"
@@ -47,26 +50,24 @@ export const getCustomerGroup = async (
     limit: rowsPerPage,
     page,
     search,
+    customerIds: selectedCustomerGroups?.map((item) => item.id),
+    customerFilter,
   });
   console.log(customerGroups);
 
   return customerGroups;
 };
 
-export const addRelationship = async (
-  userGroupId: string,
-  customerGroupId: string
-) => {
-  const results = await api.post("/items/customer_groups_user_groups", {
-    user_groups_id: userGroupId,
-    customer_groups_id: customerGroupId,
-  });
+export const addRelationship = async (payload: any[]) => {
+  const results = await api.post("/items/customer_groups_user_groups", payload);
 
   return results;
 };
 
-export const deleteRelationship = async (id: string) => {
-  const results = await api.delete(`/items/customer_groups_user_groups/${id}`);
+export const deleteRelationship = async (payload: []) => {
+  const results = await api.delete(`/items/customer_groups_user_groups`, {
+    data: payload,
+  });
   return results;
 };
 
