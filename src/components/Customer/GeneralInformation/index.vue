@@ -17,7 +17,8 @@ import { api } from "src/boot/axios";
 import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
-// import { date } from "quasar";
+import { IState } from "src/types/CustomerTypes";
+import { QForm } from "quasar";
 
 interface Option {
   value: string | number;
@@ -69,35 +70,40 @@ const genderOptions: Gender[] = [
   { value: "f", label: "Female" },
 ];
 
-const firstName = ref("");
-const lastName = ref("");
-const idNumber = ref("");
-const customerCode = ref("");
+const firstName: Ref<string | undefined> = ref("");
+const lastName: Ref<string | undefined> = ref("");
+const idNumber: Ref<string | undefined> = ref("");
+const customerCode: Ref<string | undefined> = ref("");
 const gender: Ref<Gender | undefined> = ref(undefined);
-// const dateOfBirth = ref("");
 const position: Ref<Position | undefined> = ref(undefined);
 const companies: Ref<Option[]> = ref([]);
 const customerGroups: Ref<Option[]> = ref([]);
 const tags: Ref<Option[]> = ref([]);
-const isActive = ref(false);
-const locationCode = ref("");
-const tel = ref("");
-const deliveryLocationAddress = ref("");
-const customerCompanyNameEn = ref("");
-const customerCompanyNameZht = ref("");
-const delylocNo = ref("");
-const divNo = ref("");
-const delylocNameE = ref("");
-const delylocNameC = ref("");
-const delylocAdd1E = ref("");
-const delylocAdd2E = ref("");
-const delylocAdd3E = ref("");
-const delylocAdd1C = ref("");
-const delylocAdd2C = ref("");
-const delylocAdd3C = ref("");
-const companyCd = ref("");
-const salesmanCd = ref("");
-const lastModifyDate = ref("");
+const isActive: Ref<IState["customer"]["is_active"]> = ref(false);
+const locationCode: Ref<IState["customer"]["location_code"]> = ref(null);
+const tel: Ref<IState["customer"]["tel"] | undefined> = ref("");
+const deliveryLocationAddress: Ref<
+  IState["customer"]["delivery_location_address"]
+> = ref("");
+const customerCompanyNameEn: Ref<
+  IState["customer"]["customer_company_name_en"]
+> = ref("");
+const customerCompanyNameZht: Ref<
+  IState["customer"]["customer_company_name_zht"]
+> = ref("");
+const delylocNo: Ref<IState["customer"]["delyloc_no"]> = ref("");
+const divNo: Ref<IState["customer"]["div_no"]> = ref("");
+const delylocNameE: Ref<IState["customer"]["delyloc_add1_e"]> = ref("");
+const delylocNameC: Ref<IState["customer"]["delyloc_name_c"]> = ref("");
+const delylocAdd1E: Ref<IState["customer"]["delyloc_add1_e"]> = ref("");
+const delylocAdd2E: Ref<IState["customer"]["delyloc_add2_e"]> = ref("");
+const delylocAdd3E: Ref<IState["customer"]["delyloc_add3_c"]> = ref("");
+const delylocAdd1C: Ref<IState["customer"]["delyloc_add1_c"]> = ref("");
+const delylocAdd2C: Ref<IState["customer"]["delyloc_add2_c"]> = ref("");
+const delylocAdd3C: Ref<IState["customer"]["delyloc_add3_c"]> = ref("");
+const companyCd: Ref<IState["customer"]["company_cd"] | undefined> = ref("");
+const salesmanCd: Ref<IState["customer"]["salesman_cd"]> = ref("");
+const lastModifyDate: Ref<IState["customer"]["last_modify_date"]> = ref("");
 
 const options: { [key: string]: any[] } = reactive({
   tags: [] as ITagOptions[],
@@ -107,7 +113,7 @@ const options: { [key: string]: any[] } = reactive({
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
-const customerForm = ref(null);
+const customerForm: Ref<QForm | undefined> = ref();
 const { getCustomer } = storeToRefs(customerStore);
 
 onMounted(async () => {
