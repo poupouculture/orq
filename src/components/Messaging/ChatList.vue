@@ -61,7 +61,8 @@ const selectChat = (chat: IChat) => {
   if (window.innerWidth <= 1024) {
     leftDrawerOpen.value = false;
   }
-  getContactById(chat.contacts_id);
+
+  getContactById(chat);
   customerStore.$reset();
   messagingStore.onSelectChat(chat.id);
   messagingStore.fetchContactNumber(chat.contacts_id);

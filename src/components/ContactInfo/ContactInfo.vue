@@ -21,7 +21,11 @@ const updateContacts = async () => {
 <template>
   <div class="flex flex-col">
     <div class="flex justify-between mb-4">
-      <q-btn label="dissociate contact" color="primary" />
+      <q-btn
+        @click="contacts.dissociateContact"
+        label="dissociate contact"
+        color="primary"
+      />
       <q-btn
         @click="editMode = !editMode"
         :color="editMode ? 'red-6' : 'primary'"
@@ -80,26 +84,6 @@ const updateContacts = async () => {
           :options="categoryOptions"
         />
       </div>
-
-      <!-- <div class="flex flex-col">
-        <p class="label-style">Extension</p>
-        <q-input
-          v-model="getContacts.extension"
-          outlined
-          :disable="!editMode"
-          dense
-        />
-      </div> -->
-
-      <!-- <div class="flex flex-col">
-        <p class="label-style">Remarks</p>
-        <q-input
-          v-model="getContacts.remarks"
-          outlined
-          :disable="!editMode"
-          dense
-        />
-      </div> -->
 
       <div class="flex flex-col">
         <p class="label-style">Status</p>

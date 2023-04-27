@@ -20,3 +20,9 @@ export const updateContact = async (id, payload) => {
 
   return contact;
 };
+
+export const dissociateContactApi = async (payload) => {
+  const results = await api.post("/chat/contact/dissociate/delete", payload);
+
+  return results;
+};
