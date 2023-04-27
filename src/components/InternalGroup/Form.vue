@@ -214,8 +214,8 @@ import { transformTagPayload } from "src/utils/transform-object";
 
 const statusOptions = ["published", "draft"];
 const typeOptions = [
-  { value: "manager", label: "Manager" },
-  { value: "cs", label: "Customer Service" },
+  { value: "group", label: "Group" },
+  // { value: "personal", label: "Customer Service" },
 ];
 const props = defineProps({
   id: [String],
