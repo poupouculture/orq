@@ -17,13 +17,13 @@
     />
   </q-btn>
   <!-- Modal / Dialog Customer detail -->
-  <q-dialog v-model="showUserDetail">
+  <!-- <q-dialog v-model="showUserDetail">
     <div
       class="h-full bg-white w-auto !rounded-2xl px-7 py-4 overflow-y-auto relative"
     >
       <div class="cursor-pointer absolute top-6 right-7">
         <svg
-          @click="showCustomerDetail = false"
+          @click="showUserDetail = false"
           width="14"
           height="14"
           viewBox="0 0 14 14"
@@ -39,8 +39,81 @@
           />
         </svg>
       </div>
-      <!-- Content -->
       <BaseLayout mode="show" />
+    </div>
+  </q-dialog> -->
+  <q-dialog v-model="showUserDetail">
+    <div
+      class="h-full bg-white w-auto !rounded-2xl px-7 py-4 overflow-y-auto relative"
+    >
+      <div class="cursor-pointer absolute top-6 right-7">
+        <svg
+          @click="showUserDetail = false"
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 13L13 1M1 1L13 13"
+            stroke="#9CA3AF"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <div class="mt-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <div>
+            <p class="mb-2">Firstname</p>
+            <q-input
+              class="lg:w-full"
+              v-model="user.first_name"
+              outlined
+              lazy-rules
+              disable
+              dense
+            />
+          </div>
+          <div>
+            <p class="mb-2">Lastname</p>
+            <q-input
+              class="lg:w-full"
+              v-model="user.last_name"
+              outlined
+              lazy-rules
+              disable
+              dense
+            />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <div>
+            <p class="mb-2">Email</p>
+            <q-input
+              class="lg:w-full"
+              v-model="user.email"
+              outlined
+              lazy-rules
+              disable
+              dense
+            />
+          </div>
+          <div>
+            <p class="mb-2">Status</p>
+            <q-input
+              class="lg:w-full"
+              v-model="user.status"
+              outlined
+              lazy-rules
+              disable
+              dense
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </q-dialog>
 </template>
@@ -49,7 +122,7 @@ import { Loading } from "quasar";
 import useCustomerStore from "src/stores/modules/customer";
 import useInternalGroup from "src/stores/modules/internalGroup";
 import { ref, computed } from "vue";
-import BaseLayout from "../Customer/BaseLayout.vue";
+// import BaseLayout from "../Customer/BaseLayout.vue";
 import DeleteDialog from "../Dialogs/DeleteDialog.vue";
 const props = defineProps({
   id: [String, Number],
@@ -58,6 +131,7 @@ const props = defineProps({
 });
 const customerStore = useCustomerStore();
 const internalGroupStore = useInternalGroup();
+const user = computed(() => customerStore.user);
 const showUserDetail = ref(false);
 const pagination = computed(() => props.pagination);
 const openUserDetail = async () => {
