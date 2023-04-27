@@ -12,8 +12,7 @@ interface CustomerPayload {
 
 export const getCustomers = async (payload: CustomerPayload) => {
   const { limit, page, search, filter } = payload;
-  const fields =
-    "id,first_name,last_name,gender,date_created,position,customer_code";
+  const fields = "*";
   const companies = "companies.companies_id.name_english";
   const tags = "tags.tags_id.*";
 
