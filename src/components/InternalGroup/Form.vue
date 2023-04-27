@@ -72,7 +72,9 @@
               :key="user.id"
             >
               <div class="flex items-center justify-between">
-                <span>{{ user.first_name }} {{ user.last_name }} </span>
+                <span
+                  >{{ user.first_name }} {{ user.last_name }}: {{ user.email }}
+                </span>
                 <svg
                   @click="deleteUser(i)"
                   xmlns="http://www.w3.org/2000/svg"
