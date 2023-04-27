@@ -160,12 +160,6 @@ import {
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
-// import useCustomerStore from "src/stores/modules/customer";
-// import { storeToRefs } from "pinia";
-
-// const customerStore = useCustomerStore();
-
-// const { customer } = storeToRefs(customerStore);
 
 const props = defineProps<{ message: Message; isReply?: boolean }>();
 const operationType = ref("");

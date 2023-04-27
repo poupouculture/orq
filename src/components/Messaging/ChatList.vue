@@ -27,6 +27,7 @@ import { ChatTypes } from "src/constants/ChatKeyword";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 import { IChat } from "src/types/MessagingTypes";
 
 const props = defineProps({
@@ -36,30 +37,31 @@ const props = defineProps({
 
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
+const { getContactById } = useContactStore();
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 
 const { chatsList } = storeToRefs(messagingStore);
 const list = computed(() =>
   chatsList.value.filter((chat) => {
+    console.log("chat:", chat);
+
     const chatName = chat?.customers_id
-      ? `${chat.first_name?.toLowerCase()} ${chat.last_name?.toLowerCase()}`
+      ? chat?.customer_company_name_en?.toLowerCase()
       : "visitor".toLowerCase();
-    return chat.status === props.type && chatName.includes(props.filterText);
+
+    return (
+      chat.status === props.type &&
+      (chatName?.includes(props.filterText) ||
+        chat.name.includes(props.filterText))
+    );
   })
 );
 
-// const cleanedList = computed(() =>
-//   list.value.filter(
-//     (chat, index, self) => index === self.findIndex((t) => t.id === chat.id)
-//   )
-// );
-
 const selectChat = (chat: IChat) => {
   if (window.innerWidth <= 1024) {
-    // messagingStore.setCustomerInfoMobile(false);
-    // messagingStore.setLeftDrawerOpen(false);
     leftDrawerOpen.value = false;
   }
+  getContactById(chat.contacts_id);
   customerStore.$reset();
   messagingStore.onSelectChat(chat.id);
   messagingStore.fetchContactNumber(chat.contacts_id);

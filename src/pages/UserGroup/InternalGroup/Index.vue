@@ -7,11 +7,20 @@
     </div>
     <!-- Search and Add -->
     <div class="flex items-center justify-between">
-      <div class="w-52 ml-3">
-        <SearchTableInput
-          :loading="searchLoading"
-          @search="searchHandler"
-          @reset="resetSearch"
+      <div class="flex items-center space-x-4">
+        <div class="w-52 ml-3">
+          <SearchTableInput
+            :loading="searchLoading"
+            @search="searchHandler"
+            @reset="resetSearch"
+          />
+        </div>
+        <q-select
+          dense
+          outlined
+          v-model="type"
+          :options="typeOptions"
+          label="Type"
         />
       </div>
       <q-btn
@@ -126,7 +135,7 @@
 import ButtonUserMenu from "components/InternalGroup/ButtonUserMenu.vue";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import { onMounted, reactive, computed, ref } from "vue";
+import { onMounted, reactive, computed, ref, watch } from "vue";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
 import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
 
@@ -141,6 +150,13 @@ const pagination = reactive({
   descending: false,
   page: 1,
   rowsPerPage: 4,
+});
+const type = ref("personal");
+const typeOptions = ["personal", "group"];
+
+watch(type, () => {
+  pagination.page = 1;
+  fetchInternalGroups();
 });
 
 const searchHandler = async (searchValue = "") => {
@@ -177,6 +193,7 @@ const fetchInternalGroups = async () => {
   await internalGroupStore.getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
+    type: type.value,
     search: query.value.length ? query.value : undefined,
   });
 };
