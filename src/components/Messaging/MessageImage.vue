@@ -1,12 +1,10 @@
 <template>
   <img
-    class="cursor-zoom-in h-36 w-64"
+    class="cursor-zoom-in h-36"
     ref="imageRef"
     @click.stop="visible = true"
   />
-  <span class="mt-4 font-bold text-[#9A9AAF] absolute -bottom-5">{{
-    caption
-  }}</span>
+  <span class="mt-4 font-bold text-[#9A9AAF]">{{ caption }}</span>
   <q-dialog v-model="visible" no-shake>
     <q-card style="width: 1000px; max-width: 90vw">
       <q-card-section>

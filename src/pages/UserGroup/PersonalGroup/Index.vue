@@ -281,6 +281,10 @@ watch(cgType, () => {
   tableSelected.value = [];
   getCustomerGroupData();
 });
+const rightDrawerWidth = ref(800);
+if (window.innerWidth < 768) {
+  rightDrawerWidth.value = window.innerWidth;
+}
 </script>
 <template>
   <q-layout view="hHh lpR fFf" class="mt-10">
@@ -430,14 +434,23 @@ watch(cgType, () => {
 
     <q-drawer
       overlay
-      :width="800"
-      :breakpoint="500"
+      :width="rightDrawerWidth"
+      :breakpoint="768"
       v-model="drawer"
       side="right"
     >
       <!-- drawer content -->
-      <div class="h-full flex justify-center items-center">
-        <div class="min-h-[90vh] w-full flex flex-col p-10">
+      <div class="h-full flex justify-center items-center w-full">
+        <div class="min-h-[90vh] w-full flex flex-col p-5 md:p-10">
+          <div class="flex mb-4 lg:hidden">
+            <q-btn
+              @click="drawer = false"
+              round
+              color="primary"
+              size="sm"
+              icon="close"
+            />
+          </div>
           <h5 class="text-lg">Customer Group</h5>
           <div class="flex items-center justify-between mt-3">
             <SearchTableInput

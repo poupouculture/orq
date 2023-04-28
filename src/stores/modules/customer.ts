@@ -36,6 +36,7 @@ const useCustomerStore = defineStore("customer", {
         tags: [],
         company_cd: "",
       },
+      user: null,
     } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
@@ -119,7 +120,7 @@ const useCustomerStore = defineStore("customer", {
       const {
         data: { data: user },
       } = await getUser(id);
-      this.customer = user;
+      this.user = user;
     },
     async updateCustomer(id: string, payload: FormPayload) {
       Loading.show();
