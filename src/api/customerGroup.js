@@ -16,6 +16,7 @@ export const getCustomerGroups = async (
     type = undefined,
     customerIds = undefined,
     customerFilter = "",
+    sourceType = "div_no",
   },
   id = null
 ) => {
@@ -32,6 +33,7 @@ export const getCustomerGroups = async (
     search,
     fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     meta: "*",
+    source: sourceType,
   };
   if (type) {
     if (id) {
@@ -58,7 +60,8 @@ export const getAllCustomerGroups = async () => {
 
 export const getAllCustomerEdit = async (payload) => {
   const { limit, page, customers, search, filter } = payload;
-  const fields = "*";
+  const fields =
+    "id,first_name,last_name,gender,date_created,position,customer_code,location_code,customer_company_name_en";
   const companies = "companies.companies_id.name_english";
 
   const offset = page === 1 ? 0 : (page - 1) * limit;

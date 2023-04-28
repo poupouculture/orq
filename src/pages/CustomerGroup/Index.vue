@@ -10,11 +10,24 @@
       </div>
       <!-- Search and Add -->
       <div class="flex items-center justify-between">
-        <div class="w-52 ml-3">
-          <SearchTableInput
-            :loading="search.loading"
-            @search="searchHandler"
-            @reset="resetSearch"
+        <div class="flex items-center justify-between space-x-3">
+          <div class="w-52 ml-3">
+            <SearchTableInput
+              :loading="search.loading"
+              @search="searchHandler"
+              @reset="resetSearch"
+            />
+          </div>
+          <q-select
+            dense
+            outlined
+            v-model="sourceType"
+            option-value="value"
+            option-label="label"
+            :options="sourceTypeOptions"
+            map-options
+            emit-value
+            label="Source"
           />
         </div>
         <q-btn
@@ -91,12 +104,11 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import { onMounted, reactive, computed, ref } from "vue";
+import { onMounted, reactive, computed, ref, watch } from "vue";
 import useCustomerGroupStore from "src/stores/modules/customerGroup";
 
 const customerGroupStore = useCustomerGroupStore();
@@ -109,10 +121,15 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 25,
 });
-onMounted(async () => {
-  loading.value = true;
-  await fetchCustomerGroups();
-  loading.value = false;
+
+const sourceType = ref("div_no");
+const sourceTypeOptions = [
+  { label: "div_no", value: "div_no" },
+  { label: "salesman_code", value: "salesman_code" },
+];
+watch(sourceType, () => {
+  pagination.page = 1;
+  fetchCustomerGroups();
 });
 
 const search = reactive({
@@ -139,6 +156,12 @@ const resetSearch = () => {
   searchHandler();
 };
 
+onMounted(async () => {
+  loading.value = true;
+  await fetchCustomerGroups();
+  loading.value = false;
+});
+
 const totalPage = () => {
   return Math.ceil(meta.value.filter_count / pagination.rowsPerPage);
 };
@@ -154,6 +177,7 @@ const fetchCustomerGroups = async () => {
     page: pagination.page,
     search: search.query.length ? search.query : undefined,
     type: "group",
+    sourceType: sourceType.value,
   });
 };
 </script>
