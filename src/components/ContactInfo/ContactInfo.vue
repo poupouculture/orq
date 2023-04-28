@@ -9,7 +9,7 @@ const categoryOptions = ref(["phone"]);
 const statusOptions = ref(["Active"]);
 
 const contacts = useContactStore();
-const { getContacts } = storeToRefs(contacts);
+const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
 
 const updateContacts = async () => {
   await contacts.updateContact(getContacts.value);
@@ -20,8 +20,14 @@ const updateContacts = async () => {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex justify-between mb-4">
+    <div
+      :class="[
+        getCurrentCustomerId ? 'justify-between' : 'justify-end',
+        'flex mb-4',
+      ]"
+    >
       <q-btn
+        v-if="getCurrentCustomerId"
         @click="contacts.dissociateContact"
         label="dissociate contact"
         color="primary"
