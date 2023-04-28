@@ -1,14 +1,14 @@
 <template>
-  <div class="mt-10">
+  <div class="mt-10 px-2">
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
       <q-icon name="keyboard_backspace" />
       <span>Internal Groups</span>
     </div>
     <!-- Search and Add -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-y-2">
       <div class="flex items-center space-x-4">
-        <div class="w-52 ml-3">
+        <div class="w-52 md:ml-3">
           <SearchTableInput
             :loading="searchLoading"
             @search="searchHandler"
@@ -53,9 +53,7 @@
               >
                 <div
                   class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
-                >
-                  {{ group.name }}
-                </div>
+                ></div>
                 <div class="truncate">
                   <div class="truncate">{{ group.name }}</div>
                   <p class="text-gray-400">{{ group.users.length }} Members</p>
@@ -81,10 +79,7 @@
                 >
                   <!-- for while set image default -->
                   <img
-                    :src="
-                      directus_users_id.avatar ||
-                      '/src/assets/images/profileavatar.png'
-                    "
+                    :src="directus_users_id.avatar || userAvatar"
                     class="w-10 h-10 rounded-full mx-3"
                   />
                   <div class="truncate">
@@ -138,6 +133,7 @@ import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref, watch } from "vue";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
 import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
+import userAvatar from "src/assets/images/profileicon.svg";
 
 const internalGroupStore = useInternalGroupStore();
 const query = ref("");

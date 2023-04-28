@@ -72,4 +72,8 @@ export interface ICustomer {
 
 export interface IState {
   customer: ICustomer;
+  user: {
+    first_name: string;
+    last_name: string;
+  };
 }
