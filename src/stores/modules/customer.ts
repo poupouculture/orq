@@ -37,6 +37,7 @@ const useCustomerStore = defineStore("customer", {
         company_cd: "",
       },
       user: null,
+      resetForm: false,
     } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
@@ -197,7 +198,6 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addCustomerContact(customerId: string, contactId: string) {
-      console.log("contact", customerId, contactId);
       const result = await addCustomerContact(customerId, contactId);
       return result;
     },

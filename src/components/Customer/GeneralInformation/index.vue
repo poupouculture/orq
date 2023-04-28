@@ -287,13 +287,8 @@ const onSubmit = async () => {
 
 const discardChanges = () => {
   returnDialog.value = false;
-  // router.go(-1);
   emit("discard");
 };
-
-// const optionDateFn = (qdate: string) => {
-//   return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
-// };
 
 const mappingCompanies = () => {
   return getCustomer.value.companies
@@ -397,18 +392,6 @@ const mappingCustomerGroups = () => {
           </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
-          <!-- <div class="col">
-            <p class="label-style">Contact Number</p>
-            <q-input
-              v-model="idNumber"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div> -->
           <div class="col">
             <p class="label-style">Customer Code</p>
             <q-input
