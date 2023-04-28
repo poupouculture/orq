@@ -1,8 +1,13 @@
 <template>
   <RightToLeft :close="closeOverlay" @close="emits('close')">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <div class="w-52 ml-3">
+    <div class="px-0 md:px-3 mb-3 text-lg font-semibold" v-if="label">
+      {{ label }}
+    </div>
+    <div
+      class="px-0 md:px-3 flex items-center gap-x-3 sm:justify-between gap-y-2"
+    >
+      <div class="flex items-center gap-2">
+        <div class="w-52">
           <q-input
             placeholder="Search Items..."
             bg-color="transparent"
@@ -88,6 +93,7 @@ import BaseTable from "src/components/BaseTable.vue";
 
 const props = defineProps({
   data: Array,
+  label: String,
   modelValue: {
     type: Array,
     default: () => [],

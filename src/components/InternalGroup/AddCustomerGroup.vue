@@ -3,6 +3,7 @@
     :header-columns="headerColumns"
     :pagination="pagination"
     :data="data"
+    label="Customer Groups"
     @change-page="changePage"
     v-model="selected"
     @search="emits('search', $event)"
@@ -19,7 +20,7 @@
         option-label="label"
         map-options
         emit-value
-        label="Type"
+        label="Source"
       />
       <q-select
         dense
@@ -48,6 +49,10 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import TableData from "src/components/Overlay/TableData.vue";
+import {
+  sourceOptionCG,
+  typeOptions as TypeOptions,
+} from "src/utils/typeOptions";
 
 const emits = defineEmits([
   "submit",
@@ -63,31 +68,20 @@ const props = defineProps({
   data: Array,
 });
 const sourceType = ref("div_no");
-const sourceTypeOptions = [
-  {
-    label: "div_no",
-    value: "div_no",
-  },
-  {
-    label: "salesman_code",
-    value: "salesman_code",
-  },
-];
+const sourceTypeOptions = ref(sourceOptionCG);
 const type = ref("group");
-const typeOptions = [
-  {
-    label: "personal",
-    value: "personal",
-  },
-  {
-    label: "group",
-    value: "group",
-  },
-];
+const typeOptions = ref(TypeOptions);
 watch(sourceType, () => {
   emits("update:source", sourceType.value);
 });
 watch(type, () => {
+  if (type.value === "personal") {
+    sourceType.value = "";
+    sourceTypeOptions.value = [];
+  } else {
+    sourceType.value = "div_no";
+    sourceTypeOptions.value = sourceOptionCG;
+  }
   emits("update:type", type.value);
 });
 const pagination = computed(() => props.pagination);
@@ -98,13 +92,6 @@ const headerColumns = ref([
     align: "left",
     label: "Group Name",
     field: "name",
-    classes: "text-black",
-  },
-  {
-    name: "status",
-    align: "left",
-    label: "Status",
-    field: "status",
     classes: "text-black",
   },
 ]);

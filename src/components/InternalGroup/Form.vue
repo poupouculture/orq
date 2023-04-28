@@ -178,7 +178,7 @@
     @search="searchCustomerGroupHandler"
     v-if="openAddCustomerGroup"
     @update:source="changeSource"
-    @update:type="changecgTYpe"
+    @update:type="changeCgType"
   />
   <AddUserOverlay
     @submit="(val) => submitAddUser(val)"
@@ -403,7 +403,7 @@ const changeSource = (value) => {
   paginationCustomerGroup.page = 1;
   fetchCustomerGroups();
 };
-const changecgTYpe = (value) => {
+const changeCgType = (value) => {
   cgType.value = value;
   paginationCustomerGroup.page = 1;
   fetchCustomerGroups();
@@ -419,19 +419,17 @@ const fetchCustomerGroups = async () => {
     source: sourceType.value,
     type: cgType.value,
   };
+  Loading.show();
   if (props.id) {
-    Loading.show();
     const { data } = await getAllCustomerGroupEdit(params);
-    Loading.hide();
     customerGroupData.value = data.data;
     paginationCustomerGroup.totalCount = data.filter_count;
   } else {
-    Loading.show();
     const { data } = await getCustomerGroups(params, props.id);
-    Loading.hide();
     customerGroupData.value = data.data;
     paginationCustomerGroup.totalCount = data.filter_count;
   }
+  Loading.hide();
 };
 const userQuery = ref("");
 const searchUserHandler = async (value) => {
