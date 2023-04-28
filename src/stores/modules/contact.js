@@ -63,6 +63,8 @@ const useContactStore = defineStore("useContact", {
         type: "positive",
         color: "blue-9",
       });
+
+      this.currentCustomerId = "";
       Loading.hide();
     },
   },

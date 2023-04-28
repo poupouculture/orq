@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import useContactStore from "src/stores/modules/contact";
+import useMessagingStore from "src/stores/modules/messaging";
 import { storeToRefs } from "pinia";
 
 // State
 const editMode = ref(false);
 const categoryOptions = ref(["phone"]);
 const statusOptions = ref(["Active"]);
+const messagingStore = useMessagingStore();
 
 const contacts = useContactStore();
 const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
+
+const dissociateContact = async () => {
+  await contacts.dissociateContact();
+
+  await messagingStore.fetchChats();
+};
 
 const updateContacts = async () => {
   await contacts.updateContact(getContacts.value);
@@ -28,7 +36,7 @@ const updateContacts = async () => {
     >
       <q-btn
         v-if="getCurrentCustomerId"
-        @click="contacts.dissociateContact"
+        @click="dissociateContact"
         label="dissociate contact"
         color="primary"
       />
