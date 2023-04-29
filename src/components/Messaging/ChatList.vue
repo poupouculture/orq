@@ -34,7 +34,6 @@ const props = defineProps({
   type: { type: String, default: ChatTypes.PENDING },
   filterText: { type: String, default: "" },
 });
-
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 const { getContactById } = useContactStore();
