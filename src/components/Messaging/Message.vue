@@ -142,22 +142,31 @@
         </div>
 
         <div class="row justify-end">
-          <q-btn flat round size="md" class="q-mt-md" :disable="isChatExpired">
-            <img src="~assets/images/bot.svg" />
-            <q-menu>
-              <q-list dense style="min-width: 100px">
-                <q-item
-                  v-for="item in botList"
-                  :key="item.text"
-                  clickable
-                  v-close-popup
-                  @click="selectBot(item)"
-                >
-                  <q-item-section>{{ item.name }}</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
+          <div class="flex gap-3">
+            <q-btn
+              flat
+              round
+              size="md"
+              class="q-mt-md"
+              :disable="isChatExpired"
+            >
+              <img src="~assets/images/bot.svg" />
+              <q-menu>
+                <q-list dense style="min-width: 100px">
+                  <q-item
+                    v-for="item in botList"
+                    :key="item.text"
+                    clickable
+                    v-close-popup
+                    @click="selectBot(item)"
+                  >
+                    <q-item-section>{{ item.name }}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+          </div>
+
           <q-btn
             flat
             round
