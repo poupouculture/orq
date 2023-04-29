@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import useContactStore from "src/stores/modules/contact";
+import useMessagingStore from "src/stores/modules/messaging";
 import { storeToRefs } from "pinia";
 
 // State
 const editMode = ref(false);
 const categoryOptions = ref(["phone"]);
 const statusOptions = ref(["Active"]);
+const messagingStore = useMessagingStore();
 
 const contacts = useContactStore();
-const { getContacts } = storeToRefs(contacts);
+const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
+
+const dissociateContact = async () => {
+  await contacts.dissociateContact();
+
+  await messagingStore.fetchChats();
+};
 
 const updateContacts = async () => {
   await contacts.updateContact(getContacts.value);
@@ -20,7 +28,18 @@ const updateContacts = async () => {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex justify-end">
+    <div
+      :class="[
+        getCurrentCustomerId ? 'justify-between' : 'justify-end',
+        'flex mb-4',
+      ]"
+    >
+      <q-btn
+        v-if="getCurrentCustomerId"
+        @click="dissociateContact"
+        label="dissociate contact"
+        color="primary"
+      />
       <q-btn
         @click="editMode = !editMode"
         :color="editMode ? 'red-6' : 'primary'"
@@ -79,26 +98,6 @@ const updateContacts = async () => {
           :options="categoryOptions"
         />
       </div>
-
-      <!-- <div class="flex flex-col">
-        <p class="label-style">Extension</p>
-        <q-input
-          v-model="getContacts.extension"
-          outlined
-          :disable="!editMode"
-          dense
-        />
-      </div> -->
-
-      <!-- <div class="flex flex-col">
-        <p class="label-style">Remarks</p>
-        <q-input
-          v-model="getContacts.remarks"
-          outlined
-          :disable="!editMode"
-          dense
-        />
-      </div> -->
 
       <div class="flex flex-col">
         <p class="label-style">Status</p>

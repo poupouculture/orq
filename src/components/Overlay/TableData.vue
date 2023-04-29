@@ -1,37 +1,45 @@
 <template>
   <RightToLeft :close="closeOverlay" @close="emits('close')">
-    <div class="flex items-center justify-between">
-      <div class="w-52 ml-3">
-        <q-input
-          placeholder="Search Items..."
-          bg-color="transparent"
-          outlined
-          dense
-          :debounce="600"
-          class="border-gray-400"
-          v-model="search.query"
-          @update:model-value="searchHandler()"
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" class="text-gray-400" />
-          </template>
-          <template v-slot:append>
-            <q-circular-progress
-              v-if="search.loading"
-              indeterminate
-              rounded
-              size="18px"
-              color="gray-1"
-            />
-            <q-icon
-              v-else-if="search.query"
-              name="close"
-              class="text-gray-400 cursor-pointer"
-              @click="resetSearch()"
-            />
-            <q-icon v-else name="filter_list" class="text-gray-400" />
-          </template>
-        </q-input>
+    <div class="px-0 md:px-3 mb-3 text-lg font-semibold" v-if="label">
+      {{ label }}
+    </div>
+    <div
+      class="px-0 md:px-3 flex items-center gap-x-3 sm:justify-between gap-y-2"
+    >
+      <div class="flex items-center gap-2">
+        <div class="w-52">
+          <q-input
+            placeholder="Search Items..."
+            bg-color="transparent"
+            outlined
+            dense
+            :debounce="600"
+            class="border-gray-400"
+            v-model="search.query"
+            @update:model-value="searchHandler()"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" class="text-gray-400" />
+            </template>
+            <template v-slot:append>
+              <q-circular-progress
+                v-if="search.loading"
+                indeterminate
+                rounded
+                size="18px"
+                color="gray-1"
+              />
+              <q-icon
+                v-else-if="search.query"
+                name="close"
+                class="text-gray-400 cursor-pointer"
+                @click="resetSearch()"
+              />
+              <q-icon v-else name="filter_list" class="text-gray-400" />
+            </template>
+          </q-input>
+        </div>
+        <slot name="header-search"></slot>
       </div>
       <q-btn @click="submit()" round color="primary" icon="check" />
     </div>
@@ -57,6 +65,7 @@
             auto-width
           >
             {{ col.label }}
+            {{ $slots }}
           </q-th>
         </q-tr>
         <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
@@ -84,6 +93,7 @@ import BaseTable from "src/components/BaseTable.vue";
 
 const props = defineProps({
   data: Array,
+  label: String,
   modelValue: {
     type: Array,
     default: () => [],
@@ -104,6 +114,7 @@ const emits = defineEmits([
   "close",
   "search",
   "update:modelValue",
+  "sourceType",
 ]);
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);

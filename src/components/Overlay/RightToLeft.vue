@@ -5,7 +5,7 @@
   >
     <Transition name="right-to-left" appear @after-leave="close()">
       <div
-        class="w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll"
+        class="w-full md:w-10/12 lg:w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll"
         @click.stop
         v-if="showContent"
       >

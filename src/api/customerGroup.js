@@ -14,6 +14,7 @@ export const getCustomerGroups = async (
     page = 1,
     search = undefined,
     type = undefined,
+    source = undefined,
     customerIds = undefined,
     customerFilter = "",
     sourceType = "div_no",
@@ -44,6 +45,9 @@ export const getCustomerGroups = async (
       param.status = "published";
     }
   }
+  if (source) {
+    param.source = source;
+  }
   if (customerIds) {
     param[customerFilter] = customerIds.join();
   }
@@ -60,7 +64,8 @@ export const getAllCustomerGroups = async () => {
 
 export const getAllCustomerEdit = async (payload) => {
   const { limit, page, customers, search, filter } = payload;
-  const fields = "*";
+  const fields =
+    "id,first_name,last_name,gender,date_created,position,customer_code,location_code,customer_company_name_en";
   const companies = "companies.companies_id.name_english";
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
@@ -83,17 +88,25 @@ export const getAllCustomerEdit = async (payload) => {
 export const getAllCustomerGroupEdit = async (payload) => {
   const { limit, page, customerGroups, search } = payload;
   const fields = "id, name, status, customer.id";
-  const offset = page === 1 ? 0 : (page - 1) * limit;
-  const customerGroup = await api.get("/items/customer_groups", {
-    params: {
-      "filter[id][_nin]": customerGroups.join(),
-      fields: `${fields}`,
-      sort: "-date_created",
-      search,
-      limit,
-      offset,
-      meta: "*",
-    },
+
+  const params = {
+    "filter[id][_nin]": customerGroups.join(),
+    fields: `${fields}`,
+    sort: "-date_created",
+    search,
+    limit,
+    page,
+    meta: "*",
+  };
+  if (payload.type) {
+    params.type = payload.type;
+    params.status = "published";
+  }
+  if (payload.source) {
+    params.source = payload.source;
+  }
+  const customerGroup = await api.get("/waba/customers-groups/summary", {
+    params,
   });
   return customerGroup;
 };

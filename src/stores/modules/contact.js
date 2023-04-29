@@ -1,20 +1,27 @@
 import { defineStore } from "pinia";
 import { Loading, Notify } from "quasar";
-import { getContact, updateContact } from "src/api/contact";
+import {
+  getContact,
+  updateContact,
+  dissociateContactApi,
+} from "src/api/contact";
 
 const useContactStore = defineStore("useContact", {
   state() {
     return {
       contact: {},
+      currentCustomerId: "",
     };
   },
   getters: {
     getContacts: (state) => state.contact,
+    getCurrentCustomerId: (state) => state.currentCustomerId,
   },
 
   actions: {
-    async getContactById(id) {
-      const result = await getContact(id);
+    async getContactById(chat) {
+      this.currentCustomerId = chat.customers_id;
+      const result = await getContact(chat.contacts_id);
       const { data } = result.data;
 
       this.contact = data[0];
@@ -39,6 +46,25 @@ const useContactStore = defineStore("useContact", {
         type: "positive",
         color: "blue-9",
       });
+      Loading.hide();
+    },
+
+    async dissociateContact() {
+      const payload = {
+        customer_id: this.currentCustomerId,
+        contact_id: this.contact.id,
+      };
+      Loading.show();
+      await dissociateContactApi(payload);
+
+      Notify.create({
+        message: "Successfully",
+        position: "top",
+        type: "positive",
+        color: "blue-9",
+      });
+
+      this.currentCustomerId = "";
       Loading.hide();
     },
   },
