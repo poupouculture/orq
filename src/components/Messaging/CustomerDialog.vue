@@ -36,11 +36,6 @@
             <template #body-cell-name="props">
               <q-td :props="props" auto-width>
                 <div class="firstrowholder">
-                  <div>
-                    <q-avatar size="md">
-                      <img src="../../assets/images/profileavatar.png" />
-                    </q-avatar>
-                  </div>
                   <div class="subrow">
                     <p class="headingtext">
                       {{ props.row.first_name }}
