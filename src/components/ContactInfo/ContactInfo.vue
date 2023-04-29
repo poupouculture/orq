@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import useContactStore from "src/stores/modules/contact";
 import useMessagingStore from "src/stores/modules/messaging";
+import useCustomerStore from "src/stores/modules/customer";
 import { storeToRefs } from "pinia";
 
 // State
@@ -9,6 +10,7 @@ const editMode = ref(false);
 const categoryOptions = ref(["phone"]);
 const statusOptions = ref(["Active"]);
 const messagingStore = useMessagingStore();
+const customerStore = useCustomerStore();
 
 const contacts = useContactStore();
 const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
@@ -17,6 +19,8 @@ const dissociateContact = async () => {
   await contacts.dissociateContact();
 
   await messagingStore.fetchChats();
+
+  customerStore.setCustomer(null);
 };
 
 const updateContacts = async () => {

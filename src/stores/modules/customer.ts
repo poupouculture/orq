@@ -106,15 +106,39 @@ const useCustomerStore = defineStore("customer", {
       } = await getCustomer(id);
       this.setCustomer(customer);
     },
-    setCustomer(customer: ICustomer) {
-      this.customer = [customer].map((item: ICustomer) => ({
-        ...item,
-        customer_groups: item.customer_groups.filter(
-          (data: any) => data.customer_groups_id
-        ),
-        tags: item.tags.filter((data: any) => data.tags_id),
-        companies: item.companies.filter((data: any) => data.companies_id),
-      }))[0] as ICustomer;
+    setCustomer(customer: ICustomer | null) {
+      if (customer === null) {
+        this.customer = {
+          customer_code: "",
+          date_created: "",
+          date_updated: "",
+          dob: "",
+          email: "",
+          first_name: "",
+          gender: "",
+          id: "",
+          id_number: "",
+          isActive: true,
+          last_name: "",
+          position: "",
+          status: "",
+          user_created: "",
+          user_updated: "",
+          customer_groups: [],
+          companies: [],
+          tags: [],
+          company_cd: "",
+        };
+      } else {
+        this.customer = [customer].map((item: ICustomer) => ({
+          ...item,
+          customer_groups: item.customer_groups.filter(
+            (data: any) => data.customer_groups_id
+          ),
+          tags: item.tags.filter((data: any) => data.tags_id),
+          companies: item.companies.filter((data: any) => data.companies_id),
+        }))[0] as ICustomer;
+      }
     },
     async fetchUser(id: string) {
       const {

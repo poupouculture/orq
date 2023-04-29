@@ -20,6 +20,7 @@ const useContactStore = defineStore("useContact", {
 
   actions: {
     async getContactById(chat) {
+      console.log("chat:", chat);
       this.currentCustomerId = chat.customers_id;
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
