@@ -38,7 +38,10 @@
           <span>Add</span>
         </q-btn>
       </div>
-      <div class="flex items-center justify-center mt-20">
+      <div
+        class="flex items-center justify-center mt-20"
+        v-if="customerGroups.length"
+      >
         <BasePagination
           :max="totalPage()"
           :max-pages="10"
@@ -127,9 +130,10 @@ const sourceTypeOptions = [
   { label: "div_no", value: "div_no" },
   { label: "salesman_code", value: "salesman_code" },
 ];
-watch(sourceType, () => {
+watch(sourceType, async () => {
   pagination.page = 1;
-  fetchCustomerGroups();
+  customerGroupStore.setMeta({ ...pagination });
+  await fetchCustomerGroups();
 });
 
 const search = reactive({
@@ -140,12 +144,8 @@ const searchHandler = async (searchValue = "") => {
   search.query = searchValue;
   search.loading = true;
   try {
-    await customerGroupStore.getAll({
-      rowsPerPage: 25,
-      page: 1,
-      search: search.query.length ? search.query : undefined,
-      type: "group",
-    });
+    pagination.page = 1;
+    await fetchCustomerGroups();
     search.loading = false;
   } catch (error) {
     search.loading = false;

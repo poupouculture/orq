@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <p class="header-text">Customers</p>
-    <div class="row justify-between">
+    <div class="row justify-between gap-y-3">
       <SearchTableInput
         :loading="search.loading"
         @search="searchHandler"
@@ -42,25 +42,16 @@
         <template #body-cell-name="props">
           <q-td :props="props" auto-width>
             <div class="firstrowholder">
-              <div>
-                <q-avatar size="md">
-                  <img src="../../assets/images/profileavatar.png" />
-                </q-avatar>
-              </div>
               <div class="subrow">
                 <p class="headingtext">
-                  {{ props.row.first_name }}
-                  {{ props.row.last_name }}
+                  {{ props.row.customer_company_name_en }}
                 </p>
-                <p class="subheadingtext">2022-8-10</p>
+                <p class="subheadingtext">
+                  {{ format(new Date(props.row.date_created), "yyyy-M-d") }}
+                </p>
               </div>
             </div>
             <p></p>
-          </q-td>
-        </template>
-        <template #body-cell-company="props">
-          <q-td :props="props">
-            {{ groupedCompanies(props.row.companies) }}
           </q-td>
         </template>
         <template #body-cell-label="props">
@@ -72,6 +63,11 @@
                 </q-chip>
               </div>
             </div>
+          </q-td>
+        </template>
+        <template #body-cell-company="props">
+          <q-td :props="props">
+            {{ groupedCompanies(props.row.companies) }}
           </q-td>
         </template>
         <template #body-cell-action="props">
@@ -111,27 +107,20 @@ import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
+import { format } from "date-fns";
 
 const router = useRouter();
 const customerStore = useCustomerStore();
 
 const headerColumns = [
   {
-    name: "first_name",
+    name: "name",
     align: "left",
     label: "Name",
-    field: "first_name",
+    field: "name",
     classes: "text-black",
     style: "max-width: 10%",
     sortable: true,
-  },
-  {
-    name: "company",
-    align: "left",
-    label: "Company",
-    field: "company",
-    sortable: true,
-    classes: "text-black",
   },
   {
     name: "customer_code",
@@ -142,6 +131,15 @@ const headerColumns = [
     classes: "text-black",
   },
   {
+    name: "location_code",
+    align: "left",
+    label: "Location Code",
+    field: "location_code",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
     name: "label",
     align: "center",
     label: "Label",
@@ -149,7 +147,14 @@ const headerColumns = [
     classes: "text-black",
     style: "max-width: 20%",
   },
-
+  {
+    name: "company",
+    align: "left",
+    label: "Company",
+    field: "company",
+    sortable: true,
+    classes: "text-black",
+  },
   {
     name: "action",
     align: "center",
@@ -207,12 +212,6 @@ const fetchCustomers = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.query.length ? search.query : undefined,
-    filter: search.query.length
-      ? {
-          key: "filter[first_name][_neq]",
-          value: "null",
-        }
-      : undefined,
   });
   data.customers = customers;
   data.totalCount = meta?.total_count;
