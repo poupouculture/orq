@@ -75,30 +75,6 @@ const useCustomerStore = defineStore("customer", {
         .finally(() => {
           Loading.hide();
         });
-
-      // try {
-      //   const {
-      //     data: { data },
-      //   } = await deleteCustomer(ids);
-      //   Notify.create({
-      //     message: "Successful to delete customer",
-      //     position: "top",
-      //     color: "primary",
-      //     type: "positive",
-      //   });
-      //   Loading.hide();
-      //   return data;
-      // } catch (err: any) {
-      //   console.log(err);
-      //   Notify.create({
-      //     message: `Error: ${
-      //       err.response.data?.errors[0]?.message || "Fail to updated"
-      //     }`,
-      //     position: "top",
-      //     type: "negative",
-      //   });
-      //   Loading.hide();
-      // }
     },
     async fetchCustomer(id: string) {
       const {
@@ -152,6 +128,7 @@ const useCustomerStore = defineStore("customer", {
         const {
           data: { data },
         } = await updateCustomer(id, payload);
+
         Notify.create({
           message: "Successful to update customer",
           position: "top",
@@ -173,12 +150,6 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addContact(customerId: string, payload: unknown) {
-      // const {
-      //   data: { data: contact },
-      // } = await addContact(payload);
-      // const { id: contactId } = contact;
-
-      // const result = await addCustomerContact(customerId, contactId);
       const result = await addCustomerContactAlong({
         contacts: {
           create: payload,
