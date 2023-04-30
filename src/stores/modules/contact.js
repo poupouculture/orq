@@ -58,8 +58,6 @@ const useContactStore = defineStore("useContact", {
       Loading.show();
       const result = await dissociateContactApi(payload);
 
-      console.log("result:", result);
-
       if (result.data.errors) {
         Notify.create({
           message: "Failed: " + result.data.errors[0].message,
