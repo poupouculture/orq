@@ -52,6 +52,7 @@ import GeneralInformation from "src/components/Customer/GeneralInformation/index
 import ServiceRecord from "../Customer/ServiceRecord.vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 import Remark from "src/components/Remark/Remark.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
@@ -61,6 +62,7 @@ import { storeToRefs } from "pinia";
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const { getContactById } = useContactStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
 const customer = computed(() => customerStore.getCustomer);
 const remarks = ref("");
@@ -112,6 +114,11 @@ const saveCustomer = async (val: FormPayload) => {
       customerResult.data.data?.id,
       contactId
     );
+
+    const updatedChat = getSelectedChat.value;
+    updatedChat.customers_id = data.data.customers_id;
+    await getContactById(updatedChat);
+
     if (data?.errors) {
       Notify.create({
         position: "top",

@@ -14,8 +14,8 @@
           <img :src="profileIcon" />
         </q-avatar>
         <div class="flex flex-col">
-          <p class="font-semibold text-lg">{{ name }}</p>
-          <p class="text-gray-500">{{ nameEn }} {{ chatNumber }}</p>
+          <p class="font-semibold text-lg">{{ nameEn }}</p>
+          <p class="text-gray-500">{{ chatNumber }}</p>
         </div>
       </div>
       <!-- Close button -->
@@ -96,11 +96,7 @@
           />
           <template #loading>
             <div class="row justify-center q-my-md">
-              <q-spinner-dots
-                color="primary"
-                name="dots"
-                size="40px"
-              ></q-spinner-dots>
+              <q-spinner-dots color="primary" name="dots" size="40px" />
             </div>
           </template>
         </q-infinite-scroll>
@@ -133,7 +129,7 @@
             ref="waveRef"
             :class="{ invisible: !showAudio }"
             class="absolute inset-0 bg-primary"
-          ></div>
+          />
           <span
             class="absolute right-0 bottom-0 text-white p-2"
             :class="{ invisible: !showAudio }"
@@ -275,12 +271,7 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import {
-  getChatName,
-  getChatNameEn,
-  uuid,
-  blobToBase64,
-} from "src/utils/trim-word";
+import { getChatNameEn, uuid, blobToBase64 } from "src/utils/trim-word";
 import {
   updateChatStatus,
   uploadMedia,
@@ -334,6 +325,7 @@ const FileLimit = [
   // },
 ];
 
+// State
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
@@ -367,10 +359,6 @@ const {
   replayMessage,
 } = storeToRefs(messagingStore);
 
-const name = computed<string>(() => {
-  return getChatName(getSelectedChat.value);
-});
-
 const nameEn = computed<string>(() => {
   return getChatNameEn(getSelectedChat.value);
 });
@@ -385,7 +373,7 @@ const members = computed<Member[]>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  console.log("scroll");
+
   scrollToBottom();
   return (
     cachedMessage?.map((message, index) => {
@@ -550,6 +538,7 @@ const activateChat = async () => {
     //   color: "primary",
     //   type: "positive",
     // });
+
     Loading.hide();
     messagingStore.setSelectedTab(ChatTypes.ONGOING);
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
@@ -693,26 +682,6 @@ const upload = async (fileList: readonly File[], caption: string) => {
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
-
-// const imageSizeFilter = (files: readonly any[] | FileList) => {
-//   const filterFiles = [];
-//   for (let i = 0; i < files.length; i++) {
-//     const file = files[i];
-//     if (file.size <= 1024 * 1024 * 5) {
-//       filterFiles.push(file);
-//     }
-//   }
-//   if (!filterFiles.length) {
-//     Notify.create({
-//       message: "Image cannot exceed 5M",
-//       type: "negative",
-//       color: "purple",
-//       position: "top",
-//     });
-//   }
-
-//   return filterFiles;
-// };
 
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];

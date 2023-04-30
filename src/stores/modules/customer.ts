@@ -74,31 +74,31 @@ const useCustomerStore = defineStore("customer", {
         })
         .finally(() => {
           Loading.hide();
-        });
 
-      // try {
-      //   const {
-      //     data: { data },
-      //   } = await deleteCustomer(ids);
-      //   Notify.create({
-      //     message: "Successful to delete customer",
-      //     position: "top",
-      //     color: "primary",
-      //     type: "positive",
-      //   });
-      //   Loading.hide();
-      //   return data;
-      // } catch (err: any) {
-      //   console.log(err);
-      //   Notify.create({
-      //     message: `Error: ${
-      //       err.response.data?.errors[0]?.message || "Fail to updated"
-      //     }`,
-      //     position: "top",
-      //     type: "negative",
-      //   });
-      //   Loading.hide();
-      // }
+          // try {
+          //   const {
+          //     data: { data },
+          //   } = await deleteCustomer(ids);
+          //   Notify.create({
+          //     message: "Successful to delete customer",
+          //     position: "top",
+          //     color: "primary",
+          //     type: "positive",
+          //   });
+          //   Loading.hide();
+          //   return data;
+          // } catch (err: any) {
+          //   console.log(err);
+          //   Notify.create({
+          //     message: `Error: ${
+          //       err.response.data?.errors[0]?.message || "Fail to updated"
+          //     }`,
+          //     position: "top",
+          //     type: "negative",
+          //   });
+          //   Loading.hide();
+          // }
+        });
     },
     async fetchCustomer(id: string) {
       const {
@@ -106,15 +106,39 @@ const useCustomerStore = defineStore("customer", {
       } = await getCustomer(id);
       this.setCustomer(customer);
     },
-    setCustomer(customer: ICustomer) {
-      this.customer = [customer].map((item: ICustomer) => ({
-        ...item,
-        customer_groups: item.customer_groups.filter(
-          (data: any) => data.customer_groups_id
-        ),
-        tags: item.tags.filter((data: any) => data.tags_id),
-        companies: item.companies.filter((data: any) => data.companies_id),
-      }))[0] as ICustomer;
+    setCustomer(customer: ICustomer | null) {
+      if (customer === null) {
+        this.customer = {
+          customer_code: "",
+          date_created: "",
+          date_updated: "",
+          dob: "",
+          email: "",
+          first_name: "",
+          gender: "",
+          id: "",
+          id_number: "",
+          isActive: true,
+          last_name: "",
+          position: "",
+          status: "",
+          user_created: "",
+          user_updated: "",
+          customer_groups: [],
+          companies: [],
+          tags: [],
+          company_cd: "",
+        };
+      } else {
+        this.customer = [customer].map((item: ICustomer) => ({
+          ...item,
+          customer_groups: item.customer_groups.filter(
+            (data: any) => data.customer_groups_id
+          ),
+          tags: item.tags.filter((data: any) => data.tags_id),
+          companies: item.companies.filter((data: any) => data.companies_id),
+        }))[0] as ICustomer;
+      }
     },
     async fetchUser(id: string) {
       const {
@@ -128,6 +152,7 @@ const useCustomerStore = defineStore("customer", {
         const {
           data: { data },
         } = await updateCustomer(id, payload);
+
         Notify.create({
           message: "Successful to update customer",
           position: "top",
@@ -149,12 +174,6 @@ const useCustomerStore = defineStore("customer", {
       }
     },
     async addContact(customerId: string, payload: unknown) {
-      // const {
-      //   data: { data: contact },
-      // } = await addContact(payload);
-      // const { id: contactId } = contact;
-
-      // const result = await addCustomerContact(customerId, contactId);
       const result = await addCustomerContactAlong({
         contacts: {
           create: payload,
