@@ -317,6 +317,12 @@ const FileLimit = [
     type: "audio/",
     limit: 16,
   },
+  // others
+  // {
+  //   name: "Document",
+  //   type: "document",
+  //   limit: 100,
+  // },
 ];
 
 // State
@@ -525,9 +531,18 @@ const activateChat = async () => {
     const userId: any | null = userInfoStore.getUserProfile;
     Loading.show();
     await updateChatStatus(chatId, userId?.id);
+    // Notify.create({
+    //   position: "top",
+    //   message:
+    //     "The chat has been taken by you, now you can message the customer",
+    //   color: "primary",
+    //   type: "positive",
+    // });
 
     Loading.hide();
     messagingStore.setSelectedTab(ChatTypes.ONGOING);
+    // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
+    // emit("newChatCreated", ChatTypes.ONGOING);
   } catch (e) {
     Loading.hide();
   }
@@ -619,6 +634,12 @@ function recStop() {
       time.value = duration;
       audioData.value = (window.URL || window.webkitURL).createObjectURL(blob);
       sendMedia(blob);
+      // wave.value?.ctx2.clearRect(
+      //   0,
+      //   0,
+      //   wave.value?.canvas2.width,
+      //   wave.value?.canvas2.height
+      // );
     },
     function () {
       showAudio.value = false;
@@ -661,6 +682,26 @@ const upload = async (fileList: readonly File[], caption: string) => {
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
+
+// const imageSizeFilter = (files: readonly any[] | FileList) => {
+//   const filterFiles = [];
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size <= 1024 * 1024 * 5) {
+//       filterFiles.push(file);
+//     }
+//   }
+//   if (!filterFiles.length) {
+//     Notify.create({
+//       message: "Image cannot exceed 5M",
+//       type: "negative",
+//       color: "purple",
+//       position: "top",
+//     });
+//   }
+
+//   return filterFiles;
+// };
 
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
