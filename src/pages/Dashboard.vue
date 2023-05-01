@@ -2,6 +2,12 @@
   <div class="dashboard q-px-md">
     <!-- <h2 class="text-h5">Dashboard</h2> -->
 
+    <Jumbotron />
+
+    <AnalyticOverview />
+
+    <CustomerOverview />
+
     <q-tabs
       v-model="active"
       dense
@@ -87,6 +93,9 @@ export default defineComponent({
 <script setup>
 import Statistics from "components/charts/Statistics.vue";
 import Satisfaction from "components/charts/Satisfaction.vue";
+import Jumbotron from "components/Dashboard/Jumbotron.vue";
+import AnalyticOverview from "components/Dashboard/AnalyticOverview/index.vue";
+import CustomerOverview from "components/Dashboard/CustomerOverview.vue";
 
 const tabs = ref([
     "Basic",

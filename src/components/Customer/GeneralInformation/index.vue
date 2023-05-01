@@ -114,7 +114,7 @@ const options: { [key: string]: any[] } = reactive({
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const customerForm: Ref<QForm | undefined> = ref();
-const { getCustomer } = storeToRefs(customerStore);
+const { getCustomer, resetForm } = storeToRefs(customerStore);
 
 onMounted(async () => {
   const customer = customerStore.getCustomer;
@@ -210,6 +210,14 @@ watch(getContactNumber, (val: string) => {
   idNumber.value = val;
 });
 
+watch(resetForm, (value) => {
+  if (value) {
+    onReset();
+  }
+
+  resetForm.value = false;
+});
+
 const filter = (val: string) => {
   console.log(val);
 };
@@ -238,6 +246,37 @@ const updateMultiOptions = async (val: {
   });
 };
 
+const onReset = () => {
+  firstName.value = "";
+  lastName.value = "";
+  idNumber.value = "";
+  customerCode.value = "";
+  gender.value = undefined;
+  position.value = undefined;
+  companies.value = [];
+  customerGroups.value = [];
+  tags.value = [];
+  isActive.value = false;
+  locationCode.value = null;
+  tel.value = "";
+  deliveryLocationAddress.value = "";
+  customerCompanyNameEn.value = "";
+  customerCompanyNameZht.value = "";
+  delylocNo.value = "";
+  divNo.value = "";
+  delylocNameE.value = "";
+  delylocNameC.value = "";
+  delylocAdd1E.value = "";
+  delylocAdd2E.value = "";
+  delylocAdd3E.value = "";
+  delylocAdd1C.value = "";
+  delylocAdd2C.value = "";
+  delylocAdd3C.value = "";
+  companyCd.value = "";
+  salesmanCd.value = "";
+  lastModifyDate.value = "";
+};
+
 const onSubmit = async () => {
   try {
     if (!customerForm.value) {
@@ -262,10 +301,10 @@ const onSubmit = async () => {
       tags: transformTagPayload(getCustomer.value, tags.value),
       location_code: locationCode.value,
       tel: tel.value,
-      // delivery_location_address: deliveryLocationAddress.value,
+
       customer_company_name_en: customerCompanyNameEn.value,
       customer_company_name_zht: customerCompanyNameZht.value,
-      // delyloc_no: delylocNo.value,
+
       div_no: divNo.value,
       delyloc_name_e: delylocNameE.value,
       delyloc_name_c: delylocNameC.value,
@@ -287,13 +326,8 @@ const onSubmit = async () => {
 
 const discardChanges = () => {
   returnDialog.value = false;
-  // router.go(-1);
   emit("discard");
 };
-
-// const optionDateFn = (qdate: string) => {
-//   return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
-// };
 
 const mappingCompanies = () => {
   return getCustomer.value.companies
@@ -397,18 +431,6 @@ const mappingCustomerGroups = () => {
           </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
-          <!-- <div class="col">
-            <p class="label-style">Contact Number</p>
-            <q-input
-              v-model="idNumber"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div> -->
           <div class="col">
             <p class="label-style">Customer Code</p>
             <q-input

@@ -20,6 +20,7 @@ const useContactStore = defineStore("useContact", {
 
   actions: {
     async getContactById(chat) {
+      console.log("chat:", chat);
       this.currentCustomerId = chat.customers_id;
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
@@ -55,16 +56,24 @@ const useContactStore = defineStore("useContact", {
         contact_id: this.contact.id,
       };
       Loading.show();
-      await dissociateContactApi(payload);
+      const result = await dissociateContactApi(payload);
 
-      Notify.create({
-        message: "Successfully",
-        position: "top",
-        type: "positive",
-        color: "blue-9",
-      });
+      if (result.data.errors) {
+        Notify.create({
+          message: "Failed: " + result.data.errors[0].message,
+          type: "error",
+        });
+      } else {
+        Notify.create({
+          message: "Successfully",
+          position: "top",
+          type: "positive",
+          color: "blue-9",
+        });
 
-      this.currentCustomerId = "";
+        this.currentCustomerId = "";
+      }
+
       Loading.hide();
     },
   },

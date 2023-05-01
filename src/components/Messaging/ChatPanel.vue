@@ -150,7 +150,7 @@ const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
-const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
+const { chatsList, selectedTab, getSelectedChatId } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -261,29 +261,29 @@ const initSocket = () => {
         focusConfirm: false,
         confirmButtonText: "Load Customer",
       });
-
+      const chat = chatsList.value.find(
+        (chat) => chat.id === document.session_id
+      );
       if (isConfirmed) {
         const customer = (await onSearchCustomers(
           document?.summary?.customer_code,
           document?.summary?.location_code
         )) as any;
-        const chat = chatsList.value.find(
-          (chat) => chat.id === document.session_id
-        );
         if (customer?.id && chat) {
           messagingStore.onSelectChat(chat?.id);
           await customerStore.fetchCustomer(customer.id);
           rightDrawerOpen.value = true;
         }
+      } else {
+        await closeBot(chat?.id);
+        Notify.create({
+          message: "The chatbot has been ended",
+          color: "blue-9",
+          position: "top",
+          type: "positive",
+        });
+        messagingStore.changeModeChatListById(chat?.id, "");
       }
-      await closeBot(getSelectedChatId.value);
-      Notify.create({
-        message: "The chatbot has been ended",
-        color: "blue-9",
-        position: "top",
-        type: "positive",
-      });
-      getSelectedChat.value.mode = "";
     });
   } catch (error) {
     console.log(error);
