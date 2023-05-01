@@ -76,4 +76,5 @@ export interface IState {
     first_name: string;
     last_name: string;
   };
+  resetForm: boolean;
 }
