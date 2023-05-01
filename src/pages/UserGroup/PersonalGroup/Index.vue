@@ -393,23 +393,12 @@ if (window.innerWidth < 768) {
                   <div
                     class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                   >
-                    <img
-                      :src="
-                        personal.customer_groups_id?.avatar ||
-                        'src/assets/images/profileicon.svg'
-                      "
-                      class="w-10 h-10 rounded-full mx-3"
-                    />
-                    <div class="truncate">
+                    <div class="truncate ml-4">
                       <div class="relative truncate">
                         {{ personal.customer_groups_id?.name }}
                       </div>
                       <div class="text-gray-400 cursor-pointer truncate">
-                        {{
-                          personal.customer_groups_id?.type === "personal"
-                            ? "individual"
-                            : "group"
-                        }}
+                        {{ personal.customer_groups_id?.source }}
                       </div>
                     </div>
                   </div>

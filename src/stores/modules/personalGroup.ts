@@ -48,8 +48,6 @@ const usePersonalGroupStore = defineStore("personalGroup", {
           total_count: 0,
           filter_count: 0,
         };
-        console.log("this.personalGroups:");
-        console.log(this.personalGroups);
         // this.setMeta(fetchMeta);
       } catch (error) {
         console.log(error);

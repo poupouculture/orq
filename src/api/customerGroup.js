@@ -31,7 +31,6 @@ export const getCustomerGroups = async (
   const param = {
     limit,
     page,
-    search,
     fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     meta: "*",
     source: sourceType,
@@ -44,6 +43,9 @@ export const getCustomerGroups = async (
       param.type = type;
       param.status = "published";
     }
+  }
+  if (search) {
+    param.search = search;
   }
   if (source) {
     param.source = source;
