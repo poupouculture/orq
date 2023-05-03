@@ -73,6 +73,7 @@ export interface IChat {
   expiration_timestamp: number;
   customer_company_name_en: string | null;
   mode?: string;
+  caption?: string;
 }
 
 export interface CachedChatMessages {

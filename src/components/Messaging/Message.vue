@@ -383,23 +383,21 @@ const members = computed<Member[]>(
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   scrollToBottom();
-  return (
-    cachedMessage?.map((message, index) => {
-      return {
-        ...message,
-        label:
-          index > 0 &&
-          isSameDay(
-            new Date(message.date_created),
-            new Date(cachedMessage[index - 1]?.date_created)
-          )
-            ? ""
-            : isToday(new Date(message.date_created))
-            ? "Today"
-            : format(new Date(message.date_created), "eee, d MMM"),
-      };
-    }) || []
-  );
+  return cachedMessage?.map((message, index) => {
+    return {
+      ...message,
+      label:
+        index > 0 &&
+        isSameDay(
+          new Date(message.date_created),
+          new Date(cachedMessage[index - 1]?.date_created)
+        )
+          ? ""
+          : isToday(new Date(message.date_created))
+          ? "Today"
+          : format(new Date(message.date_created), "eee, d MMM"),
+    };
+  });
 });
 
 const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
@@ -674,12 +672,12 @@ const upload = async (fileList: readonly File[], caption: string) => {
       type: MessageType.IMAGE,
       duration: time.value,
       local: true,
+      caption,
     },
     status: MessageStatus.SENT,
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
-    caption,
   });
 
   cachedMessage.push(newMessage);
