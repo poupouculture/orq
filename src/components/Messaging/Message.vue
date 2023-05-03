@@ -42,11 +42,11 @@
                 rounded
                 color="green"
               />
-              oneline
+              online
             </p>
           </div>
         </div>
-        <q-btn color="primary" label="End Bot" @click="oncloseBot" />
+        <q-btn color="primary" label="End Bot" @click="confirmCloseBot()" />
       </div>
     </template>
     <template v-else>
@@ -299,7 +299,7 @@ import {
   MessageStatus,
   SendMessageStatus,
 } from "src/types/MessagingTypes";
-import { Loading, Notify } from "quasar";
+import { Dialog, Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
@@ -382,7 +382,6 @@ const members = computed<Member[]>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-
   scrollToBottom();
   return (
     cachedMessage?.map((message, index) => {
@@ -762,6 +761,12 @@ const selectBot = async (bot: any) => {
     bot.trigger_intent
   );
   if (status) {
+    Notify.create({
+      message: "Bot initiated",
+      color: "blue-9",
+      position: "top",
+      type: "positive",
+    });
     getSelectedChat.value.mode = "Bot";
   }
 };
@@ -771,8 +776,24 @@ const getChatbots = async () => {
   botList.value = data;
 };
 
-const oncloseBot = async () => {
+const confirmCloseBot = () => {
+  Dialog.create({
+    title: "End Bot",
+    message: "Are you sure you want to end bot?",
+    cancel: true,
+    persistent: true,
+  }).onOk(() => {
+    onCloseBot();
+  });
+};
+const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
+  Notify.create({
+    message: "The chatbot has been ended",
+    color: "blue-9",
+    position: "top",
+    type: "positive",
+  });
   getSelectedChat.value.mode = "";
 };
 

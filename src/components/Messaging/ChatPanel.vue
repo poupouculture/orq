@@ -101,10 +101,11 @@ import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
 import { IChat, SocketMessage } from "src/types/MessagingTypes";
-import { startNewChat } from "src/api/messaging";
+import { closeBot, startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import { searchCustomers } from "src/api/customers";
+import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
 const ChatToggleLabel = {
@@ -260,20 +261,28 @@ const initSocket = () => {
         focusConfirm: false,
         confirmButtonText: "Load Customer",
       });
-
+      const chat = chatsList.value.find(
+        (chat) => chat.id === document.session_id
+      );
       if (isConfirmed) {
         const customer = (await onSearchCustomers(
           document?.summary?.customer_code,
           document?.summary?.location_code
         )) as any;
-        const chat = chatsList.value.find(
-          (chat) => chat.id === document.session_id
-        );
         if (customer?.id && chat) {
           messagingStore.onSelectChat(chat?.id);
           await customerStore.fetchCustomer(customer.id);
           rightDrawerOpen.value = true;
         }
+      } else {
+        await closeBot(chat?.id);
+        Notify.create({
+          message: "The chatbot has been ended",
+          color: "blue-9",
+          position: "top",
+          type: "positive",
+        });
+        messagingStore.changeModeChatListById(chat?.id, "");
       }
     });
   } catch (error) {
