@@ -679,7 +679,9 @@ const upload = async (fileList: readonly File[], caption: string) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    caption,
   });
+
   cachedMessage.push(newMessage);
   scrollToBottom();
   messagingStore.setReplayMessage();
