@@ -20,14 +20,15 @@ export const getPersonalGroups = async (
   type?: string
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
+  const cgFields =
+    "customer_groups.customer_groups_id.source,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id,customer_groups.customer_groups_id.type";
   const PersonalGroup = await api.get("/items/user_groups", {
     params: {
       limit,
       search,
       "filter[type][_eq]": type,
       offset,
-      fields:
-        "id,name,type,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id, customer_groups.customer_groups_id.type",
+      fields: `id,name,type,status,${cgFields}`,
       meta: "*",
     },
   });

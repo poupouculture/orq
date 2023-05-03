@@ -39,7 +39,7 @@
         </q-btn>
       </div>
       <div
-        class="flex items-center justify-center mt-20"
+        class="flex items-center justify-center mt-4"
         v-if="customerGroups.length"
       >
         <BasePagination
