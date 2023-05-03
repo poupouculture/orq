@@ -11,7 +11,7 @@ const routes = [
     ],
   },
   {
-    path: "/landingpage",
+    path: "/landing",
     component: () => import("pages/landingpage/index.vue"),
     children: [
       {
