@@ -2,7 +2,7 @@
   <div class="dashboard q-px-md">
     <!-- <h2 class="text-h5">Dashboard</h2> -->
 
-    <Jumbotron />
+    <Jumbotron v-if="isShowJumbotron" @close="closeJumbotron" />
 
     <AnalyticOverview />
 
@@ -81,31 +81,33 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
-
-export default defineComponent({
-  name: "DashBoard",
-  components: {},
-});
-</script>
-
 <script setup>
+import { ref } from "vue";
 import Statistics from "components/charts/Statistics.vue";
 import Satisfaction from "components/charts/Satisfaction.vue";
 import Jumbotron from "components/Dashboard/Jumbotron.vue";
 import AnalyticOverview from "components/Dashboard/AnalyticOverview/index.vue";
 import CustomerOverview from "components/Dashboard/CustomerOverview.vue";
 
+// export default defineComponent({
+//   name: "DashBoard",
+//   components: {},
+// });
+
+const isShowJumbotron = ref(true);
+
+const closeJumbotron = () => {
+  isShowJumbotron.value = false;
+};
 const tabs = ref([
-    "Basic",
-    "Conversation",
-    "Customer",
-    "Work order",
-    "Staff",
-    "Chat",
-  ]),
-  active = ref("Basic");
+  "Basic",
+  "Conversation",
+  "Customer",
+  "Work order",
+  "Staff",
+  "Chat",
+]);
+const active = ref("Basic");
 </script>
 
 <style lang="scss" scoped>
