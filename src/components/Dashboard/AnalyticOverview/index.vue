@@ -4,59 +4,59 @@ import BigBox from "src/components/Dashboard/AnalyticOverview/BigBox.vue";
 
 const userStatuses = [
   {
-    label: "New",
-    value: 70,
+    name: "New",
+    value: 50,
     color: "#4a44ed",
   },
   {
-    label: "Returning",
-    value: 13,
+    name: "Returning",
+    value: 30,
     color: "#b0adf9",
   },
   {
-    label: "Inactive",
-    value: 23,
+    name: "Inactive",
+    value: 20,
     color: "#eeeeee",
   },
 ];
 
 const paymentStatuses = [
   {
-    label: "Paid",
-    value: 40,
+    name: "Paid",
+    value: 50,
     color: "#4a44ed",
   },
   {
-    label: "Pending",
-    value: 60,
+    name: "Pending",
+    value: 30,
     color: "#b0adf9",
   },
   {
-    label: "Overdue",
-    value: 24,
+    name: "Overdue",
+    value: 10,
     color: "#e8e7fd",
   },
   {
-    label: "Draft",
-    value: 40,
+    name: "Draft",
+    value: 10,
     color: "#eeeeee",
   },
 ];
 
 const chatStatuses = [
   {
-    label: "Active",
-    value: 40,
+    name: "Active",
+    value: 50,
     color: "#4a44ed",
   },
   {
-    label: "Closed",
-    value: 13,
+    name: "Closed",
+    value: 30,
     color: "#b0adf9",
   },
   {
-    label: "Ongoing",
-    value: 23,
+    name: "Ongoing",
+    value: 20,
     color: "#eeeeee",
   },
 ];

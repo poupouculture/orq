@@ -26,18 +26,15 @@ onMounted(() => {
     tooltip: {
       trigger: "item",
     },
-    legend: {
-      top: "5%",
-      left: "center",
-    },
+    color: prop.data.map((d) => d.color),
     series: [
       {
-        name: "Access From",
+        name: prop.title,
         type: "pie",
-        radius: ["40%", "70%"],
+        radius: ["50%", "70%"],
         avoidLabelOverlap: false,
         itemStyle: {
-          borderRadius: 10,
+          borderRadius: 4,
           borderColor: "#fff",
           borderWidth: 2,
         },
@@ -45,39 +42,12 @@ onMounted(() => {
           show: false,
           position: "center",
         },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: "bold",
-          },
-        },
         labelLine: {
           show: false,
         },
-        data: [
-          { value: 1048, name: "Search Engine" },
-          { value: 735, name: "Direct" },
-          { value: 580, name: "Email" },
-          { value: 484, name: "Union Ads" },
-          { value: 300, name: "Video Ads" },
-        ],
+        data: prop.data,
       },
     ],
-  });
-
-  const baseWidth = 200,
-    baseHeight = 200;
-
-  chartDiv.value.setAttribute(
-    "style",
-    `width: ${baseWidth}px; height: ${baseHeight}px`
-  );
-  chartDiv.value.setAttribute("style", `width: ${null}; height: ${null}`);
-
-  chart.resize({
-    width: "auto",
-    height: "auto",
   });
 });
 
@@ -104,7 +74,7 @@ onBeforeUnmount(() => {
             :style="'background:' + val.color"
           ></div>
           <div>
-            {{ val.value.toString() + "% " + val.label }}
+            {{ val.value.toString() + "% " + val.name }}
           </div>
         </div>
       </div>
@@ -122,7 +92,7 @@ onBeforeUnmount(() => {
         class="w-full bottom q-pt-sm q-pl-sm q-pr-sm"
         style="flex: 1; border-radius: 20px"
       >
-        <div ref="chartDiv" width="200px" height="200px"></div>
+        <div ref="chartDiv" style="width: 100%; height: 100%"></div>
       </div>
     </div>
   </div>
