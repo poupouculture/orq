@@ -706,6 +706,7 @@ const uploadFile = async (files: readonly File[]) => {
       duration: time.value,
       local: true,
       media_id: file.name,
+      file_name: file.name,
     },
     status: MessageStatus.SENT,
     direction: Direction.OUTGOING,

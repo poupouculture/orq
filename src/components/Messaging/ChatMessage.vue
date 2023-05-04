@@ -174,7 +174,7 @@ const timestamp = computed(() => {
 });
 const list = [
   { text: "Reply" },
-  { text: "Download", visible: ["image", "document"] },
+  { text: "Download", visible: ["image", "document", "application"] },
 ];
 
 const menuList = computed(() =>

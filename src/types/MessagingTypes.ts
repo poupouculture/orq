@@ -11,6 +11,7 @@ export const enum MessageType {
   AUDIO = "audio",
   MEDIA = "media",
   DOCUMENT = "document",
+  APPLICATION = "application",
 }
 
 export const enum MessageStatus {
