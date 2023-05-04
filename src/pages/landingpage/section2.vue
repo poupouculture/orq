@@ -31,7 +31,9 @@ const weDo = ref([
         WHAT WE DO
       </span>
 
-      <p class="text-black text-[40px] font-black w-[602px] leading-[57px]">
+      <p
+        class="text-black text-4xl sm:text-[40px] font-black sm:w-[602px] leading-[57px]"
+      >
         What Makes Us UniQue
       </p>
     </div>

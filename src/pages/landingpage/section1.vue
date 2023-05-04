@@ -8,11 +8,13 @@ import VectorLiquid from "src/assets/images/vectorLiquid.png";
     <img :src="VectorLiquid" class="absolute -left-[69px] w-20" />
 
     <div class="flex pl-5 flex-col items-start">
-      <p class="text-black text-[40px] font-black w-[602px] leading-[57px]">
+      <p
+        class="text-black text-4xl sm:text-[40px] font-black sm:w-[602px] leading-[50px] lg:leading-[57px]"
+      >
         Dashboard, for all business transactions
       </p>
 
-      <span class="text-[#5C5A8F]">
+      <span class="mt-3 text-[#5C5A8F]">
         From orders to real-time cash in your bank. Run your business like a
         rockstar.
       </span>
