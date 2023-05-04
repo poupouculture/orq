@@ -45,6 +45,7 @@
       <div class="w-full flex justify-end gap-2 px-4 mt-4">
         <button class="btn-dotted" @click="hide">Close</button>
         <button
+          :disabled="disabled"
           class="px-4 py-2 bg-primary text-white rounded-md"
           @click="send"
         >
@@ -70,8 +71,9 @@ defineProps({
 
 const uplader: any = ref(null);
 const selectedImage: any = ref(null);
-const localFileList: any[] = ref([]);
-const caption: string = ref("");
+const localFileList = ref([]);
+const caption = ref("");
+const disabled = ref<boolean>(true);
 
 const imageSizeFilter = (files: readonly any[] | FileList) => {
   const filterFiles = [];
@@ -96,13 +98,14 @@ const imageSizeFilter = (files: readonly any[] | FileList) => {
 const preview = (fileList: any) => {
   localFileList.value = fileList;
   selectedImage.value = fileList[0];
-  console.log(selectedImage.value);
   const imageTag = document.getElementById("image-preview");
   const reader = new FileReader();
 
   reader.readAsDataURL(selectedImage.value);
   reader.addEventListener("load", function () {
     imageTag.src = reader.result;
+
+    disabled.value = false;
   });
 };
 
@@ -117,10 +120,13 @@ const send = () => {
 
 onMounted(() => {
   selectedImage.value = null;
+
+  disabled.value = true;
 });
 
 onUpdated(() => {
   selectedImage.value = null;
+  disabled.value = true;
 });
 
 defineExpose({
