@@ -20,7 +20,9 @@ import Section6 from "./section6.vue";
       </div>
     </div>
 
-    <div class="min-h-screen flex flex-col items-center w-full p-10">
+    <div
+      class="min-h-screen flex flex-col items-center w-full px-3 py-10 sm:p-10"
+    >
       <div class="container">
         <Section1 id="" />
 
@@ -36,13 +38,15 @@ import Section6 from "./section6.vue";
     </div>
 
     <div class="w-full flex bg-[#4B44F6] justify-center">
-      <div class="container flex items-center justify-between py-6">
+      <div
+        class="container flex flex-col gap-4 sm:flex-row items-center sm:justify-between py-6"
+      >
         <div class="flex justify-center items-center gap-3">
           <img class="w-[40px]" :src="logo" alt="logo" />
           <p class="font-[800] text-white text-2xl">ChaQ</p>
         </div>
 
-        <span class="text-white">
+        <span class="text-white order-3 sm:order-2">
           Copyright {{ new Date().getFullYear() }} Synque.io
         </span>
 

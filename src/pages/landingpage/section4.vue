@@ -24,7 +24,7 @@ const chatFeatures = ref([
             ORDER / INVOICE
           </span>
 
-          <p class="font-bold text-[40px]">
+          <p class="font-bold sm:text-[40px]">
             Invoice creation and fulfillment, ensuring timely delivery to
             customers
           </p>
