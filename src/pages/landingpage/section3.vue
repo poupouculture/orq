@@ -40,15 +40,15 @@ const customersRelationship = ref([
           <q-icon name="chevron_right" class="text-[#E12179]" />
         </span>
       </div>
-      <div class="grid sm:pl-5 grid-cols-1 lg:grid-cols-2">
+      <div class="grid sm:pl-5 w-full grid-cols-1 lg:grid-cols-2">
         <div
-          class="flex flex-col gap-5 sm:pl-20 pr-4 py-7 sm:border-l-8 sm:border-[#4B44F6]"
+          class="flex flex-col gap-5 w-full sm:pl-20 sm:pr-4 sm:py-7 sm:border-l-8 sm:border-[#4B44F6]"
         >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
             CHAT COMMERCE
           </span>
 
-          <p class="font-bold text-[40px]">
+          <p class="font-bold w-full text-[40px]">
             Connect with Your Customers in Real-Time with Our Messaging Feature
           </p>
           <div
