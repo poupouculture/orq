@@ -21,12 +21,14 @@ const customersRelationship = ref([
 <template>
   <div class="mt-36">
     <div class="flex mt-20 flex-col">
-      <div class="pl-5 mb-10 flex gap-7 flex-col">
+      <div class="sm:pl-5 mb-10 flex gap-7 flex-col">
         <span class="text-[#E12179] tracking-wide text-[23px] font-normal">
           HOW IT WORKS
         </span>
 
-        <p class="text-black text-[40px] font-black w-[683px] leading-[57px]">
+        <p
+          class="text-black text-[40px] font-black sm:w-[683px] leading-[57px]"
+        >
           Power your commerce with chat. The Simple Way to Manage Your
           Customers, Invoices, and Payments
         </p>
@@ -38,9 +40,9 @@ const customersRelationship = ref([
           <q-icon name="chevron_right" class="text-[#E12179]" />
         </span>
       </div>
-      <div class="grid pl-5 grid-cols-1 lg:grid-cols-2">
+      <div class="grid sm:pl-5 grid-cols-1 lg:grid-cols-2">
         <div
-          class="flex flex-col gap-5 pl-20 pr-4 py-7 border-l-8 border-[#4B44F6]"
+          class="flex flex-col gap-5 sm:pl-20 pr-4 py-7 sm:border-l-8 sm:border-[#4B44F6]"
         >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
             CHAT COMMERCE
@@ -63,9 +65,9 @@ const customersRelationship = ref([
         </div>
       </div>
 
-      <div class="grid pl-5 grid-cols-1 mt-20 lg:grid-cols-2">
+      <div class="grid sm:pl-5 grid-cols-1 mt-20 lg:grid-cols-2">
         <div
-          class="flex flex-col gap-5 pl-20 pr-4 py-7 border-l-8 border-[#4B44F6]"
+          class="flex flex-col gap-5 sm:pl-20 pr-4 py-7 sm:border-l-8 sm:border-[#4B44F6]"
         >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
             CUSTOMER RELATIONSHIPS
@@ -85,12 +87,12 @@ const customersRelationship = ref([
           </div>
         </div>
 
-        <div class="flex justify-center px-3 items-center">
+        <div class="flex justify-center sm:px-3 items-center">
           <img class="" :src="customerGroupIcon" alt="" />
         </div>
       </div>
       <div class="pl-5 w-1/2 mt-4 flex justify-center">
-        <div class="h-5 w-96 bg-[#E12179]"></div>
+        <div class="h-5 w-96 bg-[#E12179]" />
       </div>
     </div>
   </div>
