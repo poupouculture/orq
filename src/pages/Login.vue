@@ -73,7 +73,7 @@
           <span class="text-gray-400 text-xl"> or </span>
 
           <div class="mt-5">
-            <q-btn round class="bg-blue-700 text-white" icon="facebook" />
+            <LoginFb />
           </div>
         </div>
 
@@ -90,17 +90,12 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "LoginPage",
-};
-</script>
-
 <script setup>
 import { ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import logo from "assets/images/logo.svg";
 import loginIllustration from "assets/images/login_illustration.svg";
+import LoginFb from "./LoginFb.vue";
 
 const login = ref({ email: "", password: "" }),
   loading = ref(false),
@@ -108,7 +103,7 @@ const login = ref({ email: "", password: "" }),
 
 const remember = ref(false);
 
-const submit = (e) => {
+const submit = () => {
   if (login.value.email && login.value.password) {
     loading.value = true;
     userInfo.login(login.value).finally(() => {
