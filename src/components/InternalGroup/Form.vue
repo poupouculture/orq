@@ -244,7 +244,7 @@ const userData = ref([]);
 const form = reactive({
   name: "",
   status: "",
-  type: "manager",
+  type: "group",
   loading: false,
 });
 
