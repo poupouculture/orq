@@ -69,6 +69,14 @@
           </q-btn>
         </q-form>
 
+        <div class="flex flex-col items-center justify-center mt-10">
+          <span class="text-gray-400 text-xl"> or </span>
+
+          <div class="mt-5">
+            <q-btn round class="bg-blue-700 text-white" icon="facebook" />
+          </div>
+        </div>
+
         <footer class="mt-5">
           <p class="mt-6 text-gray-400 text-sm">
             By logging, in, you agree to SYNQUE's
