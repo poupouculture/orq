@@ -1,6 +1,7 @@
-import { defineStore } from "pinia";
-import { api, axiosInstance } from "boot/axios";
 import { LocalStorage, Notify } from "quasar";
+import { api, axiosInstance } from "boot/axios";
+
+import { defineStore } from "pinia";
 
 const useUserInfoStore = defineStore("userInfo", {
   state: () => ({
@@ -66,7 +67,7 @@ const useUserInfoStore = defineStore("userInfo", {
           position: "top",
           type: "positive",
         });
-        this.router.push("/");
+        this.router.push("/dashboard");
       } catch (err) {
         console.log(err.response, err);
       }
