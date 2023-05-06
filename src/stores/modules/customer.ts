@@ -133,11 +133,13 @@ const useCustomerStore = defineStore("customer", {
       } else {
         this.customer = [customer].map((item: ICustomer) => ({
           ...item,
-          customer_groups: item.customer_groups.filter(
-            (data: any) => data.customer_groups_id
-          ),
-          tags: item.tags.filter((data: any) => data.tags_id),
-          companies: item.companies.filter((data: any) => data.companies_id),
+          customer_groups:
+            item.customer_groups?.filter(
+              (data: any) => data.customer_groups_id
+            ) || [],
+          tags: item.tags?.filter((data: any) => data.tags_id) || [],
+          companies:
+            item.companies?.filter((data: any) => data.companies_id) || [],
         }))[0] as ICustomer;
       }
     },
