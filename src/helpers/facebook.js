@@ -61,7 +61,10 @@ function login() {
       statusChangeCallback(response);
     });
   }, {
-    scope: 'email,public_profile'
+    scope: 'email,public_profile',
+    extras: {
+      feature: 'whatsapp_embedded_setup'
+    }
   });
 }
 
