@@ -254,7 +254,7 @@ const deletedCustomer = ref([]);
 const customersData = ref([]);
 const customerQuery = ref("");
 
-const source = ref(null);
+const source = ref("div_no");
 const sourceOptions = [
   { label: "div_no", value: "div_no" },
   { label: "salesman_code", value: "salesman_code" },
