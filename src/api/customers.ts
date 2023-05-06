@@ -11,9 +11,8 @@ interface CustomerPayload {
 }
 
 export const getCustomers = async (payload: CustomerPayload) => {
-  const { limit, page, search, filter } = payload;
-  const fields =
-    "id,first_name,last_name,gender,date_created,position,customer_code";
+  const { limit, page, search = undefined, filter } = payload;
+  const fields = "*";
   const companies = "companies.companies_id.name_english";
   const tags = "tags.tags_id.*";
 
@@ -21,16 +20,17 @@ export const getCustomers = async (payload: CustomerPayload) => {
 
   const filterField =
     filter && filter.key ? { [filter.key]: filter.value } : undefined;
+  const params = {
+    fields: `${fields},${companies},${tags}`,
+    sort: "-date_created",
+    ...filterField,
+    limit,
+    offset,
+    search,
+    meta: "*",
+  } as any;
   const customers = await api.get("/items/customers", {
-    params: {
-      fields: `${fields},${companies},${tags}`,
-      sort: "-date_created",
-      ...filterField,
-      limit,
-      offset,
-      search,
-      meta: "*",
-    },
+    params,
   });
 
   return customers;

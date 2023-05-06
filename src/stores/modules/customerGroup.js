@@ -21,24 +21,24 @@ const useCustomerGroupStore = defineStore("customerGroup", {
   },
   actions: {
     async getAll({
-      rowsPerPage = 4,
+      rowsPerPage = 25,
       page = 1,
       search = undefined,
       type = undefined,
+      sourceType = undefined,
     }) {
-      const {
-        data: { data: customerGroups, meta },
-      } = await getCustomerGroups({
+      const { data } = await getCustomerGroups({
         limit: rowsPerPage,
         page,
         search,
         type,
+        sourceType,
       });
-      this.items = customerGroups.filter((item) => item !== null);
+      this.items = data.data.filter((item) => item !== null);
       this.meta = {
         ...this.meta,
-        total_count: meta?.total_count,
-        filter_count: meta?.filter_count,
+        total_count: data.total_count,
+        filter_count: data.filter_count,
       };
     },
     async get(id) {
@@ -73,12 +73,14 @@ const useCustomerGroupStore = defineStore("customerGroup", {
           type: "positive",
           color: "primary",
         });
-        this.getAll();
       } catch (error) {
         Notify.create({
           message: error,
         });
       }
+      this.getAll({
+        rowsPerPage: 25,
+      });
     },
     async deleteCustomer(id, customerId) {
       Loading.show();

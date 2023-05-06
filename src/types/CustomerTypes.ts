@@ -10,6 +10,7 @@ export interface FormPayload {
   gender: string;
   isActive: boolean;
   dob: string;
+  remarks: string;
 }
 
 interface Contact {
@@ -71,4 +72,9 @@ export interface ICustomer {
 
 export interface IState {
   customer: ICustomer;
+  user: {
+    first_name: string;
+    last_name: string;
+  };
+  resetForm: boolean;
 }

@@ -17,7 +17,16 @@ enum DrawerTypeEnum {
   DELETE = "delete",
 }
 
-const userGroupOptions = ["personal", "group"];
+const userGroupOptions = [
+  {
+    label: "Individual",
+    value: "personal",
+  },
+  {
+    label: "Group",
+    value: "group",
+  },
+];
 // State
 const personalGroupStore = userPersonalGroup();
 const { personalGroups, customerGroups } = storeToRefs(personalGroupStore);
@@ -130,6 +139,9 @@ const openDrawer = async (id: string, type: string) => {
   drawer.value = true;
   drawerType.value = type;
   paginationCustomers.page = 1;
+  if (type === DrawerTypeEnum.DELETE && selectedUserGroup.value.length < 1) {
+    return personalGroupStore.resetCustomerGroup();
+  }
   await getCustomerGroupData();
 };
 
@@ -204,16 +216,20 @@ const getPersonalGroupData = async () => {
   );
   loading.value = false;
 };
+const cgType = ref("personal");
 const getCustomerGroupData = async () => {
+  tableLoading.value = true;
   await personalGroupStore.getCustomerGroup(
     paginationCustomers.rowsPerPage,
     paginationCustomers.page,
+    cgType.value,
     queryCustomers.value,
     selectedUserGroup.value,
     drawerType.value === DrawerTypeEnum.DELETE
       ? "filter[id][_in]"
       : "filter[id][_nin]"
   );
+  tableLoading.value = false;
 };
 
 onMounted(() => {
@@ -258,6 +274,17 @@ watch(userGroupType, () => {
   changePage(1);
   getPersonalGroupData();
 });
+const tableLoading = ref(false);
+watch(cgType, () => {
+  tableLoading.value = true;
+  paginationCustomers.page = 1;
+  tableSelected.value = [];
+  getCustomerGroupData();
+});
+const rightDrawerWidth = ref(800);
+if (window.innerWidth < 768) {
+  rightDrawerWidth.value = window.innerWidth;
+}
 </script>
 <template>
   <q-layout view="hHh lpR fFf" class="mt-10">
@@ -275,7 +302,11 @@ watch(userGroupType, () => {
             dense
             outlined
             v-model="userGroupType"
+            option-value="value"
+            option-label="label"
             :options="userGroupOptions"
+            map-options
+            emit-value
             label="Type"
           />
           <div class="w-52 ml-3">
@@ -323,7 +354,7 @@ watch(userGroupType, () => {
                     <div
                       class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
                     >
-                      <!-- {{ group.type == "personal" ? "Individual" : "Grp" }} -->
+                      {{ group.name }}
                     </div>
                     <div class="truncate">
                       <div class="truncate">{{ group.name }}</div>
@@ -362,23 +393,12 @@ watch(userGroupType, () => {
                   <div
                     class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                   >
-                    <img
-                      :src="
-                        personal.customer_groups_id?.avatar ||
-                        'src/assets/images/profileicon.svg'
-                      "
-                      class="w-10 h-10 rounded-full mx-3"
-                    />
-                    <div class="truncate">
+                    <div class="truncate ml-4">
                       <div class="relative truncate">
                         {{ personal.customer_groups_id?.name }}
                       </div>
                       <div class="text-gray-400 cursor-pointer truncate">
-                        {{
-                          personal.customer_groups_id?.type === "personal"
-                            ? "individual"
-                            : "group"
-                        }}
+                        {{ personal.customer_groups_id?.source }}
                       </div>
                     </div>
                   </div>
@@ -403,35 +423,59 @@ watch(userGroupType, () => {
 
     <q-drawer
       overlay
-      :width="800"
-      :breakpoint="500"
+      :width="rightDrawerWidth"
+      :breakpoint="768"
       v-model="drawer"
       side="right"
     >
       <!-- drawer content -->
-      <div class="h-full flex justify-center items-center">
-        <div class="min-h-[90vh] w-full flex flex-col p-10">
-          <div class="flex items-center justify-between">
+      <div class="h-full flex justify-center items-center w-full">
+        <div class="min-h-[90vh] w-full flex flex-col p-5 md:p-10">
+          <div class="flex mb-4 lg:hidden">
+            <q-btn
+              @click="drawer = false"
+              round
+              color="primary"
+              size="sm"
+              icon="close"
+            />
+          </div>
+          <h5 class="text-lg">Customer Group</h5>
+          <div class="flex items-center justify-between mt-3">
             <SearchTableInput
               :loading="searchLoading"
               @search="searchHandlerCustomers"
               @reset="resetSearchCustomers"
             />
-            <q-btn
-              :disable="tableSelected.length === 0"
-              @click="newRelations"
-              :loading="relationLoading"
-              round
-              color="primary"
-              size="md"
-              icon="done"
-            />
+            <div class="flex items-center space-x-5">
+              <q-select
+                dense
+                outlined
+                v-model="cgType"
+                :options="userGroupOptions"
+                option-value="value"
+                option-label="label"
+                map-options
+                emit-value
+                label="Type"
+              />
+              <q-btn
+                :disable="tableSelected.length === 0"
+                @click="newRelations"
+                :loading="relationLoading"
+                round
+                color="primary"
+                size="md"
+                icon="done"
+              />
+            </div>
           </div>
           <div class="mt-10" v-if="allCustomerGroups.length > 0">
             <q-table
               v-model:selected="tableSelected"
               :rows="allCustomerGroups"
               :columns="headerColumns"
+              :loading="tableLoading"
               selection="multiple"
               row-key="id"
               class="mb-3"
@@ -439,7 +483,11 @@ watch(userGroupType, () => {
                 rowsPerPage: 10,
               }"
               v-if="allCustomerGroups.length"
-            />
+            >
+              <template v-slot:loading>
+                <q-inner-loading showing color="primary" />
+              </template>
+            </q-table>
             <BasePagination
               :max="totalPageCustomers()"
               :max-pages="5"

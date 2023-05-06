@@ -48,8 +48,6 @@ const usePersonalGroupStore = defineStore("personalGroup", {
           total_count: 0,
           filter_count: 0,
         };
-        console.log("this.personalGroups:");
-        console.log(this.personalGroups);
         // this.setMeta(fetchMeta);
       } catch (error) {
         console.log(error);
@@ -59,6 +57,7 @@ const usePersonalGroupStore = defineStore("personalGroup", {
     async getCustomerGroup(
       rowsPerPage: number = 10,
       page: number = 1,
+      type = "personal",
       search?: string,
       selectedCustomerGroups?: CustomerGroup[],
       customerFilter?: string
@@ -69,6 +68,7 @@ const usePersonalGroupStore = defineStore("personalGroup", {
         } = await getCustomerGroup(
           rowsPerPage,
           page,
+          type,
           search,
           selectedCustomerGroups,
           customerFilter
@@ -79,11 +79,15 @@ const usePersonalGroupStore = defineStore("personalGroup", {
           total_count: 0,
           filter_count: 0,
         };
-        console.log("this.customerGroups");
-        console.log(this.customerGroups);
       } catch (error) {
         console.log(error);
       }
+    },
+    resetCustomerGroup() {
+      this.customerGroups = {
+        data: [],
+        meta: { total_count: 0, filter_count: 0 },
+      };
     },
 
     // async get(id: any) {

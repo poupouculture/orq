@@ -1,7 +1,6 @@
 import { api } from "src/boot/axios";
 import { IUserTransform } from "src/types/TransformObjectType";
 import { userCreate } from "src/utils/transform-object";
-import { getCustomerGroups } from "./customerGroup";
 import { CustomerGroup } from "src/types/PersonalGroups";
 
 export const searchPersonalGroup = async (query: string) => {
@@ -21,14 +20,15 @@ export const getPersonalGroups = async (
   type?: string
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
+  const cgFields =
+    "customer_groups.customer_groups_id.source,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id,customer_groups.customer_groups_id.type";
   const PersonalGroup = await api.get("/items/user_groups", {
     params: {
       limit,
       search,
       "filter[type][_eq]": type,
       offset,
-      fields:
-        "id,name,type,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id, customer_groups.customer_groups_id.type",
+      fields: `id,name,type,status,${cgFields}`,
       meta: "*",
     },
   });
@@ -36,25 +36,34 @@ export const getPersonalGroups = async (
 };
 
 export const getCustomerGroup = async (
-  rowsPerPage = 10,
+  limit = 10,
   page = 1,
+  type = "personal",
   search?: string,
   selectedCustomerGroups?: CustomerGroup[],
   customerFilter?: string
 ) => {
-  // const customerGroup = await api.get(
-  //   "/items/customer_groups?limit=-1&fields=id,name,status"
-  // );
-
-  const customerGroups = await getCustomerGroups({
-    limit: rowsPerPage,
-    page,
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const companies = "customers.customers_id.companies.companies_id.*";
+  const userGroups = "user_groups.*, user_groups.user_groups_id.*";
+  const tags = "tags.*, tags.*.*";
+  const param = {
+    limit,
+    offset,
     search,
-    customerIds: selectedCustomerGroups?.map((item) => item.id),
-    customerFilter,
+    fields: `id,type,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
+    meta: "*",
+  } as any;
+  if (type) {
+    param["filter[type][_eq]"] = type;
+  }
+  const customerIds = selectedCustomerGroups?.map((item) => item.id);
+  if (customerIds?.length && customerFilter) {
+    param[customerFilter] = customerIds.join();
+  }
+  const customerGroups = await api.get("/items/customer_groups", {
+    params: param,
   });
-  console.log(customerGroups);
-
   return customerGroups;
 };
 

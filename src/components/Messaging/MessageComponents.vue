@@ -4,7 +4,7 @@
       ref="component"
       :is="componentName"
       :src="content.url"
-      :name="content.media_id"
+      :name="isDocument(content) ? content.file_name : content.media_id"
       :caption="content.caption"
     />
     <div
@@ -13,7 +13,7 @@
     >
       <img
         :src="messageTemplateHeader(content).image"
-        v-if="messageTemplateHeader(content).type === 'IMAGE'"
+        v-if="messageTemplateHeader(content).type === MessageType.IMAGE"
       />
       <video loop autoPlay muted v-if="messageTemplateHeader(content).type">
         <source
@@ -28,17 +28,6 @@
     <span v-if="!content?.type || content?.type === MessageType.TEXT">
       {{ content?.text ?? content }}
     </span>
-
-    <!-- <q-menu touch-position context-menu>
-      <q-list dense style="min-width: 100px">
-        <q-item clickable v-close-popup>
-          <q-item-section>Reply</q-item-section>
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section>Download</q-item-section>
-        </q-item>
-      </q-list>
-    </q-menu> -->
   </div>
 </template>
 
@@ -84,6 +73,13 @@ const messageTemplateHeader = (content: any) => {
   return null;
 };
 
+const isDocument = (content: any) => {
+  return (
+    content?.type === MessageType.DOCUMENT ||
+    content?.type === MessageType.APPLICATION
+  );
+};
+
 const components = shallowReactive({
   MessageImage,
   MessageAudio,
@@ -96,6 +92,8 @@ const componentName = computed(() => {
     case MessageType.AUDIO:
       return components.MessageAudio;
     case MessageType.DOCUMENT:
+      return components.MessageDocument;
+    case MessageType.APPLICATION:
       return components.MessageDocument;
     default:
       return null;

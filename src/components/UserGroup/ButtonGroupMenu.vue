@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center">
-    <q-btn color="grey-7" round flat icon="more_vert">
+    <q-btn color="white" round flat icon="more_vert">
       <q-menu fit anchor="bottom middle" self="top right" auto-close>
         <q-list>
           <q-item
@@ -9,9 +9,9 @@
           >
             <q-item-section>Edit</q-item-section>
           </q-item>
-          <q-item clickable @click="toggleAddCustomer()">
+          <!-- <q-item clickable @click="toggleAddCustomer()">
             <q-item-section>Add Customers</q-item-section>
-          </q-item>
+          </q-item> -->
           <q-item clickable @click="deleteDialog = true">
             <q-item-section>Delete Group</q-item-section>
           </q-item>
@@ -63,12 +63,12 @@ const pagination = reactive({
   totalCount: 0,
 });
 
-const toggleAddCustomer = async () => {
-  if (!openAddCustomer.value) {
-    await fetchCustomers();
-  }
-  openAddCustomer.value = !openAddCustomer.value;
-};
+// const toggleAddCustomer = async () => {
+//   if (!openAddCustomer.value) {
+//     await fetchCustomers();
+//   }
+//   openAddCustomer.value = !openAddCustomer.value;
+// };
 const searchHandler = async (value) => {
   try {
     query.value = value;

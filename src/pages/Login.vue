@@ -69,6 +69,14 @@
           </q-btn>
         </q-form>
 
+        <div class="flex flex-col items-center justify-center mt-10">
+          <span class="text-gray-400 text-xl"> or </span>
+
+          <div class="mt-5">
+            <LoginFb />
+          </div>
+        </div>
+
         <footer class="mt-5">
           <p class="mt-6 text-gray-400 text-sm">
             By logging, in, you agree to SYNQUE's
@@ -82,17 +90,12 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "LoginPage",
-};
-</script>
-
 <script setup>
 import { ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import logo from "assets/images/logo.svg";
 import loginIllustration from "assets/images/login_illustration.svg";
+import LoginFb from "./LoginFb.vue";
 
 const login = ref({ email: "", password: "" }),
   loading = ref(false),
@@ -100,7 +103,7 @@ const login = ref({ email: "", password: "" }),
 
 const remember = ref(false);
 
-const submit = (e) => {
+const submit = () => {
   if (login.value.email && login.value.password) {
     loading.value = true;
     userInfo.login(login.value).finally(() => {

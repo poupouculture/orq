@@ -36,11 +36,6 @@
             <template #body-cell-name="props">
               <q-td :props="props" auto-width>
                 <div class="firstrowholder">
-                  <div>
-                    <q-avatar size="md">
-                      <img src="../../assets/images/profileavatar.png" />
-                    </q-avatar>
-                  </div>
                   <div class="subrow">
                     <p class="headingtext">
                       {{ props.row.first_name }}
@@ -82,6 +77,7 @@
 import { ref, reactive, onMounted } from "vue";
 import { getCustomersWithContacts } from "src/api/customers";
 import BaseTable from "src/components/BaseTable.vue";
+import { Notify } from "quasar";
 
 defineProps({
   modelValue: {
@@ -155,17 +151,24 @@ const groupedCompanies = (companies) => {
 };
 
 const fetchCustomers = async () => {
-  const {
-    data: { data: customers },
-  } = await getCustomersWithContacts({
-    limit: data.rowsPerPage,
-    page: data.page,
-    search: search.value,
-  });
+  try {
+    const {
+      data: { data: customers },
+    } = await getCustomersWithContacts({
+      limit: data.rowsPerPage,
+      page: data.page,
+      search: search.value,
+    });
 
-  data.customers = customers.customers;
-  data.totalCount = customers?.total_count;
-  loading.value = false;
+    data.customers = customers?.customers;
+    data.totalCount = customers?.total_count;
+    loading.value = false;
+  } catch (error) {
+    Notify.create({
+      message: "Error: " + error,
+      type: "error",
+    });
+  }
 };
 
 const changePage = (page) => {

@@ -173,6 +173,10 @@ const useMessagingStore = defineStore("messaging", {
       const { data } = await getContact(contactId);
       this.setContactNumber(data.number);
     },
+    changeModeChatListById(id: string, mode: string) {
+      const index = this.chatsList.findIndex((chat) => chat.id === id);
+      this.chatsList[index].mode = mode;
+    },
   },
 });
 export default useMessagingStore;

@@ -11,6 +11,17 @@ const routes = [
     ],
   },
   {
+    path: "/landing",
+    component: () => import("pages/landingpage/index.vue"),
+    children: [
+      {
+        path: "",
+        name: "landingpage",
+        component: () => import("pages/landingpage/index.vue"),
+      },
+    ],
+  },
+  {
     path: "/me",
     name: "me",
     component: () => import("pages/Me.vue"),
@@ -200,6 +211,11 @@ const routes = [
       {
         path: "customer-groups",
         name: "customergroups",
+        component: () => import("pages/CustomerGroup/Index.vue"),
+      },
+      {
+        path: "customer-groups/summary",
+        name: "customergroups.summary",
         component: () => import("pages/CustomerGroup/Index.vue"),
       },
       {

@@ -72,7 +72,9 @@
               :key="user.id"
             >
               <div class="flex items-center justify-between">
-                <span>{{ user.first_name }} {{ user.last_name }} </span>
+                <span
+                  >{{ user.first_name }} {{ user.last_name }}: {{ user.email }}
+                </span>
                 <svg
                   @click="deleteUser(i)"
                   xmlns="http://www.w3.org/2000/svg"
@@ -175,6 +177,8 @@
     :pagination="paginationCustomerGroup"
     @search="searchCustomerGroupHandler"
     v-if="openAddCustomerGroup"
+    @update:source="changeSource"
+    @update:type="changeCgType"
   />
   <AddUserOverlay
     @submit="(val) => submitAddUser(val)"
@@ -214,8 +218,8 @@ import { transformTagPayload } from "src/utils/transform-object";
 
 const statusOptions = ["published", "draft"];
 const typeOptions = [
-  { value: "manager", label: "Manager" },
-  { value: "cs", label: "Customer Service" },
+  { value: "group", label: "Group" },
+  // { value: "personal", label: "Customer Service" },
 ];
 const props = defineProps({
   id: [String],
@@ -243,6 +247,7 @@ const form = reactive({
   type: "manager",
   loading: false,
 });
+
 onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
@@ -391,6 +396,18 @@ const searchCustomerGroupHandler = async (value) => {
     await fetchCustomerGroups();
   } catch (error) {}
 };
+const sourceType = ref("div_no");
+const cgType = ref("group");
+const changeSource = (value) => {
+  sourceType.value = value;
+  paginationCustomerGroup.page = 1;
+  fetchCustomerGroups();
+};
+const changeCgType = (value) => {
+  cgType.value = value;
+  paginationCustomerGroup.page = 1;
+  fetchCustomerGroups();
+};
 const fetchCustomerGroups = async () => {
   const params = {
     limit: paginationCustomerGroup.rowsPerPage,
@@ -399,28 +416,20 @@ const fetchCustomerGroups = async () => {
     search: customerGroupQuery.value.length
       ? customerGroupQuery.value
       : undefined,
+    source: sourceType.value,
+    type: cgType.value,
   };
+  Loading.show();
   if (props.id) {
-    Loading.show();
-    const {
-      data: { data: userGroups, meta },
-    } = await getAllCustomerGroupEdit(params);
-    Loading.hide();
-    customerGroupData.value = userGroups;
-    paginationCustomerGroup.totalCount = customerGroupQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    const { data } = await getAllCustomerGroupEdit(params);
+    customerGroupData.value = data.data;
+    paginationCustomerGroup.totalCount = data.filter_count;
   } else {
-    Loading.show();
-    const {
-      data: { data: customerGroups, meta },
-    } = await getCustomerGroups(params, props.id);
-    Loading.hide();
-    customerGroupData.value = customerGroups;
-    paginationCustomerGroup.totalCount = customerGroupQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    const { data } = await getCustomerGroups(params, props.id);
+    customerGroupData.value = data.data;
+    paginationCustomerGroup.totalCount = data.filter_count;
   }
+  Loading.hide();
 };
 const userQuery = ref("");
 const searchUserHandler = async (value) => {

@@ -84,9 +84,10 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
+    status: "archived",
   });
   data.applicationPrograms = applicationPrograms;
-  data.totalCount = meta?.total_count;
+  data.totalCount = meta?.filter_count;
   loading.value = false;
 };
 const changePage = (val) => {

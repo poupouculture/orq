@@ -101,10 +101,11 @@ import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
 import { IChat, SocketMessage } from "src/types/MessagingTypes";
-import { startNewChat } from "src/api/messaging";
+import { closeBot, startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import { searchCustomers } from "src/api/customers";
+import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
 const ChatToggleLabel = {
@@ -140,7 +141,7 @@ const Tabs = reactive([
 ]);
 type ChatToggleType = {
   // eslint-disable-next-line prettier/prettier
-  state: typeof ChatToggleLabel[keyof typeof ChatToggleLabel];
+  state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
 };
 const seachText = ref("");
 const userInfoStore = useUserInfoStore();
@@ -260,16 +261,28 @@ const initSocket = () => {
         focusConfirm: false,
         confirmButtonText: "Load Customer",
       });
-
+      const chat = chatsList.value.find(
+        (chat) => chat.id === document.session_id
+      );
       if (isConfirmed) {
-        const chat = (await onSearchCustomers(
+        const customer = (await onSearchCustomers(
           document?.summary?.customer_code,
           document?.summary?.location_code
         )) as any;
-        if (chat?.id) {
-          await customerStore.fetchCustomer(chat.id);
+        if (customer?.id && chat) {
+          messagingStore.onSelectChat(chat?.id);
+          await customerStore.fetchCustomer(customer.id);
           rightDrawerOpen.value = true;
         }
+      } else {
+        await closeBot(chat?.id);
+        Notify.create({
+          message: "The chatbot has been ended",
+          color: "blue-9",
+          position: "top",
+          type: "positive",
+        });
+        messagingStore.changeModeChatListById(chat?.id, "");
       }
     });
   } catch (error) {

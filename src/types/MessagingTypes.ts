@@ -11,6 +11,7 @@ export const enum MessageType {
   AUDIO = "audio",
   MEDIA = "media",
   DOCUMENT = "document",
+  APPLICATION = "application",
 }
 
 export const enum MessageStatus {
@@ -73,6 +74,7 @@ export interface IChat {
   expiration_timestamp: number;
   customer_company_name_en: string | null;
   mode?: string;
+  caption?: string;
 }
 
 export interface CachedChatMessages {

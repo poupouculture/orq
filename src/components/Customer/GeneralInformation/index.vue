@@ -17,7 +17,8 @@ import { api } from "src/boot/axios";
 import type { Tag as ITag } from "src/types/TagTypes";
 import type { ICustomerGroup } from "src/types/CustomerGroupTypes";
 import type { Company as ICompany } from "src/types/CompanyTypes";
-// import { date } from "quasar";
+import { IState } from "src/types/CustomerTypes";
+import { QForm } from "quasar";
 
 interface Option {
   value: string | number;
@@ -69,35 +70,40 @@ const genderOptions: Gender[] = [
   { value: "f", label: "Female" },
 ];
 
-const firstName = ref("");
-const lastName = ref("");
-const idNumber = ref("");
-const customerCode = ref("");
+const firstName: Ref<string | undefined> = ref("");
+const lastName: Ref<string | undefined> = ref("");
+const idNumber: Ref<string | undefined> = ref("");
+const customerCode: Ref<string | undefined> = ref("");
 const gender: Ref<Gender | undefined> = ref(undefined);
-// const dateOfBirth = ref("");
 const position: Ref<Position | undefined> = ref(undefined);
 const companies: Ref<Option[]> = ref([]);
 const customerGroups: Ref<Option[]> = ref([]);
 const tags: Ref<Option[]> = ref([]);
-const isActive = ref(false);
-const locationCode = ref("");
-const tel = ref("");
-const deliveryLocationAddress = ref("");
-const customerCompanyNameEn = ref("");
-const customerCompanyNameZht = ref("");
-const delylocNo = ref("");
-const divNo = ref("");
-const delylocNameE = ref("");
-const delylocNameC = ref("");
-const delylocAdd1E = ref("");
-const delylocAdd2E = ref("");
-const delylocAdd3E = ref("");
-const delylocAdd1C = ref("");
-const delylocAdd2C = ref("");
-const delylocAdd3C = ref("");
-const companyCd = ref("");
-const salesmanCd = ref("");
-const lastModifyDate = ref("");
+const isActive: Ref<IState["customer"]["is_active"]> = ref(false);
+const locationCode: Ref<IState["customer"]["location_code"]> = ref(null);
+const tel: Ref<IState["customer"]["tel"] | undefined> = ref("");
+const deliveryLocationAddress: Ref<
+  IState["customer"]["delivery_location_address"]
+> = ref("");
+const customerCompanyNameEn: Ref<
+  IState["customer"]["customer_company_name_en"]
+> = ref("");
+const customerCompanyNameZht: Ref<
+  IState["customer"]["customer_company_name_zht"]
+> = ref("");
+const delylocNo: Ref<IState["customer"]["delyloc_no"]> = ref("");
+const divNo: Ref<IState["customer"]["div_no"]> = ref("");
+const delylocNameE: Ref<IState["customer"]["delyloc_add1_e"]> = ref("");
+const delylocNameC: Ref<IState["customer"]["delyloc_name_c"]> = ref("");
+const delylocAdd1E: Ref<IState["customer"]["delyloc_add1_e"]> = ref("");
+const delylocAdd2E: Ref<IState["customer"]["delyloc_add2_e"]> = ref("");
+const delylocAdd3E: Ref<IState["customer"]["delyloc_add3_c"]> = ref("");
+const delylocAdd1C: Ref<IState["customer"]["delyloc_add1_c"]> = ref("");
+const delylocAdd2C: Ref<IState["customer"]["delyloc_add2_c"]> = ref("");
+const delylocAdd3C: Ref<IState["customer"]["delyloc_add3_c"]> = ref("");
+const companyCd: Ref<IState["customer"]["company_cd"] | undefined> = ref("");
+const salesmanCd: Ref<IState["customer"]["salesman_cd"]> = ref("");
+const lastModifyDate: Ref<IState["customer"]["last_modify_date"]> = ref("");
 
 const options: { [key: string]: any[] } = reactive({
   tags: [] as ITagOptions[],
@@ -107,8 +113,8 @@ const options: { [key: string]: any[] } = reactive({
 
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
-const customerForm = ref(null);
-const { getCustomer } = storeToRefs(customerStore);
+const customerForm: Ref<QForm | undefined> = ref();
+const { getCustomer, resetForm } = storeToRefs(customerStore);
 
 onMounted(async () => {
   const customer = customerStore.getCustomer;
@@ -204,6 +210,14 @@ watch(getContactNumber, (val: string) => {
   idNumber.value = val;
 });
 
+watch(resetForm, (value) => {
+  if (value) {
+    onReset();
+  }
+
+  resetForm.value = false;
+});
+
 const filter = (val: string) => {
   console.log(val);
 };
@@ -232,6 +246,37 @@ const updateMultiOptions = async (val: {
   });
 };
 
+const onReset = () => {
+  firstName.value = "";
+  lastName.value = "";
+  idNumber.value = "";
+  customerCode.value = "";
+  gender.value = undefined;
+  position.value = undefined;
+  companies.value = [];
+  customerGroups.value = [];
+  tags.value = [];
+  isActive.value = false;
+  locationCode.value = null;
+  tel.value = "";
+  deliveryLocationAddress.value = "";
+  customerCompanyNameEn.value = "";
+  customerCompanyNameZht.value = "";
+  delylocNo.value = "";
+  divNo.value = "";
+  delylocNameE.value = "";
+  delylocNameC.value = "";
+  delylocAdd1E.value = "";
+  delylocAdd2E.value = "";
+  delylocAdd3E.value = "";
+  delylocAdd1C.value = "";
+  delylocAdd2C.value = "";
+  delylocAdd3C.value = "";
+  companyCd.value = "";
+  salesmanCd.value = "";
+  lastModifyDate.value = "";
+};
+
 const onSubmit = async () => {
   try {
     if (!customerForm.value) {
@@ -256,10 +301,10 @@ const onSubmit = async () => {
       tags: transformTagPayload(getCustomer.value, tags.value),
       location_code: locationCode.value,
       tel: tel.value,
-      // delivery_location_address: deliveryLocationAddress.value,
+
       customer_company_name_en: customerCompanyNameEn.value,
       customer_company_name_zht: customerCompanyNameZht.value,
-      // delyloc_no: delylocNo.value,
+
       div_no: divNo.value,
       delyloc_name_e: delylocNameE.value,
       delyloc_name_c: delylocNameC.value,
@@ -281,13 +326,8 @@ const onSubmit = async () => {
 
 const discardChanges = () => {
   returnDialog.value = false;
-  // router.go(-1);
   emit("discard");
 };
-
-// const optionDateFn = (qdate: string) => {
-//   return qdate <= date.formatDate(Date.now(), "YYYY/MM/DD");
-// };
 
 const mappingCompanies = () => {
   return getCustomer.value.companies
@@ -391,18 +431,6 @@ const mappingCustomerGroups = () => {
           </div>
         </div>
         <div class="row q-mb-xs q-gutter-xl">
-          <!-- <div class="col">
-            <p class="label-style">Contact Number</p>
-            <q-input
-              v-model="idNumber"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div> -->
           <div class="col">
             <p class="label-style">Customer Code</p>
             <q-input
@@ -425,31 +453,6 @@ const mappingCustomerGroups = () => {
               :mode="mode"
               @filter="filter"
               @update:multi-options="updateMultiOptions"
-            />
-          </div>
-        </div>
-        <div class="row q-mb-xs q-gutter-xl">
-          <div class="col">
-            <p class="label-style">First Name</p>
-            <q-input
-              v-model="firstName"
-              class="indi"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
-            />
-          </div>
-          <div class="col">
-            <p class="label-style">Last Name</p>
-            <q-input
-              v-model="lastName"
-              class="indi"
-              outlined
-              lazy-rules
-              :disable="mode == 'show'"
-              dense
             />
           </div>
         </div>

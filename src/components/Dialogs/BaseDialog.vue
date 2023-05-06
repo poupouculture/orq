@@ -60,7 +60,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["delete", "cancel", "submit"]);
+const emit = defineEmits(["cancel", "submit"]);
 
 const cancel = () => {
   emit("cancel");
