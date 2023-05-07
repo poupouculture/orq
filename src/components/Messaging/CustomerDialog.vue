@@ -105,6 +105,14 @@ const headerColumns = [
     classes: "text-black",
   },
   {
+    name: "contact_number",
+    align: "left",
+    label: "Contact Number",
+    field: "contact_number",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
     name: "customerCode",
     align: "left",
     label: "Customer Code",
