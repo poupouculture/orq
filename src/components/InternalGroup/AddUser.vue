@@ -12,10 +12,6 @@
     <template #body-cell-name="props">
       <q-td :props="props" :class="{ 'cursor-pointer': props.isSimple }">
         <div class="flex items-center flex-nowrap">
-          <img
-            :src="props.row.avatar || 'src/assets/images/profileavatar.png'"
-            class="w-10 h-10 rounded-full mr-3"
-          />
           <div class="flex flex-col">
             <p>{{ props.row.first_name }} {{ props.row.last_name }}</p>
           </div>
