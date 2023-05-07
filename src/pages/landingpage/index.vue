@@ -50,7 +50,7 @@ import Section6 from "./section6.vue";
           Copyright {{ new Date().getFullYear() }} Synque.io
         </span>
 
-        <div class="flex text-[#4B44F6] justify-center gap-5">
+        <div class="flex text-[#4B44F6] sm:order-3 justify-center gap-5">
           <div class="rounded-full flex items-center p-1 bg-white">
             <q-icon size="20px" name="fa-brands fa-facebook-f" />
           </div>
