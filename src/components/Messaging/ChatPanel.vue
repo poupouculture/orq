@@ -238,7 +238,12 @@ const initSocket = () => {
     socket.value.on("message_created", async (data: SocketMessage) => {
       console.log("message_created", data);
       const { document } = data;
-      messagingStore.setChatsLastMessage(document.chat_id as string, document);
+      if (document) {
+        messagingStore.setChatsLastMessage(
+          document.chat_id as string,
+          document
+        );
+      }
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
