@@ -12,9 +12,9 @@ const chatFeatures = ref([
 <template>
   <div class="mt-36">
     <div class="flex mt-20 flex-col">
-      <div class="grid w-full sm:pl-5 grid-cols-1 lg:grid-cols-2">
+      <div class="grid w-full md:pl-5 grid-cols-1 lg:grid-cols-2">
         <div
-          class="flex flex-col gap-5 sm:pl-20 py-7 sm:border-l-8 sm:border-[#4B44F6]"
+          class="flex flex-col gap-5 md:pl-20 py-7 md:border-l-8 md:border-[#4B44F6]"
         >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
             PAYMENT-LINK

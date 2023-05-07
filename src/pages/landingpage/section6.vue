@@ -16,13 +16,13 @@ const clients = ref([angliss, fitmax, tasteofasia]);
       </span>
 
       <p
-        class="text-black text-[40px] font-black w-full sm:w-[602px] leading-[57px]"
+        class="text-black text-[40px] font-black w-full md:w-[602px] leading-[57px]"
       >
         Selected Clients
       </p>
     </div>
 
-    <div class="grid grid-cols-1 mt-10 sm:grid-cols-3 gap-16">
+    <div class="grid grid-cols-1 mt-10 md:grid-cols-3 gap-16">
       <div
         v-for="(client, index) in clients"
         :key="index"

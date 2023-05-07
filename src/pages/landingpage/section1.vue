@@ -9,7 +9,7 @@ import VectorLiquid from "src/assets/images/vectorLiquid.png";
 
     <div class="flex pl-5 flex-col items-start">
       <p
-        class="text-black text-4xl sm:text-[40px] font-black sm:w-[602px] leading-[50px] lg:leading-[57px]"
+        class="text-black text-4xl md:text-[40px] font-black md:w-[602px] leading-[50px] lg:leading-[57px]"
       >
         Dashboard, for all business transactions
       </p>

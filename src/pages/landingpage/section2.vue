@@ -32,7 +32,7 @@ const weDo = ref([
       </span>
 
       <p
-        class="text-black text-4xl sm:text-[40px] font-black sm:w-[602px] leading-[57px]"
+        class="text-black text-4xl md:text-[40px] font-black md:w-[602px] leading-[57px]"
       >
         What Makes Us UniQue
       </p>
@@ -43,7 +43,7 @@ const weDo = ref([
         <div
           v-for="(data, index) in weDo"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-full sm:w-[380px] py-10 gap-10 items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[380px] py-10 gap-10 items-center flex-col"
         >
           <span
             class="font-semibold mt-10 bg-[#4B44F6] text-white text-[40px] rounded-full w-20 h-20 ring-[20px] ring-[#4B44F680] flex justify-center items-center"
