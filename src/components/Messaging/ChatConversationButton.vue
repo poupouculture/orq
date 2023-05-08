@@ -17,30 +17,47 @@
         fit
       >
         <q-list separator>
-          <q-item
-            v-for="(user, index) in users"
-            :key="index"
-            clickable
-            v-close-popup
-            @click="assignUser(user)"
-          >
-            <q-item-section>
-              <div class="row items-center">
-                <q-avatar size="md">
-                  <img src="../../assets/images/profileavatar.png" />
-                </q-avatar>
-                <div class="q-ml-md">
-                  <div class="text-weight-bold">
-                    {{ user.first_name }} {{ user.last_name }}
-                  </div>
-                  <div class="text-weight-light">
-                    {{ user.role_name }}
+          <q-item-section class="px-4 pt-3">
+            <q-input
+              v-model="query"
+              :rules="[(val) => required(val)]"
+              outlined
+              :debounce="400"
+              @update:model-value="searchUser"
+              lazy-rules
+              dense
+              placeholder="Search user ..."
+            />
+          </q-item-section>
+          <q-item v-if="!users.length">
+            <q-item-section>No user found.</q-item-section>
+          </q-item>
+          <template v-else>
+            <q-item
+              v-for="(user, index) in users"
+              :key="index"
+              clickable
+              v-close-popup
+              @click="assignUser(user)"
+            >
+              <q-item-section>
+                <div class="row items-center">
+                  <q-avatar size="md">
+                    <img src="../../assets/images/profileavatar.png" />
+                  </q-avatar>
+                  <div class="q-ml-md">
+                    <div class="text-weight-bold">
+                      {{ user.first_name }} {{ user.last_name }}
+                    </div>
+                    <div class="text-weight-light">
+                      {{ user.role_name }}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </q-item-section>
-            <q-separator />
-          </q-item>
+              </q-item-section>
+              <q-separator />
+            </q-item>
+          </template>
         </q-list>
       </q-menu>
     </q-btn>
@@ -65,6 +82,7 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
+import { required } from "src/utils/validation-rules";
 
 const enum Role {
   CS = "CS",
@@ -81,13 +99,22 @@ interface User {
 const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
 
+const query: Ref<string> = ref("");
 const userRole: Ref<string> = ref("");
+const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const { getSelectedChat } = storeToRefs(messagingStore);
 
+const searchUser = () => {
+  users.value = usersData.value.filter((obj) => {
+    const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+    return name.some((val) => val.includes(query.value));
+  });
+};
 onMounted(async () => {
   const { data } = await getChatUsers();
   users.value = data;
+  usersData.value = data;
 
   userRole.value = userInfo.getUserRoleName;
 });
