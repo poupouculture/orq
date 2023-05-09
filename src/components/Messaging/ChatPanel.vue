@@ -104,7 +104,7 @@ import { IChat, SocketMessage } from "src/types/MessagingTypes";
 import { closeBot, startNewChat } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-import { searchCustomers } from "src/api/customers";
+import { searchCustomers, getCustomer } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
@@ -192,14 +192,17 @@ const fetchCustomers = async () => {
     chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon;
 };
 
-const chooseCustomer = async (user: any) => {
+const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
-  const [data] = await startNewChat(user.id);
+  const [data] = await startNewChat(customer.id);
+
+  const response = await getCustomer(customer.id);
+  const customerObj = response.data.data;
+  customerStore.setCustomer(customer);
+
+  data.customer_company_name_en = customerObj.customer_company_name_en;
   messagingStore.updateChatsList(data);
   messagingStore.onSelectChat(data.id);
-  if (data.customers_id) {
-    customerStore.fetchCustomer(data.customers_id);
-  }
 };
 
 const onSearchCustomers = async (
@@ -235,7 +238,12 @@ const initSocket = () => {
     socket.value.on("message_created", async (data: SocketMessage) => {
       console.log("message_created", data);
       const { document } = data;
-      messagingStore.setChatsLastMessage(document.chat_id as string, document);
+      if (document) {
+        messagingStore.setChatsLastMessage(
+          document.chat_id as string,
+          document
+        );
+      }
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);

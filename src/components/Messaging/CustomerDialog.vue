@@ -5,13 +5,13 @@
       class="q-pa-lg flex flex-col"
     >
       <q-card-section>
-        <p class="text-lg mb-2">Customers</p>
+        <p class="text-lg mb-2">Profile</p>
         <div class="row justify-between">
           <q-input
             v-model="search"
             @change="handleSearch"
             @keypress.enter.prevent="handleSearch"
-            placeholder="Search Customer..."
+            placeholder="Search Profile..."
             outlined
             dense
           >
@@ -91,7 +91,7 @@ const headerColumns = [
   {
     name: "customer_company_name_en",
     align: "left",
-    label: "Customer Name(English)",
+    label: "Profile Name(English)",
     field: "customer_company_name_en",
     sortable: true,
     classes: "text-black",
@@ -105,9 +105,17 @@ const headerColumns = [
     classes: "text-black",
   },
   {
+    name: "contact_number",
+    align: "left",
+    label: "Contact Number",
+    field: "contact_number",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
     name: "customerCode",
     align: "left",
-    label: "Customer Code",
+    label: "Profile Code",
     field: "customerCode",
     sortable: true,
     classes: "text-black",
