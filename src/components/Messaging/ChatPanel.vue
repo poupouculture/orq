@@ -248,6 +248,7 @@ const initSocket = () => {
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
       chatsList.value.unshift({ members: "[]", ...data });
+      socket.value.emit("join_chat", data.id);
     });
     socket.value.on("botsession_created", async (data: any) => {
       console.log("botsession_created", data);
