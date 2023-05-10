@@ -14,12 +14,12 @@
     <div v-if="!content?.type || content?.type === MessageType.TEXT">
       <div v-if="message?.waba_associated_message_id != null">
         <div class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words" :class="[
-          isChatFromAdmin
+          isSend
             ? 'bg-[#635eeb]'
             : 'bg-[#ffffff]',
         ]">
           <div :class="[
-            isChatFromAdmin
+            isSend
               ? 'text-[#f4f4f4]'
               : 'text-blue-400',
           ]">
@@ -43,13 +43,13 @@ import MessageDocument from "./MessageDocument.vue";
 interface Props {
   content: any;
   message: any;
-  isChatFromAdmin: boolean;
+  isSend: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
   message: () => ({}),
-  isChatFromAdmin: () => (false),
+  isSend: () => (false),
 });
 
 const component = ref("");
