@@ -16,7 +16,7 @@
             :debounce="600"
             class="border-gray-400"
             v-model="search.query"
-            @update:model-value="searchHandler()"
+            @keyup.enter="searchHandler()"
           >
             <template v-slot:prepend>
               <q-icon name="search" class="text-gray-400" />

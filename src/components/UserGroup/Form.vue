@@ -467,12 +467,6 @@ const fetchCustomers = async () => {
     page: pagination.page,
     customers: selectedCustomer.value,
     search: customerQuery.value.length ? customerQuery.value : undefined,
-    filter: customerQuery.value?.length
-      ? {
-          key: "filter[first_name][_neq]",
-          value: "null",
-        }
-      : undefined,
   };
   if (props.id) {
     const {
