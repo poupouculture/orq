@@ -41,6 +41,7 @@ const useCustomerStore = defineStore("customer", {
     } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
+    isCustomerExist: (state) => !!state.customer?.id,
   },
   actions: {
     async deleteCustomer(id: [string]) {
@@ -176,11 +177,9 @@ const useCustomerStore = defineStore("customer", {
         Loading.hide();
       }
     },
-    async addContact(customerId: string, payload: unknown) {
+    async addContact(customerId: string, contactId: string) {
       const result = await addCustomerContactAlong({
-        contacts: {
-          create: payload,
-        },
+        contacts_id: contactId,
         customers_id: customerId,
       });
       return result;
