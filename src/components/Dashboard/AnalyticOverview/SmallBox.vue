@@ -1,4 +1,5 @@
 <script setup>
+import { numberFormat } from "src/utils/number-format";
 const prop = defineProps({
   title: {
     type: String,
@@ -9,6 +10,10 @@ const prop = defineProps({
     default: () => "",
   },
   value: {
+    type: Number,
+    default: () => "",
+  },
+  percentage: {
     type: String,
     default: () => "",
   },
@@ -19,10 +24,10 @@ const prop = defineProps({
   <div class="flex p-4 rounded-lg border border-primary">
     <div class="w-1/2 md:w-3/4 flex flex-col gap-2">
       <span class="text-sm" :class="prop.titleColor">{{ prop.title }}</span>
-      <span class="text-3xl font-semibold">{{ prop.value }}</span>
+      <span class="text-3xl font-semibold">{{ numberFormat(prop.value) }}</span>
       <div class="w-full flex text-sm" v-if="prop.title === 'Total Customers'">
         <img src="~/assets/images/stonk-icon.svg" />
-        <span class="text-green-600 mr-1"> +10% </span>
+        <span class="text-green-600 mr-1"> {{ prop.percentage }} </span>
         <span> Since last month </span>
       </div>
     </div>
