@@ -45,7 +45,7 @@ import useInternalGroupStore from "src/stores/modules/internalGroup";
 import { Loading } from "quasar";
 import AddUserOverlay from "./AddUser.vue";
 
-const emits = defineEmits(["addUser"]);
+const emits = defineEmits(["addUser", "deleteGroup"]);
 const props = defineProps({
   id: [String, Number],
 });
@@ -111,6 +111,7 @@ const submitAddUser = async (val) => {
 
 const submitDelete = async () => {
   await internalGroupStore.delete(props.id);
+  emits("deleteGroup");
 };
 const changePage = (val) => {
   pagination.page = val;
