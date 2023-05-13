@@ -46,7 +46,7 @@
         color="primary"
         @click="closeReply"
       />
-      <MessageComponents ref="image" :content="message.content" />
+      <MessageComponents ref="image" :content="message.content" :message="message" :isChatFromAdmin="isSend"/>
       <div
         v-if="!isReply"
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"
