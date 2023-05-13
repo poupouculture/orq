@@ -14,7 +14,17 @@
           color="primary"
           label="Disassociate"
           class="q-mr-sm"
-          @click="router.push('/contact/create')"
+          :disabled="selected.length < 1 || isExistCustomerRelation"
+          @click="deleteDialog = true"
+        />
+        <q-btn
+          icon="add"
+          no-caps
+          rounded
+          color="primary"
+          label="Add"
+          class="q-mr-sm"
+          @click="addContactDialog = true"
         />
       </div>
     </div>
@@ -58,25 +68,31 @@
       </BaseTable>
     </div>
     <DeleteDialog
-      v-model="deleteCustomerDialog"
-      @cancel="deleteCustomerDialog = false"
+      v-model="deleteDialog"
+      @cancel="deleteDialog = false"
       @submitDelete="handleDelete()"
     />
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { getContacts } from "src/api/contact";
-import { useRouter } from "vue-router";
+import { ref, reactive, onMounted, computed } from "vue";
+import { getContacts, dissociateContacts } from "src/api/contact";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import useCustomerStore from "src/stores/modules/customer";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
-
-const router = useRouter();
-const customerStore = useCustomerStore();
+import { Notify } from "quasar";
 
 const headerColumns = [
+  {
+    name: "number",
+    align: "left",
+    label: "Number",
+    field: "number",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+
   {
     name: "name",
     align: "left",
@@ -91,15 +107,6 @@ const headerColumns = [
     align: "left",
     label: "Customer Code",
     field: "customer_code",
-    classes: "text-black",
-    style: "max-width: 10%",
-    sortable: true,
-  },
-  {
-    name: "number",
-    align: "left",
-    label: "Number",
-    field: "number",
     classes: "text-black",
     style: "max-width: 10%",
     sortable: true,
@@ -125,12 +132,17 @@ const headerColumns = [
 ];
 
 const loading = ref(true);
+const addContactDialog = ref(false);
 const selected = ref([]);
 
 const search = reactive({
   loading: false,
   query: "",
 });
+const isExistCustomerRelation = computed(() =>
+  selected.value.some((data) => !data.customers.length)
+);
+
 const searchHandler = async (searchValue = "") => {
   search.query = searchValue;
   search.loading = true;
@@ -146,12 +158,28 @@ const resetSearch = () => {
   searchHandler();
 };
 
-const deleteCustomerDialog = ref(false);
+const deleteDialog = ref(false);
 const handleDelete = async () => {
-  deleteCustomerDialog.value = false;
-  await customerStore.deleteCustomer(selected.value.map((item) => item.id));
-  selected.value = [];
-  await fetchContacts();
+  deleteDialog.value = false;
+  try {
+    const payload = selected.value
+      .filter((data) => data.customers.length)
+      .map((data) => ({
+        customer_id: data.customers[0].customers_id.id,
+        contact_id: data.id,
+      }));
+    await dissociateContacts(payload);
+    Notify.create({
+      message: "Successful to disassociate contact",
+      position: "top",
+      color: "primary",
+      type: "positive",
+    });
+    selected.value = [];
+    await fetchContacts();
+  } catch (error) {
+    console.log(error);
+  }
 };
 const data = reactive({
   contacts: [],

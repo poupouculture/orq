@@ -41,3 +41,11 @@ export const dissociateContactApi = async (payload) => {
 
   return results;
 };
+export const dissociateContacts = async (payload) => {
+  const results = await api.post(
+    "/chat/contact/dissociate/delete_multiple",
+    payload
+  );
+
+  return results;
+};
