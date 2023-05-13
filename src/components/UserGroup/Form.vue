@@ -186,7 +186,7 @@
       }
     "
     @changePage="(val) => changePage(val, 'customer')"
-    :pagination="pagination"
+    :pagination="paginationCustomer"
     @search="searchCustomerHandler"
     v-if="openAddCustomer"
   />
@@ -201,7 +201,7 @@
     :data="userGroupData"
     @changePage="(val) => changePage(val, 'usergroup')"
     @search="searchUserGroupHandler"
-    :pagination="pagination"
+    :pagination="paginationUserGroup"
     v-if="openAddUserGroup"
   />
   <ReturnDialog
@@ -341,9 +341,13 @@ const searchUserGroupHandler = async (value) => {
   } catch (error) {}
 };
 const changePage = (val, type) => {
-  pagination.page = val;
-  if (type === "customer") fetchCustomers();
-  else fetchUserGroups();
+  if (type === "customer") {
+    paginationCustomer.page = val;
+    fetchCustomers();
+  } else {
+    paginationUserGroup.page = val;
+    fetchUserGroups();
+  }
 };
 const formCreate = ref();
 // Submitted Form
@@ -436,8 +440,8 @@ const submitAddUserGroup = async (val) => {
 const fetchUserGroups = async () => {
   Loading.show();
   const params = {
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
+    limit: paginationUserGroup.rowsPerPage,
+    page: paginationUserGroup.page,
     userGroups: selectedUserGroup.value,
     search: userGroupQuery.value.length ? userGroupQuery.value : undefined,
   };
@@ -446,25 +450,21 @@ const fetchUserGroups = async () => {
       data: { data: userGroups, meta },
     } = await getAllUserGroupEdit(params);
     userGroupData.value = userGroups;
-    pagination.totalCount = userGroupQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationUserGroup.totalCount = meta?.filter_count;
   } else {
     const {
       data: { data: userGroups, meta },
     } = await getUserGroups(params);
     userGroupData.value = userGroups;
-    pagination.totalCount = userGroupQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationUserGroup.totalCount = meta?.filter_count;
   }
   Loading.hide();
 };
 const fetchCustomers = async () => {
   Loading.show();
   const params = {
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
+    limit: paginationCustomer.rowsPerPage,
+    page: paginationCustomer.page,
     customers: selectedCustomer.value,
     search: customerQuery.value.length ? customerQuery.value : undefined,
   };
@@ -473,17 +473,13 @@ const fetchCustomers = async () => {
       data: { data: customers, meta },
     } = await getAllCustomerEdit(params);
     customersData.value = customers;
-    pagination.totalCount = customerQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationCustomer.totalCount = meta?.filter_count;
   } else {
     const {
       data: { data: customers, meta },
     } = await getCustomers(params);
     customersData.value = customers;
-    pagination.totalCount = customerQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationCustomer.totalCount = meta?.filter_count;
   }
   Loading.hide();
 };
@@ -504,7 +500,14 @@ const userGroupCreate = () => {
     };
   });
 };
-const pagination = reactive({
+const paginationCustomer = reactive({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  totalCount: 0,
+});
+const paginationUserGroup = reactive({
   sortBy: "desc",
   descending: false,
   page: 1,
