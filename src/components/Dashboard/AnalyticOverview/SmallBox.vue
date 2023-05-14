@@ -11,7 +11,7 @@ const prop = defineProps({
   },
   value: {
     type: Number,
-    default: () => "",
+    default: () => 0,
   },
   percentage: {
     type: String,

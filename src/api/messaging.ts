@@ -25,8 +25,6 @@ export const getContactByChatId = async (id: string) => {
 
   const data = response.data.data;
 
-  console.log("contact: ", data);
-
   if (!data.contacts) return "";
 
   return data.contacts[0];
