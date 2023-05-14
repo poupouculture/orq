@@ -483,6 +483,7 @@ const sendMessage = async () => {
   if (!message.value.length) return;
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const tempId = Date.now();
+
   const newMessage = reactive({
     id: tempId,
     content: message.value,
@@ -492,7 +493,11 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
     waba_message_id: "",
+    waba_associated_message_id: replayMessage.value?.waba_message_id
   });
+  
+  console.log('newMessage', newMessage)
+  console.log('value', newMessage)
   cachedMessage.push(newMessage);
   const wabaMessageId =
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
