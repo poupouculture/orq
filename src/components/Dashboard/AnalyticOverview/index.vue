@@ -67,26 +67,26 @@ const totalUserStatuses = ref(0);
 const totalPaymentStatuses = ref(0);
 const totalChatStatuses = ref(0);
 
-const totalUserStatusesPercentage = ref('0');
+const totalUserStatusesPercentage = ref("0");
 
 const totalCurrentAmount = ref(0);
-const totalCurrentAmountColor = ref('#000000');
+const totalCurrentAmountColor = ref("#000000");
 
 const totalOverdue = ref(0);
-const totalOverdueColor = ref('#000000');
+const totalOverdueColor = ref("#000000");
 
 const totalDraft = ref(0);
-const totalDraftColor = ref('#000000');
+const totalDraftColor = ref("#000000");
 
 const totalCustomers = ref(0);
-const totalCustomersColor = ref('#000000');
-const totalCustomerPercentage = ref('0');
+const totalCustomersColor = ref("#000000");
+const totalCustomerPercentage = ref("0");
 
 onMounted(async () => {
   const response = await getDashboardAnalytics({
     limit: -1,
     page: 1,
-    search: '' 
+    search: "",
   });
 
   if (response) {
@@ -111,7 +111,9 @@ onMounted(async () => {
       totalChatStatuses.value = chatStatusList.metrics?.total;
     }
 
-    const totalCurrentAmountMetrics = tempData.find((x) => x.name === "Current amount");
+    const totalCurrentAmountMetrics = tempData.find(
+      (x) => x.name === "Current amount"
+    );
     if (totalCurrentAmountMetrics) {
       totalCurrentAmount.value = totalCurrentAmountMetrics.metrics?.total;
       totalCurrentAmountColor.value = totalCurrentAmountMetrics.metrics?.color;
@@ -129,7 +131,9 @@ onMounted(async () => {
       totalDraftColor.value = totalDraftMetrics.metrics?.color;
     }
 
-    const totalCustomerMetrics = tempData.find((x) => x.name === "Total customers");
+    const totalCustomerMetrics = tempData.find(
+      (x) => x.name === "Total customers"
+    );
     if (totalCustomerMetrics) {
       totalCustomers.value = totalCustomerMetrics.metrics?.total;
       totalCustomersColor.value = totalCustomerMetrics.metrics?.color;
@@ -137,7 +141,6 @@ onMounted(async () => {
     }
   }
 });
-
 </script>
 
 <template>
@@ -152,16 +155,45 @@ onMounted(async () => {
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-    <SmallBox title="Current" :title-color="totalCurrentAmountColor" :value="totalCurrentAmount" />
-    <SmallBox title="Overdue" :title-color="totalOverdueColor" :value="totalOverdue" />
-    <SmallBox title="Draft" :title-color="totalDraftColor" :value="totalDraft" />
-    <SmallBox title="Total Customers" :title-color="totalCustomersColor" :value="totalCustomers"
-      :percentage="totalCustomerPercentage" />
+    <SmallBox
+      title="Current"
+      :title-color="totalCurrentAmountColor"
+      :value="totalCurrentAmount"
+    />
+    <SmallBox
+      title="Overdue"
+      :title-color="totalOverdueColor"
+      :value="totalOverdue"
+    />
+    <SmallBox
+      title="Draft"
+      :title-color="totalDraftColor"
+      :value="totalDraft"
+    />
+    <SmallBox
+      title="Total Customers"
+      :title-color="totalCustomersColor"
+      :value="totalCustomers"
+      :percentage="totalCustomerPercentage"
+    />
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-4">
-    <BigBox title="Users" :value="totalUserStatuses" :data="userStatuses" :percentage="totalUserStatusesPercentage" />
-    <BigBox title="Payment Status" :value="totalPaymentStatuses" :data="paymentStatuses" />
-    <BigBox title="Chat Status" :value="totalChatStatuses" :data="chatStatuses" />
+    <BigBox
+      title="Users"
+      :value="totalUserStatuses"
+      :data="userStatuses"
+      :percentage="totalUserStatusesPercentage"
+    />
+    <BigBox
+      title="Payment Status"
+      :value="totalPaymentStatuses"
+      :data="paymentStatuses"
+    />
+    <BigBox
+      title="Chat Status"
+      :value="totalChatStatuses"
+      :data="chatStatuses"
+    />
   </div>
 </template>
