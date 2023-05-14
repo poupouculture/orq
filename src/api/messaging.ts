@@ -11,6 +11,25 @@ export const getChats = async (type?: ChatTypes) => {
   return data;
 };
 
+export const getContactByChatId = async (id: string) => {
+  const params = {
+    limit: 1,
+    page: 1,
+    fields: "id, contacts.*",
+    meta: "*",
+  };
+
+  const response = await api.get(`/items/chats/${id}`, {
+    params,
+  });
+
+  const data = response.data.data;
+
+  if (!data.contacts) return "";
+
+  return data.contacts[0];
+};
+
 export const getChatMessagesByChatId = async (
   id: string,
   page = 1,

@@ -6,22 +6,24 @@ import { onMounted, ref } from "vue";
 const customers = ref([]);
 const tags = ref([]);
 
-onMounted(async() => {
-  const response = await getDashboardAnalytics({ limit: -1, page: 1, search: '' });
+onMounted(async () => {
+  const response = await getDashboardAnalytics({
+    limit: -1,
+    page: 1,
+    search: "",
+  });
 
   if (response) {
     const tempData = response.data.data;
-    
+
     const customer = tempData?.find(
-      (x) => 
-        x.name === "Customer Group with most Customer count"
+      (x) => x.name === "Customer Group with most Customer count"
     );
 
     if (customer) customers.value = customer.metrics;
 
     const tag = tempData?.find(
-      (x) => 
-        x.name === "Top 5 Tags with most count of customers"
+      (x) => x.name === "Top 5 Tags with most count of customers"
     );
 
     if (tag) tags.value = tag.metrics;
@@ -43,7 +45,9 @@ onMounted(async() => {
               <img src="~/assets/images/angliss.svg" alt="" />
             </td>
             <td>{{ customer.name }}</td>
-            <td class="font-semibold">{{ numberFormat(customer.customer_count) }}</td>
+            <td class="font-semibold">
+              {{ numberFormat(customer.customer_count) }}
+            </td>
           </tr>
         </table>
       </div>
@@ -66,7 +70,9 @@ onMounted(async() => {
         <table class="table">
           <tr v-for="(tag, index) in tags" :key="index">
             <td>{{ tag.name }}</td>
-            <td class="font-semibold">{{ numberFormat(tag.customer_count) }}</td>
+            <td class="font-semibold">
+              {{ numberFormat(tag.customer_count) }}
+            </td>
           </tr>
         </table>
       </div>
