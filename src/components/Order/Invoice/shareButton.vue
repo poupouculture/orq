@@ -2,6 +2,8 @@
 import { reactive, ref, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import ThankYou from "src/components/Order/Invoice/thankYou.vue";
+import CustomerDialog from "src/components/Messaging/CustomerDialog.vue";
+
 
 interface Props {
   shareInvoice: {
@@ -124,6 +126,12 @@ const copyLink = () => {
 
 const onRowClick = (data: any) => console.log(data);
 
+const chooseCustomer = async (customer: any) => {
+  console.log(customer)
+  // const response = await getCustomer(customer.id);
+  // const customerObj = response.data.data;
+};
+
 onMounted(() => {
   const date = new Date();
 
@@ -184,7 +192,13 @@ onMounted(() => {
       </q-popup-proxy>
     </q-btn>
 
-    <q-dialog v-model="whatsappShare">
+    <CustomerDialog
+    v-model="whatsappShare"
+    @hide="whatsappShare = false"
+    @submit="chooseCustomer"
+  />
+
+    <!-- <q-dialog v-model="whatsappShare">
       <q-card class="w-[900px]">
         <q-card-section>
           <div class="text-h6">Customers</div>
@@ -243,7 +257,7 @@ onMounted(() => {
           </q-table>
         </q-card-section>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
 
     <q-dialog v-model="emailShare">
       <q-card class="w-[900px] h-[636px]">
