@@ -16,7 +16,7 @@
             :debounce="600"
             class="border-gray-400"
             v-model="search.query"
-            @update:model-value="searchHandler()"
+            @keyup.enter="searchHandler()"
           >
             <template v-slot:prepend>
               <q-icon name="search" class="text-gray-400" />
@@ -74,7 +74,7 @@
       </BaseTable>
       <div v-else class="text-center text-gray-700">
         <div class="text-lg">No data found</div>
-        <template v-if="isSearch">
+        <template v-if="search.query">
           <div class="text-gray-500 mb-2">
             Adjust or clear search filters to see results.
           </div>
@@ -118,7 +118,6 @@ const emits = defineEmits([
 ]);
 const data = computed(() => props.data);
 const pagination = computed(() => props.pagination);
-const isSearch = ref(false);
 const closeOverlay = ref(false);
 const selectedData = computed({
   get: () => props.modelValue,

@@ -1,3 +1,36 @@
+<script setup>
+import { getDashboardAnalytics } from "src/api/dashboard";
+import { numberFormat } from "src/utils/number-format";
+import { onMounted, ref } from "vue";
+
+const customers = ref([]);
+const tags = ref([]);
+
+onMounted(async () => {
+  const response = await getDashboardAnalytics({
+    limit: -1,
+    page: 1,
+    search: "",
+  });
+
+  if (response) {
+    const tempData = response.data.data;
+
+    const customer = tempData?.find(
+      (x) => x.name === "Customer Group with most Customer count"
+    );
+
+    if (customer) customers.value = customer.metrics;
+
+    const tag = tempData?.find(
+      (x) => x.name === "Top 5 Tags with most count of customers"
+    );
+
+    if (tag) tags.value = tag.metrics;
+  }
+});
+</script>
+
 <template>
   <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
     <div class="flex p-4 rounded-lg bg-white shadow-md">
@@ -7,40 +40,14 @@
           <span class="text-sm text-gray-400">Most customers</span>
         </div>
         <table class="table">
-          <tr>
+          <tr v-for="(customer, index) in customers" :key="index">
             <td>
               <img src="~/assets/images/angliss.svg" alt="" />
             </td>
-            <td>Customer Group 1</td>
-            <td class="font-semibold">4000</td>
-          </tr>
-          <tr>
-            <td>
-              <img src="~/assets/images/angliss.svg" alt="" />
+            <td>{{ customer.name }}</td>
+            <td class="font-semibold">
+              {{ numberFormat(customer.customer_count) }}
             </td>
-            <td>Customer Group 1</td>
-            <td class="font-semibold">3800</td>
-          </tr>
-          <tr>
-            <td>
-              <img src="~/assets/images/angliss.svg" alt="" />
-            </td>
-            <td>Customer Group 1</td>
-            <td class="font-semibold">3650</td>
-          </tr>
-          <tr>
-            <td>
-              <img src="~/assets/images/angliss.svg" alt="" />
-            </td>
-            <td>Customer Group 1</td>
-            <td class="font-semibold">3500</td>
-          </tr>
-          <tr>
-            <td>
-              <img src="~/assets/images/angliss.svg" alt="" />
-            </td>
-            <td>Customer Group 1</td>
-            <td class="font-semibold">3400</td>
           </tr>
         </table>
       </div>
@@ -61,25 +68,11 @@
         </div>
 
         <table class="table">
-          <tr>
-            <td>VIP</td>
-            <td class="font-semibold">1500</td>
-          </tr>
-          <tr>
-            <td>GOLD</td>
-            <td class="font-semibold">1400</td>
-          </tr>
-          <tr>
-            <td>SILVER</td>
-            <td class="font-semibold">1400</td>
-          </tr>
-          <tr>
-            <td>STANDARD</td>
-            <td class="font-semibold">1400</td>
-          </tr>
-          <tr>
-            <td>BRONZE</td>
-            <td class="font-semibold">1400</td>
+          <tr v-for="(tag, index) in tags" :key="index">
+            <td>{{ tag.name }}</td>
+            <td class="font-semibold">
+              {{ numberFormat(tag.customer_count) }}
+            </td>
           </tr>
         </table>
       </div>

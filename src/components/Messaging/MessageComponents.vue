@@ -1,11 +1,25 @@
 <template>
   <div class="message-item relative">
-    <component ref="component" :is="componentName" :src="content.url"
-      :name="isDocument(content) ? content.file_name : content.media_id" :caption="content.caption" />
-    <div v-if="messageTemplateHeader(content) !== null" class="flex justify-center">
-      <img :src="messageTemplateHeader(content).image" v-if="messageTemplateHeader(content).type === MessageType.IMAGE" />
+    <component
+      ref="component"
+      :is="componentName"
+      :src="content.url"
+      :name="isDocument(content) ? content.file_name : content.media_id"
+      :caption="content.caption"
+    />
+    <div
+      v-if="messageTemplateHeader(content) !== null"
+      class="flex justify-center"
+    >
+      <img
+        :src="messageTemplateHeader(content).image"
+        v-if="messageTemplateHeader(content).type === MessageType.IMAGE"
+      />
       <video loop autoPlay muted v-if="messageTemplateHeader(content).type">
-        <source :src="messageTemplateHeader(content).video?.link" type="video/mp4" />
+        <source
+          :src="messageTemplateHeader(content).video?.link"
+          type="video/mp4"
+        />
       </video>
     </div>
     <span v-if="content?.type === MessageType.TEMPLATE">
