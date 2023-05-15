@@ -3,6 +3,14 @@
     <q-btn
       outline
       color="primary"
+      label="Add User"
+      no-caps
+      :loading="addUserLoading"
+      @click="addUser()"
+    />
+    <q-btn
+      outline
+      color="primary"
       label="Reassign"
       icon-right="expand_more"
       no-caps
@@ -83,6 +91,7 @@ import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { required } from "src/utils/validation-rules";
+import { api } from "src/boot/axios";
 
 const enum Role {
   CS = "CS",
@@ -99,11 +108,13 @@ interface User {
 const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
 
+const addUserLoading: Ref<boolean> = ref(false);
 const query: Ref<string> = ref("");
 const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const { getSelectedChat } = storeToRefs(messagingStore);
+const { getUserProfile } = storeToRefs(userInfo);
 
 const searchUser = () => {
   users.value = usersData.value.filter((obj) => {
@@ -118,6 +129,27 @@ onMounted(async () => {
 
   userRole.value = userInfo.getUserRoleName;
 });
+
+const addUser = async () => {
+  addUserLoading.value = true;
+  try {
+    const { data } = await api.post("/waba/add-chat-member", {
+      user_id: getUserProfile.value?.id,
+      chat_id: getSelectedChat.value?.id,
+    });
+    if (data.status) {
+      Notify.create({
+        message: `Successful add user.`,
+        position: "top",
+        type: "positive",
+        color: "blue-9",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  addUserLoading.value = false;
+};
 
 const assignUser = async (user: User) => {
   const chatId = getSelectedChat.value.id;
