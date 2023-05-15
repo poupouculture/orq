@@ -32,7 +32,14 @@
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style mb-2">Source</p>
-            <q-select
+            <q-input
+              v-model="form.source"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              dense
+            />
+            <!-- <q-select
               dense
               outlined
               v-model="source"
@@ -42,7 +49,7 @@
               map-options
               emit-value
               label="Source"
-            />
+            /> -->
           </div>
           <div class="col">
             <BaseMultiOptions
@@ -254,21 +261,23 @@ const deletedCustomer = ref([]);
 const customersData = ref([]);
 const customerQuery = ref("");
 
-const source = ref("div_no");
-const sourceOptions = [
-  { label: "div_no", value: "div_no" },
-  { label: "salesman_code", value: "salesman_code" },
-];
+// const source = ref("div_no");
+// const sourceOptions = [
+//   { label: "div_no", value: "div_no" },
+//   { label: "salesman_code", value: "salesman_code" },
+// ];
 const form = reactive({
   name: "",
   status: "",
+  source: "",
   loading: false,
 });
 onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
     form.status = data.value.status;
-    source.value = data.value.source;
+    form.source = data.value.source;
+    // source.value = data.value.source;
     tags.value = data.value.tags.map((data) => ({
       label: data.tags_id.name,
       value: data.tags_id.id,
@@ -362,7 +371,7 @@ const submit = async () => {
         ...form,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         type: "group",
-        source: source.value,
+        // source: source.value,
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
@@ -401,7 +410,7 @@ const submit = async () => {
       await addCustomerGroup({
         ...form,
         type: "group",
-        source: source.value,
+        // source: source.value,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: userGroupCreate(),
