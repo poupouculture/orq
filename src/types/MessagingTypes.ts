@@ -56,6 +56,7 @@ export interface Message {
   isEmoticon?: boolean;
   waba_message_id?: string;
   waba_associated_message_id?: string;
+  associated_message_id? :string;
   chat_id?: string;
   mode?: string;
   channel?: string;
