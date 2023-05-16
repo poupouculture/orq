@@ -5,29 +5,29 @@
         <div
           class="w-full bg-gray-300 py-8 flex justify-center"
           v-if="
-            medias.includes(props.header.toUpperCase()) &&
+            medias.includes(props.header?.toUpperCase()) &&
             props.filePreview === null
           "
         >
           <img
             src="../../assets/images/image-active.svg"
             v-if="
-              props.media.toUpperCase() === 'IMAGE' ||
-              props.header.toUpperCase() === 'IMAGE'
+              props.media?.toUpperCase() === 'IMAGE' ||
+              props.header?.toUpperCase() === 'IMAGE'
             "
           />
           <img
             src="../../assets/images/video-active.svg"
             v-if="
-              props.media.toUpperCase() === 'VIDEO' ||
-              props.header.toUpperCase() === 'VIDEO'
+              props.media?.toUpperCase() === 'VIDEO' ||
+              props.header?.toUpperCase() === 'VIDEO'
             "
           />
           <img
             src="../../assets/images/document-active.svg"
             v-if="
-              props.media.toUpperCase() === 'DOCUMENT' ||
-              props.header.toUpperCase() === 'DOCUMENT'
+              props.media?.toUpperCase() === 'DOCUMENT' ||
+              props.header?.toUpperCase() === 'DOCUMENT'
             "
           />
         </div>
@@ -36,15 +36,15 @@
             id="video-preview"
             controls
             v-if="
-              props.media.toUpperCase() === 'VIDEO' ||
-              props.header.toUpperCase() === 'VIDEO'
+              props.media?.toUpperCase() === 'VIDEO' ||
+              props.header?.toUpperCase() === 'VIDEO'
             "
           />
           <img
             id="image-preview"
             v-if="
-              props.media.toUpperCase() === 'IMAGE' ||
-              props.header.toUpperCase() === 'IMAGE'
+              props.media?.toUpperCase() === 'IMAGE' ||
+              props.header?.toUpperCase() === 'IMAGE'
             "
           />
         </div>
@@ -141,14 +141,14 @@ onUpdated(() => {
   if (props.filePreview !== null) {
     let fileTag = null;
     if (
-      props.media.toUpperCase() === "VIDEO" ||
-      props.header.toUpperCase() === "VIDEO"
+      props.media?.toUpperCase() === "VIDEO" ||
+      props.header?.toUpperCase() === "VIDEO"
     ) {
       fileTag = document.getElementById("video-preview");
     }
     if (
-      props.media.toUpperCase() === "IMAGE" ||
-      props.header.toUpperCase() === "IMAGE"
+      props.media?.toUpperCase() === "IMAGE" ||
+      props.header?.toUpperCase() === "IMAGE"
     ) {
       fileTag = document.getElementById("image-preview");
     }
