@@ -248,6 +248,7 @@ const initSocket = () => {
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
       const contact = await getContactByChatId(data.id);
+      console.log("contact: ", data);
       data.contacts_id = contact.contacts_id;
       chatsList.value.unshift({ members: "[]", ...data });
       socket.value.emit("join_chat", data.id);

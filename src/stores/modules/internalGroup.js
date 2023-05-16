@@ -65,7 +65,6 @@ const useInternalGroupStore = defineStore("internalGroup", {
       Loading.show();
       try {
         await deleteInternalGroup(id);
-        this.items = this.items.filter((item) => item.id !== id);
         Loading.hide();
         Notify.create({
           message: "User Group successfully deleted!",
@@ -73,7 +72,6 @@ const useInternalGroupStore = defineStore("internalGroup", {
           color: "primary",
           position: "top",
         });
-        this.getAll(this.meta.rowsPerPage, this.meta.page);
       } catch (error) {
         Loading.hide();
         Notify.create({

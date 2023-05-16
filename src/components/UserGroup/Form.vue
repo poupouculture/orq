@@ -32,7 +32,14 @@
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
             <p class="label-style mb-2">Source</p>
-            <q-select
+            <q-input
+              v-model="form.source"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              dense
+            />
+            <!-- <q-select
               dense
               outlined
               v-model="source"
@@ -42,7 +49,7 @@
               map-options
               emit-value
               label="Source"
-            />
+            /> -->
           </div>
           <div class="col">
             <BaseMultiOptions
@@ -186,7 +193,7 @@
       }
     "
     @changePage="(val) => changePage(val, 'customer')"
-    :pagination="pagination"
+    :pagination="paginationCustomer"
     @search="searchCustomerHandler"
     v-if="openAddCustomer"
   />
@@ -201,7 +208,7 @@
     :data="userGroupData"
     @changePage="(val) => changePage(val, 'usergroup')"
     @search="searchUserGroupHandler"
-    :pagination="pagination"
+    :pagination="paginationUserGroup"
     v-if="openAddUserGroup"
   />
   <ReturnDialog
@@ -254,21 +261,23 @@ const deletedCustomer = ref([]);
 const customersData = ref([]);
 const customerQuery = ref("");
 
-const source = ref("div_no");
-const sourceOptions = [
-  { label: "div_no", value: "div_no" },
-  { label: "salesman_code", value: "salesman_code" },
-];
+// const source = ref("div_no");
+// const sourceOptions = [
+//   { label: "div_no", value: "div_no" },
+//   { label: "salesman_code", value: "salesman_code" },
+// ];
 const form = reactive({
   name: "",
   status: "",
+  source: "",
   loading: false,
 });
 onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
     form.status = data.value.status;
-    source.value = data.value.source;
+    form.source = data.value.source;
+    // source.value = data.value.source;
     tags.value = data.value.tags.map((data) => ({
       label: data.tags_id.name,
       value: data.tags_id.id,
@@ -341,9 +350,13 @@ const searchUserGroupHandler = async (value) => {
   } catch (error) {}
 };
 const changePage = (val, type) => {
-  pagination.page = val;
-  if (type === "customer") fetchCustomers();
-  else fetchUserGroups();
+  if (type === "customer") {
+    paginationCustomer.page = val;
+    fetchCustomers();
+  } else {
+    paginationUserGroup.page = val;
+    fetchUserGroups();
+  }
 };
 const formCreate = ref();
 // Submitted Form
@@ -358,7 +371,7 @@ const submit = async () => {
         ...form,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         type: "group",
-        source: source.value,
+        // source: source.value,
         user_groups: {
           create: addedUserGroup.value.map((userGroup) => ({
             customer_groups_id: props.id,
@@ -397,7 +410,7 @@ const submit = async () => {
       await addCustomerGroup({
         ...form,
         type: "group",
-        source: source.value,
+        // source: source.value,
         tags: transformTagPayload(data.value, tags.value, "customer_groups_id"),
         user_groups: {
           create: userGroupCreate(),
@@ -436,8 +449,8 @@ const submitAddUserGroup = async (val) => {
 const fetchUserGroups = async () => {
   Loading.show();
   const params = {
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
+    limit: paginationUserGroup.rowsPerPage,
+    page: paginationUserGroup.page,
     userGroups: selectedUserGroup.value,
     search: userGroupQuery.value.length ? userGroupQuery.value : undefined,
   };
@@ -446,25 +459,21 @@ const fetchUserGroups = async () => {
       data: { data: userGroups, meta },
     } = await getAllUserGroupEdit(params);
     userGroupData.value = userGroups;
-    pagination.totalCount = userGroupQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationUserGroup.totalCount = meta?.filter_count;
   } else {
     const {
       data: { data: userGroups, meta },
     } = await getUserGroups(params);
     userGroupData.value = userGroups;
-    pagination.totalCount = userGroupQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationUserGroup.totalCount = meta?.filter_count;
   }
   Loading.hide();
 };
 const fetchCustomers = async () => {
   Loading.show();
   const params = {
-    limit: pagination.rowsPerPage,
-    page: pagination.page,
+    limit: paginationCustomer.rowsPerPage,
+    page: paginationCustomer.page,
     customers: selectedCustomer.value,
     search: customerQuery.value.length ? customerQuery.value : undefined,
   };
@@ -473,17 +482,13 @@ const fetchCustomers = async () => {
       data: { data: customers, meta },
     } = await getAllCustomerEdit(params);
     customersData.value = customers;
-    pagination.totalCount = customerQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationCustomer.totalCount = meta?.filter_count;
   } else {
     const {
       data: { data: customers, meta },
     } = await getCustomers(params);
     customersData.value = customers;
-    pagination.totalCount = customerQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    paginationCustomer.totalCount = meta?.filter_count;
   }
   Loading.hide();
 };
@@ -504,7 +509,14 @@ const userGroupCreate = () => {
     };
   });
 };
-const pagination = reactive({
+const paginationCustomer = reactive({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  totalCount: 0,
+});
+const paginationUserGroup = reactive({
   sortBy: "desc",
   descending: false,
   page: 1,

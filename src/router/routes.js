@@ -168,6 +168,11 @@ const routes = [
         component: () => import("pages/Customers/create.vue"),
       },
       {
+        path: "contacts",
+        name: "contacts",
+        component: () => import("pages/Contacts/index.vue"),
+      },
+      {
         path: "dashboard",
         component: () => import("pages/Dashboard.vue"),
       },

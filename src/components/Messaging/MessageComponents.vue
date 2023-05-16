@@ -25,9 +25,25 @@
     <span v-if="content?.type === MessageType.TEMPLATE">
       {{ messageTemplate(content) }}
     </span>
-    <span v-if="!content?.type || content?.type === MessageType.TEXT">
+    <div v-if="!content?.type || content?.type === MessageType.TEXT">
+      <div v-if="message?.waba_associated_message_id != null">
+        <div class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words" :class="[
+          isSend
+            ? 'bg-[#635eeb]'
+            : 'bg-[#ffffff]',
+        ]">
+          <div :class="[
+            isSend
+              ? 'text-[#f4f4f4]'
+              : 'text-blue-400',
+          ]">
+            {{ message.user_name ?? message.contact_company_name }}
+          </div>
+          {{ message?.waba_associated_message_id }}
+        </div>
+      </div>
       {{ content?.text ?? content }}
-    </span>
+    </div>
   </div>
 </template>
 
@@ -40,10 +56,14 @@ import MessageDocument from "./MessageDocument.vue";
 
 interface Props {
   content: any;
+  message: any;
+  isSend: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
+  message: () => ({}),
+  isSend: () => (false),
 });
 
 const component = ref("");
