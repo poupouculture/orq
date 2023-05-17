@@ -22,7 +22,7 @@
     <div class="main-content">
       <BaseTable
         :rows="data.contacts"
-        :total-count="search.query ? data.filterCount : data.totalCount"
+        :total-count="data.filterCount"
         v-model:page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
