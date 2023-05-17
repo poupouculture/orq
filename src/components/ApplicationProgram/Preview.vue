@@ -55,18 +55,18 @@
           <button class="w-full bg-white py-2 mt-2 text-center text-gray-600">
             <q-icon
               name="fa fa-phone"
-              v-if="actions[0].type === at.CALL_PHONE"
+              v-if="actions[0]?.type === at.CALL_PHONE"
             ></q-icon>
             <q-icon name="fa fa-link" v-else></q-icon>
-            {{ actions[0].label }}
+            {{ actions[0]?.label }}
           </button>
           <button class="w-full bg-white py-2 mt-2 text-center text-gray-600">
             <q-icon
               name="fa fa-phone"
-              v-if="actions[1].type === at.CALL_PHONE"
+              v-if="actions[1]?.type === at.CALL_PHONE"
             ></q-icon>
             <q-icon name="fa fa-link" v-else></q-icon>
-            {{ actions[1].label }}
+            {{ actions[1]?.label }}
           </button>
         </div>
         <div v-if="props.actionCategory === 'Quick Reply'">
