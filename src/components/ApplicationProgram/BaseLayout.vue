@@ -659,7 +659,7 @@ const submitGeneralInformation = () => {
   };
 
   console.log({
-    name: name.value,
+    name: name.value.toLowerCase().replace(/\s+/g, ''),
     is_approved: false,
     category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
@@ -679,7 +679,7 @@ const submitGeneralInformation = () => {
   });
 
   emit("submitGeneralInformation", {
-    name: name.value,
+    name: name.value.toLowerCase().replace(/\s+/g, ''),
     is_approved: false,
     category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
