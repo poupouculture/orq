@@ -493,9 +493,10 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
     waba_message_id: "",
-    waba_associated_message_id: replayMessage.value?.waba_message_id || replayMessage.value?.message_id
+    waba_associated_message_id:
+      replayMessage.value?.waba_message_id || replayMessage.value?.message_id,
   });
-  
+
   cachedMessage.push(newMessage);
   const wabaMessageId =
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
