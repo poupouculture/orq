@@ -84,9 +84,11 @@ import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
+import useUserInfoStore from "src/stores/modules/userinfo";
+import useContactStore from "src/stores/modules/contact";
 import { getChatUsers, assignUser as assignUserHelper } from "src/api/user";
 import { closeChat } from "src/api/messaging";
-import useUserInfoStore from "src/stores/modules/userInfo";
+import useCustomerStore from "src/stores/modules/customer";
 import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
@@ -106,6 +108,8 @@ interface User {
 }
 
 const messagingStore = useMessagingStore();
+const customerStore = useCustomerStore();
+const contactStore = useContactStore();
 const userInfo = useUserInfoStore();
 
 const addUserLoading: Ref<boolean> = ref(false);
@@ -114,7 +118,8 @@ const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const { getSelectedChat } = storeToRefs(messagingStore);
-const { getUserProfile } = storeToRefs(userInfo);
+const { getCustomer } = storeToRefs(customerStore);
+const { getContacts } = storeToRefs(contactStore);
 
 const searchUser = () => {
   users.value = usersData.value.filter((obj) => {
@@ -133,9 +138,9 @@ onMounted(async () => {
 const addUser = async () => {
   addUserLoading.value = true;
   try {
-    const { data } = await api.post("/waba/add-chat-member", {
-      user_id: getUserProfile.value?.id,
-      chat_id: getSelectedChat.value?.id,
+    const { data } = await api.post("/chat/contact/associate", {
+      contact_id: getContacts.value?.id,
+      customer_id: getCustomer.value?.id,
     });
     if (data.status) {
       Notify.create({
