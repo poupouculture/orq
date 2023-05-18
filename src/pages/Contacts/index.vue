@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <p class="header-text">Contacts</p>
+    <p class="header-text">Contact - Customer</p>
     <div class="row justify-between gap-y-3">
       <SearchTableInput
         :loading="search.loading"
@@ -264,7 +264,24 @@ const headerColumns = [
     style: "max-width: 10%",
     sortable: true,
   },
-
+  {
+    name: "first_name",
+    align: "left",
+    label: "Firstname",
+    field: "first_name",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "last_name",
+    align: "left",
+    label: "Lastname",
+    field: "last_name",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
   {
     name: "name",
     align: "left",
