@@ -23,18 +23,18 @@ onMounted(async () => {
       (x) => x.name === "Customer Group with most Customer count"
     );
 
-    if(customer){
+    if (customer) {
       customers.value = customer.metrics;
-      isShowCustomerGroup.value = customer.status === 'published';
-    } 
+      isShowCustomerGroup.value = customer.status === "published";
+    }
 
     const tag = tempData?.find(
       (x) => x.name === "Top 5 Tags with most count of customers"
     );
 
-    if(tag){
+    if (tag) {
       tags.value = tag.metrics;
-      isShowTag.value = tag.status === 'published';
+      isShowTag.value = tag.status === "published";
     }
   }
 });
@@ -42,7 +42,10 @@ onMounted(async () => {
 
 <template>
   <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
-    <div class="flex p-4 rounded-lg bg-white shadow-md" v-if="isShowCustomerGroup">
+    <div
+      class="flex p-4 rounded-lg bg-white shadow-md"
+      v-if="isShowCustomerGroup"
+    >
       <div class="w-8/12 md:w-10/12 flex flex-col gap-2">
         <div class="w-full flex flex-col border-b">
           <span class="text-lg">Customer Groups</span>
@@ -64,7 +67,10 @@ onMounted(async () => {
         <img src="~/assets/images/rocket.svg" alt="" />
       </div>
     </div>
-    <div class="flex p-4 rounded-lg bg-primary text-white shadow-md" v-if="isShowTag">
+    <div
+      class="flex p-4 rounded-lg bg-primary text-white shadow-md"
+      v-if="isShowTag"
+    >
       <div class="w-full flex flex-col gap-2">
         <div class="w-full flex border-b">
           <div class="w-9/12 flex flex-col">
