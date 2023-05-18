@@ -137,7 +137,7 @@ import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
-import useUserInfoStore from "src/stores/modules/userinfo";
+import useUserInfoStore from "src/stores/modules/userInfo";
 import { getChatUsers, assignUser as assignUserAPI } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import { Dialog, Loading, Notify } from "quasar";
@@ -180,7 +180,7 @@ onMounted(async () => {
   userRole.value = userInfo.getUserRoleName;
 });
 
-const assignUser = async (user: User, addMember?: boolean = false) => {
+const assignUser = async (user: User, addMember: boolean = false) => {
   const chatId = getSelectedChat.value.id;
   const userId = user.user_id;
   try {
