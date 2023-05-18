@@ -84,7 +84,7 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
-    status: "archived",
+    status: "*",
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
@@ -95,17 +95,25 @@ const changePage = (val) => {
   fetchApplicationPrograms();
 };
 const archiveSelected = () => {
-  selected.value.forEach(async (data) => {
-    data.status = "archived";
-    await updateMessageTemplate(data.id, data);
-  });
-
-  Notify.create({
-    message: `Selected Template has been archived`,
-    position: "top",
-    type: "positive",
-    color: "blue-9",
-  });
+  if (selected.value.length > 0) {
+    selected.value.forEach(async (data) => {
+      data.status = "archived";
+      await updateMessageTemplate(data.id, data);
+    });
+    Notify.create({
+      message: `Selected Template has been archived`,
+      position: "top",
+      type: "positive",
+      color: "blue-9",
+    });
+  } else {
+    Notify.create({
+      message: `Warning: Message template not selected`,
+      position: "top",
+      type: "warning",
+      color: "red-1",
+    });
+  }
 
   selected.value = [];
 };

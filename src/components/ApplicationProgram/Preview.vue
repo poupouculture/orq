@@ -5,29 +5,29 @@
         <div
           class="w-full bg-gray-300 py-8 flex justify-center"
           v-if="
-            medias.includes(props.header.toUpperCase()) &&
+            medias.includes(props.header?.toUpperCase()) &&
             props.filePreview === null
           "
         >
           <img
             src="../../assets/images/image-active.svg"
             v-if="
-              props.media.toUpperCase() === 'IMAGE' ||
-              props.header.toUpperCase() === 'IMAGE'
+              props.media?.toUpperCase() === 'IMAGE' ||
+              props.header?.toUpperCase() === 'IMAGE'
             "
           />
           <img
             src="../../assets/images/video-active.svg"
             v-if="
-              props.media.toUpperCase() === 'VIDEO' ||
-              props.header.toUpperCase() === 'VIDEO'
+              props.media?.toUpperCase() === 'VIDEO' ||
+              props.header?.toUpperCase() === 'VIDEO'
             "
           />
           <img
             src="../../assets/images/document-active.svg"
             v-if="
-              props.media.toUpperCase() === 'DOCUMENT' ||
-              props.header.toUpperCase() === 'DOCUMENT'
+              props.media?.toUpperCase() === 'DOCUMENT' ||
+              props.header?.toUpperCase() === 'DOCUMENT'
             "
           />
         </div>
@@ -36,15 +36,15 @@
             id="video-preview"
             controls
             v-if="
-              props.media.toUpperCase() === 'VIDEO' ||
-              props.header.toUpperCase() === 'VIDEO'
+              props.media?.toUpperCase() === 'VIDEO' ||
+              props.header?.toUpperCase() === 'VIDEO'
             "
           />
           <img
             id="image-preview"
             v-if="
-              props.media.toUpperCase() === 'IMAGE' ||
-              props.header.toUpperCase() === 'IMAGE'
+              props.media?.toUpperCase() === 'IMAGE' ||
+              props.header?.toUpperCase() === 'IMAGE'
             "
           />
         </div>
@@ -55,18 +55,18 @@
           <button class="w-full bg-white py-2 mt-2 text-center text-gray-600">
             <q-icon
               name="fa fa-phone"
-              v-if="actions[0].type === at.CALL_PHONE"
+              v-if="actions[0]?.type === at.CALL_PHONE"
             ></q-icon>
             <q-icon name="fa fa-link" v-else></q-icon>
-            {{ actions[0].label }}
+            {{ actions[0]?.label }}
           </button>
           <button class="w-full bg-white py-2 mt-2 text-center text-gray-600">
             <q-icon
               name="fa fa-phone"
-              v-if="actions[1].type === at.CALL_PHONE"
+              v-if="actions[1]?.type === at.CALL_PHONE"
             ></q-icon>
             <q-icon name="fa fa-link" v-else></q-icon>
-            {{ actions[1].label }}
+            {{ actions[1]?.label }}
           </button>
         </div>
         <div v-if="props.actionCategory === 'Quick Reply'">
@@ -141,14 +141,14 @@ onUpdated(() => {
   if (props.filePreview !== null) {
     let fileTag = null;
     if (
-      props.media.toUpperCase() === "VIDEO" ||
-      props.header.toUpperCase() === "VIDEO"
+      props.media?.toUpperCase() === "VIDEO" ||
+      props.header?.toUpperCase() === "VIDEO"
     ) {
       fileTag = document.getElementById("video-preview");
     }
     if (
-      props.media.toUpperCase() === "IMAGE" ||
-      props.header.toUpperCase() === "IMAGE"
+      props.media?.toUpperCase() === "IMAGE" ||
+      props.header?.toUpperCase() === "IMAGE"
     ) {
       fileTag = document.getElementById("image-preview");
     }

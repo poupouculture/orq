@@ -4,7 +4,6 @@ import { useQuasar } from "quasar";
 import ThankYou from "src/components/Order/Invoice/thankYou.vue";
 import CustomerDialog from "src/components/Messaging/CustomerDialog.vue";
 
-
 interface Props {
   shareInvoice: {
     via: string;
@@ -16,7 +15,6 @@ interface Props {
 const whatsappShare = ref<boolean>(false);
 const emailShare = ref<boolean>(false);
 const props = defineProps<Props>();
-const filter = ref("");
 const sendTime = ref("customDate");
 const activeTab = ref("send");
 const customDate = ref("");
@@ -30,9 +28,9 @@ const shareInvoice = reactive({
   setDefault: props.shareInvoice.setDefault,
 });
 const timeZoneOptions = ["Pakistan Standard Time (GMT + 5)"];
-const bgImage = ref(
-  "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
-);
+// const bgImage = ref(
+//   "bg-[url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80')]"
+// );
 
 // tabs
 const tabs = ref([
@@ -46,52 +44,7 @@ const tabs = ref([
   },
 ]);
 
-// Table
-const columns = ref([
-  {
-    name: "name",
-    required: true,
-    label: "Name",
-    align: "left",
-    field: (row) => row.name,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "company",
-    align: "center",
-    label: "Company",
-    field: "company",
-    sortable: true,
-  },
-  {
-    name: "customerCode",
-    align: "center",
-    label: "Customer Code",
-    field: "customerCode",
-  },
-  { name: "action", align: "center", label: "Action", field: "action" },
-]);
-
 const emailsTabs = ref(["johnDoe@gmail.com"]);
-
-const rows = ref([
-  {
-    name: "Asim",
-    company: "Syn",
-    customerCode: 122339828,
-  },
-  {
-    name: "Asim q",
-    company: "Syn",
-    customerCode: 122339828,
-  },
-  {
-    name: "John q",
-    company: "Syn",
-    customerCode: 122339828,
-  },
-]);
 
 const optionsGroup = ref([
   {
@@ -124,10 +77,10 @@ const copyLink = () => {
   });
 };
 
-const onRowClick = (data: any) => console.log(data);
+// const onRowClick = (data: any) => console.log(data);
 
 const chooseCustomer = async (customer: any) => {
-  console.log(customer)
+  console.log(customer);
   // const response = await getCustomer(customer.id);
   // const customerObj = response.data.data;
 };
@@ -193,10 +146,10 @@ onMounted(() => {
     </q-btn>
 
     <CustomerDialog
-    v-model="whatsappShare"
-    @hide="whatsappShare = false"
-    @submit="chooseCustomer"
-  />
+      v-model="whatsappShare"
+      @hide="whatsappShare = false"
+      @submit="chooseCustomer"
+    />
 
     <!-- <q-dialog v-model="whatsappShare">
       <q-card class="w-[900px]">
