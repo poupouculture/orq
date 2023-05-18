@@ -19,6 +19,9 @@ const useContactStore = defineStore("useContact", {
   },
 
   actions: {
+    setCurrentCustomerId(customerID) {
+      this.currentCustomerId = customerID;
+    },
     async getContactById(chat) {
       console.log("chat:", chat);
       this.currentCustomerId = chat.customers_id;

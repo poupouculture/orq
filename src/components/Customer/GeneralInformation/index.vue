@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 import { required } from "src/utils/validation-rules";
 import useMessagingStore from "src/stores/modules/messaging";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
@@ -55,8 +56,10 @@ const props = defineProps({
 const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
+const contactStore = useContactStore();
 const getContactNumber = computed(() => messagingStore.getContactNumber);
 const { getSelectedChatId } = storeToRefs(messagingStore);
+const { getCurrentCustomerId, getContacts } = storeToRefs(contactStore);
 const positionOptions: Position[] = [
   { value: "purchase_manager", label: "Purchase Manager" },
   { value: "owner", label: "Owner" },
@@ -115,7 +118,6 @@ const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const customerForm: Ref<QForm | undefined> = ref();
 const { getCustomer, resetForm, isCustomerExist } = storeToRefs(customerStore);
-
 onMounted(async () => {
   const customer = customerStore.getCustomer;
 
@@ -349,8 +351,14 @@ const mappingCustomerGroups = () => {
       value: data.customer_groups_id.id,
     }));
 };
-const associateContact = () => {
-  customerStore.addContact(getCustomer.value.id, getCustomer.value.contacts);
+
+const associateContactLoading = ref(false);
+const associateContact = async () => {
+  associateContactLoading.value = true;
+  await customerStore.addContact(getCustomer.value.id, getContacts.value.id);
+  await messagingStore.fetchChats();
+  contactStore.setCurrentCustomerId(getCustomer.value.id);
+  associateContactLoading.value = false;
 };
 </script>
 <template>
@@ -366,12 +374,17 @@ const associateContact = () => {
       <div class="q-pa-sm">
         <div
           class="q-mb-lg flex"
-          :class="[isCustomerExist ? 'justify-between' : 'justify-end']"
+          :class="[
+            isCustomerExist && getCustomer?.id !== getCurrentCustomerId
+              ? 'justify-between'
+              : 'justify-end',
+          ]"
           v-if="getSelectedChatId"
         >
           <q-btn
             @click="associateContact"
-            v-if="isCustomerExist"
+            :loading="associateContactLoading"
+            v-if="isCustomerExist && getCustomer?.id !== getCurrentCustomerId"
             color="primary"
             label="ASSOCIATE"
             class="dark-btn"
