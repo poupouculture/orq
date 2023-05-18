@@ -114,7 +114,7 @@ const options: { [key: string]: any[] } = reactive({
 const deleteDialog = ref(false);
 const returnDialog = ref(false);
 const customerForm: Ref<QForm | undefined> = ref();
-const { getCustomer, resetForm } = storeToRefs(customerStore);
+const { getCustomer, resetForm, isCustomerExist } = storeToRefs(customerStore);
 
 onMounted(async () => {
   const customer = customerStore.getCustomer;
@@ -349,6 +349,9 @@ const mappingCustomerGroups = () => {
       value: data.customer_groups_id.id,
     }));
 };
+const associateContact = () => {
+  customerStore.addContact(getCustomer.value.id, getCustomer.value.contacts);
+};
 </script>
 <template>
   <div>
@@ -360,11 +363,19 @@ const mappingCustomerGroups = () => {
       spellcheck="false"
       @submit="onSubmit"
     >
-      <div class="q-pa-md">
+      <div class="q-pa-sm">
         <div
-          class="q-mb-lg ml-auto flex gap-3 justify-end"
+          class="q-mb-lg flex"
+          :class="[isCustomerExist ? 'justify-between' : 'justify-end']"
           v-if="getSelectedChatId"
         >
+          <q-btn
+            @click="associateContact"
+            v-if="isCustomerExist"
+            color="primary"
+            label="ASSOCIATE"
+            class="dark-btn"
+          />
           <q-btn
             v-if="mode === 'show'"
             @click="mode = 'edit'"
@@ -577,13 +588,13 @@ const mappingCustomerGroups = () => {
               dense
             />
           </div>
-          <div class="col flex justify-between items-center">
+          <div class="col">
             <div class="">
               <p class="label-style">Company Code</p>
               <q-input
                 v-model="companyCd"
                 :disable="mode == 'show'"
-                class="indi"
+                class="indi w-full"
                 outlined
                 lazy-rules
                 dense
