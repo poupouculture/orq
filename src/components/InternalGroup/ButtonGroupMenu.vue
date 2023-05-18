@@ -4,6 +4,7 @@
       <q-menu fit anchor="bottom middle" self="top right" auto-close>
         <q-list>
           <q-item
+            v-if="group.type !== 'personal'"
             clickable
             :to="{
               name: 'internal-group.edit',
@@ -48,6 +49,7 @@ import AddUserOverlay from "./AddUser.vue";
 const emits = defineEmits(["addUser", "deleteGroup"]);
 const props = defineProps({
   id: [String, Number],
+  group: Object,
 });
 const deleteDialog = ref(false);
 const openAddUser = ref(false);

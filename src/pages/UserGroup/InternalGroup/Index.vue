@@ -63,6 +63,7 @@
                 @delete-group="fetchInternalGroups()"
                 class="w-2/12 grow-0 justify-end"
                 :id="group.id"
+                :group="group"
                 @add-user="fetchInternalGroups()"
               />
             </div>

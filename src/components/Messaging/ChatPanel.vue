@@ -245,6 +245,16 @@ const initSocket = () => {
         );
       }
     });
+    socket.value.on("user_added", async (data: any) => {
+      console.log("user_added", data);
+      const findChat = chatsList.value.find(
+        (chat) => chat.chat_id === data.chat_id
+      );
+      if (!findChat) {
+        chatsList.value.unshift({ members: "[]", ...data });
+      }
+      socket.value.emit("join_chat", data.chat_id);
+    });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
       const contact = await getContactByChatId(data.id);
