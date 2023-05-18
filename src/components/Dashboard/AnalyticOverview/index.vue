@@ -135,7 +135,7 @@ onMounted(async () => {
     if (totalOverdueMetrics) {
       totalOverdue.value = totalOverdueMetrics.metrics?.total;
       totalOverdueColor.value = totalOverdueMetrics.metrics?.color;
-      isShowTotalCustomers.value = totalOverdueMetrics.status === 'published';
+      isShowOverdue.value = totalOverdueMetrics.status === 'published';
     }
 
     const totalDraftMetrics = tempData.find((x) => x.name.toLowerCase() === "draft");
@@ -172,25 +172,25 @@ onMounted(async () => {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
     <SmallBox
       title="Current"
-      :title-color="totalCurrentAmountColor"
+      title-color="text-primary"
       :value="totalCurrentAmount"
       v-if="isShowCurrentAmount"
     />
     <SmallBox
       title="Overdue"
-      :title-color="totalOverdueColor"
+      title-color="text-red-400"
       :value="totalOverdue"
       v-if="isShowOverdue"
     />
     <SmallBox
       title="Draft"
-      :title-color="totalDraftColor"
+      title-color="text-gray-400"
       :value="totalDraft"
       v-if="isShowDraft"
     />
     <SmallBox
       title="Total Customers"
-      :title-color="totalCustomersColor"
+      title-color="text-gray-400"
       :value="totalCustomers"
       :percentage="totalCustomerPercentage"
       v-if="isShowTotalCustomers"

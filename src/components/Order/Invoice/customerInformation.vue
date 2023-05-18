@@ -28,13 +28,32 @@ const tableHead = ref([
     align: "left",
   },
   {
+    name: "customer_company_name_en",
+    label: "Customer Name",
+    field: "customer_company_name_en",
+    align: "left",
+  },
+  {
     name: "customer_code",
     label: "Customer Code",
     field: "customer_code",
     align: "left",
   },
+  {
+    name: "location_code",
+    label: "Location Code",
+    field: "location_code",
+    align: "left",
+  },
 ]);
 
+
+const getWidth = () => {
+  if(screen.width < 500){
+    return screen.width;
+  }
+  return 800;
+}
 const filterCountry = (val, update) => {
   if (val === "") {
     update(() => {
@@ -305,8 +324,7 @@ watch(getCompany, () => {
 
     <q-drawer
       overlay
-      :width="800"
-      :breakpoint="500"
+      :width="getWidth()"
       v-model="drawer"
       side="right"
     >

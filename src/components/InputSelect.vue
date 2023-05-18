@@ -137,9 +137,9 @@ onMounted(() => {
   filteredOptions.value = props.options;
 });
 
-onUpdated(() => {
-  filteredOptions.value = props.options;
-});
+// onUpdated(() => {
+//   filteredOptions.value = props.options;
+// });
 
 const updateValue = (value) => {
   emit("update:value", value);
@@ -150,6 +150,8 @@ const filterOptions = () => {
     filteredOptions.value = props.options.filter((o) =>
       o.toLowerCase().includes(search.value.toLowerCase())
     );
+  } else {
+    filteredOptions.value = props.options;
   }
 };
 </script>

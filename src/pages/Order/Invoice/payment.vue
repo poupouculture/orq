@@ -56,6 +56,13 @@ const availablePayment = computed(() =>
 const unavailablePayment = computed(() =>
   paymentOptions.value.filter((item) => !item.active)
 );
+
+const getWidth = ()=>{
+  if(screen.width < 450){
+    return screen.width;
+  }
+  return 600;
+};
 </script>
 
 <template>
@@ -345,11 +352,11 @@ const unavailablePayment = computed(() =>
         </q-dialog>
       </div>
     </q-page-container>
-
+    
     <q-drawer
       overlay
-      :width="600"
-      :breakpoint="500"
+      :width="getWidth()"
+      :breakpoint="200"
       v-model="drawer"
       bordered
       side="right"
@@ -379,7 +386,7 @@ const unavailablePayment = computed(() =>
               </p>
             </div>
 
-            <div class="grid grid-cols-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2">
               <p class="text-[#111827] capitalize text-sm font-semibold">
                 invoice
               </p>

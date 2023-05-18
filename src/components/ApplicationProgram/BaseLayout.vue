@@ -48,6 +48,20 @@
         </div>
 
         <div class="label flex flex-col">
+          <p class="text-xl">Category</p>
+        </div>
+
+        <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
+          <InputSelect
+            :options="categories"
+            :default="selectedCategory"
+            :value="selectedCategory"
+            @input="updateSelectedCategory"
+            v-if="!loading"
+          />
+        </div>
+
+        <div class="label flex flex-col">
           <p class="text-xl">Is Email</p>
           <p class="text-gray-400">Is this email template</p>
         </div>
@@ -321,6 +335,12 @@ const languageOptions = names;
 const isEmailOptions = ["Yes", "No"];
 const headerOptions = ["TEXT", "MEDIA"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
+const categories = [
+  "Marketing",
+  "Transactional",
+  "Issue Resolution",
+  "Utility",
+];
 const actions = ref(Array(2).fill(null));
 const storedTemplateNames = ref([]);
 const isShowDuplicateName = ref(false);
@@ -335,6 +355,7 @@ const customVariables = ref([]);
 const footerMessage = ref("");
 const isApproved = ref("No");
 const actionCategory = ref("None");
+const selectedCategory = ref("None");
 const replies = ref(["", ""]);
 const status = ref("Draft");
 const delivered = ref(0);
@@ -348,10 +369,14 @@ onMounted(async () => {
 
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
-
+    console.log(tempData);
     if (tempData?.json?.components) {
       tempData.components = tempData?.json?.components;
     }
+
+    selectedCategory.value =
+      tempData?.category.charAt(0).toUpperCase() +
+      tempData?.category.slice(1).toLowerCase();
 
     const headerComponent = tempData?.components?.find(
       (c) => c.type === "HEADER"
@@ -436,8 +461,15 @@ onMounted(async () => {
             });
           }
         } else {
+          console.log(buttons.buttons);
+          console.log(typeof buttons == "object");
+
           replies.value =
-            buttons === null ? [] : buttons?.map((btn) => btn.text);
+            buttons === null
+              ? []
+              : typeof buttons == "object"
+              ? buttons.buttons?.map((btn) => btn.text)
+              : buttons?.map((btn) => btn.text);
         }
       }
     }
@@ -469,6 +501,10 @@ const updateMedia = (value) => {
 
 const updateActionCategory = (value) => {
   actionCategory.value = value;
+};
+
+const updateSelectedCategory = (value) => {
+  selectedCategory.value = value;
 };
 
 const updateAction = (value) => {
@@ -537,6 +573,7 @@ const submitGeneralInformation = () => {
           formatted.example = [btn.value];
         }
         formatted.text = btn.label;
+
         return formatted;
       });
     } else {
@@ -622,9 +659,9 @@ const submitGeneralInformation = () => {
   };
 
   console.log({
-    name: name.value,
+    name: name.value.toLowerCase().replace(/\s+/g, ''),
     is_approved: false,
-    category: "MARKETING",
+    category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
@@ -642,9 +679,9 @@ const submitGeneralInformation = () => {
   });
 
   emit("submitGeneralInformation", {
-    name: name.value,
+    name: name.value.toLowerCase().replace(/\s+/g, ''),
     is_approved: false,
-    category: "MARKETING",
+    category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
     language: formattedValueForEmit("language"),
     status: status.value,
