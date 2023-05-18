@@ -10,6 +10,7 @@ export const getContacts = async (payload) => {
     limit,
     offset,
     "filter[customers][_nnull]": true,
+    "filter[number][_nnull]": true,
     search,
     meta: "*",
   };
