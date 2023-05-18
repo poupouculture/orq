@@ -214,27 +214,27 @@ const headerColumns = ref([
     sortable: true,
     classes: "text-black",
   },
-  {
-    name: "messages_sent",
-    align: "center",
-    label: "Delivered",
-    field: "messages_sent",
-    classes: "text-black",
-  },
-  {
-    name: "messages_opened",
-    align: "center",
-    label: "Read",
-    field: "messages_opened",
-    classes: "text-black",
-  },
-  {
-    name: "top_block_reason",
-    align: "center",
-    label: "Replied",
-    field: "top_block_reason",
-    classes: "text-black",
-  },
+  // {
+  //   name: "messages_sent",
+  //   align: "center",
+  //   label: "Delivered",
+  //   field: "messages_sent",
+  //   classes: "text-black",
+  // },
+  // {
+  //   name: "messages_opened",
+  //   align: "center",
+  //   label: "Read",
+  //   field: "messages_opened",
+  //   classes: "text-black",
+  // },
+  // {
+  //   name: "top_block_reason",
+  //   align: "center",
+  //   label: "Replied",
+  //   field: "top_block_reason",
+  //   classes: "text-black",
+  // },
   // {
   //   name: "user_created",
   //   align: "center",
@@ -285,10 +285,10 @@ onMounted(() => {
         h.name !== "messages_opened"
     );
   }
-  if (propsTable.formType !== "bots") {
-    headerColumns.value = headerColumns.value.filter(
-      (h) => h.name !== "category"
-    );
-  }
+  // if (propsTable.formType !== "bots") {
+  //   headerColumns.value = headerColumns.value.filter(
+  //     (h) => h.name !== "category"
+  //   );
+  // }
 });
 </script>
