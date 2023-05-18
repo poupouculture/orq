@@ -179,7 +179,7 @@ const useCustomerStore = defineStore("customer", {
     },
     async addContact(customerId: string, contactId: string) {
       const result = await addCustomerContactAlong({
-        contacts_id: contactId,
+        contact_id: contactId,
         customer_id: customerId,
       });
       return result;
