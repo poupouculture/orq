@@ -88,8 +88,9 @@ const useMessagingStore = defineStore("messaging", {
               chat.totalUnread = 0;
             }
           }
-          
-          lastmessage.waba_associated_message_id = lastmessage.associated_message_id;
+
+          lastmessage.waba_associated_message_id =
+            lastmessage.associated_message_id;
           this.cachedChatMessages[chatId]?.push(lastmessage);
         }
       } catch (error) {

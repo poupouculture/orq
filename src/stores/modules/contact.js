@@ -36,17 +36,20 @@ const useContactStore = defineStore("useContact", {
         status: payload.status,
       };
       Loading.show();
-      const result = await updateContact(payload.id, getObj);
-      const { data } = result.data;
+      try {
+        const result = await updateContact(payload.id, getObj);
+        const { data } = result.data;
 
-      this.contact = data;
-
-      Notify.create({
-        message: "Update Contact Successfully",
-        position: "top",
-        type: "positive",
-        color: "blue-9",
-      });
+        this.contact = data;
+        Notify.create({
+          message: "Update Contact Successfully",
+          position: "top",
+          type: "positive",
+          color: "blue-9",
+        });
+      } catch (error) {
+        console.log(error);
+      }
       Loading.hide();
     },
 

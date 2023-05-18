@@ -9,6 +9,7 @@ export const getContacts = async (payload) => {
     sort: "-date_created",
     limit,
     offset,
+    "filter[customers][_nnull]": true,
     search,
     meta: "*",
   };

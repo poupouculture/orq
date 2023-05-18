@@ -57,8 +57,8 @@ const unavailablePayment = computed(() =>
   paymentOptions.value.filter((item) => !item.active)
 );
 
-const getWidth = ()=>{
-  if(screen.width < 450){
+const getWidth = () => {
+  if (screen.width < 450) {
     return screen.width;
   }
   return 600;
@@ -352,7 +352,7 @@ const getWidth = ()=>{
         </q-dialog>
       </div>
     </q-page-container>
-    
+
     <q-drawer
       overlay
       :width="getWidth()"
