@@ -1,10 +1,11 @@
 <template>
   <div class="main-container">
-    <p class="header-text">Contacts</p>
+    <p class="header-text">Contact - Customer</p>
     <div class="row justify-between gap-y-3">
       <SearchTableInput
         :loading="search.loading"
         @search="searchHandler"
+        :searchOnEnter="true"
         @reset="resetSearch"
       />
       <div>
@@ -17,21 +18,12 @@
           :disabled="selected.length < 1 || isExistCustomerRelation"
           @click="deleteDialog = true"
         />
-        <q-btn
-          icon="add"
-          no-caps
-          rounded
-          color="primary"
-          label="Add"
-          class="q-mr-sm"
-          @click="addContactDialog = true"
-        />
       </div>
     </div>
     <div class="main-content">
       <BaseTable
         :rows="data.contacts"
-        :total-count="search.query ? data.filterCount : data.totalCount"
+        :total-count="data.filterCount"
         v-model:page="data.page"
         :rows-per-page="data.rowsPerPage"
         :columns="headerColumns"
@@ -65,6 +57,22 @@
             {{ props.row.customers[0]?.customers_id.location_code }}
           </q-td>
         </template>
+        <template #body-cell-is_active="props">
+          <q-td :props="props" auto-width>
+            {{ props.row.is_active ? "Yes" : "No" }}
+          </q-td>
+        </template>
+        <template #body-cell-action="props">
+          <q-td :props="props" auto-width>
+            <q-btn
+              no-caps
+              rounded
+              color="primary"
+              label="Edit"
+              @click="openEditContact(props.row.id)"
+            />
+          </q-td>
+        </template>
       </BaseTable>
     </div>
     <DeleteDialog
@@ -72,76 +80,106 @@
       @cancel="deleteDialog = false"
       @submitDelete="handleDelete()"
     />
+    <q-dialog v-model="editContactDialog">
+      <div class="flex flex-col bg-white p-6">
+        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <div class="flex flex-col">
+            <p class="label-style">First Name</p>
+            <q-input outlined v-model="form.first_name" dense />
+          </div>
+          <div class="flex flex-col">
+            <p class="label-style">Last Name</p>
+            <q-input outlined v-model="form.last_name" dense />
+          </div>
+          <div class="flex flex-col">
+            <p class="label-style">Number</p>
+            <q-input outlined v-model="form.number" dense />
+            <q-checkbox
+              :true-value="true"
+              v-model="form.is_active"
+              :false-value="false"
+              label="Contact is Active"
+            />
+          </div>
+          <div class="flex flex-col">
+            <p class="label-style">Category</p>
+            <q-select
+              outlined
+              dense
+              v-model="form.category"
+              lazy-rules
+              :options="categoryOptions"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-x-3 mt-5 justify-end">
+          <q-btn
+            @click="editContactDialog = false"
+            color="secondary"
+            outline
+            label="Cancel"
+          />
+          <q-btn @click="updateContact()" color="primary" label="Save" />
+        </div>
+      </div>
+    </q-dialog>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted, computed } from "vue";
 import { getContacts, dissociateContacts } from "src/api/contact";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { Notify } from "quasar";
+import useContactStore from "src/stores/modules/contact";
 
-const headerColumns = [
-  {
-    name: "number",
-    align: "left",
-    label: "Number",
-    field: "number",
-    classes: "text-black",
-    style: "max-width: 10%",
-    sortable: true,
-  },
-
-  {
-    name: "name",
-    align: "left",
-    label: "Customer Name",
-    field: "first_name",
-    classes: "text-black",
-    style: "max-width: 10%",
-    sortable: true,
-  },
-  {
-    name: "customer_code",
-    align: "left",
-    label: "Customer Code",
-    field: "customer_code",
-    classes: "text-black",
-    style: "max-width: 10%",
-    sortable: true,
-  },
-  {
-    name: "location_code",
-    align: "left",
-    label: "Location Code",
-    field: "location_code",
-    classes: "text-black",
-    style: "max-width: 10%",
-    sortable: true,
-  },
-  {
-    name: "status",
-    align: "left",
-    label: "Status",
-    field: "status",
-    classes: "text-black",
-    style: "max-width: 10%",
-    sortable: true,
-  },
-];
-
+const contactStore = useContactStore();
 const loading = ref(true);
-const addContactDialog = ref(false);
+const editContactDialog = ref(false);
 const selected = ref([]);
+const isExistCustomerRelation = computed(() =>
+  selected.value.some((data: any) => !data.customers.length)
+);
+
+const updateContact = async () => {
+  try {
+    await contactStore.updateContact(form);
+    fetchContacts();
+  } catch (error) {
+    console.log(error);
+  }
+  editContactDialog.value = false;
+};
+const openEditContact = async (id: string) => {
+  const contact = data.contacts.find((data: any) => data.id === id) as any;
+  editContactDialog.value = true;
+  if (contact) {
+    form.id = contact.id;
+    form.first_name = contact.first_name;
+    form.last_name = contact.last_name;
+    form.number = contact.number;
+    form.is_active = contact.is_active;
+    form.category = contact.category;
+    form.status = contact.status;
+  }
+};
+
+const categoryOptions = ref(["phone"]);
+const form = reactive({
+  id: null,
+  first_name: null,
+  last_name: null,
+  number: 0,
+  is_active: false,
+  category: null,
+  status: null,
+});
 
 const search = reactive({
   loading: false,
   query: "",
 });
-const isExistCustomerRelation = computed(() =>
-  selected.value.some((data) => !data.customers.length)
-);
 
 const searchHandler = async (searchValue = "") => {
   search.query = searchValue;
@@ -163,8 +201,8 @@ const handleDelete = async () => {
   deleteDialog.value = false;
   try {
     const payload = selected.value
-      .filter((data) => data.customers.length)
-      .map((data) => ({
+      .filter((data: any) => data.customers.length)
+      .map((data: any) => ({
         customer_id: data.customers[0].customers_id.id,
         contact_id: data.id,
       }));
@@ -207,10 +245,85 @@ onMounted(() => {
   fetchContacts();
 });
 
-const changePage = (page) => {
+const changePage = (page: number) => {
   data.page = page;
   fetchContacts();
 };
+
+const headerColumns = [
+  {
+    name: "number",
+    align: "left",
+    label: "Number",
+    field: "number",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "first_name",
+    align: "left",
+    label: "Firstname",
+    field: "first_name",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "last_name",
+    align: "left",
+    label: "Lastname",
+    field: "last_name",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "name",
+    align: "left",
+    label: "Customer Name",
+    field: "first_name",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "customer_code",
+    align: "left",
+    label: "Customer Code",
+    field: "customer_code",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "location_code",
+    align: "left",
+    label: "Location Code",
+    field: "location_code",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "is_active",
+    align: "left",
+    label: "Active",
+    field: "is_active",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+  {
+    name: "action",
+    align: "left",
+    label: "Action",
+    field: "action",
+    classes: "text-black",
+    style: "max-width: 10%",
+    sortable: true,
+  },
+];
 </script>
 
 <style scoped src="./style.scss" />

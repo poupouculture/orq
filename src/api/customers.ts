@@ -112,7 +112,7 @@ export const addCustomerContact = async (customerId, contactId) => {
 };
 
 export const addCustomerContactAlong = async (payload) => {
-  const customerContact = await api.post("items/contacts_customers", payload);
+  const customerContact = await api.post("/chat/contact/associate", payload);
   return customerContact;
 };
 

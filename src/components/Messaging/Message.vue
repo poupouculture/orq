@@ -1,7 +1,8 @@
 <template>
   <div
     v-if="getSelectedChatId"
-    class="h-full w-full flex flex-col q-pa-md bg-white"
+    class="h-full w-full flex flex-col q-pa-md"
+    :style="getHeight()"
   >
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
@@ -814,7 +815,10 @@ const onPast = (e: ClipboardEvent) => {
     }
   }
 };
-
+const getHeight = () => {
+  console.log("height: " + window.innerHeight + "px");
+  return "height: " + window.innerHeight + "px";
+};
 onMounted(() => {
   getChatbots();
 });
