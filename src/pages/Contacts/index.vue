@@ -58,7 +58,7 @@
         </template>
         <template #body-cell-is_active="props">
           <q-td :props="props" auto-width>
-            {{ props.row.is_active ? "active" : "Non active" }}
+            {{ props.row.is_active ? "Yes" : "No" }}
           </q-td>
         </template>
         <template #body-cell-action="props">
@@ -307,7 +307,7 @@ const headerColumns = [
   {
     name: "is_active",
     align: "left",
-    label: "Status",
+    label: "Active",
     field: "is_active",
     classes: "text-black",
     style: "max-width: 10%",
