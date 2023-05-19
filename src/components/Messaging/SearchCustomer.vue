@@ -132,8 +132,8 @@ const customer: Ref<any> = ref(null);
 const openCustomerFilter: Ref<boolean> = ref(false);
 const openSearchResult: Ref<boolean> = ref(false);
 const selectedOption: Ref<IOption> = ref({
-  label: "First Name",
-  key: "first_name",
+  label: "Customer Name (English)",
+  key: "customer_company_name_en",
 });
 const selectOption = (option: IOption) => {
   selectedOption.value = option;
