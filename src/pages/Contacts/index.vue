@@ -56,6 +56,11 @@
             {{ props.row.customers[0]?.customers_id.location_code }}
           </q-td>
         </template>
+        <template #body-cell-is_active="props">
+          <q-td :props="props" auto-width>
+            {{ props.row.is_active ? "Yes" : "No" }}
+          </q-td>
+        </template>
         <template #body-cell-action="props">
           <q-td :props="props" auto-width>
             <q-btn
@@ -103,15 +108,6 @@
               v-model="form.category"
               lazy-rules
               :options="categoryOptions"
-            />
-          </div>
-          <div class="flex flex-col">
-            <p class="label-style">Status</p>
-            <q-select
-              v-model="form.status"
-              :options="statusOptions"
-              dense
-              outlined
             />
           </div>
         </div>
@@ -169,7 +165,6 @@ const openEditContact = async (id: string) => {
 };
 
 const categoryOptions = ref(["phone"]);
-const statusOptions = ref(["Active"]);
 const form = reactive({
   id: null,
   first_name: null,
@@ -310,10 +305,10 @@ const headerColumns = [
     sortable: true,
   },
   {
-    name: "status",
+    name: "is_active",
     align: "left",
-    label: "Status",
-    field: "status",
+    label: "Active",
+    field: "is_active",
     classes: "text-black",
     style: "max-width: 10%",
     sortable: true,
