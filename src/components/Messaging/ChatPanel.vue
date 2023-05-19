@@ -245,6 +245,9 @@ const initSocket = () => {
         );
       }
     });
+    socket.value.on("contact_created", async (data: any) => {
+      console.log("contact_created", data);
+    });
     socket.value.on("user_added", async (data: any) => {
       console.log("user_added", data);
       const findChat = chatsList.value.find(
