@@ -15,21 +15,21 @@
     <div class="row justify-between">
       <div class="flex items-center gap-x-3">
         <SearchTableInput
-        :loading="loading"
-        @search="searchHandler"
-        @reset="resetSearch"
-      />
+          :loading="loading"
+          @search="searchHandler"
+          @reset="resetSearch"
+        />
         <q-select
-            dense
-            outlined
-            v-model="status"
-            option-value="value"
-            option-label="label"
-            :options="statusOptions"
-            map-options
-            emit-value
-            label="Status"
-          />
+          dense
+          outlined
+          v-model="status"
+          option-value="value"
+          option-label="label"
+          :options="statusOptions"
+          map-options
+          emit-value
+          label="Status"
+        />
       </div>
       <div>
         <q-btn
@@ -112,13 +112,13 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
-    status: status.value == "All Status" ? "*" : status.value
+    status: status.value === "All Status" ? "*" : status.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
-onUpdated(async() => {
+onUpdated(async () => {
   data.page = 1;
   await fetchApplicationPrograms();
 });
