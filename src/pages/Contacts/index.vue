@@ -5,6 +5,7 @@
       <SearchTableInput
         :loading="search.loading"
         @search="searchHandler"
+        :searchOnEnter="true"
         @reset="resetSearch"
       />
       <div>
