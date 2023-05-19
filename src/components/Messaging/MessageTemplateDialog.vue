@@ -201,7 +201,7 @@ const fetchTemplates = async () => {
   } = await getMessageTemplates({
     limit: data.rowsPerPage,
     page: data.page,
-    status: "archived",
+    status: "published",
     search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
