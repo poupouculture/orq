@@ -99,27 +99,33 @@ onMounted(async () => {
 
   if (response) {
     const tempData = response.data.data;
-    console.log(response.data.data)
-    const userStatusList = tempData.find((x) => x.name.toLowerCase() === "total users");
+    console.log(response.data.data);
+    const userStatusList = tempData.find(
+      (x) => x.name.toLowerCase() === "total users"
+    );
     if (userStatusList) {
       userStatuses.value = userStatusList.metrics?.data;
       totalUserStatuses.value = userStatusList.metrics?.total;
       totalUserStatusesPercentage.value = userStatusList.metrics?.percentage;
-      isShowUserStatuses.value = userStatusList.status === 'published';
+      isShowUserStatuses.value = userStatusList.status === "published";
     }
 
-    const paymentStatusList = tempData.find((x) => x.name.toLowerCase() === "payment status");
+    const paymentStatusList = tempData.find(
+      (x) => x.name.toLowerCase() === "payment status"
+    );
     if (paymentStatusList) {
       paymentStatuses.value = paymentStatusList.metrics?.data;
       totalPaymentStatuses.value = paymentStatusList.metrics?.total;
-      isShowPaymentStatuses.value = paymentStatusList.status === 'published';
+      isShowPaymentStatuses.value = paymentStatusList.status === "published";
     }
 
-    const chatStatusList = tempData.find((x) => x.name.toLowerCase() === "chat status");
+    const chatStatusList = tempData.find(
+      (x) => x.name.toLowerCase() === "chat status"
+    );
     if (chatStatusList) {
       chatStatuses.value = chatStatusList.metrics?.data;
       totalChatStatuses.value = chatStatusList.metrics?.total;
-      isShowChatStatuses.value = chatStatusList.status === 'published';
+      isShowChatStatuses.value = chatStatusList.status === "published";
     }
 
     const totalCurrentAmountMetrics = tempData.find(
@@ -128,21 +134,26 @@ onMounted(async () => {
     if (totalCurrentAmountMetrics) {
       totalCurrentAmount.value = totalCurrentAmountMetrics.metrics?.total;
       totalCurrentAmountColor.value = totalCurrentAmountMetrics.metrics?.color;
-      isShowCurrentAmount.value = totalCurrentAmountMetrics.status === 'published';
+      isShowCurrentAmount.value =
+        totalCurrentAmountMetrics.status === "published";
     }
 
-    const totalOverdueMetrics = tempData.find((x) => x.name.toLowerCase() === "overdue");
+    const totalOverdueMetrics = tempData.find(
+      (x) => x.name.toLowerCase() === "overdue"
+    );
     if (totalOverdueMetrics) {
       totalOverdue.value = totalOverdueMetrics.metrics?.total;
       totalOverdueColor.value = totalOverdueMetrics.metrics?.color;
-      isShowOverdue.value = totalOverdueMetrics.status === 'published';
+      isShowOverdue.value = totalOverdueMetrics.status === "published";
     }
 
-    const totalDraftMetrics = tempData.find((x) => x.name.toLowerCase() === "draft");
+    const totalDraftMetrics = tempData.find(
+      (x) => x.name.toLowerCase() === "draft"
+    );
     if (totalDraftMetrics) {
       totalDraft.value = totalDraftMetrics.metrics?.total;
       totalDraftColor.value = totalDraftMetrics.metrics?.color;
-      isShowDraft.value = totalDraftMetrics.status === 'published';
+      isShowDraft.value = totalDraftMetrics.status === "published";
     }
 
     const totalCustomerMetrics = tempData.find(
@@ -152,7 +163,7 @@ onMounted(async () => {
       totalCustomers.value = totalCustomerMetrics.metrics?.total;
       totalCustomersColor.value = totalCustomerMetrics.metrics?.color;
       totalCustomerPercentage.value = totalCustomerMetrics.metrics?.percentage;
-      isShowTotalCustomers.value = totalCustomerMetrics.status === 'published';
+      isShowTotalCustomers.value = totalCustomerMetrics.status === "published";
     }
   }
 });

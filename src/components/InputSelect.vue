@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onMounted } from "vue";
 
 const props = defineProps({
   options: {
