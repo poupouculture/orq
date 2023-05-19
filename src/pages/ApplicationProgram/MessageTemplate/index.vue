@@ -15,21 +15,21 @@
     <div class="row justify-between">
       <div class="flex items-center gap-x-3">
         <SearchTableInput
-        :loading="loading"
-        @search="searchHandler"
-        @reset="resetSearch"
-      />
+          :loading="loading"
+          @search="searchHandler"
+          @reset="resetSearch"
+        />
         <q-select
-            dense
-            outlined
-            v-model="status"
-            option-value="value"
-            option-label="label"
-            :options="statusOptions"
-            map-options
-            emit-value
-            label="Status"
-          />
+          dense
+          outlined
+          v-model="status"
+          option-value="value"
+          option-label="label"
+          :options="statusOptions"
+          map-options
+          emit-value
+          label="Status"
+        />
       </div>
       <div>
         <q-btn
@@ -83,8 +83,12 @@ const selected = ref([]);
 const status = ref("All Status");
 const statusOptions = [
   {
+    label: "All Status",
+    value: "All Status",
+  },
+  {
     label: "Draft",
-    value: "draft",
+    value: "Draft",
   },
   {
     label: "Published",
@@ -108,13 +112,14 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
-    status: status.value == "All Status" ? "*" : status.value
+    status: status.value == "All Status" ? "*" : status.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
-watch(async() => {
+
+watch(status, async() => {
   data.page = 1;
   await fetchApplicationPrograms();
 });
@@ -123,11 +128,14 @@ const changePage = (val) => {
   data.page = val;
   fetchApplicationPrograms();
 };
-const archiveSelected = () => {
+const archiveSelected = () =>  {
   if (selected.value.length > 0) {
     selected.value.forEach(async (data) => {
       data.status = "archived";
       await updateMessageTemplate(data.id, data);
+      loading.value = true;
+      await fetchApplicationPrograms();
+      loading.value = false;
     });
     Notify.create({
       message: `Selected Template has been archived`,

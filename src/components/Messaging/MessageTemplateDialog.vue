@@ -202,6 +202,7 @@ const fetchTemplates = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     status: "published",
+    isApproved: true,
     search: search.value,
   });
   data.applicationPrograms = applicationPrograms;
