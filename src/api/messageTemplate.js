@@ -25,6 +25,9 @@ export const getMessageTemplates = async ({
     params["filter[is_approved][_eq]"] = true;
     params["filter[status][_eq]"] = status;
   }
+  if(status === "*"){
+    params["filter[status][_neq]"] = "archived";
+  }
 
   const templates = await api.get(`/items/message_templates`, {
     params,

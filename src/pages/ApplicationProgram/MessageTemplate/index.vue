@@ -70,7 +70,7 @@ import {
   getMessageTemplates,
   updateMessageTemplate,
 } from "src/api/messageTemplate";
-import { ref, reactive, onMounted, onUpdated } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
@@ -85,10 +85,6 @@ const statusOptions = [
   {
     label: "Draft",
     value: "draft",
-  },
-  {
-    label: "Archived",
-    value: "archived",
   },
   {
     label: "Published",
@@ -118,7 +114,7 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
-onUpdated(async() => {
+watch(async() => {
   data.page = 1;
   await fetchApplicationPrograms();
 });
