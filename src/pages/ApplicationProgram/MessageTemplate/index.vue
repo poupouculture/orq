@@ -15,21 +15,21 @@
     <div class="row justify-between">
       <div class="flex items-center gap-x-3">
         <SearchTableInput
-        :loading="loading"
-        @search="searchHandler"
-        @reset="resetSearch"
-      />
+          :loading="loading"
+          @search="searchHandler"
+          @reset="resetSearch"
+        />
         <q-select
-            dense
-            outlined
-            v-model="status"
-            option-value="value"
-            option-label="label"
-            :options="statusOptions"
-            map-options
-            emit-value
-            label="Status"
-          />
+          dense
+          outlined
+          v-model="status"
+          option-value="value"
+          option-label="label"
+          :options="statusOptions"
+          map-options
+          emit-value
+          label="Status"
+        />
       </div>
       <div>
         <q-btn
@@ -70,7 +70,7 @@ import {
   getMessageTemplates,
   updateMessageTemplate,
 } from "src/api/messageTemplate";
-import { ref, reactive, onMounted, onUpdated } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
@@ -83,12 +83,12 @@ const selected = ref([]);
 const status = ref("All Status");
 const statusOptions = [
   {
-    label: "Draft",
-    value: "draft",
+    label: "All Status",
+    value: "All Status",
   },
   {
-    label: "Archived",
-    value: "archived",
+    label: "Draft",
+    value: "Draft",
   },
   {
     label: "Published",
@@ -112,13 +112,14 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
-    status: status.value == "All Status" ? "*" : status.value
+    status: status.value == "All Status" ? "*" : status.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
-onUpdated(async() => {
+
+watch(status, async() => {
   data.page = 1;
   await fetchApplicationPrograms();
 });
@@ -127,11 +128,14 @@ const changePage = (val) => {
   data.page = val;
   fetchApplicationPrograms();
 };
-const archiveSelected = () => {
+const archiveSelected = () =>  {
   if (selected.value.length > 0) {
     selected.value.forEach(async (data) => {
       data.status = "archived";
       await updateMessageTemplate(data.id, data);
+      loading.value = true;
+      await fetchApplicationPrograms();
+      loading.value = false;
     });
     Notify.create({
       message: `Selected Template has been archived`,
