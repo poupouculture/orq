@@ -250,9 +250,7 @@ const initSocket = () => {
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("user_added", data);
-      const findChat = chatsList.value.find(
-        (chat) => chat.chat_id === data.chat_id
-      );
+      const findChat = chatsList.value.find((chat) => chat.id === data.chat_id);
       if (!findChat) {
         chatsList.value.unshift({ members: "[]", ...data });
       }
