@@ -1,3 +1,4 @@
+import axios from "axios";
 import { api } from "boot/axios";
 
 interface CustomerPayload {
@@ -60,6 +61,10 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
   return customers;
 };
 
+let cancelGetCustomerToken = undefined as any;
+export const cancelGetCustomerRequest = () => {
+  if (cancelGetCustomerToken) cancelGetCustomerToken.cancel();
+};
 export const getCustomer = async (id: string) => {
   const fields = "*";
   const companies = "companies.*,companies.companies_id.*";
@@ -68,8 +73,13 @@ export const getCustomer = async (id: string) => {
     "customer_groups.*,customer_groups.customer_groups_id.*";
   const tags = "tags.*,tags.tags_id.*";
 
+  const axiosSource = axios.CancelToken.source();
+  cancelGetCustomerToken = { cancel: axiosSource.cancel };
   const customer = await api.get(
-    `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`
+    `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`,
+    {
+      cancelToken: axiosSource.token,
+    }
   );
   return customer;
 };
