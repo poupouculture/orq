@@ -38,8 +38,10 @@
               <div class="subrow">
                 <p class="headingtext">
                   {{
-                    props.row.customers[0]?.customers_id
-                      .customer_company_name_en
+                    props.row.customers.length
+                      ? props.row.customers[0].customers_id
+                          ?.customer_company_name_en || ""
+                      : ""
                   }}
                 </p>
               </div>
@@ -49,12 +51,20 @@
         </template>
         <template #body-cell-customer_code="props">
           <q-td :props="props" auto-width>
-            {{ props.row.customers[0]?.customers_id.customer_code }}
+            {{
+              props.row.customers.length
+                ? props.row.customers[0].customers_id?.customer_code || ""
+                : ""
+            }}
           </q-td>
         </template>
         <template #body-cell-location_code="props">
           <q-td :props="props" auto-width>
-            {{ props.row.customers[0]?.customers_id.location_code }}
+            {{
+              props.row.customers.length
+                ? props.row.customers[0].customers_id?.location_code || ""
+                : ""
+            }}
           </q-td>
         </template>
         <template #body-cell-is_active="props">
