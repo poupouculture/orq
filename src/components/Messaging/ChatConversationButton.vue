@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="getSelectedChat.id"
-    class="flex justify-start gap-3 pb-3"
-    :class="getDirectionComponent()"
-  >
+  <div v-if="getSelectedChat.id" class="flex justify-start gap-3 pb-3">
     <q-btn
       outline
       color="primary"
@@ -17,7 +13,7 @@
         anchor="bottom left"
         self="top left"
         :offset="[0, 5]"
-        style="width: 300px"
+        style="width: 250px"
         fit
       >
         <q-list separator>
@@ -78,7 +74,7 @@
         anchor="bottom left"
         self="top left"
         :offset="[0, 5]"
-        style="width: 300px"
+        style="width: 250px"
         fit
       >
         <q-list separator>
