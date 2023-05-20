@@ -249,8 +249,13 @@ const initSocket = () => {
       console.log("contact_created", data);
     });
     socket.value.on("user_added", async (data: any) => {
-      console.log("user_added", data);
-      const findChat = chatsList.value.find((chat) => chat.id === data.chat_id);
+      console.log("SOCKET_EVENT: user_added", data);
+      console.log(chatsList.value);
+      const findChat = chatsList.value.find(
+        (chat) => chat.chat_id === data.chat_id
+      );
+      console.log("findChat");
+      console.log(findChat);
       if (!findChat) {
         chatsList.value.unshift({ members: "[]", ...data });
       }
@@ -269,20 +274,23 @@ const initSocket = () => {
       const { document } = data;
       const { isConfirmed } = await Swal.fire({
         icon: "info",
-        title: "User Message",
+        title: "Incoming Profile",
         html:
-          "customer name: " +
+          "Customer Name: " +
           document?.summary?.customer_name +
           "</br>" +
-          "customer code: " +
+          "Customer Code: " +
           document?.summary?.customer_code +
           "</br>" +
-          "location code: " +
-          document?.summary?.location_code,
+          "Location Code: " +
+          document?.summary?.location_code +
+          "</br>" +
+          "Preferred Language: " +
+          document?.summary?.preferred_language,
         showCloseButton: true,
         showCancelButton: true,
         focusConfirm: false,
-        confirmButtonText: "Load Customer",
+        confirmButtonText: "Load Profile",
       });
       const chat = chatsList.value.find(
         (chat) => chat.id === document.session_id
