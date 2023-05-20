@@ -462,12 +462,12 @@ onMounted(async () => {
           }
         } else {
           console.log(buttons.buttons);
-          console.log(typeof buttons == "object");
+          console.log(typeof buttons === "object");
 
           replies.value =
             buttons === null
               ? []
-              : typeof buttons == "object"
+              : typeof buttons === "object"
               ? buttons.buttons?.map((btn) => btn.text)
               : buttons?.map((btn) => btn.text);
         }
@@ -659,7 +659,7 @@ const submitGeneralInformation = () => {
   };
 
   console.log({
-    name: name.value.toLowerCase().replace(/\s+/g, ''),
+    name: name.value.toLowerCase().replace(/\s+/g, ""),
     is_approved: false,
     category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
@@ -679,7 +679,7 @@ const submitGeneralInformation = () => {
   });
 
   emit("submitGeneralInformation", {
-    name: name.value.toLowerCase().replace(/\s+/g, ''),
+    name: name.value.toLowerCase().replace(/\s+/g, ""),
     is_approved: false,
     category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",

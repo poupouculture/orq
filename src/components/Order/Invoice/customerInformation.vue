@@ -47,13 +47,12 @@ const tableHead = ref([
   },
 ]);
 
-
 const getWidth = () => {
-  if(screen.width < 500){
+  if (screen.width < 500) {
     return screen.width;
   }
   return 800;
-}
+};
 const filterCountry = (val, update) => {
   if (val === "") {
     update(() => {
@@ -322,12 +321,7 @@ watch(getCompany, () => {
       </div>
     </q-page-container>
 
-    <q-drawer
-      overlay
-      :width="getWidth()"
-      v-model="drawer"
-      side="right"
-    >
+    <q-drawer overlay :width="getWidth()" v-model="drawer" side="right">
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center">
         <div class="h-[90vh] w-full flex flex-col p-10">

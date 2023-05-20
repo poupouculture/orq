@@ -144,7 +144,7 @@ onMounted(async () => {
     if (totalOverdueMetrics) {
       totalOverdue.value = totalOverdueMetrics.metrics?.total;
       totalOverdueColor.value = totalOverdueMetrics.metrics?.color;
-      isShowTotalCustomers.value = totalOverdueMetrics.status === "published";
+      isShowOverdue.value = totalOverdueMetrics.status === "published";
     }
 
     const totalDraftMetrics = tempData.find(

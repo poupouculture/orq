@@ -44,14 +44,11 @@ export const getCustomerGroup = async (
   customerFilter?: string
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const companies = "customers.customers_id.companies.companies_id.*";
-  const userGroups = "user_groups.*, user_groups.user_groups_id.*";
-  const tags = "tags.*, tags.*.*";
   const param = {
     limit,
     offset,
     search,
-    fields: `id,type,name,status,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
+    fields: `id,type,name,status`,
     meta: "*",
   } as any;
   if (type) {

@@ -41,6 +41,7 @@ const useCustomerStore = defineStore("customer", {
     } as unknown as IState),
   getters: {
     getCustomer: (state) => state.customer,
+    isCustomerExist: (state) => !!state.customer?.id,
   },
   actions: {
     async deleteCustomer(id: [string]) {
@@ -102,10 +103,13 @@ const useCustomerStore = defineStore("customer", {
         });
     },
     async fetchCustomer(id: string) {
-      const {
-        data: { data: customer },
-      } = await getCustomer(id);
-      this.setCustomer(customer);
+      try {
+        const data = await getCustomer(id);
+        if (data) {
+          const customer = data.data.data;
+          this.setCustomer(customer);
+        }
+      } catch (error) {}
     },
     setCustomer(customer: ICustomer | null) {
       if (customer === null) {
@@ -176,12 +180,10 @@ const useCustomerStore = defineStore("customer", {
         Loading.hide();
       }
     },
-    async addContact(customerId: string, payload: unknown) {
+    async addContact(customerId: string, contactId: string) {
       const result = await addCustomerContactAlong({
-        contacts: {
-          create: payload,
-        },
-        customers_id: customerId,
+        contact_id: contactId,
+        customer_id: customerId,
       });
       return result;
     },
