@@ -335,7 +335,12 @@ const languageOptions = names;
 const isEmailOptions = ["Yes", "No"];
 const headerOptions = ["TEXT", "MEDIA"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
-const categories = ["Marketing", "Utility"];
+const categories = [
+  "Marketing",
+  "Transactional",
+  "Issue Resolution",
+  "Utility",
+];
 const actions = ref(Array(2).fill(null));
 const storedTemplateNames = ref([]);
 const isShowDuplicateName = ref(false);
