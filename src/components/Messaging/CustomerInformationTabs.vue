@@ -47,12 +47,10 @@
   </q-tab-panels>
 </template>
 <script setup lang="ts">
-import { Notify } from "quasar";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
 import ServiceRecord from "../Customer/ServiceRecord.vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import useCustomerStore from "src/stores/modules/customer";
-import useContactStore from "src/stores/modules/contact";
 import Remark from "src/components/Remark/Remark.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { FormPayload } from "src/types/CustomerTypes";
@@ -62,12 +60,11 @@ import { storeToRefs } from "pinia";
 
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
-const { getContactById } = useContactStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
 const customer = computed(() => customerStore.getCustomer);
 const remarks = ref("");
 watch(customer, (val) => {
-  remarks.value = val.remarks;
+  remarks.value = val.remarks as string;
 });
 
 const customerInformationTab = ref("general");
@@ -96,36 +93,16 @@ const tabs = ref([
 
 // Methods
 const saveCustomer = async (val: FormPayload) => {
-  let customerResult = null;
   val.remarks = remarks.value;
   if (getSelectedChat.value.customers_id) {
     // update
     await customerStore.updateCustomer(getSelectedChat.value.customers_id, val);
-    customerResult = customerStore.getCustomer;
   } else {
     // insert
     if (customer.value.id) {
-      customerResult = await updateCustomer(customer.value.id, val);
+      await updateCustomer(customer.value.id, val);
     } else {
-      customerResult = await addCustomer(val);
-    }
-    const contactId = getSelectedChat.value.contacts_id;
-    const { data } = await customerStore.addCustomerContact(
-      customerResult.data.data?.id,
-      contactId
-    );
-
-    const updatedChat = getSelectedChat.value;
-    updatedChat.customers_id = data.data.customers_id;
-    await getContactById(updatedChat);
-
-    if (data?.errors) {
-      Notify.create({
-        position: "top",
-        message: data?.errors[0]?.message,
-        type: "negative",
-        color: "purple",
-      });
+      await addCustomer(val);
     }
   }
 
