@@ -1,5 +1,5 @@
 <template>
-  <div v-if="getSelectedChat.id" class="flex justify-end gap-3">
+  <div v-if="getSelectedChat.id" class="flex justify-start gap-3 pb-3">
     <q-btn
       outline
       color="primary"
@@ -173,11 +173,13 @@ const searchUser = () => {
   });
 };
 onMounted(async () => {
+  Loading.show();
   const { data } = await getChatUsers();
   users.value = data;
   usersData.value = data;
 
   userRole.value = userInfo.getUserRoleName;
+  Loading.hide();
 });
 
 const assignUser = async (user: User, addMember: boolean = false) => {

@@ -52,8 +52,8 @@
     </template>
     <template v-else>
       <div class="p-2 text-gray-400">Members</div>
-      <div class="flex justify-between p-2">
-        <div class="flex">
+      <div class="flex justify-between p-2 items-center">
+        <div class="flex pb-3">
           <div
             class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
             v-for="(member, index) of members.slice(0, 3)"
@@ -68,15 +68,26 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <ChatConversationButton
-          v-if="getSelectedChat.status !== ChatTypes.CLOSED"
-        />
+        <div v-if="isMobile">
+          <div
+            class="text-primary pb-3 cursor-pointer"
+            @click="toogleChatOption()"
+          >
+            Actions
+          </div>
+        </div>
+
+        <div v-if="!isMobile || (isMobile && showChatOption)">
+          <ChatConversationButton
+            v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+          />
+        </div>
       </div>
     </template>
 
     <q-separator class="mx-2" size="1px" inset />
     <!-- message content -->
-    <main class="flex-1 relative z-10 w-full h-full">
+    <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
       <div
         class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
         ref="scrollAreaRef"
@@ -115,6 +126,7 @@
             isReply
           />
           <q-input
+            @click="hideBotOption()"
             v-model="message"
             placeholder="Enter reply information"
             dense
@@ -417,6 +429,7 @@ const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 const showBot = ref(false);
 const isMobile = ref(false);
+const showChatOption = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -433,12 +446,19 @@ const toggleInfo = () => {
   showBot.value = !showBot.value;
 };
 
+const hideBotOption = () => {
+  showBot.value = false;
+};
+
 const getSeparator = (index: number) => {
-  console.log(index);
   if (index != botList.value.length - 1) {
     return "border-b-2";
   }
   return "";
+};
+
+const toogleChatOption = () => {
+  showChatOption.value = !showChatOption.value;
 };
 
 const nameEn = computed<string>(() => {
@@ -834,7 +854,7 @@ const fileFilter = (files: readonly any[] | FileList) => {
 };
 
 const selectBot = async (bot: any) => {
-  showBot.value = false;
+  hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
     bot.trigger_intent
@@ -893,6 +913,9 @@ const getHeight = () => {
   return "height: " + window.innerHeight + "px";
 };
 onMounted(() => {
+  if (window.innerWidth < 1024) {
+    isMobile.value = true;
+  }
   getChatbots();
 });
 
