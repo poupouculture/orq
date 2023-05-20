@@ -1,5 +1,9 @@
 <template>
-  <div v-if="getSelectedChat.id" class="flex justify-start gap-3 pb-3">
+  <div
+    v-if="getSelectedChat.id"
+    class="flex justify-start gap-3 pb-3"
+    :class="getDirectionComponent()"
+  >
     <q-btn
       outline
       color="primary"
@@ -172,6 +176,14 @@ const searchUser = () => {
     return name.some((val) => val.includes(query.value));
   });
 };
+
+const getDirectionComponent = () => {
+  if (window.innerWidth < 500) {
+    return "flex-col";
+  }
+  return "";
+};
+
 onMounted(async () => {
   Loading.show();
   const { data } = await getChatUsers();

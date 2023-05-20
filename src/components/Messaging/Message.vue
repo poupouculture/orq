@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="getSelectedChatId"
-    class="h-full w-full flex flex-col q-pa-md"
+    class="h-full w-full flex flex-col q-pa-md overflow-hidden"
     :style="getHeight()"
   >
     <header
@@ -115,7 +115,7 @@
       </div>
     </main>
     <!-- footer -->
-    <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
+    <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 overflow-hidden">
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
         <div
           class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2"
@@ -161,7 +161,11 @@
             >
               <img src="~assets/images/bot.svg" @click="toggleInfo()" />
               <q-menu v-if="!isMobile">
-                <q-list dense style="min-width: 100px">
+                <q-list
+                  dense
+                  style="min-width: 100px"
+                  class="py-2 px-3 space-y-2"
+                >
                   <q-item
                     v-for="item in botList"
                     :key="item.text"
@@ -169,6 +173,18 @@
                     v-close-popup
                     @click="selectBot(item)"
                   >
+                    <img
+                      src="~assets/images/bot.svg"
+                      width="26"
+                      class="pr-2"
+                      v-if="item.name !== 'Greetings'"
+                    />
+                    <img
+                      src="~assets/images/wave.svg"
+                      width="28"
+                      class="pr-2"
+                      v-else
+                    />
                     <q-item-section>{{ item.name }}</q-item-section>
                   </q-item>
                 </q-list>
@@ -184,10 +200,7 @@
             size="md"
             :disable="isChatExpired"
             class="q-mt-md active:bg-primary mic-recorder"
-            @mousedown.prevent="recStart"
-            @touchstart.prevent="recStart"
-            @mouseup.prevent="recStop"
-            @touchend.prevent="recStop"
+            @click="record()"
           />
           <q-btn
             :flat="!isChatExpired"
@@ -696,6 +709,14 @@ const sendMedia = async (blob: Blob) => {
   bodyFormData.append("file", file);
   const data = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
+};
+
+const record = () => {
+  if (showAudio.value) {
+    recStop();
+  } else {
+    recStart();
+  }
 };
 
 const recStart = function () {
