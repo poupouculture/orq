@@ -147,8 +147,8 @@
               class="q-mt-md"
               :disable="isChatExpired"
             >
-              <img src="~assets/images/bot.svg" />
-              <q-menu>
+              <img src="~assets/images/bot.svg" @click="toggleInfo()" />
+              <q-menu v-if="!isMobile">
                 <q-list dense style="min-width: 100px">
                   <q-item
                     v-for="item in botList"
@@ -259,6 +259,61 @@
     @hide="showMessageImage = false"
     @send="upload"
   />
+  <Transition
+    enter-active-class="duration-200 ease-out"
+    enter-from-class="transform opacity-0 translate-y-96"
+    enter-to-class="opacity-100 translate-y-0"
+    leave-active-class="duration-200 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0 translate-y-96"
+  >
+    <div
+      class="fixed bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
+      v-if="showBot && isMobile"
+    >
+      <div
+        class="flex items-center space-x-2 cursor-pointer w-fit text-gray-500 pb-3"
+        @click="toggleInfo()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M5 12l14 0"></path>
+          <path d="M5 12l4 4"></path>
+          <path d="M5 12l4 -4"></path>
+        </svg>
+        <span>Back</span>
+      </div>
+      <q-list dense style="min-width: 100px">
+        <q-item
+          v-for="(item, index) in botList"
+          :class="getSeparator(index)"
+          :key="item.text"
+          clickable
+          v-close-popup
+          @click="selectBot(item)"
+        >
+          <img
+            src="~assets/images/bot.svg"
+            width="26"
+            class="pr-2"
+            v-if="item.name !== 'Greetings'"
+          />
+          <img src="~assets/images/wave.svg" width="28" class="pr-2" v-else />
+          <q-item-section>{{ item.name }}</q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -360,6 +415,8 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
+const showBot = ref(false);
+const isMobile = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -368,6 +425,21 @@ const {
   cachedChatMessages,
   replayMessage,
 } = storeToRefs(messagingStore);
+
+const toggleInfo = () => {
+  if (window.innerWidth < 1024) {
+    isMobile.value = true;
+  }
+  showBot.value = !showBot.value;
+};
+
+const getSeparator = (index: number) => {
+  console.log(index);
+  if (index != botList.value.length - 1) {
+    return "border-b-2";
+  }
+  return "";
+};
 
 const nameEn = computed<string>(() => {
   return getChatNameEn(getSelectedChat.value);
@@ -762,10 +834,12 @@ const fileFilter = (files: readonly any[] | FileList) => {
 };
 
 const selectBot = async (bot: any) => {
+  showBot.value = false;
   const { status } = await initiateBot(
     getSelectedChatId.value,
     bot.trigger_intent
   );
+
   if (status) {
     Notify.create({
       message: "Bot initiated",
@@ -816,9 +890,8 @@ const onPast = (e: ClipboardEvent) => {
   }
 };
 const getHeight = () => {
-  console.log("height: " + window.innerHeight +'px');
-  return "height: " + window.innerHeight +'px';
-}
+  return "height: " + window.innerHeight + "px";
+};
 onMounted(() => {
   getChatbots();
 });
