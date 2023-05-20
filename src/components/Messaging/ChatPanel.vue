@@ -249,10 +249,13 @@ const initSocket = () => {
       console.log("contact_created", data);
     });
     socket.value.on("user_added", async (data: any) => {
-      console.log("user_added", data);
+      console.log("SOCKET_EVENT: user_added", data);
+      console.log(chatsList.value);
       const findChat = chatsList.value.find(
         (chat) => chat.chat_id === data.chat_id
       );
+      console.log("findChat");
+      console.log(findChat);
       if (!findChat) {
         chatsList.value.unshift({ members: "[]", ...data });
       }
@@ -280,7 +283,10 @@ const initSocket = () => {
           document?.summary?.customer_code +
           "</br>" +
           "Location Code: " +
-          document?.summary?.location_code,
+          document?.summary?.location_code +
+          "</br>" +
+          "Preferred Language: " +
+          document?.summary?.preferred_language,
         showCloseButton: true,
         showCancelButton: true,
         focusConfirm: false,
