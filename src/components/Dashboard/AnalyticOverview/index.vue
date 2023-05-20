@@ -183,25 +183,25 @@ onMounted(async () => {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
     <SmallBox
       title="Current"
-      title-color="text-primary"
+      :title-color="totalCurrentAmountColor"
       :value="totalCurrentAmount"
       v-if="isShowCurrentAmount"
     />
     <SmallBox
       title="Overdue"
-      title-color="text-red-400"
+      :title-color="totalOverdueColor"
       :value="totalOverdue"
       v-if="isShowOverdue"
     />
     <SmallBox
       title="Draft"
-      title-color="text-gray-400"
+      :title-color="totalDraftColor"
       :value="totalDraft"
       v-if="isShowDraft"
     />
     <SmallBox
       title="Total Customers"
-      title-color="text-gray-400"
+      :title-color="totalCustomersColor"
       :value="totalCustomers"
       :percentage="totalCustomerPercentage"
       v-if="isShowTotalCustomers"

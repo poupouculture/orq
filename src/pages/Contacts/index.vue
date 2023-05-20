@@ -38,8 +38,10 @@
               <div class="subrow">
                 <p class="headingtext">
                   {{
-                    props.row.customers[0]?.customers_id
-                      .customer_company_name_en
+                    props.row.customers.length
+                      ? props.row.customers[0].customers_id
+                          ?.customer_company_name_en || ""
+                      : ""
                   }}
                 </p>
               </div>
@@ -49,12 +51,20 @@
         </template>
         <template #body-cell-customer_code="props">
           <q-td :props="props" auto-width>
-            {{ props.row.customers[0]?.customers_id.customer_code }}
+            {{
+              props.row.customers.length
+                ? props.row.customers[0].customers_id?.customer_code || ""
+                : ""
+            }}
           </q-td>
         </template>
         <template #body-cell-location_code="props">
           <q-td :props="props" auto-width>
-            {{ props.row.customers[0]?.customers_id.location_code }}
+            {{
+              props.row.customers.length
+                ? props.row.customers[0].customers_id?.location_code || ""
+                : ""
+            }}
           </q-td>
         </template>
         <template #body-cell-is_active="props">
@@ -75,10 +85,13 @@
         </template>
       </BaseTable>
     </div>
-    <DeleteDialog
+    <BaseDialog
       v-model="deleteDialog"
       @cancel="deleteDialog = false"
-      @submitDelete="handleDelete()"
+      title="Disassociate"
+      description="This action is permanent and can not be undone. Are you sure you would like to proceed?"
+      submit-label="Confirm"
+      @submit="handleDelete"
     />
     <q-dialog v-model="editContactDialog">
       <div class="flex flex-col bg-white p-6">
@@ -130,9 +143,9 @@ import { ref, reactive, onMounted, computed } from "vue";
 import { getContacts, dissociateContacts } from "src/api/contact";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { Notify } from "quasar";
 import useContactStore from "src/stores/modules/contact";
+import BaseDialog from "src/components/Dialogs/BaseDialog.vue";
 
 const contactStore = useContactStore();
 const loading = ref(true);

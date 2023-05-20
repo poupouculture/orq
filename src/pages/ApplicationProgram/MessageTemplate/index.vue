@@ -112,14 +112,14 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
-    status: status.value == "All Status" ? "*" : status.value,
+    status: status.value === "All Status" ? "*" : status.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
 
-watch(status, async() => {
+watch(status, async () => {
   data.page = 1;
   await fetchApplicationPrograms();
 });
@@ -128,7 +128,7 @@ const changePage = (val) => {
   data.page = val;
   fetchApplicationPrograms();
 };
-const archiveSelected = () =>  {
+const archiveSelected = () => {
   if (selected.value.length > 0) {
     selected.value.forEach(async (data) => {
       data.status = "archived";

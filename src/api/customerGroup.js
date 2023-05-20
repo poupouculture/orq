@@ -17,7 +17,7 @@ export const getCustomerGroups = async (
     source = undefined,
     customerIds = undefined,
     customerFilter = "",
-    sourceType = "div_no",
+    sourceType = undefined,
   },
   id = null
 ) => {
