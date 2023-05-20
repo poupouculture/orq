@@ -337,6 +337,8 @@ const headerOptions = ["TEXT", "MEDIA"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const categories = [
   "Marketing",
+  "Transactional",
+  "Issue Resolution",
   "Utility",
 ];
 const actions = ref(Array(2).fill(null));

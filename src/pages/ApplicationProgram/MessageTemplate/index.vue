@@ -70,7 +70,7 @@ import {
   getMessageTemplates,
   updateMessageTemplate,
 } from "src/api/messageTemplate";
-import { ref, reactive, onMounted, onUpdated } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
@@ -83,12 +83,12 @@ const selected = ref([]);
 const status = ref("All Status");
 const statusOptions = [
   {
-    label: "Draft",
-    value: "draft",
+    label: "All Status",
+    value: "All Status",
   },
   {
-    label: "Archived",
-    value: "archived",
+    label: "Draft",
+    value: "Draft",
   },
   {
     label: "Published",
@@ -118,7 +118,8 @@ const fetchApplicationPrograms = async () => {
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
-onUpdated(async () => {
+
+watch(status, async () => {
   data.page = 1;
   await fetchApplicationPrograms();
 });
@@ -132,6 +133,9 @@ const archiveSelected = () => {
     selected.value.forEach(async (data) => {
       data.status = "archived";
       await updateMessageTemplate(data.id, data);
+      loading.value = true;
+      await fetchApplicationPrograms();
+      loading.value = false;
     });
     Notify.create({
       message: `Selected Template has been archived`,
