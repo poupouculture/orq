@@ -232,6 +232,10 @@ const initSocket = () => {
         (chat: IChat) => chat.id === data.document?.id
       );
       if (chat) {
+        messagingStore.changeModeChatListById(
+          chat?.id,
+          data.document?.update_fields.mode
+        );
         messagingStore.updateChatsList(chat, data.document?.status);
       }
     });
