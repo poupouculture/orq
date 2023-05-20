@@ -103,10 +103,13 @@ const useCustomerStore = defineStore("customer", {
         });
     },
     async fetchCustomer(id: string) {
-      const {
-        data: { data: customer },
-      } = await getCustomer(id);
-      this.setCustomer(customer);
+      try {
+        const data = await getCustomer(id);
+        if (data) {
+          const customer = data.data.data;
+          this.setCustomer(customer);
+        }
+      } catch (error) {}
     },
     setCustomer(customer: ICustomer | null) {
       if (customer === null) {

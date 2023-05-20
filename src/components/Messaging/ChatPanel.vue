@@ -245,6 +245,9 @@ const initSocket = () => {
         );
       }
     });
+    socket.value.on("contact_created", async (data: any) => {
+      console.log("contact_created", data);
+    });
     socket.value.on("user_added", async (data: any) => {
       console.log("user_added", data);
       const findChat = chatsList.value.find(
@@ -268,20 +271,20 @@ const initSocket = () => {
       const { document } = data;
       const { isConfirmed } = await Swal.fire({
         icon: "info",
-        title: "User Message",
+        title: "Incoming Profile",
         html:
-          "customer name: " +
+          "Customer Name: " +
           document?.summary?.customer_name +
           "</br>" +
-          "customer code: " +
+          "Customer Code: " +
           document?.summary?.customer_code +
           "</br>" +
-          "location code: " +
+          "Location Code: " +
           document?.summary?.location_code,
         showCloseButton: true,
         showCancelButton: true,
         focusConfirm: false,
-        confirmButtonText: "Load Customer",
+        confirmButtonText: "Load Profile",
       });
       const chat = chatsList.value.find(
         (chat) => chat.id === document.session_id
