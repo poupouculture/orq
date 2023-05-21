@@ -416,7 +416,7 @@ const fetchCustomerGroups = async () => {
     search: customerGroupQuery.value.length
       ? customerGroupQuery.value
       : undefined,
-    source: sourceType.value,
+    source: cgType.value === "group" ? sourceType.value : undefined,
     type: cgType.value,
   };
   Loading.show();

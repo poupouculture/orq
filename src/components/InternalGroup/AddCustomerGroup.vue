@@ -14,6 +14,7 @@
       <q-select
         dense
         outlined
+        v-if="type === 'group'"
         v-model="sourceType"
         :options="sourceTypeOptions"
         option-value="value"

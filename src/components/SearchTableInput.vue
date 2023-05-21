@@ -5,7 +5,8 @@
     dense
     v-model="search"
     :debounce="500"
-    @update:model-value="searchHandler"
+    @keypress.enter="searchHandlerOnEnter()"
+    @update:model-value="searchHandler($event)"
   >
     <template v-slot:prepend>
       <q-icon name="search" />
@@ -19,7 +20,7 @@
         color="gray-1"
       />
       <q-icon
-        v-else-if="search"
+        v-else-if="search || searchTrigged"
         name="close"
         class="text-gray-400 cursor-pointer"
         @click="resetSearch"
@@ -38,15 +39,27 @@ const props = defineProps({
     required: true,
     default: () => false,
   },
+  searchOnEnter: {
+    type: Boolean,
+    default: () => false,
+  },
 });
 const search = ref("");
-
+const searchTrigged = ref(false);
 const searchHandler = () => {
+  searchTrigged.value = true;
+  if (!props.searchOnEnter) {
+    emit("search", search.value);
+  }
+};
+const searchHandlerOnEnter = () => {
+  searchTrigged.value = true;
   emit("search", search.value);
 };
 
 const resetSearch = () => {
   search.value = "";
+  searchTrigged.value = false;
   emit("reset");
 };
 </script>

@@ -13,11 +13,24 @@
       Message Templates
     </p>
     <div class="row justify-between">
-      <SearchTableInput
-        :loading="loading"
-        @search="searchHandler"
-        @reset="resetSearch"
-      />
+      <div class="flex items-center gap-x-3">
+        <SearchTableInput
+          :loading="loading"
+          @search="searchHandler"
+          @reset="resetSearch"
+        />
+        <q-select
+          dense
+          outlined
+          v-model="status"
+          option-value="value"
+          option-label="label"
+          :options="statusOptions"
+          map-options
+          emit-value
+          label="Status"
+        />
+      </div>
       <div>
         <q-btn
           icon="add"
@@ -57,7 +70,7 @@ import {
   getMessageTemplates,
   updateMessageTemplate,
 } from "src/api/messageTemplate";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
@@ -67,6 +80,21 @@ const router = useRouter();
 const loading = ref(true);
 const search = ref("");
 const selected = ref([]);
+const status = ref("All Status");
+const statusOptions = [
+  {
+    label: "All Status",
+    value: "All Status",
+  },
+  {
+    label: "Draft",
+    value: "Draft",
+  },
+  {
+    label: "Published",
+    value: "published",
+  },
+];
 const data = reactive({
   applicationPrograms: [],
   totalCount: 0,
@@ -84,12 +112,18 @@ const fetchApplicationPrograms = async () => {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.value,
-    status: "*",
+    status: status.value === "All Status" ? "*" : status.value,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
+
+watch(status, async () => {
+  data.page = 1;
+  await fetchApplicationPrograms();
+});
+
 const changePage = (val) => {
   data.page = val;
   fetchApplicationPrograms();
@@ -99,6 +133,9 @@ const archiveSelected = () => {
     selected.value.forEach(async (data) => {
       data.status = "archived";
       await updateMessageTemplate(data.id, data);
+      loading.value = true;
+      await fetchApplicationPrograms();
+      loading.value = false;
     });
     Notify.create({
       message: `Selected Template has been archived`,

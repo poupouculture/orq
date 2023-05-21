@@ -606,7 +606,7 @@ const associateContact = async () => {
               <p class="label-style">Company Code</p>
               <q-input
                 v-model="companyCd"
-                :disable="mode == 'show'"
+                disable
                 class="indi w-full"
                 outlined
                 lazy-rules
