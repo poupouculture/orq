@@ -71,14 +71,14 @@
               class="rounded-lg w-full overflow-hidden border border-gray-200 bg-white"
             >
               <div
-                class="bg-primary flex items-center justify-between text-white pl-3 py-0.5"
+                class="bg-primary flex items-center justify-between text-white pl-3 py-0.5 h-10"
               >
                 <div class="truncate w-10/12">{{ group.name }}</div>
-                <ButtonGroupMenu
+                <!-- <ButtonGroupMenu
                   class="w-2/12 grow-0 justify-end"
                   :id="group.id"
                   :source="group.source"
-                />
+                /> -->
               </div>
               <div class="px-4 py-3 text-gray-500">
                 <div class="flex items-center justify-between mb-2">
@@ -109,7 +109,7 @@
   </div>
 </template>
 <script setup>
-import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
+// import ButtonGroupMenu from "components/UserGroup/ButtonGroupMenu.vue";
 import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref, watch } from "vue";
