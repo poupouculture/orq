@@ -77,6 +77,7 @@
                 <ButtonGroupMenu
                   class="w-2/12 grow-0 justify-end"
                   :id="group.id"
+                  :source="group.source"
                 />
               </div>
               <div class="px-4 py-3 text-gray-500">

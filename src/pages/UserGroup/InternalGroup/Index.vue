@@ -59,13 +59,13 @@
                   <p class="text-gray-400">{{ group.users.length }} Members</p>
                 </div>
               </div>
-              <!-- <ButtonGroupMenu
+              <ButtonGroupMenu
                 @delete-group="fetchInternalGroups()"
                 class="w-2/12 grow-0 justify-end"
                 :id="group.id"
                 :group="group"
                 @add-user="fetchInternalGroups()"
-              /> -->
+              />
             </div>
             <!-- customers -->
             <div
@@ -135,7 +135,7 @@ import BasePagination from "components/BasePagination.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import { onMounted, reactive, computed, ref, watch } from "vue";
 import useInternalGroupStore from "src/stores/modules/internalGroup";
-// import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
+import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
 import userAvatar from "src/assets/images/profileicon.svg";
 
 const internalGroupStore = useInternalGroupStore();
