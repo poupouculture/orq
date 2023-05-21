@@ -193,6 +193,25 @@ onMounted(async () => {
 const assignUser = async (user: User, addMember: boolean = false) => {
   const chatId = getSelectedChat.value.id;
   const userId = user.user_id;
+
+  try {
+    const currentMembers = JSON.parse(getSelectedChat.value.members);
+    console.log("current members:", currentMembers);
+    const checkCurrentMember = currentMembers.find(
+      (member: any) => member.id === userId
+    );
+    if (checkCurrentMember) {
+      Notify.create({
+        message: "User already exist",
+        position: "top",
+        type: "negative",
+      });
+      return;
+    }
+  } catch (error) {
+    console.log("cannot get members");
+  }
+
   try {
     Loading.show();
     const { data } = await assignUserAPI(chatId, userId, addMember);
