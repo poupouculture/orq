@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="getSelectedChatId"
-    class="h-full w-full flex flex-col q-pa-md overflow-hidden"
+    class="h-full w-full flex flex-col q-pa-md"
     :style="getHeight()"
   >
     <header
@@ -89,7 +89,7 @@
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
       <div
-        class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
+        class="absolute top-0 scrollbar h-3/4 overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -115,7 +115,10 @@
       </div>
     </main>
     <!-- footer -->
-    <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 overflow-hidden">
+    <footer
+      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-2 inset-x-0"
+      :style="getWidthFooter()"
+    >
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
         <div
           class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2"
@@ -293,7 +296,7 @@
     leave-to-class="transform opacity-0 translate-y-96"
   >
     <div
-      class="fixed bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
+      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
       v-if="showBot && isMobile"
     >
       <div
@@ -321,6 +324,8 @@
       <q-list dense style="min-width: 100px">
         <q-item
           v-for="(item, index) in botList"
+          class="hover:bg-gray-200"
+          style="height: 35px"
           :class="getSeparator(index)"
           :key="item.text"
           clickable
@@ -778,6 +783,13 @@ function recClose() {
   rec.value = null;
   showAudio.value = false;
 }
+
+const getWidthFooter = () => {
+  if (window.innerWidth > 500) {
+    return "padding-left: 360px";
+  }
+  return "";
+};
 
 const upload = async (fileList: readonly File[], caption: string) => {
   const file = fileList[0];
