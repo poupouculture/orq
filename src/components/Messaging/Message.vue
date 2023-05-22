@@ -52,8 +52,8 @@
     </template>
     <template v-else>
       <div class="p-2 text-gray-400">Members</div>
-      <div class="flex justify-between p-2">
-        <div class="flex">
+      <div class="flex justify-between p-2 items-center">
+        <div class="flex pb-3">
           <div
             class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-200"
             v-for="(member, index) of members.slice(0, 3)"
@@ -68,17 +68,28 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <ChatConversationButton
-          v-if="getSelectedChat.status !== ChatTypes.CLOSED"
-        />
+        <div v-if="isMobile">
+          <div
+            class="text-primary pb-3 cursor-pointer"
+            @click="toogleChatOption()"
+          >
+            Actions
+          </div>
+        </div>
+
+        <div v-if="!isMobile || (isMobile && showChatOption)">
+          <ChatConversationButton
+            v-if="getSelectedChat.status !== ChatTypes.CLOSED"
+          />
+        </div>
       </div>
     </template>
 
     <q-separator class="mx-2" size="1px" inset />
     <!-- message content -->
-    <main class="flex-1 relative z-10 w-full h-full">
+    <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
       <div
-        class="absolute top-0 scrollbar h-full overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
+        class="absolute top-0 scrollbar h-3/4 overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -104,7 +115,10 @@
       </div>
     </main>
     <!-- footer -->
-    <footer class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5">
+    <footer
+      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-2 inset-x-0"
+      :style="getWidthFooter()"
+    >
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
         <div
           class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2"
@@ -115,6 +129,7 @@
             isReply
           />
           <q-input
+            @click="hideBotOption()"
             v-model="message"
             placeholder="Enter reply information"
             dense
@@ -147,9 +162,13 @@
               class="q-mt-md"
               :disable="isChatExpired"
             >
-              <img src="~assets/images/bot.svg" />
-              <q-menu>
-                <q-list dense style="min-width: 100px">
+              <img src="~assets/images/bot.svg" @click="toggleInfo()" />
+              <q-menu v-if="!isMobile">
+                <q-list
+                  dense
+                  style="min-width: 100px"
+                  class="py-2 px-3 space-y-2"
+                >
                   <q-item
                     v-for="item in botList"
                     :key="item.text"
@@ -157,6 +176,18 @@
                     v-close-popup
                     @click="selectBot(item)"
                   >
+                    <img
+                      src="~assets/images/bot.svg"
+                      width="26"
+                      class="pr-2"
+                      v-if="item.name !== 'Greetings'"
+                    />
+                    <img
+                      src="~assets/images/wave.svg"
+                      width="28"
+                      class="pr-2"
+                      v-else
+                    />
                     <q-item-section>{{ item.name }}</q-item-section>
                   </q-item>
                 </q-list>
@@ -172,10 +203,7 @@
             size="md"
             :disable="isChatExpired"
             class="q-mt-md active:bg-primary mic-recorder"
-            @mousedown.prevent="recStart"
-            @touchstart.prevent="recStart"
-            @mouseup.prevent="recStop"
-            @touchend.prevent="recStop"
+            @click="record()"
           />
           <q-btn
             :flat="!isChatExpired"
@@ -259,6 +287,63 @@
     @hide="showMessageImage = false"
     @send="upload"
   />
+  <Transition
+    enter-active-class="duration-200 ease-out"
+    enter-from-class="transform opacity-0 translate-y-96"
+    enter-to-class="opacity-100 translate-y-0"
+    leave-active-class="duration-200 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0 translate-y-96"
+  >
+    <div
+      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
+      v-if="showBot && isMobile"
+    >
+      <div
+        class="flex items-center space-x-2 cursor-pointer w-fit text-gray-500 pb-3"
+        @click="toggleInfo()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M5 12l14 0"></path>
+          <path d="M5 12l4 4"></path>
+          <path d="M5 12l4 -4"></path>
+        </svg>
+        <span>Back</span>
+      </div>
+      <q-list dense style="min-width: 100px">
+        <q-item
+          v-for="(item, index) in botList"
+          class="hover:bg-gray-200"
+          style="height: 35px"
+          :class="getSeparator(index)"
+          :key="item.text"
+          clickable
+          v-close-popup
+          @click="selectBot(item)"
+        >
+          <img
+            src="~assets/images/bot.svg"
+            width="26"
+            class="pr-2"
+            v-if="item.name !== 'Greetings'"
+          />
+          <img src="~assets/images/wave.svg" width="28" class="pr-2" v-else />
+          <q-item-section>{{ item.name }}</q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -275,7 +360,7 @@ import {
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, isSameDay, isToday, differenceInDays } from "date-fns";
+import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
 import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
@@ -360,6 +445,9 @@ const userInfoStore = useUserInfoStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
+const showBot = ref(false);
+const isMobile = ref(false);
+const showChatOption = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -368,6 +456,28 @@ const {
   cachedChatMessages,
   replayMessage,
 } = storeToRefs(messagingStore);
+
+const toggleInfo = () => {
+  if (window.innerWidth < 1024) {
+    isMobile.value = true;
+  }
+  showBot.value = !showBot.value;
+};
+
+const hideBotOption = () => {
+  showBot.value = false;
+};
+
+const getSeparator = (index: number) => {
+  if (index !== botList.value.length - 1) {
+    return "border-b-2";
+  }
+  return "";
+};
+
+const toogleChatOption = () => {
+  showChatOption.value = !showChatOption.value;
+};
 
 const nameEn = computed<string>(() => {
   return getChatNameEn(getSelectedChat.value);
@@ -422,12 +532,18 @@ watch(getSelectedChatId, () => {
 });
 
 watch(
-  () => getSelectedChat.value?.last_message,
+  () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    const createDate = val?.date_created;
-    if (createDate) {
-      isChatExpired.value =
-        differenceInDays(new Date(), new Date(createDate)) > 0;
+    console.log("Selected-Chat:expiry", val);
+    if (val) {
+      const expiredDate = new Date(val * 1000);
+      console.log("expiredDate:", expiredDate);
+      if (expiredDate) {
+        isChatExpired.value = new Date() >= expiredDate;
+        // differenceInDays(new Date(), new Date(expiredDate)) < 0;
+      } else {
+        isChatExpired.value = true;
+      }
     } else {
       isChatExpired.value = true;
     }
@@ -505,7 +621,7 @@ const sendMessage = async () => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   message.value = "";
-  isChatExpired.value = false;
+  // isChatExpired.value = false;
 
   try {
     const data = await messagingStore.sendChatTextMessage({
@@ -606,6 +722,14 @@ const sendMedia = async (blob: Blob) => {
   messageCallback(data, newMessage);
 };
 
+const record = () => {
+  if (showAudio.value) {
+    recStop();
+  } else {
+    recStart();
+  }
+};
+
 const recStart = function () {
   showAudio.value = true;
   if (!wave.value) {
@@ -665,6 +789,13 @@ function recClose() {
   rec.value = null;
   showAudio.value = false;
 }
+
+const getWidthFooter = () => {
+  if (window.innerWidth > 500) {
+    return "padding-left: 360px";
+  }
+  return "";
+};
 
 const upload = async (fileList: readonly File[], caption: string) => {
   const file = fileList[0];
@@ -762,10 +893,12 @@ const fileFilter = (files: readonly any[] | FileList) => {
 };
 
 const selectBot = async (bot: any) => {
+  hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
     bot.trigger_intent
   );
+
   if (status) {
     Notify.create({
       message: "Bot initiated",
@@ -816,10 +949,12 @@ const onPast = (e: ClipboardEvent) => {
   }
 };
 const getHeight = () => {
-  console.log("height: " + window.innerHeight + "px");
   return "height: " + window.innerHeight + "px";
 };
 onMounted(() => {
+  if (window.innerWidth < 1024) {
+    isMobile.value = true;
+  }
   getChatbots();
 });
 

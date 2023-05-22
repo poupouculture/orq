@@ -4,6 +4,7 @@ export interface PersonalItem {
   status: string;
   type: string;
   avatar: string;
+  source: string;
 }
 
 export interface Meta {

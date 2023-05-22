@@ -1,5 +1,5 @@
 <template>
-  <div v-if="getSelectedChat.id" class="flex justify-end gap-3">
+  <div v-if="getSelectedChat.id" class="flex justify-start gap-3 pb-3">
     <q-btn
       outline
       color="primary"
@@ -13,7 +13,7 @@
         anchor="bottom left"
         self="top left"
         :offset="[0, 5]"
-        style="width: 300px"
+        style="width: 250px"
         fit
       >
         <q-list separator>
@@ -74,7 +74,7 @@
         anchor="bottom left"
         self="top left"
         :offset="[0, 5]"
-        style="width: 300px"
+        style="width: 250px"
         fit
       >
         <q-list separator>
@@ -172,12 +172,22 @@ const searchUser = () => {
     return name.some((val) => val.includes(query.value));
   });
 };
+
+// const getDirectionComponent = () => {
+//   if (window.innerWidth < 500) {
+//     return "flex-col";
+//   }
+//   return "";
+// };
+
 onMounted(async () => {
+  Loading.show();
   const { data } = await getChatUsers();
   users.value = data;
   usersData.value = data;
 
   userRole.value = userInfo.getUserRoleName;
+  Loading.hide();
 });
 
 const assignUser = async (user: User, addMember: boolean = false) => {
