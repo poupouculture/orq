@@ -532,12 +532,15 @@ watch(getSelectedChatId, () => {
 });
 
 watch(
-  () => getSelectedChat.value?.last_message,
+  () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    const createDate = val?.date_created;
-    if (createDate) {
+    console.log("Selected-Chat:expiry", val);
+    // console.log(getSelectedChat.value.last_message);
+    const expiredDate = val;
+    console.log(differenceInDays(new Date(), new Date(expiredDate)) > 0);
+    if (expiredDate) {
       isChatExpired.value =
-        differenceInDays(new Date(), new Date(createDate)) > 0;
+        differenceInDays(new Date(), new Date(expiredDate)) > 0;
     } else {
       isChatExpired.value = true;
     }
@@ -615,7 +618,7 @@ const sendMessage = async () => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   message.value = "";
-  isChatExpired.value = false;
+  // isChatExpired.value = false;
 
   try {
     const data = await messagingStore.sendChatTextMessage({
