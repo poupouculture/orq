@@ -32,49 +32,49 @@
             <p class="text-gray-400">Type your template name</p>
           </div>
 
-        <input
-          type="text"
-          class="w-full h-9 block border rounded-lg mt-2 pl-4"
-          :class="{
-            'mb-2': isShowDuplicateName,
-            'mb-4': !isShowDuplicateName,
-          }"
-          v-model="name"
-          @keypress="checkName"
-          @change="checkDuplication"
-        />
-
-        <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
-          Name is not valid because it's already used
-        </div>
-
-        <div class="label flex flex-col">
-          <p class="text-xl">Category</p>
-        </div>
-
-        <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
-          <InputSelect
-            :options="categories"
-            :default="selectedCategory"
-            :value="selectedCategory"
-            @input="updateSelectedCategory"
-            v-if="!loading"
+          <input
+            type="text"
+            class="w-full h-9 block border rounded-lg mt-2 pl-4"
+            :class="{
+              'mb-2': isShowDuplicateName,
+              'mb-4': !isShowDuplicateName,
+            }"
+            v-model="name"
+            @keypress="checkName"
+            @change="checkDuplication"
           />
-        </div>
 
-        <div class="label flex flex-col">
-          <p class="text-xl">Is Email</p>
-          <p class="text-gray-400">Is this email template</p>
-        </div>
+          <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
+            Name is not valid because it's already used
+          </div>
 
-        <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
-          <InputSelect
-            :options="isEmailOptions"
-            :default="isEmail"
-            :value="isEmail"
-            @input="updateIsEmail"
-            v-if="!loading"
-          />
+          <div class="label flex flex-col">
+            <p class="text-xl">Category</p>
+          </div>
+
+          <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
+            <InputSelect
+              :options="categories"
+              :default="selectedCategory"
+              :value="selectedCategory"
+              @input="updateSelectedCategory"
+              v-if="!loading"
+            />
+          </div>
+
+          <div class="label flex flex-col">
+            <p class="text-xl">Is Email</p>
+            <p class="text-gray-400">Is this email template</p>
+          </div>
+
+          <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
+            <InputSelect
+              :options="isEmailOptions"
+              :default="isEmail"
+              :value="isEmail"
+              @input="updateIsEmail"
+              v-if="!loading"
+            />
           </div>
           <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
             Name is not valid because it's already used
