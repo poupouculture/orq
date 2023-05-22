@@ -234,6 +234,13 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
+        if (data.document?.mode !== "bot")
+          Notify.create({
+            message: `${data.document?.name} has been finished`,
+            type: "positive",
+            color: "primary",
+            position: "top",
+          });
       }
     });
     socket.value.on("message_created", async (data: SocketMessage) => {
