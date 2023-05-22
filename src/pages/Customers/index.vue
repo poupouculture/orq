@@ -9,15 +9,6 @@
       />
       <div>
         <q-btn
-          icon="add"
-          no-caps
-          rounded
-          color="primary"
-          label="Add"
-          class="q-mr-sm"
-          @click="router.push('/customers/create')"
-        />
-        <q-btn
           icon="delete"
           no-caps
           rounded
@@ -102,14 +93,12 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { getCustomers } from "src/api/customers";
-import { useRouter } from "vue-router";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { format } from "date-fns";
 
-const router = useRouter();
 const customerStore = useCustomerStore();
 
 const headerColumns = [
