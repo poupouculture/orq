@@ -1,287 +1,288 @@
 <template>
-  <div class="main-container">
-    <p class="header-text text-2xl">
-      <router-link
-        :to="`/application-programs/${
-          props.formType === 'bots'
-            ? 'chatbots'
-            : props.formType === 'customer-service'
-            ? 'customer-services'
-            : 'message-templates'
-        }`"
-        style="text-decoration: none; color: inherit"
-      >
-        <span class="text-gray-400 cursor-pointer">
-          <q-icon name="fa-solid fa-arrow-left" />
-          Application programs /
-        </span>
-      </router-link>
-      {{
-        props.formType === "bots"
-          ? "Chatbots"
-          : props.formType === "customer-service"
-          ? "Customer Service"
-          : "Message Templates"
-      }}
-    </p>
-    <div class="w-full flex bg-[#fdfdfd] rounded-lg">
-      <div class="w-2/3 flex flex-col p-6 border-r">
-        <div class="label flex flex-col">
-          <p class="text-xl">Name</p>
-          <p class="text-gray-400">Type your template name</p>
-        </div>
+  <q-form>
+    <div class="main-container">
+      <p class="header-text text-2xl">
+        <router-link
+          :to="`/application-programs/${
+            props.formType === 'bots'
+              ? 'chatbots'
+              : props.formType === 'customer-service'
+              ? 'customer-services'
+              : 'message-templates'
+          }`"
+          style="text-decoration: none; color: inherit"
+        >
+          <span class="text-gray-400 cursor-pointer">
+            <q-icon name="fa-solid fa-arrow-left" />
+            Application programs /
+          </span>
+        </router-link>
+        {{
+          props.formType === "bots"
+            ? "Chatbots"
+            : props.formType === "customer-service"
+            ? "Customer Service"
+            : "Message Templates"
+        }}
+      </p>
+      <div class="w-full flex bg-[#fdfdfd] rounded-lg">
+        <div class="w-2/3 flex flex-col p-6 border-r">
+          <div class="label flex flex-col">
+            <p class="text-xl">Name</p>
+            <p class="text-gray-400">Type your template name</p>
+          </div>
 
-        <input
-          type="text"
-          class="w-full h-9 block border rounded-lg mt-2 pl-4"
-          :class="{
-            'mb-2': isShowDuplicateName,
-            'mb-4': !isShowDuplicateName,
-          }"
-          v-model="name"
-          @keypress="checkName"
-          @change="checkDuplication"
-        />
-
-        <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
-          Name is not valid because it's already used
-        </div>
-
-        <div class="label flex flex-col">
-          <p class="text-xl">Is Email</p>
-          <p class="text-gray-400">Is this email template</p>
-        </div>
-
-        <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
-          <InputSelect
-            :options="isEmailOptions"
-            :default="isEmail"
-            :value="isEmail"
-            @input="updateIsEmail"
-            v-if="!loading"
+          <input
+            type="text"
+            class="w-full h-9 block border rounded-lg mt-2 pl-4"
+            :class="{
+              'mb-2': isShowDuplicateName,
+              'mb-4': !isShowDuplicateName,
+            }"
+            v-model="name"
+            @keypress="checkName"
+            @change="checkDuplication"
           />
-        </div>
 
-        <div class="label flex flex-col">
-          <p class="text-xl">Languages</p>
-          <p class="text-gray-400">Select your message language</p>
-        </div>
+          <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
+            Name is not valid because it's already used
+          </div>
 
-        <div class="w-full md:w-8/12 lg:w-6/12 mt-2 mb-4">
-          <InputSelect
-            :options="languageOptions"
-            :default="language"
-            :value="language"
-            @input="updateLanguage"
-            v-if="!loading"
-          />
-        </div>
+          <div class="label flex flex-col">
+            <p class="text-xl">Is Email</p>
+            <p class="text-gray-400">Is this email template</p>
+          </div>
 
-        <div class="label flex flex-col">
-          <p class="text-xl">Header</p>
-          <p class="text-gray-400">
-            Add a title or choose which type of media you’ll use for this
-            Header.
-          </p>
-        </div>
-
-        <div class="flex mt-2 mb-4 gap-4">
-          <div class="w-full md:w-4/12 lg:w-3/12">
+          <div class="w-full md:w-4/12 lg:w-3/12 mt-2 mb-4">
             <InputSelect
-              :options="headerOptions"
-              :default="header"
-              :value="header"
-              @input="updateHeader"
+              :options="isEmailOptions"
+              :default="isEmail"
+              :value="isEmail"
+              @input="updateIsEmail"
               v-if="!loading"
             />
           </div>
-          <input
-            type="text"
-            class="w-8/12 block border rounded-lg pl-4"
-            v-if="header === 'TEXT'"
-            v-model="headerMessage"
-          />
-        </div>
 
-        <MediaChooser
-          @updateMedia="updateMedia"
-          :media="media"
-          v-if="header === 'MEDIA'"
-        />
+          <div class="label flex flex-col">
+            <p class="text-xl">Languages</p>
+            <p class="text-gray-400">Select your message language</p>
+          </div>
 
-        <div class="label flex flex-col">
-          <p class="text-xl">Body</p>
-          <p class="text-gray-400">
-            Enter the text for your message in the language you’ve selected.
-          </p>
-        </div>
-
-        <div
-          class="mt-2"
-          :class="{
-            'mb-2': customVariables.length > 0,
-            'mb-4': customVariables.length < 1,
-          }"
-        >
-          <textarea
-            type="text"
-            class="w-full block border rounded-lg p-4"
-            rows="4"
-            v-model="bodyMessage"
-            @change="bodyMessageChange"
-          ></textarea>
-          <span class="text-gray-400">
-            Characters: {{ bodyMessage.length }}/1024
-          </span>
-        </div>
-
-        <div
-          class="w-full flex flex-col mb-2"
-          v-if="customVariables.length > 0"
-        >
-          <div class="text-gray-400">Example:</div>
-          <div
-            class="w-full"
-            v-for="(example, index) of customVariables"
-            :key="index"
-          >
-            <input
-              type="text"
-              class="w-full h-10 block border rounded-lg pl-4 mb-2"
-              v-model="customVariables[index]"
-              :placeholder="`example for variable {{${index + 1}}}`"
+          <div class="w-full md:w-8/12 lg:w-6/12 mt-2 mb-4">
+            <InputSelect
+              :options="languageOptions"
+              :default="language"
+              :value="language"
+              @input="updateLanguage"
+              v-if="!loading"
             />
           </div>
-        </div>
 
-        <div class="label flex flex-col">
-          <p class="text-xl">Footer</p>
-          <p class="text-gray-400">
-            Add a short line of text to the button of you message template.
-          </p>
-        </div>
-
-        <div class="mt-2 mb-4">
-          <input
-            type="text"
-            class="w-full h-10 block border rounded-lg pl-4"
-            v-model="footerMessage"
-          />
-        </div>
-
-        <div class="label flex flex-col">
-          <p class="text-xl">Approved</p>
-          <p class="text-gray-400">Is this template approved</p>
-        </div>
-
-        <div class="mt-2 mb-4">
-          <input
-            type="text"
-            class="w-full md:w-4/12 lg:w-3/12 h-10 block border rounded-lg pl-4"
-            :value="isApproved"
-            disabled
-          />
-        </div>
-
-        <div class="label flex flex-col">
-          <p class="text-xl">Button</p>
-          <p class="text-gray-400">
-            Create buttons that let customers respond to your message or take
-            action
-          </p>
-        </div>
-
-        <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
-          <InputSelect
-            :options="actionCategoryOptions"
-            :default="actionCategory"
-            :value="actionCategory"
-            @input="updateActionCategory"
-            v-if="!loading"
-          />
-        </div>
-
-        <div v-if="actionCategory === ac.CALL_TO_ACTION">
-          <CallToAction
-            @updateAction="updateAction"
-            :index="0"
-            :action="actions[0]"
-            v-if="!loading"
-          />
-
-          <CallToAction
-            @updateAction="updateAction"
-            :index="1"
-            :action="actions[1]"
-            class="mt-4"
-            v-if="!loading"
-          />
-        </div>
-
-        <div
-          class="w-6/12 flex flex-col gap-2"
-          v-if="actionCategory === ac.QUICK_REPLY && !loading"
-        >
-          <ReplyAction
-            :index="index"
-            v-for="(replyText, index) of replies"
-            :key="index"
-            :replyText="replyText"
-            @updateReply="updateReply"
-            @deleteReply="deleteReply"
-          />
-
-          <button
-            class="w-9/12 flex border py-2 px-4 text-gray-500 items-center"
-            @click="addReply"
-          >
-            <q-icon name="fa fa-plus" class="mr-2"></q-icon>
-            Add Another Button
-          </button>
-        </div>
-
-        <div class="row justify-between mt-4">
-          <router-link
-            :to="`/application-programs/${
-              formType === 'bots'
-                ? 'chatbots'
-                : props.formType === 'customer-service'
-                ? 'customer-services'
-                : 'message-templates'
-            }`"
-            style="text-decoration: none; color: inherit"
-          >
-            <p
-              class="py-2 px-6 rounded text-primary border-2 border-dashed border-primary"
-            >
-              Return
+          <div class="label flex flex-col">
+            <p class="text-xl">Header</p>
+            <p class="text-gray-400">
+              Add a title or choose which type of media you’ll use for this
+              Header.
             </p>
-          </router-link>
-          <button
-            class="py-2 px-6 rounded bg-primary text-white"
-            @click="submitGeneralInformation"
-            v-if="!isShowDuplicateName"
+          </div>
+
+          <div class="flex mt-2 mb-4 gap-4">
+            <div class="w-full md:w-4/12 lg:w-3/12">
+              <InputSelect
+                :options="headerOptions"
+                :default="header"
+                :value="header"
+                @input="updateHeader"
+                v-if="!loading"
+              />
+            </div>
+            <input
+              type="text"
+              class="w-8/12 block border rounded-lg pl-4"
+              v-if="header === 'TEXT'"
+              v-model="headerMessage"
+            />
+          </div>
+
+          <MediaChooser
+            @updateMedia="updateMedia"
+            :media="media"
+            v-if="header === 'MEDIA'"
+          />
+
+          <div class="label flex flex-col">
+            <p class="text-xl">Body</p>
+            <p class="text-gray-400">
+              Enter the text for your message in the language you’ve selected.
+            </p>
+          </div>
+
+          <div
+            class="mt-2"
+            :class="{
+              'mb-2': customVariables.length > 0,
+              'mb-4': customVariables.length < 1,
+            }"
           >
-            Save
-          </button>
+            <textarea
+              type="text"
+              class="w-full block border rounded-lg p-4"
+              rows="4"
+              v-model="bodyMessage"
+              @change="bodyMessageChange"
+            ></textarea>
+            <span class="text-gray-400">
+              Characters: {{ bodyMessage.length }}/1024
+            </span>
+          </div>
+
+          <div
+            class="w-full flex flex-col mb-2"
+            v-if="customVariables.length > 0"
+          >
+            <div class="text-gray-400">Example:</div>
+            <div
+              class="w-full"
+              v-for="(example, index) of customVariables"
+              :key="index"
+            >
+              <input
+                type="text"
+                class="w-full h-10 block border rounded-lg pl-4 mb-2"
+                v-model="customVariables[index]"
+                :placeholder="`example for variable {{${index + 1}}}`"
+              />
+            </div>
+          </div>
+
+          <div class="label flex flex-col">
+            <p class="text-xl">Footer</p>
+            <p class="text-gray-400">
+              Add a short line of text to the button of you message template.
+            </p>
+          </div>
+
+          <div class="mt-2 mb-4">
+            <input
+              type="text"
+              class="w-full h-10 block border rounded-lg pl-4"
+              v-model="footerMessage"
+            />
+          </div>
+
+          <div class="label flex flex-col">
+            <p class="text-xl">Approved</p>
+            <p class="text-gray-400">Is this template approved</p>
+          </div>
+
+          <div class="mt-2 mb-4">
+            <input
+              type="text"
+              class="w-full md:w-4/12 lg:w-3/12 h-10 block border rounded-lg pl-4"
+              :value="isApproved"
+              disabled
+            />
+          </div>
+
+          <div class="label flex flex-col">
+            <p class="text-xl">Button</p>
+            <p class="text-gray-400">
+              Create buttons that let customers respond to your message or take
+              action
+            </p>
+          </div>
+
+          <div class="w-full md:4/12 lg:w-3/12 mt-2 mb-4">
+            <InputSelect
+              :options="actionCategoryOptions"
+              :default="actionCategory"
+              :value="actionCategory"
+              @input="updateActionCategory"
+              v-if="!loading"
+            />
+          </div>
+
+          <div v-if="actionCategory === ac.CALL_TO_ACTION">
+            <CallToAction
+              @updateAction="updateAction"
+              :index="0"
+              :action="actions[0]"
+              v-if="!loading"
+            />
+
+            <CallToAction
+              @updateAction="updateAction"
+              :index="1"
+              :action="actions[1]"
+              class="mt-4"
+              v-if="!loading"
+            />
+          </div>
+
+          <div
+            class="w-6/12 flex flex-col gap-2"
+            v-if="actionCategory === ac.QUICK_REPLY && !loading"
+          >
+            <ReplyAction
+              :index="index"
+              v-for="(replyText, index) of replies"
+              :key="index"
+              :replyText="replyText"
+              @updateReply="updateReply"
+              @deleteReply="deleteReply"
+            />
+
+            <button
+              class="w-9/12 flex border py-2 px-4 text-gray-500 items-center"
+              @click="addReply"
+            >
+              <q-icon name="fa fa-plus" class="mr-2"></q-icon>
+              Add Another Button
+            </button>
+          </div>
+
+          <div class="row justify-between mt-4">
+            <div
+              class="row q-gutter-xl btn-cls cursor-pointer"
+              @click="showReturnDialog = true"
+            >
+              <p
+                class="py-2 px-6 rounded text-primary border-2 border-dashed border-primary"
+              >
+                Return
+              </p>
+            </div>
+            <button
+              class="py-2 px-6 rounded bg-primary text-white"
+              @click="submitGeneralInformation"
+              v-if="!isShowDuplicateName"
+            >
+              Save
+            </button>
+          </div>
         </div>
-      </div>
-      <div class="w-1/3 p-6 flex flex-col">
-        <span class="text-xl">Preview</span>
-        <Preview
-          :header="header"
-          :headerMessage="headerMessage"
-          :media="media"
-          :bodyMessage="bodyMessage"
-          :footerMessage="footerMessage"
-          :actionCategory="actionCategory"
-          :actions="actions"
-          :replies="replies"
-          v-if="!loading"
-        />
+        <div class="w-1/3 p-6 flex flex-col">
+          <span class="text-xl">Preview</span>
+          <Preview
+            :header="header"
+            :headerMessage="headerMessage"
+            :media="media"
+            :bodyMessage="bodyMessage"
+            :footerMessage="footerMessage"
+            :actionCategory="actionCategory"
+            :actions="actions"
+            :replies="replies"
+            v-if="!loading"
+          />
+        </div>
       </div>
     </div>
-  </div>
+  </q-form>
+  <ReturnDialog
+    v-model="showReturnDialog"
+    @cancel="showReturnDialog = false"
+    @submit="discardChanges()"
+  />
 </template>
 
 <script setup>
@@ -299,6 +300,8 @@ import {
 } from "../../constants/messageTemplate.js";
 import { codes, names } from "../../constants/languages.js";
 import { getFacebookTemplateLists } from "src/api/messageTemplate";
+import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
+import { useRouter } from "vue-router";
 
 const userInfo = useUserInfoStore();
 const emit = defineEmits(["submitGeneralInformation"]);
@@ -324,6 +327,8 @@ const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const actions = ref(Array(2).fill(null));
 const storedTemplateNames = ref([]);
 const isShowDuplicateName = ref(false);
+const showReturnDialog = ref(false);
+const router = useRouter();
 
 const isEmail = ref("No");
 const language = ref("English (United States)");
@@ -450,6 +455,18 @@ onMounted(async () => {
 
   loading.value = false;
 });
+
+const discardChanges = async () => {
+  showReturnDialog.value = false;
+  var routeDetail =
+    props.formType === "bots"
+      ? "chatbots"
+      : props.formType === "customer-service"
+      ? "customer-services"
+      : "message-templates";
+  await router.replace("/application-programs/" + routeDetail);
+  location.reload();
+};
 
 const updateIsEmail = (value) => {
   isEmail.value = value;
