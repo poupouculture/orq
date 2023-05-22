@@ -791,10 +791,14 @@ function recClose() {
 }
 
 const getWidthFooter = () => {
+  let property = "";
   if (window.innerWidth > 500) {
-    return "padding-left: 360px";
+    property = "padding-left: 360px;";
   }
-  return "";
+  if (window.innerWidth > 500 && rightDrawerOpen.value) {
+    property = "padding-left: 360px; padding-right: 560px";
+  }
+  return property;
 };
 
 const upload = async (fileList: readonly File[], caption: string) => {
