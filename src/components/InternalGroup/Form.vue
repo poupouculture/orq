@@ -416,7 +416,7 @@ const fetchCustomerGroups = async () => {
     search: customerGroupQuery.value.length
       ? customerGroupQuery.value
       : undefined,
-    source: sourceType.value,
+    source: cgType.value === "group" ? sourceType.value : undefined,
     type: cgType.value,
   };
   Loading.show();
@@ -442,32 +442,27 @@ const fetchUsers = async () => {
   const params = {
     limit: paginationUser.rowsPerPage,
     page: paginationUser.page,
-    customers: selectedCustomerGroup.value,
     search: userQuery.value.length ? userQuery.value : undefined,
   };
   if (props.id) {
     Loading.show();
     const {
-      data: { data: customerGroups, meta },
+      data: { data: users, meta },
     } = await getUsersFilter(
       params,
       selectedUser.value.map((item) => item.id)
     );
     Loading.hide();
-    userData.value = customerGroups;
-    paginationUser.totalCount = userQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    userData.value = users;
+    paginationUser.totalCount = meta?.filter_count;
   } else {
     Loading.show();
     const {
-      data: { data: customers, meta },
+      data: { data: users, meta },
     } = await getUsers(params);
     Loading.hide();
-    userData.value = customers;
-    paginationUser.totalCount = userQuery.value.length
-      ? meta?.filter_count
-      : meta?.total_count;
+    userData.value = users;
+    paginationUser.totalCount = meta?.filter_count;
   }
 };
 

@@ -24,8 +24,10 @@
 import { computed, inject } from "vue";
 import { storeToRefs } from "pinia";
 import { ChatTypes } from "src/constants/ChatKeyword";
+import { getContactByChatId } from "src/api/messaging";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
+import { cancelGetCustomerRequest } from "src/api/customers";
 import useCustomerStore from "src/stores/modules/customer";
 import useContactStore from "src/stores/modules/contact";
 import { IChat } from "src/types/MessagingTypes";
@@ -54,19 +56,22 @@ const list = computed(() =>
   })
 );
 
-const selectChat = (chat: IChat) => {
+const selectChat = async (chat: IChat) => {
+  // Handle multiple request
+  cancelGetCustomerRequest();
   if (window.innerWidth <= 1024) {
     leftDrawerOpen.value = false;
   }
-  console.log(chat);
   getContactById(chat);
-  customerStore.$reset();
   messagingStore.onSelectChat(chat.id);
-  if (chat.contacts_id) {
-    messagingStore.fetchContactNumber(chat.contacts_id);
+  if (!chat.contacts_id) {
+    const contact = await getContactByChatId(chat.id);
+    chat.contacts_id = contact.contacts_id;
   }
+  messagingStore.fetchContactNumber(chat.contacts_id);
+  customerStore.$reset();
   if (chat.customers_id) {
-    customerStore.fetchCustomer(chat.customers_id);
+    await customerStore.fetchCustomer(chat.customers_id);
   }
 };
 </script>

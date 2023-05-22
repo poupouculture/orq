@@ -132,8 +132,8 @@ const customer: Ref<any> = ref(null);
 const openCustomerFilter: Ref<boolean> = ref(false);
 const openSearchResult: Ref<boolean> = ref(false);
 const selectedOption: Ref<IOption> = ref({
-  label: "First Name",
-  key: "first_name",
+  label: "Customer Name (English)",
+  key: "customer_company_name_en",
 });
 const selectOption = (option: IOption) => {
   selectedOption.value = option;
@@ -176,18 +176,6 @@ const searchHandler = debounce(async function () {
 }, 300);
 const filterOption = reactive<IOption[]>([
   {
-    label: "First Name",
-    key: "first_name",
-  },
-  {
-    label: "Last Name",
-    key: "last_name",
-  },
-  {
-    label: "ID Number",
-    key: "id_number",
-  },
-  {
     label: "Customer Code",
     key: "customer_code",
   },
@@ -210,6 +198,14 @@ const filterOption = reactive<IOption[]>([
   {
     label: "Location Code",
     key: "location_code",
+  },
+  {
+    label: "First Name",
+    key: "first_name",
+  },
+  {
+    label: "Last Name",
+    key: "last_name",
   },
 ]);
 </script>

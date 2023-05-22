@@ -5,7 +5,7 @@ export const getUsers = async ({
   page = 1,
   search = undefined,
 }) => {
-  const fields = `id, first_name, last_name, gender, date_created, position, role.name`;
+  const fields = `id,email,first_name,last_name,gender,date_created,position,role.name`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
   try {
@@ -60,10 +60,16 @@ export const getChatUsers = async () => {
  * @param userId
  * @returns
  */
-export const assignUser = async (chatId: string, userId: string) => {
-  const { data } = await api.post(`/waba/assign-chat-user`, {
+export const assignUser = async (
+  chatId: string,
+  userId: string,
+  addMember: boolean
+) => {
+  const params = {
     chat_id: chatId,
     user_id: userId,
-  });
+    add_member: addMember,
+  };
+  const { data } = await api.post(`/waba/assign-chat-user`, params);
   return data;
 };

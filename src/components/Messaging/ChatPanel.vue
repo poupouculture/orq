@@ -101,7 +101,7 @@ import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
 import { IChat, SocketMessage } from "src/types/MessagingTypes";
-import { closeBot, startNewChat } from "src/api/messaging";
+import { closeBot, startNewChat, getContactByChatId } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import { searchCustomers, getCustomer } from "src/api/customers";
@@ -245,29 +245,52 @@ const initSocket = () => {
         );
       }
     });
+    socket.value.on("contact_created", async (data: any) => {
+      console.log("contact_created", data);
+    });
+    socket.value.on("user_added", async (data: any) => {
+      console.log("SOCKET_EVENT: user_added", data);
+      console.log(chatsList.value);
+      const findChat = chatsList.value.find(
+        (chat) => chat.chat_id === data.chat_id
+      );
+      console.log("findChat");
+      console.log(findChat);
+      if (!findChat) {
+        chatsList.value.unshift({ members: "[]", ...data });
+      }
+      socket.value.emit("join_chat", data.chat_id);
+    });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
+      const contact = await getContactByChatId(data.id);
+      console.log("contact retrieved when chat_created event: ", data);
+      data.contacts_id = contact.contacts_id;
       chatsList.value.unshift({ members: "[]", ...data });
+      socket.value.emit("join_chat", data.id);
     });
     socket.value.on("botsession_created", async (data: any) => {
       console.log("botsession_created", data);
       const { document } = data;
       const { isConfirmed } = await Swal.fire({
         icon: "info",
-        title: "User Message",
+        title: "Incoming Profile",
         html:
-          "customer name: " +
+          "Customer Name: " +
           document?.summary?.customer_name +
           "</br>" +
-          "customer code: " +
+          "Customer Code: " +
           document?.summary?.customer_code +
           "</br>" +
-          "location code: " +
-          document?.summary?.location_code,
+          "Location Code: " +
+          document?.summary?.location_code +
+          "</br>" +
+          "Preferred Language: " +
+          document?.summary?.preferred_language,
         showCloseButton: true,
         showCancelButton: true,
         focusConfirm: false,
-        confirmButtonText: "Load Customer",
+        confirmButtonText: "Load Profile",
       });
       const chat = chatsList.value.find(
         (chat) => chat.id === document.session_id

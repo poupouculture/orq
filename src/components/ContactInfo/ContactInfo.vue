@@ -29,7 +29,6 @@ const updateContacts = async () => {
   editMode.value = false;
 };
 </script>
-
 <template>
   <div class="flex flex-col">
     <div

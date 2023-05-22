@@ -1,11 +1,25 @@
 <template>
   <div class="message-item relative">
-    <component ref="component" :is="componentName" :src="content.url"
-      :name="isDocument(content) ? content.file_name : content.media_id" :caption="content.caption" />
-    <div v-if="messageTemplateHeader(content) !== null" class="flex justify-center">
-      <img :src="messageTemplateHeader(content).image" v-if="messageTemplateHeader(content).type === MessageType.IMAGE" />
+    <component
+      ref="component"
+      :is="componentName"
+      :src="content.url"
+      :name="isDocument(content) ? content.file_name : content.media_id"
+      :caption="content.caption"
+    />
+    <div
+      v-if="messageTemplateHeader(content) !== null"
+      class="flex justify-center"
+    >
+      <img
+        :src="messageTemplateHeader(content).image"
+        v-if="messageTemplateHeader(content).type === MessageType.IMAGE"
+      />
       <video loop autoPlay muted v-if="messageTemplateHeader(content).type">
-        <source :src="messageTemplateHeader(content).video?.link" type="video/mp4" />
+        <source
+          :src="messageTemplateHeader(content).video?.link"
+          type="video/mp4"
+        />
       </video>
     </div>
     <span v-if="content?.type === MessageType.TEMPLATE">
@@ -13,16 +27,11 @@
     </span>
     <div v-if="!content?.type || content?.type === MessageType.TEXT">
       <div v-if="message?.waba_associated_message_id != null">
-        <div class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words" :class="[
-          isChatFromAdmin
-            ? 'bg-[#635eeb]'
-            : 'bg-[#ffffff]',
-        ]">
-          <div :class="[
-            isChatFromAdmin
-              ? 'text-[#f4f4f4]'
-              : 'text-blue-400',
-          ]">
+        <div
+          class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words"
+          :class="[isSend ? 'bg-[#635eeb]' : 'bg-[#ffffff]']"
+        >
+          <div :class="[isSend ? 'text-[#f4f4f4]' : 'text-blue-400']">
             {{ message.user_name ?? message.contact_company_name }}
           </div>
           {{ message?.waba_associated_message_id }}
@@ -43,13 +52,13 @@ import MessageDocument from "./MessageDocument.vue";
 interface Props {
   content: any;
   message: any;
-  isChatFromAdmin: boolean;
+  isSend: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
   message: () => ({}),
-  isChatFromAdmin: () => (false),
+  isSend: () => false,
 });
 
 const component = ref("");

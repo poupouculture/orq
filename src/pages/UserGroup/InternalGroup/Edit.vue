@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { updateInternalGroup } from "src/api/InternalGroup";
 import { Loading, Notify } from "quasar";
@@ -35,6 +35,7 @@ import useInternalGroupStore from "src/stores/modules/internalGroup";
 const router = useRouter();
 const route = useRoute();
 const internalGroupStore = useInternalGroupStore();
+const data = computed(() => internalGroupStore.item);
 const loading = ref(false);
 const formLoading = ref(false);
 
@@ -66,5 +67,13 @@ onMounted(async () => {
   await internalGroupStore.get(route.params.id);
   formLoading.value = false;
   Loading.hide();
+  if (data.value.type === "group") {
+    Notify.create({
+      message: "You can not edit personal group",
+      position: "top",
+      type: "negative",
+    });
+    router.replace("/internal-group");
+  }
 });
 </script>
