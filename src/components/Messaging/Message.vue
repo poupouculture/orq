@@ -360,7 +360,7 @@ import {
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { format, isSameDay, isToday, differenceInDays } from "date-fns";
+import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
 import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
@@ -469,7 +469,7 @@ const hideBotOption = () => {
 };
 
 const getSeparator = (index: number) => {
-  if (index != botList.value.length - 1) {
+  if (index !== botList.value.length - 1) {
     return "border-b-2";
   }
   return "";
@@ -535,12 +535,15 @@ watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
     console.log("Selected-Chat:expiry", val);
-    // console.log(getSelectedChat.value.last_message);
-    const expiredDate = val;
-    console.log(differenceInDays(new Date(), new Date(expiredDate)) > 0);
-    if (expiredDate) {
-      isChatExpired.value =
-        differenceInDays(new Date(), new Date(expiredDate)) > 0;
+    if (val) {
+      const expiredDate = new Date(val * 1000);
+      console.log("expiredDate:", expiredDate);
+      if (expiredDate) {
+        isChatExpired.value = new Date() >= expiredDate;
+        // differenceInDays(new Date(), new Date(expiredDate)) < 0;
+      } else {
+        isChatExpired.value = true;
+      }
     } else {
       isChatExpired.value = true;
     }

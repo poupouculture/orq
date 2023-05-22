@@ -173,12 +173,12 @@ const searchUser = () => {
   });
 };
 
-const getDirectionComponent = () => {
-  if (window.innerWidth < 500) {
-    return "flex-col";
-  }
-  return "";
-};
+// const getDirectionComponent = () => {
+//   if (window.innerWidth < 500) {
+//     return "flex-col";
+//   }
+//   return "";
+// };
 
 onMounted(async () => {
   Loading.show();
