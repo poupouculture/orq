@@ -122,14 +122,14 @@
             >
               <div class="flex items-center justify-between">
                 <div class="flex gap-x-3">
-                  <span>Name: {{ customerGroup.name }} </span>
+                  <span>{{ customerGroup.name }} </span>
                   <span class="flex gap-x-3">
                     <span>/</span>
-                    Type: {{ customerGroup.type }}
+                    {{ customerGroup.type }}
                   </span>
                   <span class="flex gap-x-3">
                     <span>/</span>
-                    Source: {{ customerGroup.source }}
+                    {{ customerGroup.source }}
                   </span>
                 </div>
                 <svg
