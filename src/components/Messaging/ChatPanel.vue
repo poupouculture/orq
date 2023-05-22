@@ -232,10 +232,7 @@ const initSocket = () => {
         (chat: IChat) => chat.id === data.document?.id
       );
       if (chat) {
-        messagingStore.changeModeChatListById(
-          chat?.id,
-          data.document?.update_fields.mode
-        );
+        messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
       }
     });
@@ -304,20 +301,21 @@ const initSocket = () => {
           document?.summary?.customer_code,
           document?.summary?.location_code
         )) as any;
-        if (customer?.id && chat) {
-          messagingStore.onSelectChat(chat?.id);
-          await customerStore.fetchCustomer(customer.id);
-          rightDrawerOpen.value = true;
+        if (chat) {
+          if (customer?.id) {
+            messagingStore.onSelectChat(chat?.id);
+            await customerStore.fetchCustomer(customer.id);
+            rightDrawerOpen.value = true;
+          } else {
+            await closeBot(chat?.id);
+            Notify.create({
+              message: "The chatbot has been ended",
+              color: "blue-9",
+              position: "top",
+              type: "positive",
+            });
+          }
         }
-      } else {
-        await closeBot(chat?.id);
-        Notify.create({
-          message: "The chatbot has been ended",
-          color: "blue-9",
-          position: "top",
-          type: "positive",
-        });
-        messagingStore.changeModeChatListById(chat?.id, "");
       }
     });
   } catch (error) {
