@@ -163,10 +163,10 @@ const routes = [
         name: "customers",
         component: () => import("pages/Customers/index.vue"),
       },
-      {
-        path: "customers/create",
-        component: () => import("pages/Customers/create.vue"),
-      },
+      // {
+      //   path: "customers/create",
+      //   component: () => import("pages/Customers/create.vue"),
+      // },
       {
         path: "contacts",
         name: "contacts",
@@ -223,11 +223,11 @@ const routes = [
         name: "customergroups.summary",
         component: () => import("pages/CustomerGroup/Index.vue"),
       },
-      {
-        path: "customer-groups/create",
-        name: "customergroups.create",
-        component: () => import("pages/CustomerGroup/Create.vue"),
-      },
+      // {
+      //   path: "customer-groups/create",
+      //   name: "customergroups.create",
+      //   component: () => import("pages/CustomerGroup/Create.vue"),
+      // },
       {
         path: "customer-groups/:id/edit",
         name: "customergroups.edit",

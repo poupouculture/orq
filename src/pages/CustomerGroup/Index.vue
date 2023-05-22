@@ -30,13 +30,13 @@
             label="Source"
           />
         </div>
-        <q-btn
+        <!-- <q-btn
           :to="{ name: 'customergroups.create' }"
           class="bg-primary text-white"
         >
           <q-icon name="add" class="text-white mr-2" />
           <span>Add</span>
-        </q-btn>
+        </q-btn> -->
       </div>
       <div
         class="flex items-center justify-center mt-4"
