@@ -150,7 +150,7 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 4,
 });
-const type = ref("individual");
+const type = ref("group");
 const typeOptions = ["group"];
 
 watch(type, () => {
