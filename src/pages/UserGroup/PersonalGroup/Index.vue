@@ -61,7 +61,7 @@ const paginationCustomers = reactive({
   page: 1,
   rowsPerPage: 10,
 });
-const userGroupType = ref("personal");
+const userGroupType = ref("group");
 
 const allPersonalGroups = computed(() => personalGroups.value.data);
 const allCustomerGroups = computed(() => customerGroups.value.data);
