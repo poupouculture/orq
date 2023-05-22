@@ -53,7 +53,7 @@ export const getUsersFilter = async (
   ids: string[]
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const fields = `id,first_name,last_name,gender,date_created,position,role.name`;
+  const fields = `id,first_name,email,last_name,gender,date_created,position,role.name`;
 
   const customer = await api.get("/users", {
     params: {

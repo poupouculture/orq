@@ -61,7 +61,7 @@ const paginationCustomers = reactive({
   page: 1,
   rowsPerPage: 10,
 });
-const userGroupType = ref("personal");
+const userGroupType = ref("group");
 
 const allPersonalGroups = computed(() => personalGroups.value.data);
 const allCustomerGroups = computed(() => customerGroups.value.data);
@@ -266,7 +266,16 @@ const headerColumns = [
   //   classes: "text-black capitalize",
   // },
 ];
-
+const cgSource = (source: string) => {
+  switch (source) {
+    case "customer_id":
+      return "Individual";
+    case "group":
+      return "Group";
+    default:
+      return source;
+  }
+};
 watch(drawerType, () => {
   tableSelected.value = [];
 });
@@ -398,7 +407,7 @@ if (window.innerWidth < 768) {
                         {{ personal.customer_groups_id?.name }}
                       </div>
                       <div class="text-gray-400 cursor-pointer truncate">
-                        {{ personal.customer_groups_id?.source }}
+                        {{ cgSource(personal.customer_groups_id?.source) }}
                       </div>
                     </div>
                   </div>

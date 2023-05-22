@@ -5,6 +5,7 @@
         <q-list>
           <q-item
             clickable
+            v-if="source !== 'div_no' && source !== 'salesman_code'"
             :to="{ name: 'customergroups.edit', params: { id } }"
           >
             <q-item-section>Edit</q-item-section>
@@ -46,6 +47,7 @@ import { Loading } from "quasar";
 const emits = defineEmits(["addCustomer"]);
 const props = defineProps({
   id: [String, Number],
+  source: String,
 });
 const customerGroupStore = useCustomerGroupStore();
 const customersData = ref([]);

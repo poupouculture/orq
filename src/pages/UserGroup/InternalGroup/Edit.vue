@@ -67,7 +67,7 @@ onMounted(async () => {
   await internalGroupStore.get(route.params.id);
   formLoading.value = false;
   Loading.hide();
-  if (data.value.type === "personal") {
+  if (data.value.type === "group") {
     Notify.create({
       message: "You can not edit personal group",
       position: "top",

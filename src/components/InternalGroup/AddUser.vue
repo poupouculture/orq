@@ -46,6 +46,13 @@ const headerColumns = ref([
     classes: "text-black",
   },
   {
+    name: "email",
+    align: "left",
+    label: "Email",
+    field: "email",
+    classes: "text-black",
+  },
+  {
     name: "role",
     align: "left",
     label: "Role",

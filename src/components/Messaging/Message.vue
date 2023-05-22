@@ -816,9 +816,9 @@ const onPast = (e: ClipboardEvent) => {
   }
 };
 const getHeight = () => {
-  console.log("height: " + window.innerHeight +'px');
-  return "height: " + window.innerHeight +'px';
-}
+  console.log("height: " + window.innerHeight + "px");
+  return "height: " + window.innerHeight + "px";
+};
 onMounted(() => {
   getChatbots();
 });

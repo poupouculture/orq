@@ -69,7 +69,7 @@
             </div>
             <!-- customers -->
             <div
-              class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap"
+              class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 flex-nowrap w-full"
               v-for="({ directus_users_id }, i) in group.users.filter(
                 (item) => item.directus_users_id !== null
               )"
@@ -90,7 +90,8 @@
                       {{ directus_users_id.last_name }}
                     </div>
                     <div class="text-gray-400 cursor-pointer truncate">
-                      {{ directus_users_id.role?.name }}
+                      {{ directus_users_id.role?.name }} /
+                      {{ directus_users_id.email }}
                     </div>
                   </div>
                 </div>
@@ -149,8 +150,8 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 4,
 });
-const type = ref("personal");
-const typeOptions = ["personal", "group"];
+const type = ref("group");
+const typeOptions = ["group"];
 
 watch(type, () => {
   pagination.page = 1;
@@ -191,7 +192,7 @@ const fetchInternalGroups = async () => {
   await internalGroupStore.getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
-    type: type.value,
+    type: type.value === "individual" ? "personal" : "group",
     search: query.value.length ? query.value : undefined,
   });
 };

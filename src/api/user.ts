@@ -5,7 +5,7 @@ export const getUsers = async ({
   page = 1,
   search = undefined,
 }) => {
-  const fields = `id, first_name, last_name, gender, date_created, position, role.name`;
+  const fields = `id,email,first_name,last_name,gender,date_created,position,role.name`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
   try {
