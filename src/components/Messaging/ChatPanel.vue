@@ -292,6 +292,16 @@ const initSocket = () => {
         focusConfirm: false,
         confirmButtonText: "Load Profile",
       });
+
+      const name = data.document.name.split(" ")[0];
+
+      Notify.create({
+        message: `Chat ${name} has been finished`,
+        color: "blue-9",
+        position: "top",
+        type: "positive",
+      });
+
       const chat = chatsList.value.find(
         (chat) => chat.id === document.session_id
       );

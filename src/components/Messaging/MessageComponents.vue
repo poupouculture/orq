@@ -25,7 +25,12 @@
     <span v-if="content?.type === MessageType.TEMPLATE">
       {{ messageTemplate(content) }}
     </span>
-    <div v-if="!content?.type || content?.type === MessageType.TEXT">
+    <div
+      v-if="
+        !content?.type ||
+        (content?.type === MessageType.TEXT && content?.mime_type === undefined)
+      "
+    >
       <div v-if="message?.waba_associated_message_id != null">
         <div
           class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words"
@@ -89,9 +94,18 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
+  console.log("content:", content);
+  console.log(
+    "is document:",
+    content?.type === MessageType.DOCUMENT ||
+      content?.type === MessageType.APPLICATION ||
+      (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
+  );
+
   return (
     content?.type === MessageType.DOCUMENT ||
-    content?.type === MessageType.APPLICATION
+    content?.type === MessageType.APPLICATION ||
+    (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
   );
 };
 
@@ -101,6 +115,12 @@ const components = shallowReactive({
   MessageDocument,
 });
 const componentName = computed(() => {
+  if (
+    props.content?.type === MessageType.TEXT &&
+    props.content?.mime_type !== undefined
+  ) {
+    return components.MessageDocument;
+  }
   switch (props.content?.type) {
     case MessageType.IMAGE:
       return components.MessageImage;
