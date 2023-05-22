@@ -170,7 +170,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full flex justify-between my-4">
+  <!-- <div class="w-full flex justify-between my-4">
     <span class="text-xl">Analytics Overview</span>
     <div class="flex p-2 bg-gray-200 rounded-md">
       <span class="text-gray-500"> Show: </span>
@@ -178,7 +178,7 @@ onMounted(async () => {
         <option value="">Last month</option>
       </select>
     </div>
-  </div>
+  </div> -->
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
     <SmallBox
