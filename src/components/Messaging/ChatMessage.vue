@@ -26,13 +26,13 @@
     >
       <span
         v-if="!isSend"
-        class="bottom-full left-0 scale-90 origin-left text-[#9A9AAF]"
+        class="bottom-full left-0 scale-90 origin-left text-black text-semibold"
       >
         {{ message.contact_name }}
       </span>
       <span
         v-if="isSend"
-        class="bottom-full left-0 scale-90 origin-right text-[#9A9AAF]"
+        class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
       >
         {{ message.user_name }}
       </span>
@@ -46,7 +46,12 @@
         color="primary"
         @click="closeReply"
       />
-      <MessageComponents ref="image" :content="message.content" :message="message" :isChatFromAdmin="isSend"/>
+      <MessageComponents
+        ref="image"
+        :content="message.content"
+        :message="message"
+        :isSend="isSend"
+      />
       <div
         v-if="!isReply"
         class="absolute right-0 top-full whitespace-nowrap flex flex-nowrap justify-end items-center pb-2 scale-90 origin-top-right"

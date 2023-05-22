@@ -13,7 +13,7 @@
       <q-td :props="props" :class="{ 'cursor-pointer': props.isSimple }">
         <div class="flex items-center flex-nowrap">
           <img
-            :src="props.row.avatar || '/src/assets/images/profileicon.svg'"
+            :src="props.row.avatar || userAvatar"
             class="w-10 h-10 rounded-full mr-3"
           />
           <div class="flex flex-col">
@@ -49,6 +49,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import TableData from "src/components/Overlay/TableData.vue";
+import userAvatar from "src/assets/images/profileicon.svg";
 
 const emits = defineEmits(["submit", "changePage", "close", "search"]);
 const selected = ref([]);

@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, onBeforeUnmount, ref, onUpdated } from "vue";
 import echarts from "src/components/charts/charts";
+import { numberFormat } from "src/utils/number-format";
 
 const prop = defineProps({
   title: {
@@ -8,18 +9,23 @@ const prop = defineProps({
     default: () => "",
   },
   value: {
-    type: String,
-    default: () => "",
+    type: Number,
+    default: () => 0,
   },
   data: {
     type: Array,
     default: () => [],
   },
+  percentage: {
+    type: String,
+    default: () => "",
+  },
 });
 
 const chartDiv = ref(null);
 let chart = null;
-onMounted(() => {
+
+const loadChart = () => {
   chart = echarts.init(chartDiv.value);
 
   chart.setOption({
@@ -49,6 +55,14 @@ onMounted(() => {
       },
     ],
   });
+};
+
+onMounted(() => {
+  loadChart();
+});
+
+onUpdated(() => {
+  loadChart();
 });
 
 onBeforeUnmount(() => {
@@ -62,7 +76,9 @@ onBeforeUnmount(() => {
       <span class="w-full">
         {{ prop.title }}
       </span>
-      <span class="my-4 text-2xl font-semibold"> {{ prop.value }} </span>
+      <span class="my-4 text-2xl font-semibold">
+        {{ numberFormat(prop.value) }}
+      </span>
       <div
         class="w-full flex flex-col text-xs"
         v-for="(val, index) in prop.data"
@@ -85,7 +101,7 @@ onBeforeUnmount(() => {
         v-if="prop.title === 'Users'"
       >
         <img src="~/assets/images/stonk-icon.svg" />
-        <span class="text-green-600 mr-1"> +10% </span>
+        <span class="text-green-600 mr-1"> {{ prop.percentage }} </span>
         <span> Since last month </span>
       </div>
       <div

@@ -19,6 +19,9 @@ const useContactStore = defineStore("useContact", {
   },
 
   actions: {
+    setCurrentCustomerId(customerID) {
+      this.currentCustomerId = customerID;
+    },
     async getContactById(chat) {
       console.log("chat:", chat);
       this.currentCustomerId = chat.customers_id;
@@ -36,17 +39,20 @@ const useContactStore = defineStore("useContact", {
         status: payload.status,
       };
       Loading.show();
-      const result = await updateContact(payload.id, getObj);
-      const { data } = result.data;
+      try {
+        const result = await updateContact(payload.id, getObj);
+        const { data } = result.data;
 
-      this.contact = data;
-
-      Notify.create({
-        message: "Update Contact Successfully",
-        position: "top",
-        type: "positive",
-        color: "blue-9",
-      });
+        this.contact = data;
+        Notify.create({
+          message: "Update Contact Successfully",
+          position: "top",
+          type: "positive",
+          color: "blue-9",
+        });
+      } catch (error) {
+        console.log(error);
+      }
       Loading.hide();
     },
 
