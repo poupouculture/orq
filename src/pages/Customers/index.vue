@@ -8,6 +8,15 @@
         @reset="resetSearch"
       />
       <div>
+        <!-- <q-btn
+          icon="add"
+          no-caps
+          rounded
+          color="primary"
+          label="Add"
+          class="q-mr-sm"
+          to="/customers/create"
+        /> -->
         <q-btn
           icon="delete"
           no-caps
