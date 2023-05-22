@@ -4,7 +4,7 @@
       <q-menu fit anchor="bottom middle" self="top right" auto-close>
         <q-list>
           <q-item
-            v-if="group.type !== 'personal'"
+            v-if="group.type === 'personal'"
             clickable
             :to="{
               name: 'internal-group.edit',
