@@ -792,10 +792,10 @@ function recClose() {
 
 const getWidthFooter = () => {
   let property = "";
-  if (window.innerWidth > 500) {
+  if (window.innerWidth > 768) {
     property = "padding-left: 360px;";
   }
-  if (window.innerWidth > 500 && rightDrawerOpen.value) {
+  if (window.innerWidth > 768 && rightDrawerOpen.value) {
     property = "padding-left: 360px; padding-right: 560px";
   }
   return property;
