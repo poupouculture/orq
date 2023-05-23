@@ -5,7 +5,13 @@
       class="q-pa-lg flex flex-col"
     >
       <q-card-section>
-        <p class="text-lg mb-2">Profile</p>
+        <div class="flex justify-between">
+          <p class="text-lg mb-2">Profile</p>
+          <button class="text-base mb-2 text-primary" @click="hide">
+            Close
+          </button>
+        </div>
+
         <div class="row justify-between">
           <q-input
             v-model="search"
