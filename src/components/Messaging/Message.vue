@@ -117,7 +117,7 @@
     </main>
     <!-- footer -->
     <footer
-      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-1 inset-x-0 h-1/5"
+      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-1 inset-x-0"
       :style="getWidthFooter()"
     >
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
