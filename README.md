@@ -9,7 +9,7 @@ yarn
 
 ## Application Design
 ### Content Management System **ERP**
-- login: https://waba.synque.ca/admin/login
+- login: https://{{env_url}}/admin/login
 this is where all data-models are created, designed, stored, and managed.
 ### Store
 - uses PINIA
@@ -197,8 +197,3 @@ Quasar • Generating files...
 - src/stores/store-flag.d.ts
 
 Quasar •  SUCCESS  • The project has been scaffolded
-
-```
-
-
-```
