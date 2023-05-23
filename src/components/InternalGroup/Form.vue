@@ -121,7 +121,17 @@
               :key="customerGroup.id"
             >
               <div class="flex items-center justify-between">
-                <span> {{ customerGroup.name }} </span>
+                <div class="flex gap-x-3">
+                  <span>{{ customerGroup.name }} </span>
+                  <span class="flex gap-x-3">
+                    <span>/</span>
+                    {{ customerGroup.type }}
+                  </span>
+                  <span class="flex gap-x-3">
+                    <span>/</span>
+                    {{ customerGroup.source }}
+                  </span>
+                </div>
                 <svg
                   @click="deleteCustomerGroup(i)"
                   xmlns="http://www.w3.org/2000/svg"

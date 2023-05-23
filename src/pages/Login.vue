@@ -14,7 +14,7 @@
 
     <div class="flex-1 flex no-wrap bg-white">
       <section
-        class="login-from flex flex-col justify-center mt-16 w-full sm:w-96 max-w-sm mx-auto px-4 sm:px-0"
+        class="login-from flex flex-col justify-center w-full sm:w-96 max-w-sm mx-auto px-4 sm:px-0"
       >
         <h1
           class="title text-[#111827] font-[800] font-inter text-center text-3xl mb-10"
@@ -38,7 +38,7 @@
           <label for="password" class="text-xs">Password</label>
           <q-input
             id="password"
-            class="mb-3"
+            class="mb-5"
             dense
             label="Input Your Password"
             type="Password"
@@ -47,7 +47,7 @@
             outlined
           />
 
-          <div class="control flex no-wrap items-center justify-between">
+          <!-- <div class="control flex no-wrap items-center justify-between">
             <div>
               <q-checkbox v-model="remember" label="Remember Me" />
             </div>
@@ -58,7 +58,7 @@
           <div class="py-4 flex items-center gap-1">
             <p class="text-sm">No Account ?</p>
             <RouterLink to="/" class="text-primary"> Create one! </RouterLink>
-          </div>
+          </div> -->
 
           <q-btn
             class="w-full h-9 font-normal rounded-md text-white bg-blue-700"
@@ -69,13 +69,13 @@
           </q-btn>
         </q-form>
 
-        <div class="flex flex-col items-center justify-center mt-10">
+        <!-- <div class="flex flex-col items-center justify-center mt-10">
           <span class="text-gray-400 text-xl"> or </span>
 
           <div class="mt-5">
             <LoginFb />
           </div>
-        </div>
+        </div> -->
 
         <footer class="mt-5">
           <p class="mt-6 text-gray-400 text-sm">

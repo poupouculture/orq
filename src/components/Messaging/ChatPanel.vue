@@ -232,7 +232,15 @@ const initSocket = () => {
         (chat: IChat) => chat.id === data.document?.id
       );
       if (chat) {
+        messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
+        if (data.document?.mode !== "bot")
+          Notify.create({
+            message: `${data.document?.name} has been finished`,
+            type: "positive",
+            color: "primary",
+            position: "top",
+          });
       }
     });
     socket.value.on("message_created", async (data: SocketMessage) => {
@@ -300,20 +308,21 @@ const initSocket = () => {
           document?.summary?.customer_code,
           document?.summary?.location_code
         )) as any;
-        if (customer?.id && chat) {
-          messagingStore.onSelectChat(chat?.id);
-          await customerStore.fetchCustomer(customer.id);
-          rightDrawerOpen.value = true;
+        if (chat) {
+          if (customer?.id) {
+            messagingStore.onSelectChat(chat?.id);
+            await customerStore.fetchCustomer(customer.id);
+            rightDrawerOpen.value = true;
+          } else {
+            await closeBot(chat?.id);
+            Notify.create({
+              message: "The chatbot has been ended",
+              color: "blue-9",
+              position: "top",
+              type: "positive",
+            });
+          }
         }
-      } else {
-        await closeBot(chat?.id);
-        Notify.create({
-          message: "The chatbot has been ended",
-          color: "blue-9",
-          position: "top",
-          type: "positive",
-        });
-        messagingStore.changeModeChatListById(chat?.id, "");
       }
     });
   } catch (error) {
