@@ -898,20 +898,7 @@ const fileFilter = (files: readonly any[] | FileList) => {
 
 const selectBot = async (bot: any) => {
   hideBotOption();
-  const { status } = await initiateBot(
-    getSelectedChatId.value,
-    bot.trigger_intent
-  );
-
-  if (status) {
-    Notify.create({
-      message: "Bot initiated",
-      color: "blue-9",
-      position: "top",
-      type: "positive",
-    });
-    getSelectedChat.value.mode = "Bot";
-  }
+  await initiateBot(getSelectedChatId.value, bot.trigger_intent);
 };
 
 const getChatbots = async () => {
@@ -931,12 +918,6 @@ const confirmCloseBot = () => {
 };
 const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  Notify.create({
-    message: "The chatbot has been ended",
-    color: "blue-9",
-    position: "top",
-    type: "positive",
-  });
   getSelectedChat.value.mode = "";
 };
 

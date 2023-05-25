@@ -150,7 +150,7 @@ const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
-const { chatsList, selectedTab, getSelectedChatId } =
+const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -234,13 +234,37 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
-        if (data.document?.mode !== "bot")
+        let message;
+        if (
+          data.update_fields.status &&
+          data.update_fields.status !== "waiting"
+        ) {
+          switch (data.update_fields.status) {
+            case "ongoing":
+              message = `Chat has been taken by ${data.document?.name}`;
+              break;
+            case "closed":
+              message = `${data.document?.name} has been closed`;
+              break;
+          }
+        }
+        if (data.update_fields.mode) {
+          getSelectedChat.value.mode = data.update_fields.mode;
+          switch (data.update_fields.mode) {
+            case "Bot":
+              message = `Bot initiated`;
+              break;
+            case "CS-Agent":
+              message = `The chatbot has been ended`;
+              break;
+          }
           Notify.create({
-            message: `${data.document?.name} has been finished`,
+            message,
             type: "positive",
             color: "primary",
             position: "top",
           });
+        }
       }
     });
     socket.value.on("message_created", async (data: SocketMessage) => {
@@ -277,6 +301,8 @@ const initSocket = () => {
       chatsList.value.unshift({ members: "[]", ...data });
       socket.value.emit("join_chat", data.id);
     });
+    // the event is removed
+    // Should be refactoring
     socket.value.on("botsession_created", async (data: any) => {
       console.log("botsession_created", data);
       const { document } = data;
@@ -317,7 +343,7 @@ const initSocket = () => {
             await closeBot(chat?.id);
             Notify.create({
               message: "The chatbot has been ended",
-              color: "blue-9",
+              color: "primary",
               position: "top",
               type: "positive",
             });
