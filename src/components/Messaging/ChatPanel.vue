@@ -185,6 +185,7 @@ socket.value = io(socketUrl, {
   extraHeaders: {
     authorization: `${userInfo.value.access_token}`,
   },
+  // transports: ["websocket"],
 });
 
 const fetchCustomers = async () => {
@@ -223,8 +224,8 @@ const initSocket = () => {
     socket.value.on("connect", () => {
       socket.value.emit("join_chat", userProfile?.value?.id);
     });
-    socket.value.io.on("error", () => {
-      console.log("socket error");
+    socket.value.io.on("error", (err: any) => {
+      console.log("socket error", err);
     });
     socket.value.on("chat_updated", (data: any) => {
       console.log("chat_updated", data);
@@ -255,6 +256,9 @@ const initSocket = () => {
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("contact_created", data);
+      const response = await getCustomer(data.customers_id);
+      const customer = response.data.data;
+      chooseCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
