@@ -508,7 +508,7 @@ onMounted(async () => {
 
 const discardChanges = async () => {
   showReturnDialog.value = false;
-  var routeDetail =
+  const routeDetail =
     props.formType === "bots"
       ? "chatbots"
       : props.formType === "customer-service"

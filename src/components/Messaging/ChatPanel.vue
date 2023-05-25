@@ -247,6 +247,12 @@ const initSocket = () => {
               message = `${data.document?.name} has been closed`;
               break;
           }
+          Notify.create({
+            message,
+            type: "positive",
+            color: "primary",
+            position: "top",
+          });
         }
         if (data.update_fields.mode) {
           getSelectedChat.value.mode = data.update_fields.mode;
