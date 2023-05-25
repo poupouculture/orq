@@ -7,9 +7,7 @@
       <q-card-section>
         <div class="flex justify-between">
           <p class="text-lg mb-2">Profile</p>
-          <button class="text-base mb-2 text-primary" @click="hide">
-            Close
-          </button>
+          <q-icon name="close" class="cursor-pointer" @click="hide" />
         </div>
 
         <div class="row justify-between">
@@ -73,6 +71,9 @@
               </q-td>
             </template>
           </BaseTable>
+          <div class="w-full flex justify-end mt-4">
+            <button class="btn-dotted" @click="hide">Close</button>
+          </div>
         </q-card-section>
       </div>
     </q-card>
