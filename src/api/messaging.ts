@@ -12,7 +12,7 @@ export const getChats = async (type?: ChatTypes) => {
 };
 
 export const getChatByID = async (id: string) => {
-  const { data } = await api.get(`/waba/chats/${id}`);
+  const { data } = await api.get(`/chat/chats/${id}`);
   return data;
 };
 
