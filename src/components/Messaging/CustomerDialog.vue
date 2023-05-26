@@ -5,7 +5,11 @@
       class="q-pa-lg flex flex-col"
     >
       <q-card-section>
-        <p class="text-lg mb-2">Profile</p>
+        <div class="flex justify-between">
+          <p class="text-lg mb-2">Profile</p>
+          <q-icon name="close" class="cursor-pointer" @click="hide" />
+        </div>
+
         <div class="row justify-between">
           <q-input
             v-model="search"
@@ -67,6 +71,9 @@
               </q-td>
             </template>
           </BaseTable>
+          <div class="w-full flex justify-end mt-4">
+            <button class="btn-dotted" @click="hide">Close</button>
+          </div>
         </q-card-section>
       </div>
     </q-card>
