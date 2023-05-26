@@ -11,6 +11,11 @@ export const getChats = async (type?: ChatTypes) => {
   return data;
 };
 
+export const getChatByID = async (id: string) => {
+  const { data } = await api.get(`/waba/chats/${id}`);
+  return data;
+};
+
 export const getContactByChatId = async (id: string) => {
   const params = {
     limit: 1,

@@ -101,7 +101,12 @@ import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
 import { IChat, SocketMessage } from "src/types/MessagingTypes";
-import { closeBot, startNewChat, getContactByChatId } from "src/api/messaging";
+import {
+  closeBot,
+  startNewChat,
+  // getContactByChatId,
+  getChatByID,
+} from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import { searchCustomers, getCustomer } from "src/api/customers";
@@ -271,10 +276,12 @@ const initSocket = () => {
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
-      const contact = await getContactByChatId(data.id);
-      console.log("contact retrieved when chat_created event: ", data);
-      data.contacts_id = contact.contacts_id;
-      chatsList.value.unshift({ members: "[]", ...data });
+      // const contact = await getContactByChatId(data.id);
+      // console.log("contact retrieved when chat_created event: ", data);
+      // data.contacts_id = contact.contacts_id;
+      const chat = await getChatByID(data.id);
+      // chatsList.value.unshift({ members: "[]", ...data });
+      chatsList.value.unshift(chat);
       socket.value.emit("join_chat", data.id);
     });
     socket.value.on("botsession_created", async (data: any) => {
