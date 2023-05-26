@@ -657,17 +657,18 @@ const activateChat = async () => {
     const chatId = getSelectedChat.value.id;
     const userId: any | null = userInfoStore.getUserProfile;
     Loading.show();
-    await updateChatStatus(chatId, userId?.id);
-    // Notify.create({
-    //   position: "top",
-    //   message:
-    //     "The chat has been taken by you, now you can message the customer",
-    //   color: "primary",
-    //   type: "positive",
-    // });
-
+    try {
+      const result = await updateChatStatus(chatId, userId?.id);
+      if (!result)
+        Notify.create({
+          message: "User already assigned",
+          type: "negative",
+          color: "red-8",
+          position: "top",
+        });
+      else messagingStore.setSelectedTab(ChatTypes.ONGOING);
+    } catch (error: any) {}
     Loading.hide();
-    messagingStore.setSelectedTab(ChatTypes.ONGOING);
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
     // emit("newChatCreated", ChatTypes.ONGOING);
   } catch (e) {
