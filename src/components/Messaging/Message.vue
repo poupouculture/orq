@@ -68,7 +68,7 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <div v-if="isMobile">
+        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
           <div
             class="text-primary pb-3 cursor-pointer"
             @click="toogleChatOption()"
