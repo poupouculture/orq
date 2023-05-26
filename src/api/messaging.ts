@@ -191,6 +191,7 @@ export const updateChatStatus = async (id: string, userId: string) => {
   } = await api.post(`/waba/assign-chat-user`, {
     chat_id: id,
     user_id: userId,
+    take_it: true,
   });
 
   return data;
