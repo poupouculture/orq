@@ -263,15 +263,15 @@ const initSocket = () => {
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
-      console.log(chatsList.value);
-      const findChat = chatsList.value.find(
-        (chat) => chat.chat_id === data.chat_id
-      );
-      console.log("findChat");
-      console.log(findChat);
-      if (!findChat) {
-        chatsList.value.unshift({ members: "[]", ...data });
-      }
+      // console.log(chatsList.value);
+      // const findChat = chatsList.value.find(
+      //   (chat) => chat.chat_id === data.chat_id
+      // );
+      // console.log("findChat");
+      // console.log(findChat);
+      // if (!findChat) {
+      //   chatsList.value.unshift({ members: "[]", ...data });
+      // }
       socket.value.emit("join_chat", data.chat_id);
     });
     socket.value.on("chat_created", async (data: any) => {
