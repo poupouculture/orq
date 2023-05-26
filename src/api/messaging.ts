@@ -13,6 +13,7 @@ export const getChats = async (type?: ChatTypes) => {
 
 export const getChatByID = async (id: string) => {
   const { data } = await api.get(`/chat/chats/${id}`);
+  console.log("get chat by id:", data);
   return data.length > 0 ? data[0] : null;
 };
 
