@@ -2,7 +2,7 @@ import { api } from "boot/axios";
 
 export const getContacts = async (payload) => {
   const fields = "*, customers.customers_id.*";
-  const { limit, page, search = undefined } = payload;
+  const { limit, page, search = undefined, filterType = undefined } = payload;
   const offset = page === 1 ? 0 : (page - 1) * limit;
   const params = {
     fields,
@@ -11,9 +11,20 @@ export const getContacts = async (payload) => {
     offset,
     "filter[customers][_nnull]": true,
     "filter[number][_nnull]": true,
-    search,
     meta: "*",
   };
+  if (!filterType) {
+    params.search = search;
+  }
+  if (filterType === "customer_code") {
+    params[
+      "filter[_and][0][_and][0][customers][customers_id][customer_code][_contains]"
+    ] = search;
+  } else if (filterType === "location_code") {
+    params[
+      "filter[_and][0][_and][0][customers][customers_id][location_code][_contains]"
+    ] = search;
+  }
   const contact = await api.get("items/contacts", { params });
   return contact;
 };

@@ -7,7 +7,44 @@
         @search="searchHandler"
         :searchOnEnter="true"
         @reset="resetSearch"
-      />
+      >
+        <template #filter_sort>
+          <q-icon
+            name="filter_list"
+            class="cursor-pointer"
+            @click="menuFilter = !menuFilter"
+          >
+            <q-menu anchor="bottom middle" self="top middle">
+              <q-list style="min-width: 100px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  :class="[
+                    selectedFilterMenu === 'customer_code'
+                      ? 'bg-primary text-white'
+                      : '',
+                  ]"
+                  @click="changeFilterMenu('customer_code')"
+                >
+                  <q-item-section>Customer Code</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  :class="[
+                    selectedFilterMenu === 'location_code'
+                      ? 'bg-primary text-white'
+                      : '',
+                  ]"
+                  @click="changeFilterMenu('location_code')"
+                >
+                  <q-item-section>Location Code</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-icon>
+        </template>
+      </SearchTableInput>
       <div>
         <q-btn
           no-caps
@@ -155,6 +192,8 @@ const isExistCustomerRelation = computed(() =>
   selected.value.some((data: any) => !data.customers.length)
 );
 
+const menuFilter = ref(false);
+const selectedFilterMenu = ref("");
 const updateContact = async () => {
   try {
     await contactStore.updateContact(form);
@@ -194,6 +233,10 @@ const search = reactive({
   query: "",
 });
 
+const changeFilterMenu = (type: string) => {
+  selectedFilterMenu.value = type;
+  if (search.query) searchHandler(search.query);
+};
 const searchHandler = async (searchValue = "") => {
   search.query = searchValue;
   search.loading = true;
@@ -206,6 +249,7 @@ const searchHandler = async (searchValue = "") => {
 };
 const resetSearch = () => {
   search.query = "";
+  selectedFilterMenu.value = "";
   searchHandler();
 };
 
@@ -246,6 +290,7 @@ const fetchContacts = async () => {
   } = await getContacts({
     limit: data.rowsPerPage,
     page: data.page,
+    filterType: selectedFilterMenu.value,
     search: search.query.length ? search.query : undefined,
   });
   data.contacts = contacts;
