@@ -659,7 +659,7 @@ const activateChat = async () => {
     Loading.show();
     try {
       const result = await updateChatStatus(chatId, userId?.id);
-      if (!result)
+      if (!result.data.status)
         Notify.create({
           message: "User already assigned",
           type: "negative",
