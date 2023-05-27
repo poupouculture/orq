@@ -27,6 +27,7 @@
         @click="resetSearch"
       />
     </template>
+    <slot />
   </q-input>
 </template>
 
