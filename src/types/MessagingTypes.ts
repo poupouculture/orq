@@ -65,6 +65,7 @@ export interface IChat {
   id: string;
   contacts_id: string;
   customers_id: string | null;
+  chat_id: string;
   first_name: string | null;
   last_name: string | null;
   last_message: Message;

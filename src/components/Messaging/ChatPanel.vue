@@ -279,10 +279,15 @@ const initSocket = () => {
       // const contact = await getContactByChatId(data.id);
       // console.log("contact retrieved when chat_created event: ", data);
       // data.contacts_id = contact.contacts_id;
-      const chat = await getChatByID(data.id);
+      const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
+      console.log("findChat:", findChat);
+      if (!findChat) {
+        chatsList.value.unshift({ members: "[]", ...data });
+        const chat = await getChatByID(data.id);
+        console.log("created chat:", chat);
+        chatsList.value.unshift(chat);
+      }
       // chatsList.value.unshift({ members: "[]", ...data });
-      console.log("created chat:", chat);
-      chatsList.value.unshift(chat);
       socket.value.emit("join_chat", data.id);
     });
     socket.value.on("botsession_created", async (data: any) => {
