@@ -225,9 +225,16 @@ export const chatbots = async () => {
   return data;
 };
 
-export const initiateBot = async (chatId: string, intent: string) => {
-  const { data } = await api.get(
-    `/dialogflow/initiate-bot/${chatId}/${intent}`
+export const initiateBot = async (
+  chatId: string,
+  botId: string,
+  intent: string
+) => {
+  const { data } = await api.post(
+    `/dialogflow/initiate-bot/${chatId}/${botId}`,
+    {
+      intent,
+    }
   );
   return data;
 };

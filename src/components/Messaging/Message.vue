@@ -904,6 +904,7 @@ const selectBot = async (bot: any) => {
   hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
+    bot.id,
     bot.trigger_intent
   );
 
