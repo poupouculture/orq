@@ -115,8 +115,15 @@
           no-caps
           rounded
           color="primary"
-          label="Disassociate"
+          label="Create"
           class="q-mr-sm"
+          @click="addDialog = true"
+        />
+        <q-btn
+          no-caps
+          rounded
+          color="primary"
+          label="Disassociate"
           :disabled="selected.length < 1 || isExistCustomerRelation"
           @click="deleteDialog = true"
         />
@@ -195,48 +202,15 @@
       submit-label="Confirm"
       @submit="handleDelete"
     />
+    <q-dialog v-model="addDialog">
+      <FormContact @close="addDialog = false" @save="saveContact($event)" />
+    </q-dialog>
     <q-dialog v-model="editContactDialog">
-      <div class="flex flex-col bg-white p-6">
-        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div class="flex flex-col">
-            <p class="label-style">First Name</p>
-            <q-input outlined v-model="form.first_name" dense />
-          </div>
-          <div class="flex flex-col">
-            <p class="label-style">Last Name</p>
-            <q-input outlined v-model="form.last_name" dense />
-          </div>
-          <div class="flex flex-col">
-            <p class="label-style">Number</p>
-            <q-input outlined v-model="form.number" dense />
-            <q-checkbox
-              :true-value="true"
-              v-model="form.is_active"
-              :false-value="false"
-              label="Contact is Active"
-            />
-          </div>
-          <div class="flex flex-col">
-            <p class="label-style">Category</p>
-            <q-select
-              outlined
-              dense
-              v-model="form.category"
-              lazy-rules
-              :options="categoryOptions"
-            />
-          </div>
-        </div>
-        <div class="flex items-center gap-x-3 mt-5 justify-end">
-          <q-btn
-            @click="editContactDialog = false"
-            color="secondary"
-            outline
-            label="Cancel"
-          />
-          <q-btn @click="updateContact()" color="primary" label="Save" />
-        </div>
-      </div>
+      <FormContact
+        @close="editContactDialog = false"
+        :form="form"
+        @save="updateContact($event)"
+      />
     </q-dialog>
   </div>
 </template>
@@ -248,6 +222,7 @@ import SearchTableInput from "src/components/SearchTableInput.vue";
 import { Notify } from "quasar";
 import useContactStore from "src/stores/modules/contact";
 import BaseDialog from "src/components/Dialogs/BaseDialog.vue";
+import FormContact from "src/components/Contact/FormContact.vue";
 
 const contactStore = useContactStore();
 const loading = ref(true);
@@ -287,13 +262,13 @@ const filterByMenus = [
     label: "Equals to",
   },
 ];
-const filterData = ref([]);
+const filterData = ref([]) as any;
 const addFilter = ref(false);
-const openFilterBy = ref([]);
+const openFilterBy = ref([]) as any;
 const selectedFilterMenu = ref("");
 
 const loadFilter = () => {
-  const results = [];
+  const results = [] as any;
   filterData.value.forEach((data: any, index: number) => {
     if (data.model) {
       results.push({
@@ -313,7 +288,7 @@ const pushFilterData = (data: any) => {
     filterBy: "_contains",
   });
 };
-const changeFilterBy = (data: any, index) => {
+const changeFilterBy = (data: any, index: number) => {
   openFilterBy.value[index] = false;
   filterData.value[index] = {
     ...filterData.value[index],
@@ -325,14 +300,29 @@ const removeFilterData = (data: any) => {
   loadFilter();
 };
 const printFilterBy = (key: string) => {
-  return filterByMenus.find((d: any) => d.key === key).label;
+  return filterByMenus.find((d: any) => d.key === key)?.label;
 };
 const isDupliclateFilterMenu = (data: any) => {
   return filterData.value.find((d: any) => d.key === data.key);
 };
-const updateContact = async () => {
+const saveContact = async (data: any) => {
   try {
-    await contactStore.updateContact(form);
+    await contactStore.saveContact({
+      ...data,
+      id: form.id,
+    });
+    fetchContacts();
+  } catch (error) {
+    console.log(error);
+  }
+  addDialog.value = false;
+};
+const updateContact = async (data: any) => {
+  try {
+    await contactStore.updateContact({
+      ...data,
+      id: form.id,
+    });
     fetchContacts();
   } catch (error) {
     console.log(error);
@@ -353,7 +343,6 @@ const openEditContact = async (id: string) => {
   }
 };
 
-const categoryOptions = ref(["phone"]);
 const form = reactive({
   id: null,
   first_name: null,
@@ -389,6 +378,8 @@ const resetSearch = () => {
   searchHandler();
 };
 
+const addDialog = ref(false);
+
 const deleteDialog = ref(false);
 const handleDelete = async () => {
   deleteDialog.value = false;
@@ -421,7 +412,6 @@ const data = reactive({
 });
 
 const fetchContacts = async (filter?: any) => {
-  console.log(filter);
   const {
     data: { data: contacts, meta },
   } = await getContacts({
