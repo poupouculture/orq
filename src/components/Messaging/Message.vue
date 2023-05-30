@@ -68,7 +68,7 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <div v-if="isMobile">
+        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
           <div
             class="text-primary pb-3 cursor-pointer"
             @click="toogleChatOption()"
@@ -89,7 +89,8 @@
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
       <div
-        class="absolute top-0 scrollbar h-3/4 overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
+        class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area"
+        style="height: 75%"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -116,7 +117,7 @@
     </main>
     <!-- footer -->
     <footer
-      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-2 inset-x-0"
+      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-1 inset-x-0"
       :style="getWidthFooter()"
     >
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
@@ -795,6 +796,9 @@ const getWidthFooter = () => {
   if (window.innerWidth > 768) {
     property = "padding-left: 360px;";
   }
+  if (window.innerWidth > 768 && !leftDrawerOpen.value) {
+    property = "padding-left: 0px";
+  }
   if (window.innerWidth > 768 && rightDrawerOpen.value) {
     property = "padding-left: 360px; padding-right: 560px";
   }
@@ -900,6 +904,7 @@ const selectBot = async (bot: any) => {
   hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
+    bot.id,
     bot.trigger_intent
   );
 
