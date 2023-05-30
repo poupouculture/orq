@@ -331,7 +331,7 @@ import {
   formattedActionType as fat,
 } from "../../constants/messageTemplate.js";
 import { codes, names } from "../../constants/languages.js";
-import { getFacebookTemplateLists } from "src/api/messageTemplate";
+import { checkDuplicationTemplate } from "src/api/messageTemplate";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import { useRouter } from "vue-router";
 
@@ -363,7 +363,6 @@ const categories = [
   "Utility",
 ];
 const actions = ref(Array(2).fill(null));
-const storedTemplateNames = ref([]);
 const isShowDuplicateName = ref(false);
 const showReturnDialog = ref(false);
 const router = useRouter();
@@ -387,9 +386,6 @@ const replied = ref(0);
 const loading = ref(true);
 
 onMounted(async () => {
-  const responseFB = await getFacebookTemplateLists();
-  storedTemplateNames.value = responseFB.map((template) => template.name);
-
   if (props?.applicationProgram) {
     const tempData = props.applicationProgram.data.data;
     console.log(tempData);
@@ -572,8 +568,10 @@ const checkName = (event) => {
   }
 };
 
-const checkDuplication = () => {
-  isShowDuplicateName.value = storedTemplateNames.value.includes(name.value);
+const checkDuplication = async () => {
+  const responseFB = await checkDuplicationTemplate(name.value);
+  console.log(responseFB);
+  isShowDuplicateName.value = responseFB.data.status !== 200;
 };
 
 const listNumbers = (str) => {
