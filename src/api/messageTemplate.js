@@ -1,5 +1,4 @@
 import { api } from "boot/axios";
-import axios from "axios";
 
 export const getMessageTemplates = async ({
   limit = 10,
@@ -58,10 +57,7 @@ export const updateMessageTemplate = async (id, payload) => {
   return applicationProgram;
 };
 
-export const getFacebookTemplateLists = async () => {
-  const response = await axios.get(
-    "https://graph.facebook.com/v15.0/109463181985028/message_templates?access_token=EAAVDhzta3JEBAO4FCS0WJ2H8PPTMs8uw65B8fGn400kohc7zgaoZBiQ7GMuy4QiabwsZCP9aU27aePoJFRE4YSbSXgvjmQyPZBmo0vIdWWusY9QZACZBmx57NUNJiDoPcu6pmHHXRvJm9BeD10FjmGwuhzG5lCdg4D6iARJanpsdBPgaKE0QZCAsX73qTsEPVjoxdARaaY0QZDZD"
-  );
-
-  return response.data.data;
+export const checkDuplicationTemplate = async (name) => {
+  const response = await api.post(`chat/message_templates/waba`, { name });
+  return response;
 };
