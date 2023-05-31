@@ -63,6 +63,7 @@ export interface Message {
 }
 export interface IChat {
   id: string;
+  chat_id: string;
   contacts_id: string;
   customers_id: string | null;
   chat_id: string;
