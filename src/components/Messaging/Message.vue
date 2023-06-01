@@ -297,7 +297,7 @@
     leave-to-class="transform opacity-0 translate-y-96"
   >
     <div
-      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
+      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 w-full"
       v-if="showBot && isMobile"
     >
       <div
