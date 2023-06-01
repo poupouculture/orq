@@ -246,7 +246,7 @@ const initSocket = () => {
         ) {
           switch (data.update_fields.status) {
             case "ongoing":
-              message = `Chat has been taken by ${data.document?.name}`;
+              message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
               break;
             case "closed":
               message = `${data.document?.name} has been closed`;
@@ -261,20 +261,14 @@ const initSocket = () => {
         }
         if (data.update_fields.mode) {
           getSelectedChat.value.mode = data.update_fields.mode;
-          switch (data.update_fields.mode) {
-            case "Bot":
-              message = `Bot initiated`;
-              break;
-            case "CS-Agent":
-              message = `The chatbot has been ended`;
-              break;
+          if (data.update_fields.mode === "CS-Agent") {
+            Notify.create({
+              message: `The chatbot has been ended`,
+              type: "positive",
+              color: "primary",
+              position: "top",
+            });
           }
-          Notify.create({
-            message,
-            type: "positive",
-            color: "primary",
-            position: "top",
-          });
         }
       }
     });
@@ -293,15 +287,15 @@ const initSocket = () => {
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
-      console.log(chatsList.value);
-      const findChat = chatsList.value.find(
-        (chat) => chat.chat_id === data.chat_id
-      );
-      console.log("findChat");
-      console.log(findChat);
-      if (!findChat) {
-        chatsList.value.unshift({ members: "[]", ...data });
-      }
+      // console.log(chatsList.value);
+      // const findChat = chatsList.value.find(
+      //   (chat) => chat.chat_id === data.chat_id
+      // );
+      // console.log("findChat");
+      // console.log(findChat);
+      // if (!findChat) {
+      //   chatsList.value.unshift({ members: "[]", ...data });
+      // }
       socket.value.emit("join_chat", data.chat_id);
     });
     socket.value.on("chat_created", async (data: any) => {
@@ -309,10 +303,15 @@ const initSocket = () => {
       // const contact = await getContactByChatId(data.id);
       // console.log("contact retrieved when chat_created event: ", data);
       // data.contacts_id = contact.contacts_id;
-      const chat = await getChatByID(data.id);
+      const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
+      console.log("findChat:", findChat);
+      if (!findChat) {
+        chatsList.value.unshift({ members: "[]", ...data });
+        const chat = await getChatByID(data.id);
+        console.log("created chat:", chat);
+        chatsList.value.unshift(chat);
+      }
       // chatsList.value.unshift({ members: "[]", ...data });
-      console.log("created chat:", chat);
-      chatsList.value.unshift(chat);
       socket.value.emit("join_chat", data.id);
     });
     // the event is removed
@@ -340,6 +339,16 @@ const initSocket = () => {
         focusConfirm: false,
         confirmButtonText: "Load Profile",
       });
+
+      const name = data.document.name.split(" ")[0];
+
+      Notify.create({
+        message: `Chat ${name} has been finished`,
+        color: "blue-9",
+        position: "top",
+        type: "positive",
+      });
+
       const chat = chatsList.value.find(
         (chat) => chat.id === document.session_id
       );

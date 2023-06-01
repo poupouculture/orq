@@ -12,6 +12,7 @@
       <q-icon name="search" />
     </template>
     <template v-slot:append>
+      <slot name="filter_sort" />
       <q-circular-progress
         v-if="props.loading"
         indeterminate
@@ -26,6 +27,7 @@
         @click="resetSearch"
       />
     </template>
+    <slot />
   </q-input>
 </template>
 

@@ -89,7 +89,8 @@
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
       <div
-        class="absolute top-0 scrollbar h-3/4 overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
+        class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area"
+        style="height: 75%"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -116,7 +117,7 @@
     </main>
     <!-- footer -->
     <footer
-      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-2 inset-x-0"
+      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-1 inset-x-0"
       :style="getWidthFooter()"
     >
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
@@ -296,7 +297,7 @@
     leave-to-class="transform opacity-0 translate-y-96"
   >
     <div
-      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
+      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 w-full"
       v-if="showBot && isMobile"
     >
       <div
@@ -576,7 +577,7 @@ const showCustomerInfoInMobile = () => {
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
-  if (!data.status) {
+  if (!data || !data.status) {
     newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     Swal.fire({
       icon: "error",
@@ -584,12 +585,7 @@ const messageCallback = async (data: any, newMessage: any) => {
       text: data.message,
     });
   } else {
-    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-    const index = cachedMessage.findIndex((item) => item.id === data.id);
-    if (index !== -1) {
-      cachedMessage.splice(index, 1);
-    }
-    if (cachedMessage) data = data.data || data;
+    data = data.data || data;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
@@ -610,10 +606,10 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
     waba_message_id: "",
+    is_cache: true,
     waba_associated_message_id:
       replayMessage.value?.waba_message_id || replayMessage.value?.message_id,
   });
-
   cachedMessage.push(newMessage);
   const wabaMessageId =
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
@@ -621,7 +617,10 @@ const sendMessage = async () => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   message.value = "";
-  // isChatExpired.value = false;
+
+  const timestamp = getSelectedChat.value?.expiration_timestamp;
+  const expiredDate = new Date(timestamp * 1000);
+  isChatExpired.value = new Date() >= expiredDate;
 
   try {
     const data = await messagingStore.sendChatTextMessage({
@@ -796,6 +795,9 @@ const getWidthFooter = () => {
   if (window.innerWidth > 768) {
     property = "padding-left: 360px;";
   }
+  if (window.innerWidth > 768 && !leftDrawerOpen.value) {
+    property = "padding-left: 0px";
+  }
   if (window.innerWidth > 768 && rightDrawerOpen.value) {
     property = "padding-left: 360px; padding-right: 560px";
   }
@@ -899,7 +901,21 @@ const fileFilter = (files: readonly any[] | FileList) => {
 
 const selectBot = async (bot: any) => {
   hideBotOption();
-  await initiateBot(getSelectedChatId.value, bot.trigger_intent);
+  const { status } = await initiateBot(
+    getSelectedChatId.value,
+    bot.id,
+    bot.trigger_intent
+  );
+
+  if (status) {
+    Notify.create({
+      message: `The ${bot.name} has been initiated`,
+      color: "primary",
+      position: "top",
+      type: "positive",
+    });
+    getSelectedChat.value.mode = "Bot";
+  }
 };
 
 const getChatbots = async () => {
