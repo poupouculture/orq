@@ -139,7 +139,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @paste="onPast"
           />
           <div
