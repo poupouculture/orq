@@ -182,12 +182,20 @@ const list = [
   { text: "Download", visible: ["image", "document", "application"] },
 ];
 
-const menuList = computed(() =>
-  list.filter(
+const menuList = computed(() => {
+  const selectedList = list.filter(
     (item) =>
       !item.visible || item.visible.includes(props.message?.content?.type)
+  );
+
+  if (
+    props.message?.content?.type === MessageType.TEXT &&
+    props.message?.content?.mime_type !== undefined
   )
-);
+    selectedList.push({ text: "Download" });
+
+  return selectedList;
+});
 const onhandleClick = (type: string) => {
   operationType.value = type;
   switch (type) {

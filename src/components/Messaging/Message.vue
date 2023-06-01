@@ -617,7 +617,10 @@ const sendMessage = async () => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   message.value = "";
-  // isChatExpired.value = false;
+
+  const timestamp = getSelectedChat.value?.expiration_timestamp;
+  const expiredDate = new Date(timestamp * 1000);
+  isChatExpired.value = new Date() >= expiredDate;
 
   try {
     const data = await messagingStore.sendChatTextMessage({
