@@ -53,6 +53,7 @@ import { MessageType } from "src/types/MessagingTypes";
 import MessageImage from "./MessageImage.vue";
 import MessageAudio from "./MessageAudio.vue";
 import MessageDocument from "./MessageDocument.vue";
+import MessageVideo from "./MessageVideo.vue";
 
 interface Props {
   content: any;
@@ -113,6 +114,7 @@ const components = shallowReactive({
   MessageImage,
   MessageAudio,
   MessageDocument,
+  MessageVideo,
 });
 const componentName = computed(() => {
   if (
@@ -130,6 +132,8 @@ const componentName = computed(() => {
       return components.MessageDocument;
     case MessageType.APPLICATION:
       return components.MessageDocument;
+    case MessageType.VIDEO:
+      return components.MessageVideo;
     default:
       return null;
   }
