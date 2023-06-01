@@ -1,5 +1,5 @@
 <template>
-  <div class="login h-full flex no-warp select-none">
+  <div class="login h-screen flex no-warp select-none">
     <div
       class="hidden md:!flex md:flex-col gap-28 bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3"
     >
