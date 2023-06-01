@@ -173,9 +173,9 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 
   currPayload.waba_content.context = { message_id: messageId };
 
-  const { data } = await api.post(`/waba/handle-cs-waba-message`, currPayload);
+  const data = await api.post(`/waba/handle-cs-waba-message`, currPayload);
 
-  return data;
+  return data.data || null;
 };
 
 export const getContact = async (contactId: string) => {
