@@ -39,6 +39,7 @@ export enum SendMessageStatus {
 
 export interface Message {
   id: number;
+  is_cache: true;
   contact_name?: string;
   user_name?: string;
   contact?: string;

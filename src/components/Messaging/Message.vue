@@ -577,7 +577,7 @@ const showCustomerInfoInMobile = () => {
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
-  if (!data.status) {
+  if (!data || !data.status) {
     newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     Swal.fire({
       icon: "error",
@@ -585,12 +585,7 @@ const messageCallback = async (data: any, newMessage: any) => {
       text: data.message,
     });
   } else {
-    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-    const index = cachedMessage.findIndex((item) => item.id === data.id);
-    if (index !== -1) {
-      cachedMessage.splice(index, 1);
-    }
-    if (cachedMessage) data = data.data || data;
+    data = data.data || data;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
@@ -611,10 +606,10 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
     waba_message_id: "",
+    is_cache: true,
     waba_associated_message_id:
       replayMessage.value?.waba_message_id || replayMessage.value?.message_id,
   });
-
   cachedMessage.push(newMessage);
   const wabaMessageId =
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
