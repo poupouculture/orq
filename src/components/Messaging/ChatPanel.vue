@@ -288,6 +288,7 @@ const initSocket = () => {
       const response = await getCustomer(data.customers_id);
       const customer = response.data.data;
       chooseCustomer(customer);
+      getSelectedChat.value.mode = "";
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
