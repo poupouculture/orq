@@ -300,7 +300,18 @@ const initSocket = () => {
       // if (!findChat) {
       //   chatsList.value.unshift({ members: "[]", ...data });
       // }
-      // socket.value.emit("join_chat", data.chat_id);
+      const chatObj = await getChatByID(data.chat_id);
+      const chatIndex = chatsList.value.findIndex(
+        (chat) => chat.chat_id === chatObj.chat_id
+      );
+
+      if (chatIndex > -1) {
+        chatsList.value[chatIndex] = chatObj;
+      } else {
+        chatsList.value.unshift(chatObj);
+      }
+
+      socket.value.emit("join_chat", data.chat_id);
       Notify.create({
         message: `You're added to chat`,
         color: "blue-9",
