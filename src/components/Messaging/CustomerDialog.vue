@@ -104,10 +104,10 @@ const headerColumns = [
     classes: "text-black",
   },
   {
-    name: "name",
+    name: "contact_first_name",
     align: "left",
-    label: "Name",
-    field: "name",
+    label: "Firstname",
+    field: "contact_first_name",
     sortable: true,
     classes: "text-black",
   },

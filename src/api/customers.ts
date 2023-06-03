@@ -46,7 +46,7 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
   // const offset = search ? 0 : page === 1 ? 0 : (page - 1) * limit;
 
   // "/items/customers"
-  const customers = await api.get("/waba/valid-customers", {
+  const customers = await api.get("/chat/valid-customers", {
     params: {
       // fields: `${fields}`,
       // sort: "-date_created",
@@ -54,6 +54,7 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
       limit,
       page,
       search,
+      fields: "*.*",
       // meta: "*",
     },
   });

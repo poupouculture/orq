@@ -139,7 +139,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @paste="onPast"
           />
           <div
@@ -656,17 +656,18 @@ const activateChat = async () => {
     const chatId = getSelectedChat.value.id;
     const userId: any | null = userInfoStore.getUserProfile;
     Loading.show();
-    await updateChatStatus(chatId, userId?.id);
-    // Notify.create({
-    //   position: "top",
-    //   message:
-    //     "The chat has been taken by you, now you can message the customer",
-    //   color: "primary",
-    //   type: "positive",
-    // });
-
+    try {
+      const result = await updateChatStatus(chatId, userId?.id);
+      if (!result.data.status)
+        Notify.create({
+          message: result.data.message || "User already assigned",
+          type: "negative",
+          color: "red-8",
+          position: "top",
+        });
+      else messagingStore.setSelectedTab(ChatTypes.ONGOING);
+    } catch (error: any) {}
     Loading.hide();
-    messagingStore.setSelectedTab(ChatTypes.ONGOING);
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
     // emit("newChatCreated", ChatTypes.ONGOING);
   } catch (e) {
@@ -908,8 +909,8 @@ const selectBot = async (bot: any) => {
 
   if (status) {
     Notify.create({
-      message: "Bot initiated",
-      color: "blue-9",
+      message: `The ${bot.name} has been initiated`,
+      color: "primary",
       position: "top",
       type: "positive",
     });
@@ -934,12 +935,6 @@ const confirmCloseBot = () => {
 };
 const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  Notify.create({
-    message: "The chatbot has been ended",
-    color: "blue-9",
-    position: "top",
-    type: "positive",
-  });
   getSelectedChat.value.mode = "";
 };
 
