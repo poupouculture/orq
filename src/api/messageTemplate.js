@@ -61,3 +61,18 @@ export const checkDuplicationTemplate = async (name) => {
   const response = await api.post(`chat/message_templates/waba`, { name });
   return response;
 };
+
+export const checkDuplicateWaba = async (name) => {
+  const params = {
+    fields: `name, language`,
+    sort: `-date_created`,
+  };
+
+  params["filter[name][_eq]"] = name;
+
+  const templates = await api.get(`/items/message_templates`, {
+    params,
+  });
+
+  return templates;
+};

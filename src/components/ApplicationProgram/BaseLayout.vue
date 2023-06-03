@@ -76,9 +76,6 @@
               v-if="!loading"
             />
           </div>
-          <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
-            Name is not valid because it's already used
-          </div>
 
           <div class="label flex flex-col">
             <p class="text-xl">Is Email</p>
@@ -331,7 +328,10 @@ import {
   formattedActionType as fat,
 } from "../../constants/messageTemplate.js";
 import { codes, names } from "../../constants/languages.js";
-import { checkDuplicationTemplate } from "src/api/messageTemplate";
+import {
+  checkDuplicationTemplate,
+  checkDuplicateWaba,
+} from "src/api/messageTemplate";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
 import { useRouter } from "vue-router";
 
@@ -358,8 +358,8 @@ const headerOptions = ["TEXT", "MEDIA"];
 const actionCategoryOptions = [ac.NONE, ac.CALL_TO_ACTION, ac.QUICK_REPLY];
 const categories = [
   "Marketing",
-  "Transactional",
-  "Issue Resolution",
+  // "Transactional",
+  // "Issue Resolution",
   "Utility",
 ];
 const actions = ref(Array(2).fill(null));
@@ -570,8 +570,9 @@ const checkName = (event) => {
 
 const checkDuplication = async () => {
   const responseFB = await checkDuplicationTemplate(name.value);
-  console.log(responseFB);
-  isShowDuplicateName.value = responseFB.data.status !== 200;
+  const responseWaba = await checkDuplicateWaba(name.value);
+  isShowDuplicateName.value =
+    responseFB.data.status !== 200 || responseWaba.data?.data?.length > 0;
 };
 
 const listNumbers = (str) => {
