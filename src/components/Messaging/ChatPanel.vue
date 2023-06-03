@@ -307,11 +307,9 @@ const initSocket = () => {
 
       if (chatIndex > -1) {
         chatsList.value[chatIndex] = chatObj;
-      } else {
-        chatsList.value.unshift(chatObj);
       }
 
-      socket.value.emit("join_chat", data.chat_id);
+      // socket.value.emit("join_chat", data.chat_id);
       Notify.create({
         message: `You're added to chat`,
         color: "blue-9",
