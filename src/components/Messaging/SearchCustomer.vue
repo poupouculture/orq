@@ -34,7 +34,7 @@
       </div>
     </div>
     <div>Customer</div>
-    <div class="rounded flex items-start px-6 py-2 bg-white mt-3 w-full">
+    <div class="rounded flex items-start pl-6 pr-2 py-2 bg-white mt-3 w-full">
       <div class="flex items-center gap-x-2 border-r pr-3 cursor-pointer">
         <div>{{ selectedOption.label }}</div>
         <svg
@@ -62,7 +62,7 @@
           </q-list>
         </q-menu>
       </div>
-      <div class="flex-1 relative">
+      <div class="flex-1 relative mr-2">
         <input
           type="text"
           class="bg-transparent focus:outline-none pl-3 w-full"
@@ -109,6 +109,101 @@
           </q-menu>
         </div>
       </div>
+      <div>
+        <q-icon name="filter_list" size="1.2rem" />
+        <q-menu fit anchor="bottom middle" self="top middle" :offset="[0, 10]">
+          <div class="py-3 px-2">
+            <ul class="max-w-sm space-y-3 w-80">
+              <li
+                class="py-1 px-3 bg-gray-100 rounded-lg flex items-center justify-between cursor-pointer flex-nowrap"
+                v-for="(filter, index) in filterData"
+                :key="filter.key"
+              >
+                <div
+                  class="flex items-center space-x-2 w-full flex-nowrap overflow-x-auto"
+                >
+                  <span class="whitespace-nowrap">
+                    {{ filter.label }}
+                  </span>
+                  <q-icon name="arrow_forward" />
+                  <span class="font-bold whitespace-nowrap">
+                    {{ printFilterBy(filter.filterBy) }}
+                    <q-menu
+                      fit
+                      anchor="bottom middle"
+                      self="top middle"
+                      :offset="[0, 10]"
+                      class="border"
+                      dense
+                      v-model="openFilterBy[index]"
+                    >
+                      <q-list style="min-width: 100px">
+                        <q-item
+                          clickable
+                          v-for="filterBy in filterByMenus"
+                          :key="filterBy.key"
+                          @click="changeFilterBy(filterBy, index)"
+                        >
+                          <q-item-section>
+                            {{ filterBy.label }}
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="- -"
+                    @keyup.enter="loadFilter()"
+                    v-model="filter.model"
+                    class="bg-transparent border-none focus:outline-none w-full"
+                  />
+                </div>
+                <q-icon
+                  class="w-4"
+                  name="close"
+                  @click="removeFilterData(filter)"
+                />
+              </li>
+              <li
+                class="py-1 px-3 bg-gray-100 rounded-lg flex items-center justify-between cursor-pointer"
+              >
+                <span><q-icon name="add" /> Add Filter</span>
+                <span>
+                  <q-icon
+                    class="transform transition-all"
+                    :class="[{ 'rotate-180': addFilter }]"
+                    name="expand_more"
+                  />
+                </span>
+                <q-menu
+                  fit
+                  anchor="bottom middle"
+                  self="top middle"
+                  :offset="[0, 10]"
+                  class="border py-1"
+                  v-model="addFilter"
+                >
+                  <q-list dense>
+                    <q-item
+                      clickable
+                      v-for="filter in filterMenus"
+                      :key="filter.key"
+                      :disabled="isDupliclateFilterMenu(filter)"
+                      :class="{
+                        'opacity-60': isDupliclateFilterMenu(filter),
+                      }"
+                      @click="pushFilterData(filter)"
+                    >
+                      <q-item-section>{{ filter.label }}</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </li>
+            </ul>
+          </div>
+        </q-menu>
+      </div>
     </div>
   </div>
 </template>
@@ -120,6 +215,88 @@ import { searchCustomers } from "src/api/customers";
 import useCustomerStore from "src/stores/modules/customer";
 import image from "src/assets/images/messaging-customer.png";
 
+interface IFilterMenus {
+  key: string;
+  label: string;
+  queryFilter: string;
+  filterBy: string;
+  model: string;
+}
+interface IFilterByMenus {
+  key: string;
+  label: string;
+}
+const filterData: Ref<IFilterMenus[]> = ref([]);
+const filterMenus: Ref<IFilterByMenus[]> = ref([
+  {
+    key: "customer_code",
+    label: "Customer Code",
+    queryFilter: "[customer_code]",
+    model: "",
+    filterBy: "_contains",
+  },
+  {
+    key: "location_code",
+    label: "Location Code",
+    queryFilter: "[location_code]",
+    model: "",
+    filterBy: "_contains",
+  },
+]);
+const filterByMenus: Ref<IFilterByMenus[]> = ref([
+  {
+    key: "_contains",
+    label: "Contains",
+  },
+  {
+    key: "_eq",
+    label: "Equals to",
+  },
+]);
+const addFilter = ref(false);
+const openFilterBy: Ref<boolean[]> = ref([]);
+const loadFilter = () => {
+  const results: {
+    key: string;
+    value: string;
+  }[] = [];
+  filterData.value.forEach((data: any, index: number) => {
+    if (data.model) {
+      results.push({
+        key: `filter[_and][0][_and][${index}]${data.queryFilter}[${data.filterBy}]`,
+        value: data.model,
+      });
+    }
+  });
+};
+const pushFilterData = (data: any) => {
+  addFilter.value = false;
+  if (isDupliclateFilterMenu(data)) return;
+  filterData.value.push({
+    ...data,
+    filterBy: "_contains",
+  });
+};
+const changeFilterBy = (data: any, index: number) => {
+  openFilterBy.value[index] = false;
+  filterData.value[index] = {
+    ...filterData.value[index],
+    filterBy: data.key,
+  };
+};
+const removeFilterData = (data: any) => {
+  filterData.value = filterData.value.filter((d: any) => d.key !== data.key);
+  loadFilter();
+};
+const printFilterBy = (key: string) => {
+  return (
+    filterByMenus.value.length &&
+    filterByMenus.value.find((d: any) => d.key === key)?.label
+  );
+};
+const isDupliclateFilterMenu = (data: any) => {
+  return filterData.value.find((d: any) => d.key === data.key);
+};
 const customerStore = useCustomerStore();
 interface IOption {
   label: string;
