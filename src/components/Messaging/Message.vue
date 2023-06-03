@@ -425,7 +425,7 @@ const FileLimit = [
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
-const isChatExpired: Ref<boolean> = ref(true);
+const isChatExpired: Ref<boolean> = ref(false);
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -543,10 +543,10 @@ watch(
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
       } else {
-        isChatExpired.value = true;
+        isChatExpired.value = false;
       }
     } else {
-      isChatExpired.value = true;
+      isChatExpired.value = false;
     }
   }
 );
