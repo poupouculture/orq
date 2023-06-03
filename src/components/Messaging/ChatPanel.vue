@@ -301,6 +301,12 @@ const initSocket = () => {
       //   chatsList.value.unshift({ members: "[]", ...data });
       // }
       // socket.value.emit("join_chat", data.chat_id);
+      Notify.create({
+        message: `You're added to chat`,
+        color: "blue-9",
+        position: "top",
+        type: "positive",
+      });
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
