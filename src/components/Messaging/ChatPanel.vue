@@ -383,6 +383,7 @@ const initSocket = () => {
             rightDrawerOpen.value = true;
           } else {
             await closeBot(chat?.id);
+            getSelectedChat.value.mode = "";
             Notify.create({
               message: "The chatbot has been ended",
               color: "primary",
