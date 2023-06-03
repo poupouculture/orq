@@ -300,14 +300,14 @@ const initSocket = () => {
       // if (!findChat) {
       //   chatsList.value.unshift({ members: "[]", ...data });
       // }
-      const chatObj = await getChatByID(data.chat_id);
-      const chatIndex = chatsList.value.findIndex(
-        (chat) => chat.chat_id === chatObj.chat_id
-      );
+      // const chatObj = await getChatByID(data.chat_id);
+      // const chatIndex = chatsList.value.findIndex(
+      //   (chat) => chat.chat_id === chatObj.chat_id
+      // );
 
-      if (chatIndex > -1) {
-        chatsList.value[chatIndex] = chatObj;
-      }
+      // if (chatIndex > -1) {
+      //   chatsList.value[chatIndex] = chatObj;
+      // }
 
       // socket.value.emit("join_chat", data.chat_id);
       Notify.create({
