@@ -179,10 +179,19 @@ const searchUser = () => {
 //   }
 //   return "";
 // };
+const sortData = (data: any) => {
+  data.forEach((data: any) => {
+    data.full_name = data.first_name + data.last_name;
+  });
+  return data.sort((a: any, b: any) => {
+    return a.full_name.localeCompare(b.full_name);
+  });
+};
 
 onMounted(async () => {
   Loading.show();
-  const { data } = await getChatUsers();
+  let { data } = await getChatUsers();
+  data = sortData(data);
   users.value = data;
   usersData.value = data;
 

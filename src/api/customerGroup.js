@@ -25,13 +25,15 @@ export const getCustomerGroups = async (
     id !== null
       ? "/items/customer_groups/" + id
       : "/waba/customers-groups/summary";
-  const companies = "customers.customers_id.companies.companies_id.*";
-  const userGroups = "user_groups.*, user_groups.user_groups_id.*";
-  const tags = "tags.*, tags.*.*";
+  // const companies = "customers.customers_id.companies.companies_id.*";
+  // const userGroups = "user_groups.*, user_groups.user_groups_id.*";
+  // const tags = "tags.*, tags.*.*";
   const param = {
     limit,
     page,
-    fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
+    sort: "date_created",
+    // fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
+    fields: `id,type,name,status,source,customers.id,customers.customers_id.*`,
     meta: "*",
     source: sourceType,
   };

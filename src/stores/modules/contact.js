@@ -4,6 +4,7 @@ import {
   getContact,
   updateContact,
   dissociateContactApi,
+  saveContact,
 } from "src/api/contact";
 
 const useContactStore = defineStore("useContact", {
@@ -30,6 +31,28 @@ const useContactStore = defineStore("useContact", {
 
       this.contact = data[0];
     },
+    async saveContact(payload) {
+      const getObj = {
+        first_name: payload.first_name,
+        last_name: payload.last_name,
+        is_active: payload.is_active,
+        number: payload.number,
+        status: payload.status,
+      };
+      Loading.show();
+      try {
+        await saveContact(getObj);
+        Notify.create({
+          message: "Create Contact Successfully",
+          position: "top",
+          type: "positive",
+          color: "primary",
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      Loading.hide();
+    },
     async updateContact(payload) {
       const getObj = {
         first_name: payload.first_name,
@@ -48,7 +71,7 @@ const useContactStore = defineStore("useContact", {
           message: "Update Contact Successfully",
           position: "top",
           type: "positive",
-          color: "blue-9",
+          color: "primary",
         });
       } catch (error) {
         console.log(error);

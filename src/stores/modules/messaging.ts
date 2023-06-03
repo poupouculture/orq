@@ -71,16 +71,19 @@ const useMessagingStore = defineStore("messaging", {
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
-
         if (index !== -1) {
           const [chat] = this.chatsList.splice(index, 1);
           // chat.mode = lastmessage.mode;
           this.chatsList.unshift(chat);
-          const cachedMessage = this.cachedChatMessages[chatId]?.find(
-            (item) => item.id === lastmessage.id
+          const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
+            (item) => item.id === lastmessage.id || item.is_cache
           );
           chat.last_message = lastmessage;
-          if (cachedMessage) return;
+          console.log(cachedMessageIndex);
+          // delete cache when cache is exists
+          if (cachedMessageIndex !== -1) {
+            this.cachedChatMessages[chatId].splice(cachedMessageIndex, 1);
+          }
           if (lastmessage.status === MessageStatus.RECEIVE) {
             if (this.selectedChatId !== chatId) {
               chat.totalUnread = chat.totalUnread ? chat.totalUnread + 1 : 1;

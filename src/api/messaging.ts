@@ -11,6 +11,12 @@ export const getChats = async (type?: ChatTypes) => {
   return data;
 };
 
+export const getChatByID = async (id: string) => {
+  const { data } = await api.get(`/chat/chats/${id}`);
+  console.log(data.data);
+  return data.data.length > 0 ? data.data[0] : null;
+};
+
 export const getContactByChatId = async (id: string) => {
   const params = {
     limit: 1,
@@ -167,9 +173,9 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 
   currPayload.waba_content.context = { message_id: messageId };
 
-  const { data } = await api.post(`/waba/handle-cs-waba-message`, currPayload);
+  const data = await api.post(`/waba/handle-cs-waba-message`, currPayload);
 
-  return data;
+  return data.data || null;
 };
 
 export const getContact = async (contactId: string) => {
@@ -186,11 +192,10 @@ export const startNewChat = async (customerId: string) => {
 };
 
 export const updateChatStatus = async (id: string, userId: string) => {
-  const {
-    data: { data },
-  } = await api.post(`/waba/assign-chat-user`, {
+  const data = await api.post(`/waba/assign-chat-user`, {
     chat_id: id,
     user_id: userId,
+    take_it: true,
   });
 
   return data;
@@ -218,9 +223,16 @@ export const chatbots = async () => {
   return data;
 };
 
-export const initiateBot = async (chatId: string, intent: string) => {
-  const { data } = await api.get(
-    `/dialogflow/initiate-bot/${chatId}/${intent}`
+export const initiateBot = async (
+  chatId: string,
+  botId: string,
+  intent: string
+) => {
+  const { data } = await api.post(
+    `/dialogflow/initiate-bot/${chatId}/${botId}`,
+    {
+      intent,
+    }
   );
   return data;
 };

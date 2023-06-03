@@ -25,7 +25,12 @@
     <span v-if="content?.type === MessageType.TEMPLATE">
       {{ messageTemplate(content) }}
     </span>
-    <div v-if="!content?.type || content?.type === MessageType.TEXT">
+    <div
+      v-if="
+        !content?.type ||
+        (content?.type === MessageType.TEXT && content?.mime_type === undefined)
+      "
+    >
       <div v-if="message?.waba_associated_message_id != null">
         <div
           class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words"
@@ -48,6 +53,7 @@ import { MessageType } from "src/types/MessagingTypes";
 import MessageImage from "./MessageImage.vue";
 import MessageAudio from "./MessageAudio.vue";
 import MessageDocument from "./MessageDocument.vue";
+import MessageVideo from "./MessageVideo.vue";
 
 interface Props {
   content: any;
@@ -89,9 +95,18 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
+  console.log("content:", content);
+  console.log(
+    "is document:",
+    content?.type === MessageType.DOCUMENT ||
+      content?.type === MessageType.APPLICATION ||
+      (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
+  );
+
   return (
     content?.type === MessageType.DOCUMENT ||
-    content?.type === MessageType.APPLICATION
+    content?.type === MessageType.APPLICATION ||
+    (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
   );
 };
 
@@ -99,8 +114,15 @@ const components = shallowReactive({
   MessageImage,
   MessageAudio,
   MessageDocument,
+  MessageVideo,
 });
 const componentName = computed(() => {
+  if (
+    props.content?.type === MessageType.TEXT &&
+    props.content?.mime_type !== undefined
+  ) {
+    return components.MessageDocument;
+  }
   switch (props.content?.type) {
     case MessageType.IMAGE:
       return components.MessageImage;
@@ -110,6 +132,8 @@ const componentName = computed(() => {
       return components.MessageDocument;
     case MessageType.APPLICATION:
       return components.MessageDocument;
+    case MessageType.VIDEO:
+      return components.MessageVideo;
     default:
       return null;
   }
