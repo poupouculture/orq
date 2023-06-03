@@ -288,7 +288,6 @@ const initSocket = () => {
       const response = await getCustomer(data.customers_id);
       const customer = response.data.data;
       chooseCustomer(customer);
-      getSelectedChat.value.mode = "";
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
@@ -384,7 +383,7 @@ const initSocket = () => {
             rightDrawerOpen.value = true;
           } else {
             await closeBot(chat?.id);
-            getSelectedChat.value.mode = "";
+            messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
             Notify.create({
               message: "The chatbot has been ended",
               color: "primary",
