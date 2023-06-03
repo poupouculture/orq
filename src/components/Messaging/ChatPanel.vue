@@ -310,7 +310,7 @@ const initSocket = () => {
       const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
       console.log("findChat:", findChat);
       if (!findChat) {
-        chatsList.value.unshift({ members: "[]", ...data });
+        // chatsList.value.unshift({ members: "[]", ...data });
         const chat = await getChatByID(data.id);
         console.log("created chat:", chat);
         chatsList.value.unshift(chat);
