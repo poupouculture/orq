@@ -190,6 +190,7 @@ socket.value = io(socketUrl, {
   extraHeaders: {
     authorization: `${userInfo.value.access_token}`,
   },
+  // transports: ["websocket"],
 });
 
 const fetchCustomers = async () => {
@@ -228,8 +229,8 @@ const initSocket = () => {
     socket.value.on("connect", () => {
       socket.value.emit("join_chat", userProfile?.value?.id);
     });
-    socket.value.io.on("error", () => {
-      console.log("socket error");
+    socket.value.io.on("error", (err: any) => {
+      console.log("socket error", err);
     });
     socket.value.on("chat_updated", (data: any) => {
       console.log("chat_updated", data);
@@ -284,6 +285,9 @@ const initSocket = () => {
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("contact_created", data);
+      const response = await getCustomer(data.customers_id);
+      const customer = response.data.data;
+      chooseCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
@@ -296,7 +300,22 @@ const initSocket = () => {
       // if (!findChat) {
       //   chatsList.value.unshift({ members: "[]", ...data });
       // }
-      socket.value.emit("join_chat", data.chat_id);
+      // const chatObj = await getChatByID(data.chat_id);
+      // const chatIndex = chatsList.value.findIndex(
+      //   (chat) => chat.chat_id === chatObj.chat_id
+      // );
+
+      // if (chatIndex > -1) {
+      //   chatsList.value[chatIndex] = chatObj;
+      // }
+
+      // socket.value.emit("join_chat", data.chat_id);
+      Notify.create({
+        message: `You're added to chat`,
+        color: "blue-9",
+        position: "top",
+        type: "positive",
+      });
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
@@ -306,7 +325,7 @@ const initSocket = () => {
       const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
       console.log("findChat:", findChat);
       if (!findChat) {
-        chatsList.value.unshift({ members: "[]", ...data });
+        // chatsList.value.unshift({ members: "[]", ...data });
         const chat = await getChatByID(data.id);
         console.log("created chat:", chat);
         chatsList.value.unshift(chat);
@@ -364,6 +383,7 @@ const initSocket = () => {
             rightDrawerOpen.value = true;
           } else {
             await closeBot(chat?.id);
+            messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
             Notify.create({
               message: "The chatbot has been ended",
               color: "primary",
