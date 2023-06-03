@@ -12,16 +12,11 @@
     :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
     <div
-      class="relative rounded max-w-[60%]"
+      class="relative rounded max-w-[60%] px-3 py-2"
       :class="[
         isSend
-          ? 'text-white rounded-br-none'
-          : 'text-[#2E2E3A] rounded-tl-none',
-        showBackground
-          ? isSend
-            ? 'bg-primary px-3 py-2'
-            : 'bg-[#E8E7FB] px-3 py-2'
-          : '',
+          ? 'text-white rounded-br-none bg-primary'
+          : 'text-[#2E2E3A] rounded-tl-none bg-[#E8E7FB]',
       ]"
     >
       <span
@@ -171,9 +166,9 @@ const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
 const isSend = computed(() => props.message.direction === Direction.OUTGOING);
-const showBackground = computed(
-  () => props.message.content.type !== MessageType.IMAGE
-);
+// const showBackground = computed(
+//   () => props.message.content.type !== MessageType.IMAGE
+// );
 const timestamp = computed(() => {
   return format(new Date(props.message.date_created), "p");
 });

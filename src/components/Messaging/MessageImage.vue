@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-gray-100 rounded-md p-2.5">
+  <div class="bg-[#4B44F6] rounded-md mt-1">
     <img
       class="cursor-zoom-in h-36 rounded"
       ref="imageRef"
       @click.stop="visible = true"
     />
-    <div class="mt-1 font-semibold text-gray-600">{{ caption }}</div>
+    <div class="mt-1 text-white">{{ caption }}</div>
   </div>
   <q-dialog v-model="visible" no-shake>
     <q-card style="width: 1000px; max-width: 90vw">
