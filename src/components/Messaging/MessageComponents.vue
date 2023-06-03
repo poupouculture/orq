@@ -30,6 +30,7 @@
         !content?.type ||
         (content?.type === MessageType.TEXT && content?.mime_type === undefined)
       "
+      class="break-words"
     >
       <div v-if="message?.waba_associated_message_id != null">
         <div
