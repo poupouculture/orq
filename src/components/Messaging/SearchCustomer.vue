@@ -91,7 +91,7 @@
             <path d="M6 6l12 12"></path>
           </svg>
         </div>
-        <div class="absolute">
+        <div class="absolute -z-10">
           <q-menu :model-value="openSearchResult" :offset="[0, 10]" persistent>
             <q-list class="w-full">
               <q-item
@@ -110,7 +110,7 @@
         </div>
       </div>
       <div>
-        <q-icon name="filter_list" size="1.2rem" />
+        <q-icon class="cursor-pointer" name="filter_list" size="1.2rem" />
         <q-menu fit anchor="bottom middle" self="top middle" :offset="[0, 10]">
           <div class="py-3 px-2">
             <ul class="max-w-sm space-y-3 w-80">
@@ -268,6 +268,7 @@ const loadFilter = () => {
       });
     }
   });
+  searchHandler(results);
 };
 const pushFilterData = (data: any) => {
   addFilter.value = false;
@@ -290,7 +291,7 @@ const removeFilterData = (data: any) => {
 };
 const printFilterBy = (key: string) => {
   return (
-    filterByMenus.value.length &&
+    filterByMenus.value.length && filterByMenus.value.length,
     filterByMenus.value.find((d: any) => d.key === key)?.label
   );
 };
@@ -326,7 +327,7 @@ const selectCustomer = (data: any) => {
   }
 };
 // Search Handler
-const searchHandler = debounce(async function () {
+const searchHandler = debounce(async function (filterQuery?: any) {
   Loading.show();
   try {
     let filter;
@@ -334,10 +335,16 @@ const searchHandler = debounce(async function () {
       const key = `filter[${selectedOption.value.key}][_contains]`;
       filter = { [key]: query.value };
     }
-    const { data } = await searchCustomers({
+    const params = {
       fields: "*",
       ...filter,
-    });
+    } as any;
+    if (filterQuery?.length) {
+      filterQuery.forEach((data: any) => {
+        params[data.key] = data.value;
+      });
+    }
+    const { data } = await searchCustomers(params);
     if (data.data.length > 0) {
       openSearchResult.value = true;
       customers.value = data.data;
