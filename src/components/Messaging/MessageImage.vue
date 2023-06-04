@@ -1,11 +1,13 @@
 <template>
-  <div class="bg-gray-100 rounded-md p-2.5">
+  <div class="rounded-md mt-1">
     <img
       class="cursor-zoom-in h-36 rounded"
       ref="imageRef"
       @click.stop="visible = true"
     />
-    <div class="mt-1 font-semibold text-gray-600">{{ caption }}</div>
+    <div class="mt-1 text-white" :class="{ '!text-gray-800': !isSend }">
+      {{ caption }}
+    </div>
   </div>
   <q-dialog v-model="visible" no-shake>
     <q-card style="width: 1000px; max-width: 90vw">
@@ -52,6 +54,7 @@ interface Props {
   height?: number;
   name?: string;
   caption?: string;
+  isSend: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -59,6 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: 128,
   name: "",
   caption: "",
+  isSend: false,
 });
 
 const visible = ref(false);
