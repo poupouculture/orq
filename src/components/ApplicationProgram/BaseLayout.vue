@@ -625,12 +625,14 @@ const submitGeneralInformation = () => {
         : language.value;
     }
     if (type === "components") {
-      const componentsFormatted = [
-        {
+      const componentsFormatted = [];
+
+      if (footerMessage.value) {
+        componentsFormatted.push({
           type: "FOOTER",
           text: footerMessage.value,
-        },
-      ];
+        });
+      }
 
       const headerComponent = {
         type: "HEADER",
