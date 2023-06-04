@@ -142,11 +142,13 @@
             :disable="isChatExpired || isBot"
             @paste="onPast"
           />
-          <div
-            ref="waveRef"
-            :class="{ invisible: !showAudio }"
-            class="absolute inset-0 bg-primary"
-          />
+          <Transition name="fade-scale" appear>
+            <div
+              ref="waveRef"
+              :class="{ invisible: !showAudio }"
+              class="absolute inset-0 bg-primary"
+            />
+          </Transition>
           <span
             class="absolute right-0 bottom-0 text-white p-2"
             :class="{ invisible: !showAudio }"
@@ -747,17 +749,27 @@ const recStart = function () {
       bufferDuration: number,
       sampleRate: number
     ) => {
-      console.log(11111);
-
       wave.value.input(buffers[buffers.length - 1], powerLevel, sampleRate);
       time.value = bufferDuration;
     },
   });
 
-  rec.value.open(function () {
-    console.log(22222);
-    rec.value.start();
-  });
+  rec.value.open(
+    function () {
+      console.log(22222);
+      rec.value.start();
+    },
+    function () {
+      Notify.create({
+        message:
+          "Your microphone is not activated. Please Enable microphone in your browser.",
+        type: "negative",
+        color: "red",
+        position: "top",
+      });
+      showAudio.value = false;
+    }
+  );
 };
 
 function recStop() {
