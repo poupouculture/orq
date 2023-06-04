@@ -6,6 +6,7 @@
       :src="content.url"
       :name="isDocument(content) ? content.file_name : content.media_id"
       :caption="content.caption"
+      :is-send="isSend"
     />
     <div
       v-if="messageTemplateHeader(content) !== null"

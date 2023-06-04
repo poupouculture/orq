@@ -166,7 +166,7 @@ const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
 const isSend = computed(() => props.message.direction === Direction.OUTGOING);
-// const showBackground = computed(
+// const isNotImageType = computed(
 //   () => props.message.content.type !== MessageType.IMAGE
 // );
 const timestamp = computed(() => {
