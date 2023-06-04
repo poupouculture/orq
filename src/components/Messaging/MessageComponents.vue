@@ -97,13 +97,13 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
-  console.log("content:", content);
-  console.log(
-    "is document:",
-    content?.type === MessageType.DOCUMENT ||
-      content?.type === MessageType.APPLICATION ||
-      (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
-  );
+  // console.log("content:", content);
+  // console.log(
+  //   "is document:",
+  //   content?.type === MessageType.DOCUMENT ||
+  //     content?.type === MessageType.APPLICATION ||
+  //     (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
+  // );
 
   return (
     content?.type === MessageType.DOCUMENT ||
