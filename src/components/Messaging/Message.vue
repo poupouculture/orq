@@ -68,7 +68,7 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <div v-if="isMobile">
+        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
           <div
             class="text-primary pb-3 cursor-pointer"
             @click="toogleChatOption()"
@@ -89,7 +89,8 @@
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
       <div
-        class="absolute top-0 scrollbar h-3/4 overflow-y-auto w-full z-50 pt-3 px-2 scroll_area"
+        class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area"
+        style="height: 75%"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -116,7 +117,7 @@
     </main>
     <!-- footer -->
     <footer
-      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-2 inset-x-0"
+      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-1 inset-x-0"
       :style="getWidthFooter()"
     >
       <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
@@ -138,7 +139,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @paste="onPast"
           />
           <div
@@ -296,7 +297,7 @@
     leave-to-class="transform opacity-0 translate-y-96"
   >
     <div
-      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 h-1/5 w-full"
+      class="fixed z-30 bottom-0 rounded-t-2xl bg-white shadow-[0_25px_200px_5px_rgba(0,0,0,0.3)] p-3 w-full"
       v-if="showBot && isMobile"
     >
       <div
@@ -424,7 +425,7 @@ const FileLimit = [
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
-const isChatExpired: Ref<boolean> = ref(true);
+const isChatExpired: Ref<boolean> = ref(false);
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -542,10 +543,10 @@ watch(
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
       } else {
-        isChatExpired.value = true;
+        isChatExpired.value = false;
       }
     } else {
-      isChatExpired.value = true;
+      isChatExpired.value = false;
     }
   }
 );
@@ -576,7 +577,7 @@ const showCustomerInfoInMobile = () => {
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
-  if (!data.status) {
+  if (!data || !data.status) {
     newMessage.sendMessageStatus = SendMessageStatus.FAILURE;
     Swal.fire({
       icon: "error",
@@ -584,12 +585,7 @@ const messageCallback = async (data: any, newMessage: any) => {
       text: data.message,
     });
   } else {
-    const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-    const index = cachedMessage.findIndex((item) => item.id === data.id);
-    if (index !== -1) {
-      cachedMessage.splice(index, 1);
-    }
-    if (cachedMessage) data = data.data || data;
+    data = data.data || data;
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
@@ -610,10 +606,10 @@ const sendMessage = async () => {
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
     waba_message_id: "",
+    is_cache: true,
     waba_associated_message_id:
       replayMessage.value?.waba_message_id || replayMessage.value?.message_id,
   });
-
   cachedMessage.push(newMessage);
   const wabaMessageId =
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
@@ -621,7 +617,10 @@ const sendMessage = async () => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   message.value = "";
-  // isChatExpired.value = false;
+
+  const timestamp = getSelectedChat.value?.expiration_timestamp;
+  const expiredDate = new Date(timestamp * 1000);
+  isChatExpired.value = new Date() >= expiredDate;
 
   try {
     const data = await messagingStore.sendChatTextMessage({
@@ -657,17 +656,18 @@ const activateChat = async () => {
     const chatId = getSelectedChat.value.id;
     const userId: any | null = userInfoStore.getUserProfile;
     Loading.show();
-    await updateChatStatus(chatId, userId?.id);
-    // Notify.create({
-    //   position: "top",
-    //   message:
-    //     "The chat has been taken by you, now you can message the customer",
-    //   color: "primary",
-    //   type: "positive",
-    // });
-
+    try {
+      const result = await updateChatStatus(chatId, userId?.id);
+      if (!result.data.status)
+        Notify.create({
+          message: result.data.message || "User already assigned",
+          type: "negative",
+          color: "red-8",
+          position: "top",
+        });
+      else messagingStore.setSelectedTab(ChatTypes.ONGOING);
+    } catch (error: any) {}
     Loading.hide();
-    messagingStore.setSelectedTab(ChatTypes.ONGOING);
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
     // emit("newChatCreated", ChatTypes.ONGOING);
   } catch (e) {
@@ -791,10 +791,17 @@ function recClose() {
 }
 
 const getWidthFooter = () => {
-  if (window.innerWidth > 500) {
-    return "padding-left: 360px";
+  let property = "";
+  if (window.innerWidth > 768) {
+    property = "padding-left: 360px;";
   }
-  return "";
+  if (window.innerWidth > 768 && !leftDrawerOpen.value) {
+    property = "padding-left: 0px";
+  }
+  if (window.innerWidth > 768 && rightDrawerOpen.value) {
+    property = "padding-left: 360px; padding-right: 560px";
+  }
+  return property;
 };
 
 const upload = async (fileList: readonly File[], caption: string) => {
@@ -896,13 +903,14 @@ const selectBot = async (bot: any) => {
   hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
+    bot.id,
     bot.trigger_intent
   );
 
   if (status) {
     Notify.create({
-      message: "Bot initiated",
-      color: "blue-9",
+      message: `The ${bot.name} has been initiated`,
+      color: "primary",
       position: "top",
       type: "positive",
     });
@@ -927,12 +935,6 @@ const confirmCloseBot = () => {
 };
 const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  Notify.create({
-    message: "The chatbot has been ended",
-    color: "blue-9",
-    position: "top",
-    type: "positive",
-  });
   getSelectedChat.value.mode = "";
 };
 

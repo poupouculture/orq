@@ -9,6 +9,7 @@ export const enum MessageType {
   TEMPLATE = "template",
   IMAGE = "image",
   AUDIO = "audio",
+  VIDEO = "video",
   MEDIA = "media",
   DOCUMENT = "document",
   APPLICATION = "application",
@@ -39,6 +40,7 @@ export enum SendMessageStatus {
 
 export interface Message {
   id: number;
+  is_cache: true;
   contact_name?: string;
   user_name?: string;
   contact?: string;
@@ -63,8 +65,10 @@ export interface Message {
 }
 export interface IChat {
   id: string;
+  chat_id: string;
   contacts_id: string;
   customers_id: string | null;
+  chat_id: string;
   first_name: string | null;
   last_name: string | null;
   last_message: Message;

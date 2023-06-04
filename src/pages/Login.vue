@@ -1,5 +1,5 @@
 <template>
-  <div class="login h-full flex no-warp select-none">
+  <div class="login h-screen flex no-warp select-none">
     <div
       class="hidden md:!flex md:flex-col gap-28 bg-[#d5e2ff] h-screen px-7 pt-11 w-1/3"
     >
@@ -95,13 +95,13 @@ import { ref } from "vue";
 import useUserInfoStore from "stores/modules/userInfo";
 import logo from "assets/images/logo.svg";
 import loginIllustration from "assets/images/login_illustration.svg";
-import LoginFb from "./LoginFb.vue";
+// import LoginFb from "./LoginFb.vue";
 
 const login = ref({ email: "", password: "" }),
   loading = ref(false),
   userInfo = useUserInfoStore();
 
-const remember = ref(false);
+// const remember = ref(false);
 
 const submit = () => {
   if (login.value.email && login.value.password) {

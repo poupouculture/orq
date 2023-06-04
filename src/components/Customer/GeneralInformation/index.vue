@@ -389,13 +389,13 @@ const associateContact = async () => {
             label="ASSOCIATE"
             class="dark-btn"
           />
-          <q-btn
+          <!-- <q-btn
             v-if="mode === 'show'"
             @click="mode = 'edit'"
             color="primary"
             label="Edit"
             class="dark-btn"
-          />
+          /> -->
 
           <q-btn
             v-if="mode === 'edit'"

@@ -101,7 +101,12 @@ import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
 import { IChat, SocketMessage } from "src/types/MessagingTypes";
-import { closeBot, startNewChat, getContactByChatId } from "src/api/messaging";
+import {
+  closeBot,
+  startNewChat,
+  // getContactByChatId,
+  getChatByID,
+} from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import { searchCustomers, getCustomer } from "src/api/customers";
@@ -150,7 +155,7 @@ const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
-const { chatsList, selectedTab, getSelectedChatId } =
+const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -185,6 +190,7 @@ socket.value = io(socketUrl, {
   extraHeaders: {
     authorization: `${userInfo.value.access_token}`,
   },
+  // transports: ["websocket"],
 });
 
 const fetchCustomers = async () => {
@@ -223,8 +229,8 @@ const initSocket = () => {
     socket.value.on("connect", () => {
       socket.value.emit("join_chat", userProfile?.value?.id);
     });
-    socket.value.io.on("error", () => {
-      console.log("socket error");
+    socket.value.io.on("error", (err: any) => {
+      console.log("socket error", err);
     });
     socket.value.on("chat_updated", (data: any) => {
       console.log("chat_updated", data);
@@ -234,13 +240,37 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
-        if (data.document?.mode !== "bot")
+        let message;
+        if (
+          data.update_fields.status &&
+          data.update_fields.status !== "waiting"
+        ) {
+          switch (data.update_fields.status) {
+            case "ongoing":
+              message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
+              break;
+            case "closed":
+              message = `${data.document?.name} has been closed`;
+              break;
+          }
           Notify.create({
-            message: `${data.document?.name} has been finished`,
+            message,
             type: "positive",
             color: "primary",
             position: "top",
           });
+        }
+        if (data.update_fields.mode) {
+          getSelectedChat.value.mode = data.update_fields.mode;
+          if (data.update_fields.mode === "CS-Agent") {
+            Notify.create({
+              message: `The chatbot has been ended`,
+              type: "positive",
+              color: "primary",
+              position: "top",
+            });
+          }
+        }
       }
     });
     socket.value.on("message_created", async (data: SocketMessage) => {
@@ -255,28 +285,56 @@ const initSocket = () => {
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("contact_created", data);
+      const response = await getCustomer(data.customers_id);
+      const customer = response.data.data;
+      chooseCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
-      console.log(chatsList.value);
-      const findChat = chatsList.value.find(
-        (chat) => chat.chat_id === data.chat_id
-      );
-      console.log("findChat");
-      console.log(findChat);
-      if (!findChat) {
-        chatsList.value.unshift({ members: "[]", ...data });
-      }
-      socket.value.emit("join_chat", data.chat_id);
+      // console.log(chatsList.value);
+      // const findChat = chatsList.value.find(
+      //   (chat) => chat.chat_id === data.chat_id
+      // );
+      // console.log("findChat");
+      // console.log(findChat);
+      // if (!findChat) {
+      //   chatsList.value.unshift({ members: "[]", ...data });
+      // }
+      // const chatObj = await getChatByID(data.chat_id);
+      // const chatIndex = chatsList.value.findIndex(
+      //   (chat) => chat.chat_id === chatObj.chat_id
+      // );
+
+      // if (chatIndex > -1) {
+      //   chatsList.value[chatIndex] = chatObj;
+      // }
+
+      // socket.value.emit("join_chat", data.chat_id);
+      Notify.create({
+        message: `You're added to chat`,
+        color: "blue-9",
+        position: "top",
+        type: "positive",
+      });
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
-      const contact = await getContactByChatId(data.id);
-      console.log("contact retrieved when chat_created event: ", data);
-      data.contacts_id = contact.contacts_id;
-      chatsList.value.unshift({ members: "[]", ...data });
+      // const contact = await getContactByChatId(data.id);
+      // console.log("contact retrieved when chat_created event: ", data);
+      // data.contacts_id = contact.contacts_id;
+      const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
+      console.log("findChat:", findChat);
+      if (!findChat) {
+        // chatsList.value.unshift({ members: "[]", ...data });
+        const chat = await getChatByID(data.id);
+        console.log("created chat:", chat);
+        chatsList.value.unshift(chat);
+      }
+      // chatsList.value.unshift({ members: "[]", ...data });
       socket.value.emit("join_chat", data.id);
     });
+    // the event is removed
+    // Should be refactoring
     socket.value.on("botsession_created", async (data: any) => {
       console.log("botsession_created", data);
       const { document } = data;
@@ -300,6 +358,16 @@ const initSocket = () => {
         focusConfirm: false,
         confirmButtonText: "Load Profile",
       });
+
+      const name = data.document.name.split(" ")[0];
+
+      Notify.create({
+        message: `Chat ${name} has been finished`,
+        color: "blue-9",
+        position: "top",
+        type: "positive",
+      });
+
       const chat = chatsList.value.find(
         (chat) => chat.id === document.session_id
       );
@@ -315,9 +383,10 @@ const initSocket = () => {
             rightDrawerOpen.value = true;
           } else {
             await closeBot(chat?.id);
+            messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
             Notify.create({
               message: "The chatbot has been ended",
-              color: "blue-9",
+              color: "primary",
               position: "top",
               type: "positive",
             });
