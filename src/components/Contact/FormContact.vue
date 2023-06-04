@@ -11,7 +11,7 @@
       </div>
       <div class="flex flex-col">
         <p class="label-style">Number</p>
-        <q-input outlined v-model="form.number" dense />
+        <q-input disable outlined v-model="form.number" dense />
         <q-checkbox
           :true-value="true"
           v-model="form.is_active"
