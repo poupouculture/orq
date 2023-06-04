@@ -125,7 +125,7 @@
         </div>
       </div>
 
-      <div class="w-full flex justify-end gap-2 px-4">
+      <div class="w-full flex items-end justify-end gap-2 px-4">
         <button class="btn-dotted" @click="hide" v-if="!isPreview">
           Close
         </button>
