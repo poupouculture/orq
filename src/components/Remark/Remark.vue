@@ -10,7 +10,7 @@
       <q-btn
         v-if="mode === 'edit'"
         @click="mode = 'show'"
-        color="primary"
+        color="red"
         outline
         label="Cancel"
       />
