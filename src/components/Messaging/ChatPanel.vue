@@ -231,6 +231,11 @@ const initSocket = () => {
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
+      Notify.create({
+        message: "Refresh Your Page to connect to Chats",
+        position: "top",
+        type: "negative",
+      });
     });
     socket.value.on("chat_updated", (data: any) => {
       console.log("chat_updated", data);
