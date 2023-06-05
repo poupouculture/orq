@@ -324,6 +324,7 @@ const initSocket = () => {
       if (!findChat) {
         const chat = await getChatByID(data.id);
         console.log("created chat:", chat);
+        chat.last_message = JSON.parse(chat.last_message);
         chatsList.value.unshift(chat);
       }
       socket.value.emit("join_chat", data.id);
