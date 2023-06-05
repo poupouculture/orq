@@ -311,7 +311,7 @@ const initSocket = () => {
 
       // socket.value.emit("join_chat", data.chat_id);
       Notify.create({
-        message: `You're added to chat`,
+        message: `You have been added to chat`,
         color: "blue-9",
         position: "top",
         type: "positive",
