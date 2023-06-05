@@ -81,7 +81,7 @@ const useMessagingStore = defineStore("messaging", {
           chat.last_message = lastmessage;
           console.log(cachedMessageIndex);
           // delete cache when cache is exists
-          if (cachedMessageIndex !== -1) {
+          if (cachedMessageIndex !== -1 && cachedMessageIndex !== undefined) {
             this.cachedChatMessages[chatId].splice(cachedMessageIndex, 1);
           }
           if (lastmessage.status === MessageStatus.RECEIVE) {
