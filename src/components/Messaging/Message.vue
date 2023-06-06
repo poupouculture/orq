@@ -165,7 +165,7 @@
               class="q-mt-md"
               :disable="isChatExpired"
             >
-              <img src="~assets/images/bot.svg" @click="toggleInfo()" />
+              <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
                 <q-list
                   dense
