@@ -75,12 +75,7 @@ const updateContacts = async () => {
 
       <div class="flex flex-col">
         <p class="label-style">Number</p>
-        <q-input
-          outlined
-          v-model="getContacts.number"
-          :disable="!editMode"
-          dense
-        />
+        <q-input outlined v-model="getContacts.number" disable dense />
         <q-checkbox
           :disable="!editMode"
           :true-value="true"
