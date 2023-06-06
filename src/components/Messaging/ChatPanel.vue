@@ -72,8 +72,11 @@
         <ChatList :type="tab.name" :filter-text="seachText" />
       </q-tab-panel>
     </q-tab-panels>
-    <q-btn class="bg-primary text-white m-4 shadow-md" @click="showMoreChats"
-      >Show More</q-btn
+    <q-btn
+      class="bg-primary text-white m-4 shadow-md"
+      v-if="isShowingButtonLoadMore[selectedTab]"
+      @click="showMoreChats"
+      >Load More</q-btn
     >
     <ChatListFooter />
   </q-list>
@@ -163,9 +166,18 @@ const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
 const socket = ref();
-const onGoingPageNumber = ref(1);
-const waitingPageNumber = ref(1);
-const closedPageNumber = ref(1);
+
+const pageNumber = ref({
+  waiting: 1,
+  ongoing: 1,
+  closed: 1,
+});
+const isShowingButtonLoadMore = ref({
+  waiting: true,
+  ongoing: true,
+  closed: true,
+});
+
 const tabsTip = computed(() => {
   const result: any = {};
   chatsList.value.forEach((chat: IChat) => {
@@ -230,23 +242,18 @@ const onSearchCustomers = async (
   return data.data?.[0];
 };
 
-const showMoreChats = () => {
+const showMoreChats = async () => {
   console.log("selected tab:", selectedTab.value);
-  let pageNumber = 1;
-  if (selectedTab.value === ChatTypes.ONGOING) {
-    onGoingPageNumber.value += 1;
-    pageNumber = onGoingPageNumber.value;
-  }
-  if (selectedTab.value === ChatTypes.PENDING) {
-    waitingPageNumber.value += 1;
-    pageNumber = waitingPageNumber.value;
-  }
-  if (selectedTab.value === ChatTypes.CLOSED) {
-    closedPageNumber.value += 1;
-    pageNumber = closedPageNumber.value;
-  }
+  pageNumber.value[selectedTab.value] += 1;
+  const pageNumberLocal = pageNumber.value[selectedTab.value];
 
-  messagingStore.loadMoreChats(selectedTab.value, pageNumber);
+  const chats = await messagingStore.loadMoreChats(
+    selectedTab.value,
+    pageNumberLocal
+  );
+
+  if (chats.length < 1)
+    isShowingButtonLoadMore.value[selectedTab.value] = false;
 };
 
 const initSocket = () => {

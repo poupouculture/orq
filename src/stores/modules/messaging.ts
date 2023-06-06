@@ -134,18 +134,41 @@ const useMessagingStore = defineStore("messaging", {
     },
     async loadMoreChats(type?: ChatTypes, pageNumber?: number) {
       const chats = await getChatsByType(type, pageNumber);
+
       chats.forEach((loadedChat: IChat) => {
-        console.log(loadedChat);
+        console.log("loaded chat:", loadedChat);
+
         const checker = this.chatsList.find(
           (chat) => chat.id === loadedChat.id
         );
+
+        console.log("is listed:", checker);
+
         if (!checker) {
-          loadedChat.last_message = JSON.parse(
-            loadedChat.last_message.toString()
-          );
+          if (loadedChat.last_message) {
+            loadedChat.last_message = JSON.parse(
+              loadedChat.last_message.toString()
+            );
+          } else {
+            loadedChat.last_message = {
+              id: 0,
+              content: {
+                type: "text",
+                text: "",
+              },
+              direction: "incoming",
+              is_cache: true,
+              contact_company_name: "",
+              contact_customer_name: "",
+              status: MessageStatus.RECEIVE,
+              date_created: "",
+            };
+          }
           this.chatsList.push(loadedChat);
         }
       });
+
+      return chats;
     },
 
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
