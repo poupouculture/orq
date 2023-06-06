@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive, computed, ref, watch } from "vue";
+import { reactive, computed, ref, watch, onMounted } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
@@ -55,7 +55,7 @@ const pagination = reactive({
   page: 1,
   rowsPerPage: 5,
 });
-const paginationCustomers = reactive({
+const paginationCustomers = ref({
   sortBy: "desc",
   descending: false,
   page: 1,
@@ -76,7 +76,8 @@ const totalPage = computed(() =>
 const totalPageCustomers = () => {
   if (metaCustomerGroups.value) {
     return Math.ceil(
-      metaCustomerGroups.value.filter_count / paginationCustomers.rowsPerPage
+      metaCustomerGroups.value.filter_count /
+        paginationCustomers.value.rowsPerPage
     );
   }
 };
@@ -130,7 +131,7 @@ const changePage = (val: number) => {
 };
 
 const changePageCustomers = (val: number) => {
-  paginationCustomers.page = val;
+  paginationCustomers.value.page = val;
   getCustomerGroupData();
 };
 
@@ -138,7 +139,7 @@ const openDrawer = async (id: string, type: string) => {
   userGroupId.value = id;
   drawer.value = true;
   drawerType.value = type;
-  paginationCustomers.page = 1;
+  paginationCustomers.value.page = 1;
   if (type === DrawerTypeEnum.DELETE && selectedUserGroup.value.length < 1) {
     return personalGroupStore.resetCustomerGroup();
   }
@@ -168,7 +169,7 @@ const newRelations = async () => {
 
   await addRelationship(populateCustomerGroupId);
   await getPersonalGroupData();
-  paginationCustomers.page = 1;
+  paginationCustomers.value.page = 1;
   await getCustomerGroupData();
   tableSelected.value = [];
   relationLoading.value = false;
@@ -195,7 +196,7 @@ const deleteRelations = async () => {
 
   await deleteRelationship(getDataArray);
   await getPersonalGroupData();
-  paginationCustomers.page = 1;
+  paginationCustomers.value.page = 1;
   await getCustomerGroupData();
   tableSelected.value = [];
   Notify.create({
@@ -220,8 +221,8 @@ const cgType = ref("personal");
 const getCustomerGroupData = async () => {
   tableLoading.value = true;
   await personalGroupStore.getCustomerGroup(
-    paginationCustomers.rowsPerPage,
-    paginationCustomers.page,
+    paginationCustomers.value.rowsPerPage,
+    paginationCustomers.value.page,
     cgType.value,
     queryCustomers.value,
     selectedUserGroup.value,
@@ -286,7 +287,8 @@ watch(userGroupType, () => {
 const tableLoading = ref(false);
 watch(cgType, () => {
   tableLoading.value = true;
-  paginationCustomers.page = 1;
+  paginationCustomers.value.page = 1;
+  paginationCustomers.value.rowsPerPage = 10;
   tableSelected.value = [];
   getCustomerGroupData();
 });
@@ -294,6 +296,13 @@ const rightDrawerWidth = ref(800);
 if (window.innerWidth < 768) {
   rightDrawerWidth.value = window.innerWidth;
 }
+
+watch(paginationCustomers, (val: any, old: any) => {
+  if (val.rowsPerPage !== old.rowsPerPage) {
+    paginationCustomers.value.rowsPerPage = val.rowsPerPage;
+    getCustomerGroupData();
+  }
+});
 </script>
 <template>
   <q-layout view="hHh lpR fFf" class="mt-10">
@@ -487,10 +496,10 @@ if (window.innerWidth < 768) {
               :loading="tableLoading"
               selection="multiple"
               row-key="id"
+              :rows-per-page-options="[5, 10, 15, 20, 25, 50]"
               class="mb-3"
-              :pagination="{
-                rowsPerPage: 10,
-              }"
+              v-model:pagination="paginationCustomers"
+              binary-state-sort
               v-if="allCustomerGroups.length"
             >
               <template v-slot:loading>
