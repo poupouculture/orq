@@ -288,6 +288,7 @@ const tableLoading = ref(false);
 watch(cgType, () => {
   tableLoading.value = true;
   paginationCustomers.value.page = 1;
+  paginationCustomers.value.rowsPerPage = 10;
   tableSelected.value = [];
   getCustomerGroupData();
 });
@@ -495,6 +496,7 @@ watch(paginationCustomers, (val: any, old: any) => {
               :loading="tableLoading"
               selection="multiple"
               row-key="id"
+              :rows-per-page-options="[5, 10, 15, 20, 25, 50]"
               class="mb-3"
               v-model:pagination="paginationCustomers"
               binary-state-sort
