@@ -72,6 +72,9 @@
         <ChatList :type="tab.name" :filter-text="seachText" />
       </q-tab-panel>
     </q-tab-panels>
+    <q-btn class="bg-primary text-white m-4 shadow-md" @click="showMoreChats"
+      >Show More</q-btn
+    >
     <ChatListFooter />
   </q-list>
   <!-- customer dialog -->
@@ -160,6 +163,9 @@ const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
 const socket = ref();
+const onGoingPageNumber = ref(1);
+const waitingPageNumber = ref(1);
+const closedPageNumber = ref(1);
 const tabsTip = computed(() => {
   const result: any = {};
   chatsList.value.forEach((chat: IChat) => {
@@ -222,6 +228,25 @@ const onSearchCustomers = async (
   };
   const { data } = await searchCustomers(params);
   return data.data?.[0];
+};
+
+const showMoreChats = () => {
+  console.log("selected tab:", selectedTab.value);
+  let pageNumber = 1;
+  if (selectedTab.value === ChatTypes.ONGOING) {
+    onGoingPageNumber.value += 1;
+    pageNumber = onGoingPageNumber.value;
+  }
+  if (selectedTab.value === ChatTypes.PENDING) {
+    waitingPageNumber.value += 1;
+    pageNumber = waitingPageNumber.value;
+  }
+  if (selectedTab.value === ChatTypes.CLOSED) {
+    closedPageNumber.value += 1;
+    pageNumber = closedPageNumber.value;
+  }
+
+  messagingStore.loadMoreChats(selectedTab.value, pageNumber);
 };
 
 const initSocket = () => {
@@ -292,29 +317,20 @@ const initSocket = () => {
       console.log("contact_created", data);
       const response = await getCustomer(data.customers_id);
       const customer = response.data.data;
-      chooseCustomer(customer);
+      const currentChat = chatsList.value.find(
+        (chat: IChat) => chat.contacts_id === data.contacts_id
+      );
+
+      if (currentChat !== undefined) {
+        currentChat.customers_id = data.customers_id;
+        currentChat.customer_company_name_en =
+          customer.customer_company_name_en;
+        socket.value.emit("join_chat", data.id);
+      }
+      // customerStore.setCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
-      // console.log(chatsList.value);
-      // const findChat = chatsList.value.find(
-      //   (chat) => chat.chat_id === data.chat_id
-      // );
-      // console.log("findChat");
-      // console.log(findChat);
-      // if (!findChat) {
-      //   chatsList.value.unshift({ members: "[]", ...data });
-      // }
-      // const chatObj = await getChatByID(data.chat_id);
-      // const chatIndex = chatsList.value.findIndex(
-      //   (chat) => chat.chat_id === chatObj.chat_id
-      // );
-
-      // if (chatIndex > -1) {
-      //   chatsList.value[chatIndex] = chatObj;
-      // }
-
-      // socket.value.emit("join_chat", data.chat_id);
       Notify.create({
         message: `You have been added to chat`,
         color: "blue-9",
@@ -334,9 +350,9 @@ const initSocket = () => {
         const chat = await getChatByID(data.id);
         console.log("created chat:", chat);
         chatsList.value.unshift(chat);
+        socket.value.emit("join_chat", data.id);
       }
       // chatsList.value.unshift({ members: "[]", ...data });
-      socket.value.emit("join_chat", data.id);
     });
     // the event is removed
     // Should be refactoring

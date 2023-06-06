@@ -12,6 +12,7 @@ import {
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
+  getChatsByType,
 } from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -129,6 +130,21 @@ const useMessagingStore = defineStore("messaging", {
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
         return item;
+      });
+    },
+    async loadMoreChats(type?: ChatTypes, pageNumber?: number) {
+      const chats = await getChatsByType(type, pageNumber);
+      chats.forEach((loadedChat: IChat) => {
+        console.log(loadedChat);
+        const checker = this.chatsList.find(
+          (chat) => chat.id === loadedChat.id
+        );
+        if (!checker) {
+          loadedChat.last_message = JSON.parse(
+            loadedChat.last_message.toString()
+          );
+          this.chatsList.push(loadedChat);
+        }
       });
     },
 

@@ -6,30 +6,41 @@ import {
   ComponentParameter,
 } from "src/types/MessagingTypes";
 
-export const getChats = async (type?: ChatTypes) => {
-  const { data } = await api.get(`/waba/chats/list/${type || "all"}`);
-  return data;
+export const getChats = async (limit = 15, pageNumber = 1) => {
+  const ongoingChats = await getChatsByType(
+    ChatTypes.ONGOING,
+    pageNumber,
+    limit
+  );
+
+  const waitingChats = await getChatsByType(
+    ChatTypes.PENDING,
+    pageNumber,
+    1000
+  );
+
+  const closedChats = await getChatsByType(ChatTypes.CLOSED, pageNumber, limit);
+
+  return ongoingChats.concat(waitingChats, closedChats);
 };
 
-// export const getChatsByType = async (
-//   pageNumber = 1,
-//   limit = 10,
-//   type?: ChatTypes
-// ) => {
-//   const typeSend = type || "all";
-//   const { data } = await api.get(`/chat/list`, {
-//     params: {
-//       pageNumber,
-//       limit,
-//       sort: "-id",
-//       chunk_sort: "asc",
-//       type: typeSend,
-//     },
-//   });
-//   console.log("chats list...............");
-//   console.log(data);
-//   return data.data.length > 0 ? data.data : null;
-// };
+export const getChatsByType = async (
+  type?: ChatTypes,
+  pageNumber = 1,
+  limit = 15
+) => {
+  const typeSend = type || "all";
+  const { data } = await api.get(`/chat/list`, {
+    params: {
+      page_number: pageNumber,
+      page_size: limit,
+      sort: "-id",
+      chunk_sort: "asc",
+      type: typeSend,
+    },
+  });
+  return data.data.length > 0 ? data.data : [];
+};
 
 export const getChatByID = async (id: string) => {
   const { data } = await api.get(`/chat/chats/${id}`);
