@@ -2,8 +2,8 @@
   <q-form>
     <div class="main-container">
       <p class="header-text text-2xl">
-        <router-link
-          :to="`/application-programs/${
+        <a
+          :href="`/application-programs/${
             props.formType === 'bots'
               ? 'chatbots'
               : props.formType === 'customer-service'
@@ -16,7 +16,7 @@
             <q-icon name="fa-solid fa-arrow-left" />
             Application programs /
           </span>
-        </router-link>
+        </a>
         {{
           props.formType === "bots"
             ? "Chatbots"
