@@ -552,6 +552,8 @@ watch(
     } else {
       isChatExpired.value = false;
     }
+    console.log("isChatExpired.value");
+    console.log(isChatExpired.value);
   }
 );
 
