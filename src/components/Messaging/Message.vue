@@ -147,6 +147,7 @@
               ref="waveRef"
               :class="{ invisible: !showAudio }"
               class="absolute inset-0 bg-primary"
+              :disable="isChatExpired || isBot"
             />
           </Transition>
           <span
@@ -163,9 +164,9 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isChatExpired"
+              :disable="isChatExpired || isBot"
             >
-              <img src="~assets/images/bot.svg" @click="toggleInfo()" />
+              <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
                 <q-list
                   dense
@@ -204,14 +205,15 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
           <q-btn
-            :flat="!isChatExpired"
+            :flat="!isChatExpired || isBot"
+            :disable="isBot"
             round
-            :color="isChatExpired ? 'primary' : 'grey'"
+            color="primary"
             icon="insert_comment"
             size="md"
             class="q-mt-md"
@@ -224,7 +226,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @click="showMessageImage = true"
           />
 
@@ -234,7 +236,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @click="fileUplader?.pickFiles"
           >
             <img src="~assets/images/pin.svg" />
@@ -250,7 +252,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @click="sendMessage"
           />
         </div>
@@ -618,12 +620,17 @@ const sendMessage = async () => {
 
   scrollToBottom();
   messagingStore.setReplayMessage();
-  message.value = "";
 
   const timestamp = getSelectedChat.value?.expiration_timestamp;
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
+  if (!isChatExpired.value && isTemplate.value) {
+    isTemplate.value = false;
+    newMessage.content = message.value;
+  }
+
+  message.value = "";
   try {
     const data = await messagingStore.sendChatTextMessage({
       chatId: getSelectedChatId.value,
@@ -686,6 +693,7 @@ const sendMessageTemplate = (
   headType: string
 ) => {
   templateName.value = name;
+  console.log("template body:", msg);
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
@@ -860,8 +868,8 @@ const uploadFile = async (files: readonly File[]) => {
       type: MessageType.DOCUMENT,
       duration: time.value,
       local: true,
-      media_id: file.name,
-      file_name: file.name,
+      media_id: decodeURIComponent(file.name),
+      file_name: decodeURIComponent(file.name),
     },
     status: MessageStatus.SENT,
     direction: Direction.OUTGOING,
@@ -872,9 +880,14 @@ const uploadFile = async (files: readonly File[]) => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   const bodyFormData = new FormData();
+  const newFileName = new File([file], encodeURIComponent(file.name), {
+    type: file.type,
+  });
+
   // bodyFormData.append("caption", file.name);
-  bodyFormData.append("file", file);
+  bodyFormData.append("file", newFileName);
   fileUplader.value?.removeQueuedFiles();
+
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };

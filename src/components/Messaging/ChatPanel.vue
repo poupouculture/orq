@@ -287,7 +287,7 @@ const initSocket = () => {
               message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
               break;
             case "closed":
-              message = `${data.document?.name} has been closed`;
+              message = `${data.document?.name} chat has been closed`;
               break;
           }
           Notify.create({
@@ -298,10 +298,12 @@ const initSocket = () => {
           });
         }
         if (data.update_fields.mode) {
-          getSelectedChat.value.mode = data.update_fields.mode;
+          if (getSelectedChat.value.chat_id === data.document.id) {
+            getSelectedChat.value.mode = data.update_fields.mode;
+          }
           if (data.update_fields.mode === "CS-Agent") {
             Notify.create({
-              message: `The chatbot has been ended`,
+              message: `The ${data.document.name} chatbot has been ended`,
               type: "positive",
               color: "primary",
               position: "top",
@@ -347,19 +349,15 @@ const initSocket = () => {
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
-      // const contact = await getContactByChatId(data.id);
-      // console.log("contact retrieved when chat_created event: ", data);
-      // data.contacts_id = contact.contacts_id;
       const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
       console.log("findChat:", findChat);
       if (!findChat) {
-        // chatsList.value.unshift({ members: "[]", ...data });
         const chat = await getChatByID(data.id);
         console.log("created chat:", chat);
+        chat.last_message = JSON.parse(chat.last_message);
         chatsList.value.unshift(chat);
         socket.value.emit("join_chat", data.id);
       }
-      // chatsList.value.unshift({ members: "[]", ...data });
     });
     // the event is removed
     // Should be refactoring

@@ -11,7 +11,7 @@
         {{ name }}
       </q-item-label>
       <q-item-label caption lines="1" :class="{ 'text-white': active }">
-        {{ message }}
+        {{ message ? decodeURIComponent(message) : message }}
       </q-item-label>
     </q-item-section>
     <q-item-section side top class="justify-between q-pb-sm">
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { format } from "date-fns";
+import { isToday, format } from "date-fns";
 import { storeToRefs } from "pinia";
 import { getChatNameEn } from "src/utils/trim-word";
 import { IChat, MessageType } from "src/types/MessagingTypes";
@@ -84,7 +84,10 @@ const message = computed<string>(() => {
 const time = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
   const dateCreated = lastMessage?.date_created;
-  return dateCreated && format(new Date(dateCreated), "p");
+  if (isToday(new Date(dateCreated))) {
+    return dateCreated && format(new Date(dateCreated), "p");
+  }
+  return dateCreated && format(new Date(dateCreated), "p, d MMM");
 });
 </script>
 

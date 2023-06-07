@@ -11,4 +11,5 @@ export const enum ChatTypes {
   PENDING = "waiting",
   ONGOING = "ongoing",
   CLOSED = "closed",
+  ALL = "all",
 }

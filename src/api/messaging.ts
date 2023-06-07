@@ -7,20 +7,17 @@ import {
 } from "src/types/MessagingTypes";
 
 export const getChats = async (limit = 15, pageNumber = 1) => {
-  const ongoingChats = await getChatsByType(
-    ChatTypes.ONGOING,
-    pageNumber,
-    limit
-  );
+  const { data } = await api.get(`/chat/list`, {
+    params: {
+      page_number: pageNumber,
+      page_size: limit,
+      type: "all",
+    },
+  });
 
-  const waitingChats = await getChatsByType(
-    ChatTypes.PENDING,
-    pageNumber,
-    1000
-  );
-
-  const closedChats = await getChatsByType(ChatTypes.CLOSED, pageNumber, limit);
-
+  const ongoingChats = data.data.ongoing;
+  const waitingChats = data.data.waiting;
+  const closedChats = data.data.closed;
   return ongoingChats.concat(waitingChats, closedChats);
 };
 

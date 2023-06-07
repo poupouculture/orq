@@ -82,7 +82,7 @@ const useMessagingStore = defineStore("messaging", {
           chat.last_message = lastmessage;
           console.log(cachedMessageIndex);
           // delete cache when cache is exists
-          if (cachedMessageIndex !== -1) {
+          if (cachedMessageIndex !== -1 && cachedMessageIndex !== undefined) {
             this.cachedChatMessages[chatId].splice(cachedMessageIndex, 1);
           }
           if (lastmessage.status === MessageStatus.RECEIVE) {
@@ -123,7 +123,10 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id !== newchat.id
       );
       this.chatsList.unshift(newchat);
-      this.selectedTab = newchat.status;
+      // this.selectedTab = newchat.status;
+      // if ((getSelectedChat.value.mode = newchat.id)) { // only when we are focussed on the current chat, then the selected status moves
+      //   this.selectedTab = newchat.status;
+      // }
     },
     async fetchChats() {
       const chatsList = await getChats();
