@@ -19,6 +19,7 @@ export const getInternalGroups = async ({
   type = undefined,
 }) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
+  console.log(type);
   const params = {
     limit,
     search,

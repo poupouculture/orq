@@ -191,10 +191,11 @@ onMounted(async () => {
 });
 
 const fetchInternalGroups = async () => {
+  type.value = type.value === "individual" ? "personal" : "group";
   await internalGroupStore.getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
-    type: type.value === "individual" ? "personal" : "group",
+    type: type.value,
     search: query.value.length ? query.value : undefined,
   });
 };
