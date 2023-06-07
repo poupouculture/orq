@@ -147,6 +147,7 @@
               ref="waveRef"
               :class="{ invisible: !showAudio }"
               class="absolute inset-0 bg-primary"
+              :disable="isChatExpired || isBot"
             />
           </Transition>
           <span
@@ -163,7 +164,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isChatExpired"
+              :disable="isChatExpired || isBot"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
@@ -204,12 +205,13 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
           <q-btn
-            :flat="!isChatExpired"
+            :flat="!isChatExpired || isBot"
+            :disable="isChatExpired || isBot"
             round
             :color="isChatExpired ? 'primary' : 'grey'"
             icon="insert_comment"
@@ -224,7 +226,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @click="showMessageImage = true"
           />
 
@@ -234,7 +236,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @click="fileUplader?.pickFiles"
           >
             <img src="~assets/images/pin.svg" />
