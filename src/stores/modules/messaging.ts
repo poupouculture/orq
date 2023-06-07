@@ -122,7 +122,10 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id !== newchat.id
       );
       this.chatsList.unshift(newchat);
-      this.selectedTab = newchat.status;
+      // this.selectedTab = newchat.status;
+      // if ((getSelectedChat.value.mode = newchat.id)) { // only when we are focussed on the current chat, then the selected status moves
+      //   this.selectedTab = newchat.status;
+      // }
     },
     async fetchChats() {
       const chatsList = await getChats();

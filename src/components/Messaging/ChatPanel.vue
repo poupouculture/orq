@@ -255,7 +255,7 @@ const initSocket = () => {
               message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
               break;
             case "closed":
-              message = `${data.document?.name} has been closed`;
+              message = `${data.document?.name} chat has been closed`;
               break;
           }
           Notify.create({
@@ -266,10 +266,12 @@ const initSocket = () => {
           });
         }
         if (data.update_fields.mode) {
-          getSelectedChat.value.mode = data.update_fields.mode;
+          if (getSelectedChat.value.chat_id === data.document.id) {
+            getSelectedChat.value.mode = data.update_fields.mode;
+          }
           if (data.update_fields.mode === "CS-Agent") {
             Notify.create({
-              message: `The chatbot has been ended`,
+              message: `The ${data.document.name} chatbot has been ended`,
               type: "positive",
               color: "primary",
               position: "top",
