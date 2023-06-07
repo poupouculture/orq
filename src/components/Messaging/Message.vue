@@ -252,7 +252,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isChatExpired"
+            :disable="isChatExpired || isBot"
             @click="sendMessage"
           />
         </div>
