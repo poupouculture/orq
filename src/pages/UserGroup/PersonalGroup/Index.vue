@@ -370,12 +370,12 @@ watch(paginationCustomers, (val: any, old: any) => {
                     class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
                   >
                     <div
-                      class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
+                      class="w-16 h-16 text-xl items-center justify-center flex text-white mr-3 bg-primary px-2 text-center"
                     >
-                      {{ group.name }}
+                      UG
                     </div>
-                    <div class="truncate">
-                      <div class="truncate">{{ group.name }}</div>
+                    <div class="">
+                      <div class="">{{ group.name }}</div>
                     </div>
                   </div>
 

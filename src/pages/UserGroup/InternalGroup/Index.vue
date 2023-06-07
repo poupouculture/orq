@@ -52,10 +52,12 @@
                 class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
               >
                 <div
-                  class="w-16 h-16 items-center justify-center flex text-white mr-3 bg-primary text-xs px-2 text-center"
-                ></div>
-                <div class="truncate">
-                  <div class="truncate">{{ group.name }}</div>
+                  class="w-16 h-16 font-inter items-center justify-center flex text-white mr-3 bg-primary text-[14px] font-medium px-2 text-center"
+                >
+                  UG
+                </div>
+                <div class="">
+                  <div class="">{{ group.name }}</div>
                   <p class="text-gray-400">{{ group.users.length }} Members</p>
                 </div>
               </div>
