@@ -2,7 +2,7 @@
   <div class="flex items-center">
     <q-icon name="text_snippet" size="md" />
     <div>
-      <span class="">{{ name }}</span>
+      <span class="">{{ decodeURIComponent(name) }}</span>
     </div>
   </div>
 </template>

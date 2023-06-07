@@ -231,6 +231,11 @@ const initSocket = () => {
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
+      Notify.create({
+        message: "Refresh Your Page to connect to Chats",
+        position: "top",
+        type: "negative",
+      });
     });
     socket.value.on("chat_updated", (data: any) => {
       console.log("chat_updated", data);
@@ -250,7 +255,7 @@ const initSocket = () => {
               message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
               break;
             case "closed":
-              message = `${data.document?.name} has been closed`;
+              message = `${data.document?.name} chat has been closed`;
               break;
           }
           Notify.create({
@@ -261,10 +266,12 @@ const initSocket = () => {
           });
         }
         if (data.update_fields.mode) {
-          getSelectedChat.value.mode = data.update_fields.mode;
+          if (getSelectedChat.value.chat_id === data.document.id) {
+            getSelectedChat.value.mode = data.update_fields.mode;
+          }
           if (data.update_fields.mode === "CS-Agent") {
             Notify.create({
-              message: `The chatbot has been ended`,
+              message: `The ${data.document.name} chatbot has been ended`,
               type: "positive",
               color: "primary",
               position: "top",
@@ -311,7 +318,7 @@ const initSocket = () => {
 
       // socket.value.emit("join_chat", data.chat_id);
       Notify.create({
-        message: `You're added to chat`,
+        message: `You have been added to chat`,
         color: "blue-9",
         position: "top",
         type: "positive",
@@ -319,18 +326,14 @@ const initSocket = () => {
     });
     socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
-      // const contact = await getContactByChatId(data.id);
-      // console.log("contact retrieved when chat_created event: ", data);
-      // data.contacts_id = contact.contacts_id;
       const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
       console.log("findChat:", findChat);
       if (!findChat) {
-        // chatsList.value.unshift({ members: "[]", ...data });
         const chat = await getChatByID(data.id);
         console.log("created chat:", chat);
+        chat.last_message = JSON.parse(chat.last_message);
         chatsList.value.unshift(chat);
       }
-      // chatsList.value.unshift({ members: "[]", ...data });
       socket.value.emit("join_chat", data.id);
     });
     // the event is removed

@@ -2,8 +2,8 @@
   <q-form>
     <div class="main-container">
       <p class="header-text text-2xl">
-        <router-link
-          :to="`/application-programs/${
+        <a
+          :href="`/application-programs/${
             props.formType === 'bots'
               ? 'chatbots'
               : props.formType === 'customer-service'
@@ -16,7 +16,7 @@
             <q-icon name="fa-solid fa-arrow-left" />
             Application programs /
           </span>
-        </router-link>
+        </a>
         {{
           props.formType === "bots"
             ? "Chatbots"
@@ -25,8 +25,8 @@
             : "Message Templates"
         }}
       </p>
-      <div class="w-full flex bg-[#fdfdfd] rounded-lg">
-        <div class="w-2/3 flex flex-col p-6 border-r">
+      <div class="w-full grid mt-3 lg:grid-cols-3 bg-[#fdfdfd] rounded-lg">
+        <div class="col-span-2 flex flex-col p-6 border-r">
           <div class="label flex flex-col">
             <p class="text-xl">Name</p>
             <p class="text-gray-400">Type your template name</p>
@@ -290,7 +290,7 @@
             </button>
           </div>
         </div>
-        <div class="w-1/3 p-6 flex flex-col">
+        <div class="col-span-1 p-6 flex flex-col">
           <span class="text-xl">Preview</span>
           <Preview
             :header="header"
@@ -625,12 +625,14 @@ const submitGeneralInformation = () => {
         : language.value;
     }
     if (type === "components") {
-      const componentsFormatted = [
-        {
+      const componentsFormatted = [];
+
+      if (footerMessage.value) {
+        componentsFormatted.push({
           type: "FOOTER",
           text: footerMessage.value,
-        },
-      ];
+        });
+      }
 
       const headerComponent = {
         type: "HEADER",

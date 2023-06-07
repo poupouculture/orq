@@ -5,7 +5,9 @@
       @pause="playing = false"
       class="hidden invisible"
       :src="src"
-    ></audio>
+    >
+      <source :src="src" ref="source" />
+    </audio>
 
     <q-icon v-show="playing" name="pause_circle" color="white" size="30px" />
     <q-icon
@@ -19,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 // import { MessageType } from "src/types/MessagingTypes";
 import { api } from "boot/axios";
 
@@ -32,9 +34,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const audio: any = ref(null);
+const source: any = ref(null);
 const playing = ref(false);
 
 const getAudioData = async () => {
+  console.log(props.src?.startsWith("blob"), props.src);
   if (props.src?.startsWith("blob")) {
     return;
   }
@@ -42,15 +46,25 @@ const getAudioData = async () => {
     responseType: "blob",
   });
   const blob = new Blob([data], { type: "audio/wav" });
+  source.value.src = (window.URL || window.webkitURL).createObjectURL(blob);
   audio.value.src = (window.URL || window.webkitURL).createObjectURL(blob);
 };
 
-const audioPlay = () => {
+watch(
+  () => props.src,
+  () => {
+    if (!props.src?.startsWith("blob")) {
+      getAudioData();
+    }
+  }
+);
+const audioPlay = async () => {
+  console.log(audio.value);
   if (audio.value.paused) {
-    audio.value.play();
+    await audio.value.play();
     playing.value = true;
   } else {
-    audio.value.pause();
+    await audio.value.pause();
     // audio.value.currentTime = 0;
     playing.value = false;
   }

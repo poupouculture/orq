@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :modelValue="modelValue" @hide="hide">
+  <q-dialog :modelValue="props.modelValue" @hide="hide">
     <q-card
       style="min-width: 85%; min-height: 85%"
       class="q-pa-lg flex flex-col"
@@ -81,12 +81,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onUpdated } from "vue";
 import { getCustomersWithContacts } from "src/api/customers";
 import BaseTable from "src/components/BaseTable.vue";
 import { Notify } from "quasar";
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false,
@@ -205,7 +205,7 @@ const chooseCustomer = (customer) => {
   emit("submit", customer);
 };
 
-onMounted(() => {
-  fetchCustomers();
+onUpdated(() => {
+  if (props.modelValue) fetchCustomers();
 });
 </script>

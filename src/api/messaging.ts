@@ -11,6 +11,26 @@ export const getChats = async (type?: ChatTypes) => {
   return data;
 };
 
+// export const getChatsByType = async (
+//   pageNumber = 1,
+//   limit = 10,
+//   type?: ChatTypes
+// ) => {
+//   const typeSend = type || "all";
+//   const { data } = await api.get(`/chat/list`, {
+//     params: {
+//       pageNumber,
+//       limit,
+//       sort: "-id",
+//       chunk_sort: "asc",
+//       type: typeSend,
+//     },
+//   });
+//   console.log("chats list...............");
+//   console.log(data);
+//   return data.data.length > 0 ? data.data : null;
+// };
+
 export const getChatByID = async (id: string) => {
   const { data } = await api.get(`/chat/chats/${id}`);
   console.log(data.data);
@@ -172,8 +192,11 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   }
 
   currPayload.waba_content.context = { message_id: messageId };
-
-  const data = await api.post(`/waba/handle-cs-waba-message`, currPayload);
+  let url = "/waba/handle-cs-waba-message";
+  if (type === "text") {
+    url = "/whatsapp/message/waba";
+  }
+  const data = await api.post(url, currPayload);
 
   return data.data || null;
 };

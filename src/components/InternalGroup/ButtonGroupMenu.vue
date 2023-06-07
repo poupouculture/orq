@@ -94,9 +94,7 @@ const fetchUsers = async () => {
   );
   Loading.hide();
   usersData.value = users;
-  pagination.totalCount = userQuery.value.length
-    ? meta?.filter_count
-    : meta?.total_count;
+  pagination.totalCount = meta?.filter_count;
   Loading.hide();
 };
 

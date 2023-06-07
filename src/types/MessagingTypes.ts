@@ -68,7 +68,6 @@ export interface IChat {
   chat_id: string;
   contacts_id: string;
   customers_id: string | null;
-  chat_id: string;
   first_name: string | null;
   last_name: string | null;
   last_message: Message;
@@ -172,3 +171,19 @@ export interface ChatPayload {
 export interface SocketMessage {
   document: Message;
 }
+
+export interface SendMessageResult {
+  status: boolean;
+  messageId: string;
+  phoneNumber: string;
+  whatsappId: string;
+}
+
+export interface SendMessageErrorResult {
+  status: boolean;
+  message: string;
+  type: string;
+  code: number;
+}
+
+export type FinalSendMessageResult = SendMessageResult | SendMessageErrorResult;
