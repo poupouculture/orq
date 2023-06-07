@@ -860,8 +860,8 @@ const uploadFile = async (files: readonly File[]) => {
       type: MessageType.DOCUMENT,
       duration: time.value,
       local: true,
-      media_id: file.name,
-      file_name: file.name,
+      media_id: decodeURIComponent(file.name),
+      file_name: decodeURIComponent(file.name),
     },
     status: MessageStatus.SENT,
     direction: Direction.OUTGOING,
@@ -872,9 +872,14 @@ const uploadFile = async (files: readonly File[]) => {
   scrollToBottom();
   messagingStore.setReplayMessage();
   const bodyFormData = new FormData();
+  const newFileName = new File([file], encodeURIComponent(file.name), {
+    type: file.type,
+  });
+
   // bodyFormData.append("caption", file.name);
-  bodyFormData.append("file", file);
+  bodyFormData.append("file", newFileName);
   fileUplader.value?.removeQueuedFiles();
+
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
