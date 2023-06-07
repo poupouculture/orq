@@ -11,7 +11,7 @@
         {{ name }}
       </q-item-label>
       <q-item-label caption lines="1" :class="{ 'text-white': active }">
-        {{ message }}
+        {{ message ? decodeURIComponent(message) : message }}
       </q-item-label>
     </q-item-section>
     <q-item-section side top class="justify-between q-pb-sm">
