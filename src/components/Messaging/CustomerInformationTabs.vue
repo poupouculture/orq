@@ -35,7 +35,7 @@
     </q-tab-panel>
 
     <q-tab-panel name="remark">
-      <Remark v-model.modelValue="remarks" />
+      <Remark v-model.modelValue="remarks" v-model:mode="remarkMode" />
     </q-tab-panel>
 
     <q-tab-panel name="other">
@@ -63,8 +63,9 @@ const messagingStore = useMessagingStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
 const customer = computed(() => customerStore.getCustomer);
 const remarks = ref("");
+const remarkMode = ref("show");
 watch(customer, (val) => {
-  remarks.value = val.remarks as string;
+  remarks.value = (val.remarks as string) || "";
 });
 
 const customerInformationTab = ref("general");

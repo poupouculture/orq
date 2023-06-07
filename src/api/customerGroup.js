@@ -31,7 +31,7 @@ export const getCustomerGroups = async (
   const param = {
     limit,
     page,
-    sort: "date_created",
+    sort: "name",
     // fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     fields: `id,type,name,status,source,customers.id,customers.customers_id.*`,
     meta: "*",
