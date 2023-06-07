@@ -135,8 +135,13 @@ const useMessagingStore = defineStore("messaging", {
         return item;
       });
     },
-    async loadMoreChats(type?: ChatTypes, pageNumber?: number) {
-      const chats = await getChatsByType(type, pageNumber);
+    async loadMoreChats(
+      type?: ChatTypes,
+      pageNumber?: number,
+      limit?: number,
+      order?: string
+    ) {
+      const chats = await getChatsByType(type, pageNumber, limit, order);
 
       chats.forEach((loadedChat: IChat) => {
         console.log("loaded chat:", loadedChat);

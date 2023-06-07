@@ -171,11 +171,13 @@ const pageNumber = ref({
   waiting: 1,
   ongoing: 1,
   closed: 1,
+  all: 1,
 });
 const isShowingButtonLoadMore = ref({
   waiting: true,
   ongoing: true,
   closed: true,
+  all: true,
 });
 
 const tabsTip = computed(() => {
@@ -249,7 +251,9 @@ const showMoreChats = async () => {
 
   const chats = await messagingStore.loadMoreChats(
     selectedTab.value,
-    pageNumberLocal
+    pageNumberLocal,
+    15,
+    selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
 
   if (chats.length < 1)
