@@ -164,7 +164,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isChatExpired || isBot"
+              :disable="isChatExpired"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
@@ -211,7 +211,7 @@
           />
           <q-btn
             :flat="!isChatExpired || isBot"
-            :disable="isChatExpired || isBot"
+            :disable="isBot"
             round
             :color="isChatExpired ? 'primary' : 'grey'"
             icon="insert_comment"
