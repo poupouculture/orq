@@ -23,12 +23,7 @@ const useInternalGroupStore = defineStore("internalGroup", {
     getInternalGroups: (state) => state.items,
   },
   actions: {
-    async getAll({
-      rowsPerPage = 4,
-      page = 1,
-      search = undefined,
-      type = undefined,
-    }) {
+    async getAll({ rowsPerPage = 4, page = 1, search, type = "group" }) {
       try {
         const {
           data: { data: internalGroups, meta },
