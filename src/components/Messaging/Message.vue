@@ -139,7 +139,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
-            :disable="isChatExpired || isBot"
+            :disable="isPending || isBot"
             @paste="onPast"
           />
           <Transition name="fade-scale" appear>
@@ -147,7 +147,7 @@
               ref="waveRef"
               :class="{ invisible: !showAudio }"
               class="absolute inset-0 bg-primary"
-              :disable="isChatExpired || isBot"
+              :disable="isPending || isBot"
             />
           </Transition>
           <span
@@ -159,13 +159,7 @@
 
         <div class="row justify-end">
           <div class="flex gap-3">
-            <q-btn
-              flat
-              round
-              size="md"
-              class="q-mt-md"
-              :disable="isChatExpired || isBot"
-            >
+            <q-btn flat round size="md" class="q-mt-md" :disable="isPending">
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
                 <q-list
@@ -205,13 +199,13 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isChatExpired || isBot"
+            :disable="isPending || isBot"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
+          <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :flat="!isChatExpired || isBot"
-            :disable="isBot"
+            :disable="!isPending || isBot"
             round
             color="primary"
             icon="insert_comment"
@@ -226,7 +220,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isChatExpired || isBot"
+            :disable="isPending || isBot"
             @click="showMessageImage = true"
           />
 
@@ -236,7 +230,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isChatExpired || isBot"
+            :disable="isPending || isBot"
             @click="fileUplader?.pickFiles"
           >
             <img src="~assets/images/pin.svg" />
@@ -252,7 +246,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isChatExpired || isBot"
+            :disable="isPending || isBot"
             @click="sendMessage"
           />
         </div>
@@ -430,6 +424,9 @@ const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
 const isChatExpired: Ref<boolean> = ref(false);
+const conversationType: Ref<string | undefined> = ref("");
+const isPending: Ref<boolean> = ref(false);
+
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -540,9 +537,13 @@ watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
     console.log("Selected-Chat:expiry", val);
+    conversationType.value = getSelectedChat.value.conversation_type;
+    isPending.value = conversationType.value === "pending_inbound";
+
     if (val) {
       const expiredDate = new Date(val * 1000);
       console.log("expiredDate:", expiredDate);
+      console.log("now:", new Date());
       if (expiredDate) {
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
@@ -552,6 +553,8 @@ watch(
     } else {
       isChatExpired.value = false;
     }
+    console.log("isChatExpired.value");
+    console.log(isChatExpired.value);
   }
 );
 
