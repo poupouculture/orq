@@ -44,7 +44,7 @@
           {{ message?.waba_associated_message_id }}
         </div>
       </div>
-      {{ content?.text ?? content }}
+      {{ messageContent(message) }}
     </div>
   </div>
 </template>
@@ -110,6 +110,13 @@ const isDocument = (content: any) => {
     content?.type === MessageType.APPLICATION ||
     (content?.type === MessageType.TEXT && content?.mime_type !== undefined)
   );
+};
+
+const messageContent = (content: any) => {
+  if (content?.content?.error_body) {
+    return content.content.error_body.errors[0].title;
+  }
+  return content?.content?.text ?? content.content;
 };
 
 const components = shallowReactive({
