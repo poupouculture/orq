@@ -56,10 +56,12 @@ const list = computed(() => {
 
   if (props.type === ChatTypes.PENDING) {
     orderedChatlist = orderedChatlist.sort((a: any, b: any) => {
-      const aDate = a.last_message.date_created;
-      const bDate = b.last_message.date_created;
-      if (aDate < bDate) return -1;
-      if (aDate === bDate) return 0;
+      if (a.last_message && b.last_message) {
+        const aDate = a.last_message.date_created;
+        const bDate = b.last_message.date_created;
+        if (aDate < bDate) return -1;
+        if (aDate === bDate) return 0;
+      }
       return 1;
     });
   }
