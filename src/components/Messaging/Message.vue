@@ -543,6 +543,7 @@ watch(
     if (val) {
       const expiredDate = new Date(val * 1000);
       console.log("expiredDate:", expiredDate);
+      console.log("now:", new Date());
       if (expiredDate) {
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
