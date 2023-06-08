@@ -317,14 +317,20 @@ const initSocket = () => {
       // }
 
       // socket.value.emit("join_chat", data.chat_id);
+      // Notify.create({
+      //   message: `You have been added to chat`,
+      //   color: "blue-9",
+      //   position: "top",
+      //   type: "positive",
+      // });
+    });
+    socket.value.on("chat_created", async (data: any) => {
       Notify.create({
-        message: `You have been added to chat`,
+        message: `You have been added to chat ${data.name}`,
         color: "blue-9",
         position: "top",
         type: "positive",
       });
-    });
-    socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
       const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
       console.log("findChat:", findChat);
