@@ -39,7 +39,7 @@ const weDo = ref([
     </div>
 
     <div class="w-full mt-20 flex justify-center">
-      <div class="grid gap-10 w-full lg:grid-cols-3">
+      <div class="grid gap-10 w-full grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(data, index) in weDo"
           :key="index"
