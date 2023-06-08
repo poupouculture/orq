@@ -18,6 +18,7 @@ export const enum MessageType {
 export const enum MessageStatus {
   RECEIVE = "received",
   SENT = "sent",
+  FAILURE = "failure",
 }
 
 export const enum Product {
@@ -79,6 +80,7 @@ export interface IChat {
   customer_company_name_en: string | null;
   mode?: string;
   caption?: string;
+  conversation_type?: string;
 }
 
 export interface CachedChatMessages {

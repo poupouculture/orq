@@ -91,7 +91,10 @@
         size="1.2em"
       />
       <q-icon
-        v-if="message.sendMessageStatus === SendMessageStatus.FAILURE"
+        v-if="
+          message.sendMessageStatus === SendMessageStatus.FAILURE ||
+          message.status === MessageStatus.FAILURE
+        "
         class="absolute right-full top-1/2 -translate-y-2/4 pr-1"
         name="warning"
         color="negative"
@@ -156,6 +159,7 @@ import {
   Direction,
   MessageType,
   SendMessageStatus,
+  MessageStatus,
 } from "src/types/MessagingTypes";
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
