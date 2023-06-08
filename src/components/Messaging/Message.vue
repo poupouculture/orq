@@ -159,7 +159,13 @@
 
         <div class="row justify-end">
           <div class="flex gap-3">
-            <q-btn flat round size="md" class="q-mt-md" :disable="isPending">
+            <q-btn
+              flat
+              round
+              size="md"
+              class="q-mt-md"
+              :disable="isPending || isBot"
+            >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
                 <q-list
