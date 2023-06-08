@@ -164,7 +164,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isChatExpired || isBot"
+              :disable="isChatExpired"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
@@ -211,7 +211,7 @@
           />
           <q-btn
             :flat="!isChatExpired || isBot"
-            :disable="isChatExpired || isBot"
+            :disable="isBot"
             round
             :color="isChatExpired ? 'primary' : 'grey'"
             icon="insert_comment"
@@ -543,6 +543,7 @@ watch(
     if (val) {
       const expiredDate = new Date(val * 1000);
       console.log("expiredDate:", expiredDate);
+      console.log("now:", new Date());
       if (expiredDate) {
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
@@ -552,6 +553,8 @@ watch(
     } else {
       isChatExpired.value = false;
     }
+    console.log("isChatExpired.value");
+    console.log(isChatExpired.value);
   }
 );
 

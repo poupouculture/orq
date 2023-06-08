@@ -290,6 +290,9 @@ watch(cgType, () => {
   paginationCustomers.value.page = 1;
   paginationCustomers.value.rowsPerPage = 10;
   tableSelected.value = [];
+  if (selectedUserGroup.value.length < 1) {
+    return personalGroupStore.resetCustomerGroup();
+  }
   getCustomerGroupData();
 });
 const rightDrawerWidth = ref(800);
