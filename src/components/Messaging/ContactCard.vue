@@ -85,7 +85,7 @@ const time = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
   const dateCreated = lastMessage?.date_created;
   if (isToday(new Date(dateCreated))) {
-    return dateCreated && format(new Date(dateCreated), "p");
+    return dateCreated && format(new Date(dateCreated), "p") + ", Today";
   }
   return dateCreated && format(new Date(dateCreated), "p, d MMM");
 });
