@@ -16,7 +16,13 @@ export const getChatName = (chat: IChat) => {
 export const getChatNameEn = (chat: IChat) => {
   if (chat.customers_id) {
     return trimWord(`${chat.customer_company_name_en}`);
-  } else return "Visitor";
+  } else {
+    if (chat.contact_first_name) {
+      return trimWord(`${chat.contact_first_name}`);
+    } else {
+      return "Visitor";
+    }
+  }
 };
 
 export const uuid = (): string => {

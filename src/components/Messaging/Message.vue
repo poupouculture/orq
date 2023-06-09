@@ -15,9 +15,7 @@
           <img :src="profileIcon" />
         </q-avatar>
         <div class="flex flex-col">
-          <p class="font-semibold text-lg">
-            {{ getSelectedChat.contact_first_name }}
-          </p>
+          <p class="font-semibold text-lg">{{ nameEn }}</p>
           <p class="text-gray-500">{{ chatNumber }}</p>
         </div>
       </div>
@@ -373,7 +371,7 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { uuid, blobToBase64 } from "src/utils/trim-word";
+import { getChatNameEn, uuid, blobToBase64 } from "src/utils/trim-word";
 import {
   updateChatStatus,
   uploadMedia,
@@ -489,9 +487,9 @@ const toogleChatOption = () => {
   showChatOption.value = !showChatOption.value;
 };
 
-// const nameEn = computed<string>(() => {
-//   return getChatNameEn(getSelectedChat.value);
-// });
+const nameEn = computed<string>(() => {
+  return getChatNameEn(getSelectedChat.value);
+});
 
 const chatNumber = computed<string>(() =>
   getSelectedChat.value.name.replace(/[^\d]/g, "")
