@@ -68,6 +68,7 @@
         v-for="tab in Tabs"
         :key="tab.name"
         :name="tab.name"
+        ref="chatListScroller"
       >
         <ChatList :type="tab.name" :filter-text="seachText" />
       </q-tab-panel>
@@ -154,6 +155,8 @@ type ChatToggleType = {
   // eslint-disable-next-line prettier/prettier
   state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
 };
+
+const chatListScroller = ref(null);
 const seachText = ref("");
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
@@ -256,7 +259,7 @@ const showMoreChats = async () => {
     selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
 
-  console.log("chats:", chats);
+  chatListScroller.value[0].$el.scrollTo({ top: 0, behavior: "smooth" });
 
   isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
 };
