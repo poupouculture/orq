@@ -83,7 +83,7 @@ const message = computed<string>(() => {
 const time = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
   const dateCreated = lastMessage?.date_created;
-  return dateCreated && format(new Date(dateCreated), "p");
+  return dateCreated && format(new Date(dateCreated), "p, d LLL");
 });
 </script>
 
