@@ -120,6 +120,9 @@ const messageContent = (content: any) => {
   if (content?.content?.error_body?.error_data) {
     return content.content.error_body.error_data.details;
   }
+  if (content?.content?.error_body?.message) {
+    return content?.content?.error_body?.message;
+  }
   return content?.content?.text ?? content.content;
 };
 
