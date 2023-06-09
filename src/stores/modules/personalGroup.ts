@@ -64,7 +64,7 @@ const usePersonalGroupStore = defineStore("personalGroup", {
     ) {
       try {
         const {
-          data: { data = [], meta },
+          data: { data, meta },
         } = await getCustomerGroup(
           rowsPerPage,
           page,
