@@ -35,7 +35,7 @@ const chatFeatures = ref([
           </div>
         </div>
       </div>
-      <div class="pl-5 mt-4 flex md:justify-end">
+      <div class="pl-5 mt-4 w-full flex md:justify-end">
         <div class="w-1/2 flex justify-center">
           <div class="h-5 w-96 bg-[#E12179]" />
         </div>

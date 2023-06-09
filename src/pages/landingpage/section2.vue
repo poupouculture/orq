@@ -25,8 +25,8 @@ const weDo = ref([
 </script>
 
 <template>
-  <div class="mt-36">
-    <div class="pl-5 flex flex-col">
+  <div class="mt-36 p-5 sm:p-0">
+    <div class="md:pl-5 flex flex-col">
       <span class="text-[#E12179] tracking-wide text-[23px] font-normal">
         WHAT WE DO
       </span>
@@ -43,7 +43,7 @@ const weDo = ref([
         <div
           v-for="(data, index) in weDo"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[380px] py-10 gap-10 items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[320px] lg:w-[320px] xl:w-[380px] py-10 gap-10 items-center flex-col"
         >
           <span
             class="font-semibold mt-10 bg-[#4B44F6] text-white text-[40px] rounded-full w-20 h-20 ring-[20px] ring-[#4B44F680] flex justify-center items-center"

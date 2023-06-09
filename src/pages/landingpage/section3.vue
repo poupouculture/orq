@@ -19,7 +19,7 @@ const customersRelationship = ref([
 </script>
 
 <template>
-  <div class="mt-36">
+  <div class="mt-36 p-5 sm:p-0">
     <div class="flex mt-20 flex-col">
       <div class="md:pl-5 mb-10 flex gap-7 flex-col">
         <span class="text-[#E12179] tracking-wide text-[23px] font-normal">
@@ -44,7 +44,7 @@ const customersRelationship = ref([
         <div
           class="flex flex-col gap-5 w-full md:pl-20 md:pr-4 md:py-7 md:border-l-8 md:border-[#4B44F6]"
         >
-          <span class="text-[#E12179] tracking-wide text-lg font-normal">
+          <span class="text-[#E12179] w-full tracking-wide text-lg font-normal">
             CHAT COMMERCE
           </span>
 
@@ -52,7 +52,7 @@ const customersRelationship = ref([
             Connect with Your Customers in Real-Time with Our Messaging Feature
           </p>
           <div
-            class="flex gap-4 w-[22rem] flex-col font-normal text-lg font-['Red_Hat_Display'] text-[#5C5A8F]"
+            class="flex gap-4 md:w-[22rem] flex-col font-normal text-lg font-['Red_Hat_Display'] text-[#5C5A8F] w-full"
           >
             <span v-for="(data, index) in chatFeatures" :key="index" class="">
               {{ data }}
@@ -60,7 +60,7 @@ const customersRelationship = ref([
           </div>
         </div>
 
-        <div class="flex justify-center px-3 items-center">
+        <div class="flex justify-center mt-5 md:m-0 md:px-3 items-center">
           <img class="" :src="dashboardAssigned" alt="" />
         </div>
       </div>

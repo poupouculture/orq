@@ -29,11 +29,11 @@ const chatFeatures = ref([
             </span>
           </div>
         </div>
-        <div class="flex justify-center px-3 items-center">
+        <div class="flex justify-center md:px-3 items-center">
           <img class="" :src="payment" alt="" />
         </div>
       </div>
-      <div class="pl-5 mt-4 flex justify-start">
+      <div class="pl-5 mt-4 w-full flex justify-start">
         <div class="w-1/2 flex justify-center">
           <div class="h-5 w-96 bg-[#E12179]" />
         </div>

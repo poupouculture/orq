@@ -37,7 +37,9 @@ const checkNew = () => {
 
     <q-page-container>
       <div class="bg-white font-['Red_Hat_Display']">
-        <div class="min-h-screen home flex flex-col items-center w-full p-10">
+        <div
+          class="min-h-screen home flex flex-col items-center w-full p-5 lg:p-10"
+        >
           <div class="container">
             <Navbar @open="checkNew" />
 

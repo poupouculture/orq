@@ -22,7 +22,7 @@ const clients = ref([angliss, fitmax, tasteofasia]);
       </p>
     </div>
 
-    <div class="grid grid-cols-1 mt-10 md:grid-cols-3 gap-16">
+    <div class="grid grid-cols-1 mt-10 sm:grid-cols-3 gap-16">
       <div
         v-for="(client, index) in clients"
         :key="index"
