@@ -139,7 +139,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
-            :disable="isPending || isBot"
+            :disable="isBot"
             @paste="onPast"
           />
           <Transition name="fade-scale" appear>
@@ -252,7 +252,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isPending || isBot"
+            :disable="isBot"
             @click="sendMessage"
           />
         </div>
