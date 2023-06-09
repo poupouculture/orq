@@ -252,7 +252,9 @@ const initSocket = () => {
         ) {
           switch (data.update_fields.status) {
             case "ongoing":
-              message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
+              message = `Chat has been taken by ${
+                userProfile.value?.first_name
+              } ${userProfile.value?.last_name || ""}`;
               break;
             case "closed":
               message = `${data.document?.name} chat has been closed`;
