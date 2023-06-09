@@ -182,6 +182,12 @@ const isShowingButtonLoadMore = ref({
   closed: true,
   all: true,
 });
+const isChatsDecreased = ref({
+  waiting: false,
+  ongoing: false,
+  closed: false,
+  all: false,
+});
 
 const tabsTip = computed(() => {
   const result: any = {};
@@ -204,6 +210,21 @@ watch(chatsList, (list) => {
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
+});
+
+watch(tabsTip, (newVal, oldVal) => {
+  if (oldVal) {
+    isChatsDecreased.value[ChatTypes.PENDING] =
+      oldVal[ChatTypes.PENDING]?.num > newVal[ChatTypes.PENDING]?.num;
+    isChatsDecreased.value[ChatTypes.ONGOING] =
+      oldVal[ChatTypes.ONGOING]?.num > newVal[ChatTypes.ONGOING]?.num;
+    isChatsDecreased.value[ChatTypes.CLOSED] =
+      oldVal[ChatTypes.CLOSED]?.num > newVal[ChatTypes.CLOSED]?.num;
+  } else {
+    isChatsDecreased.value[ChatTypes.PENDING] = false;
+    isChatsDecreased.value[ChatTypes.ONGOING] = false;
+    isChatsDecreased.value[ChatTypes.CLOSED] = false;
+  }
 });
 
 const socketUrl = process.env.SOCKETS_URL as string;
@@ -249,7 +270,10 @@ const onSearchCustomers = async (
 
 const showMoreChats = async () => {
   console.log("selected tab:", selectedTab.value);
-  pageNumber.value[selectedTab.value] += 1;
+  if (!isChatsDecreased.value[selectedTab.value]) {
+    pageNumber.value[selectedTab.value] += 1;
+  }
+
   const pageNumberLocal = pageNumber.value[selectedTab.value];
 
   const chats = await messagingStore.loadMoreChats(
@@ -259,9 +283,10 @@ const showMoreChats = async () => {
     selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
 
-  chatListScroller.value[0].$el.scrollTo({ top: 0, behavior: "smooth" });
+  chatListScroller.value[0]?.$el?.scrollTo({ top: 0, behavior: "smooth" });
 
   isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
+  isChatsDecreased.value[selectedTab.value] = false;
 };
 
 const initSocket = () => {
