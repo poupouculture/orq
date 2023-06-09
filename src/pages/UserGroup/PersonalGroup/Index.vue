@@ -290,6 +290,7 @@ watch(cgType, () => {
   tableLoading.value = true;
   paginationCustomers.value.page = 1;
   paginationCustomers.value.rowsPerPage = 10;
+  paginationCustomersTable.value.rowsPerPage = 10;
   tableSelected.value = [];
   if (
     drawerType.value === DrawerTypeEnum.DELETE &&
@@ -309,9 +310,9 @@ if (window.innerWidth < 768) {
 const paginationCustomersTable = ref({
   rowsPerPage: 10,
 });
-watch(paginationCustomers, (val: any, old: any) => {
+watch(paginationCustomersTable, (val: any, old: any) => {
   if (val.rowsPerPage !== old.rowsPerPage) {
-    paginationCustomersTable.value.rowsPerPage = val.rowsPerPage;
+    paginationCustomers.value.rowsPerPage = val.rowsPerPage;
     getCustomerGroupData();
   }
 });
