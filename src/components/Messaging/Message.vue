@@ -165,6 +165,7 @@
               size="md"
               class="q-mt-md"
               :disable="isPending || isBot"
+              @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
