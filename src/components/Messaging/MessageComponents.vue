@@ -113,8 +113,12 @@ const isDocument = (content: any) => {
 };
 
 const messageContent = (content: any) => {
-  if (content?.content?.error_body) {
-    return content.content.error_body.errors[0].title;
+  if (content?.content?.error_body?.errors) {
+    console.log(content?.content?.error_body);
+    return content.content.error_body?.errors[0]?.title;
+  }
+  if (content?.content?.error_body?.error_data) {
+    return content.content.error_body.error_data.details;
   }
   return content?.content?.text ?? content.content;
 };

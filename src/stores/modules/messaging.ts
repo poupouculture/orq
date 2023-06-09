@@ -114,7 +114,22 @@ const useMessagingStore = defineStore("messaging", {
         chat.totalUnread = 0;
       }
     },
+    updateChatTabSelected(status: ChatTypes) {
+      // console.log("hi");
+      // if (status) {
+      //   newchat.status = status;
+      // }
+      // this.chatsList = this.chatsList.filter(
+      //   (chat: IChat) => chat.id !== newchat.id
+      // );
+      // this.chatsList.unshift(newchat);
+      this.selectedTab = status;
+      // if ((getSelectedChat.value.mode = newchat.id)) { // only when we are focussed on the current chat, then the selected status moves
+      //   this.selectedTab = newchat.status;
+      // }
+    },
     updateChatsList(newchat: IChat, status?: ChatTypes) {
+      console.log("hi");
       if (status) {
         newchat.status = status;
       }
@@ -183,6 +198,7 @@ const useMessagingStore = defineStore("messaging", {
       this.setContactNumber(data.number);
     },
     changeModeChatListById(id: string, mode: string) {
+      console.log("hi");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].mode = mode;
     },

@@ -245,6 +245,23 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
+        if (data?.update_fields?.status) {
+          console.log("hi");
+          console.log(getSelectedChat.value);
+          if (getSelectedChat.value.id === data.document.id) {
+            messagingStore.updateChatTabSelected(data.update_fields.status);
+            // if (getSelectedChat.value.status !== data.update_fields.status) {
+            //   console.log("change selected chat");
+
+            // }
+          }
+          // if ((getSelectedChat.value.mode = newchat.id)) {
+          // only when we are focussed on the current chat, then the selected status moves
+          // this.selectedTab = newchat.status;
+          // }
+          // this.selectedTab = newchat.status;
+        }
+
         let message;
         if (
           data.update_fields.status &&
@@ -252,7 +269,9 @@ const initSocket = () => {
         ) {
           switch (data.update_fields.status) {
             case "ongoing":
-              message = `Chat has been taken by ${userProfile.value?.first_name} ${userProfile.value?.last_name}`;
+              message = `Chat has been taken by ${
+                userProfile.value?.first_name
+              } ${userProfile.value?.last_name || ""}`;
               break;
             case "closed":
               message = `${data.document?.name} chat has been closed`;
@@ -317,14 +336,20 @@ const initSocket = () => {
       // }
 
       // socket.value.emit("join_chat", data.chat_id);
+      // Notify.create({
+      //   message: `You have been added to chat`,
+      //   color: "blue-9",
+      //   position: "top",
+      //   type: "positive",
+      // });
+    });
+    socket.value.on("chat_created", async (data: any) => {
       Notify.create({
-        message: `You have been added to chat`,
+        message: `You have been added to chat ${data.name}`,
         color: "blue-9",
         position: "top",
         type: "positive",
       });
-    });
-    socket.value.on("chat_created", async (data: any) => {
       console.log("chat_created", data);
       const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
       console.log("findChat:", findChat);

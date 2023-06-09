@@ -58,12 +58,7 @@
                 </q-item-section>
                 <q-item-section>Privacy</q-item-section>
               </q-item>
-              <q-item
-                href="https://synque.ca/chaQ"
-                target="_blank"
-                clickable
-                v-close-popup
-              >
+              <q-item to="/landing" target="_blank" clickable v-close-popup>
                 <q-item-section avatar>
                   <q-icon name="business" />
                 </q-item-section>
