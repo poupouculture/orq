@@ -256,7 +256,9 @@ const showMoreChats = async () => {
     selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
 
-  isShowingButtonLoadMore.value[selectedTab.value] = chats.length < 15;
+  console.log("chats:", chats);
+
+  isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
 };
 
 const initSocket = () => {
