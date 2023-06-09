@@ -139,7 +139,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
-            :disable="isPending || isBot"
+            :disable="isBot"
             @paste="onPast"
           />
           <Transition name="fade-scale" appear>
@@ -159,7 +159,13 @@
 
         <div class="row justify-end">
           <div class="flex gap-3">
-            <q-btn flat round size="md" class="q-mt-md" :disable="isPending">
+            <q-btn
+              flat
+              round
+              size="md"
+              class="q-mt-md"
+              :disable="isPending || isBot"
+            >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
                 <q-list
@@ -246,7 +252,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isPending || isBot"
+            :disable="isBot"
             @click="sendMessage"
           />
         </div>
