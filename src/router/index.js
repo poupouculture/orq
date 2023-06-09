@@ -33,7 +33,7 @@ export default function () {
     const userStore = useUserInfoStore();
     const userInfo = userStore.userInfo;
     if (to.path === "/login" && userInfo?.access_token) {
-      return next("/");
+      return next("/dashboard");
     }
 
     if (
