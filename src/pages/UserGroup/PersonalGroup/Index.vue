@@ -220,6 +220,12 @@ const getPersonalGroupData = async () => {
 };
 const cgType = ref("personal");
 const getCustomerGroupData = async () => {
+  if (
+    drawerType.value === DrawerTypeEnum.DELETE &&
+    selectedUserGroup.value.length < 1
+  ) {
+    return personalGroupStore.resetCustomerGroup();
+  }
   tableLoading.value = true;
   await personalGroupStore.getCustomerGroup(
     paginationCustomers.value.rowsPerPage,
