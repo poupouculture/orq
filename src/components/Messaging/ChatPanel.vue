@@ -245,6 +245,23 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
+        if (data?.update_fields?.status) {
+          console.log("hi");
+          console.log(getSelectedChat.value);
+          if (getSelectedChat.value.id === data.document.id) {
+            messagingStore.updateChatTabSelected(data.update_fields.status);
+            // if (getSelectedChat.value.status !== data.update_fields.status) {
+            //   console.log("change selected chat");
+
+            // }
+          }
+          // if ((getSelectedChat.value.mode = newchat.id)) {
+          // only when we are focussed on the current chat, then the selected status moves
+          // this.selectedTab = newchat.status;
+          // }
+          // this.selectedTab = newchat.status;
+        }
+
         let message;
         if (
           data.update_fields.status &&
