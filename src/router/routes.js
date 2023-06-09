@@ -11,7 +11,7 @@ const routes = [
     ],
   },
   {
-    path: "/",
+    path: "/landing",
     component: () => import("pages/landingpage/index.vue"),
     children: [
       {
@@ -27,7 +27,7 @@ const routes = [
     component: () => import("pages/Me.vue"),
   },
   {
-    path: "/dashboard",
+    path: "/",
     component: () => import("layouts/DrawerLayout.vue"),
     meta: {
       requiresAuth: true,
