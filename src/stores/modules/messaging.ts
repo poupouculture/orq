@@ -116,21 +116,10 @@ const useMessagingStore = defineStore("messaging", {
       }
     },
     updateChatTabSelected(status: ChatTypes) {
-      // console.log("hi");
-      // if (status) {
-      //   newchat.status = status;
-      // }
-      // this.chatsList = this.chatsList.filter(
-      //   (chat: IChat) => chat.id !== newchat.id
-      // );
-      // this.chatsList.unshift(newchat);
       this.selectedTab = status;
-      // if ((getSelectedChat.value.mode = newchat.id)) { // only when we are focussed on the current chat, then the selected status moves
-      //   this.selectedTab = newchat.status;
-      // }
     },
     updateChatsList(newchat: IChat, status?: ChatTypes) {
-      console.log("hi");
+      console.log("updateChatsList-----");
       if (status) {
         newchat.status = status;
       }
@@ -242,9 +231,19 @@ const useMessagingStore = defineStore("messaging", {
       this.setContactNumber(data.number);
     },
     changeModeChatListById(id: string, mode: string) {
-      console.log("hi");
+      console.log("changeModeChatListById-----");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].mode = mode;
+    },
+    changeConversationType(id: string, conversationType: string) {
+      console.log("changeConversationType-----");
+      const index = this.chatsList.findIndex((chat) => chat.id === id);
+      this.chatsList[index].conversation_type = conversationType;
+    },
+    changeExpiry(id: string, expirationTimestamp: number) {
+      console.log("changeExpiry-----");
+      const index = this.chatsList.findIndex((chat) => chat.id === id);
+      this.chatsList[index].expiration_timestamp = expirationTimestamp;
     },
   },
 });

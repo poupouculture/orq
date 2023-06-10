@@ -30,6 +30,7 @@
         class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
       >
         {{ message.user_name }}
+        <!-- ??? todo, jimmy comment out user_name {{ message.user_name }} -->
       </span>
       <q-btn
         v-if="isReply"

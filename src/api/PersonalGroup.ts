@@ -47,7 +47,6 @@ export const getCustomerGroup = async (
   const param = {
     limit,
     offset,
-    search,
     fields: `id,type,name,status`,
     meta: "*",
   } as any;
@@ -57,6 +56,9 @@ export const getCustomerGroup = async (
   const customerIds = selectedCustomerGroups?.map((item) => item.id);
   if (customerIds?.length && customerFilter) {
     param[customerFilter] = customerIds.join();
+  }
+  if (search) {
+    param.search = search;
   }
   const customerGroups = await api.get("/items/customer_groups", {
     params: param,
