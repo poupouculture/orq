@@ -219,7 +219,7 @@ import { getUsersFilter } from "src/api/InternalGroup";
 import { getUsers } from "src/api/user";
 import {
   getAllCustomerGroupEdit,
-  getCustomerGroups,
+  getCustomerGroupsIG,
 } from "src/api/customerGroup";
 import { Loading } from "quasar";
 import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
@@ -436,9 +436,10 @@ const fetchCustomerGroups = async () => {
     customerGroupData.value = data.data;
     paginationCustomerGroup.totalCount = data.filter_count;
   } else {
-    const { data } = await getCustomerGroups(params, props.id);
+    const { data } = await getCustomerGroupsIG(params, props.id);
     customerGroupData.value = data.data;
-    paginationCustomerGroup.totalCount = data.filter_count;
+    paginationCustomerGroup.totalCount =
+      data.meta?.filter_count || data.filter_count;
   }
   Loading.hide();
 };

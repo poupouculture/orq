@@ -17,25 +17,24 @@ export const getCustomerGroups = async (
     source = undefined,
     customerIds = undefined,
     customerFilter = "",
-    sourceType = undefined,
-    customerGroups = [],
   },
   id = null
 ) => {
-  console.log(customerGroups);
+  const offset = page === 1 ? 0 : (page - 1) * limit;
   const url =
-    id !== null ? "/items/customer_groups/" + id : "/waba/customers-groups";
+    id !== null
+      ? "/items/customer_groups/" + id
+      : "/waba/customers-groups/summary";
   // const companies = "customers.customers_id.companies.companies_id.*";
   // const userGroups = "user_groups.*, user_groups.user_groups_id.*";
   // const tags = "tags.*, tags.*.*";
   const param = {
     limit,
-    page,
-    sort: "name",
+    offset,
+    // sort: "name",
     // fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     fields: `id,type,name,status,source,customers.id,customers.customers_id.*`,
     meta: "*",
-    source: sourceType,
   };
   if (type) {
     if (id) {
@@ -55,8 +54,34 @@ export const getCustomerGroups = async (
   if (customerIds) {
     param[customerFilter] = customerIds.join();
   }
-  if (customerGroups?.length) {
-    param["filter[id][_nin]"] = customerGroups.join();
+  const data = await api.get(url, {
+    params: param,
+  });
+  return data;
+};
+export const getCustomerGroupsIG = async ({
+  limit = 10,
+  page = 1,
+  search = undefined,
+  type = undefined,
+  source = undefined,
+  customerGroups = [],
+}) => {
+  const url = "/items/customer_groups";
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const param = {
+    limit,
+    sort: "name",
+    offset,
+    fields: `id,type,name,status,source`,
+    meta: "*",
+    "filter[_and][0][type][_eq]": type,
+    "filter[_and][0][status][_eq]": "published",
+    "filter[_and][0][source][_eq]": source,
+    "filter[_and][0][id][_nin]": customerGroups.join(),
+  };
+  if (search) {
+    param.search = search;
   }
   const data = await api.get(url, {
     params: param,
