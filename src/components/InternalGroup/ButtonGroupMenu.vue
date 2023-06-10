@@ -69,6 +69,7 @@ const toggleAddUser = async () => {
 const searchHandler = async (value) => {
   try {
     userQuery.value = value;
+    pagination.page = 1;
     await fetchUsers();
   } catch (error) {}
 };

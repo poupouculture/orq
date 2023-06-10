@@ -18,13 +18,13 @@ export const getCustomerGroups = async (
     customerIds = undefined,
     customerFilter = "",
     sourceType = undefined,
+    customerGroups = [],
   },
   id = null
 ) => {
+  console.log(customerGroups);
   const url =
-    id !== null
-      ? "/items/customer_groups/" + id
-      : "/waba/customers-groups/summary";
+    id !== null ? "/items/customer_groups/" + id : "/waba/customers-groups";
   // const companies = "customers.customers_id.companies.companies_id.*";
   // const userGroups = "user_groups.*, user_groups.user_groups_id.*";
   // const tags = "tags.*, tags.*.*";
@@ -55,10 +55,13 @@ export const getCustomerGroups = async (
   if (customerIds) {
     param[customerFilter] = customerIds.join();
   }
-  const customerGroups = await api.get(url, {
+  if (customerGroups?.length) {
+    param["filter[id][_nin]"] = customerGroups.join();
+  }
+  const data = await api.get(url, {
     params: param,
   });
-  return customerGroups;
+  return data;
 };
 
 export const getAllCustomerGroups = async () => {
