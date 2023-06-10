@@ -228,6 +228,7 @@ const initSocket = () => {
   try {
     socket.value.on("connect", () => {
       socket.value.emit("join_chat", userProfile?.value?.id);
+      console.log("userProfile", userProfile.value);
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
@@ -245,52 +246,59 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
+        if (data?.update_fields?.conversation_type) {
+          console.log("SOCKET: conversation_type");
+          messagingStore.changeConversationType(
+            chat?.id,
+            data?.update_fields?.conversation_type
+          );
+        }
         if (data?.update_fields?.status) {
-          console.log("hi");
+          console.log("SOCKET: status change");
           console.log(getSelectedChat.value);
-          if (getSelectedChat.value.id === data.document.id) {
+          if (
+            getSelectedChat.value &&
+            getSelectedChat.value.id === data.document.id
+          ) {
             messagingStore.updateChatTabSelected(data.update_fields.status);
-            // if (getSelectedChat.value.status !== data.update_fields.status) {
-            //   console.log("change selected chat");
-
-            // }
           }
-          // if ((getSelectedChat.value.mode = newchat.id)) {
-          // only when we are focussed on the current chat, then the selected status moves
-          // this.selectedTab = newchat.status;
-          // }
-          // this.selectedTab = newchat.status;
+          let message;
+          if (data.update_fields.status !== "waiting") {
+            switch (data.update_fields.status) {
+              case "ongoing":
+                message = `Chat has been taken by ${
+                  userProfile.value?.first_name
+                } ${userProfile.value?.last_name || ""}`;
+                break;
+              case "closed":
+                message = `${data.document?.name} chat has been closed`;
+                break;
+            }
+            Notify.create({
+              message,
+              type: "positive",
+              color: "primary",
+              position: "top",
+            });
+          }
+        }
+        if (data.update_fields.expiration_timestamp) {
+          messagingStore.changeExpiry(
+            chat?.id,
+            data?.update_fields?.expiration_timestamp
+          );
         }
 
-        let message;
-        if (
-          data.update_fields.status &&
-          data.update_fields.status !== "waiting"
-        ) {
-          switch (data.update_fields.status) {
-            case "ongoing":
-              message = `Chat has been taken by ${
-                userProfile.value?.first_name
-              } ${userProfile.value?.last_name || ""}`;
-              break;
-            case "closed":
-              message = `${data.document?.name} chat has been closed`;
-              break;
-          }
-          Notify.create({
-            message,
-            type: "positive",
-            color: "primary",
-            position: "top",
-          });
-        }
-        if (data.update_fields.mode) {
-          if (getSelectedChat.value.chat_id === data.document.id) {
+        if (data?.update_fields?.mode) {
+          if (
+            getSelectedChat &&
+            getSelectedChat.value.chat_id === data.document.id
+          ) {
             getSelectedChat.value.mode = data.update_fields.mode;
           }
           if (data.update_fields.mode === "CS-Agent") {
             Notify.create({
-              message: `The ${data.document.name} chatbot has been ended`,
+              message: `The ${data.document.name} Bot has been ended`,
               type: "positive",
               color: "primary",
               position: "top",
@@ -413,7 +421,7 @@ const initSocket = () => {
             await closeBot(chat?.id);
             messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
             Notify.create({
-              message: "The chatbot has been ended",
+              message: "The Bot has been ended",
               color: "primary",
               position: "top",
               type: "positive",
