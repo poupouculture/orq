@@ -25,14 +25,14 @@ export const getChatsByType = async (
   type?: ChatTypes,
   pageNumber = 1,
   limit = 15,
-  order = "desc"
+  sort = "desc"
 ) => {
   const typeSend = type || "all";
   const { data } = await api.get(`/chat/list`, {
     params: {
       page_number: pageNumber,
       page_size: limit,
-      order,
+      sort,
       type: typeSend,
     },
   });
