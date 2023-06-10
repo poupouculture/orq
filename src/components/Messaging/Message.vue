@@ -16,7 +16,9 @@
         </q-avatar>
         <div class="flex flex-col">
           <p class="font-semibold text-lg">{{ nameEn }}</p>
-          <p class="text-gray-500">{{ chatNumber }}</p>
+          <p class="text-gray-500">
+            {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
+          </p>
         </div>
       </div>
       <!-- Close button -->
@@ -494,6 +496,18 @@ const nameEn = computed<string>(() => {
 const chatNumber = computed<string>(() =>
   getSelectedChat.value.name.replace(/[^\d]/g, "")
 );
+
+const contactNameGet = computed<string>(() => {
+  const contactName =
+    getSelectedChat.value.contact_first_name ??
+    getSelectedChat.value.contact_last_name;
+  return contactName;
+  // return (
+  //    +
+  //   " " +
+  //   getSelectedChat.value.contact_last_name
+  // );
+});
 
 const members = computed<Member[]>(
   () => JSON.parse(getSelectedChat.value.members) || []

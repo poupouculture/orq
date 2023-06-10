@@ -13,15 +13,31 @@ export const getChatName = (chat: IChat) => {
   } else return "Visitor";
 };
 
+// export const getChatNameEn = (chat: IChat) => {
+//   if (chat.customers_id) {
+//     return trimWord(`${chat.customer_company_name_en}`);
+//   } else {
+//     if (chat.contact_first_name) {
+//       return trimWord(`${chat.contact_first_name}`);
+//     } else {
+//       return "Visitor";
+//     }
+//   }
+// };
+
 export const getChatNameEn = (chat: IChat) => {
   if (chat.customers_id) {
     return trimWord(`${chat.customer_company_name_en}`);
   } else {
-    if (chat.contact_first_name) {
-      return trimWord(`${chat.contact_first_name}`);
-    } else {
-      return "Visitor";
-    }
+    return getContactNameEn(chat);
+  }
+};
+
+export const getContactNameEn = (chat: IChat) => {
+  if (chat.contact_first_name) {
+    return trimWord(`${chat.contact_first_name}`);
+  } else {
+    return "Visitor";
   }
 };
 

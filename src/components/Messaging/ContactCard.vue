@@ -10,6 +10,9 @@
       <q-item-label :class="{ 'text-white': active }" class="text-h6 truncate">
         {{ name }}
       </q-item-label>
+      <q-item-label :class="{ 'text-white': active }" class="text-h8 truncate">
+        {{ nameContact !== "Visitor" ? nameContact : "" }}
+      </q-item-label>
       <q-item-label caption lines="1" :class="{ 'text-white': active }">
         {{ message ? decodeURIComponent(message) : message }}
       </q-item-label>
@@ -35,11 +38,19 @@ import { storeToRefs } from "pinia";
 import { IChat, MessageType } from "src/types/MessagingTypes";
 import useMessagingStore from "src/stores/modules/messaging";
 import profileIcon from "src/assets/images/profileicon.svg";
-import { getChatNameEn } from "src/utils/trim-word";
+import { getChatNameEn, getContactNameEn } from "src/utils/trim-word";
 
 export interface Props {
   data?: IChat;
 }
+
+// const contactNameGet = computed<string>(() => {
+//   return (
+//     getSelectedChat.value.contact_first_name +
+//     " " +
+//     getSelectedChat.value.contact_last_name
+//   );
+// });
 
 const props = withDefaults(defineProps<Props>(), {
   data: () => ({} as IChat),
@@ -49,6 +60,7 @@ const { selectedChatId } = storeToRefs(messagingStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const name = computed(() => getChatNameEn(props.data));
+const nameContact = computed(() => getContactNameEn(props.data));
 
 const messageTemplate = (content: any) => {
   const components = content?.template?.components ?? content?.components;
