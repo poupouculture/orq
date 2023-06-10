@@ -403,6 +403,7 @@ const customerGroupQuery = ref("");
 const searchCustomerGroupHandler = async (value) => {
   try {
     customerGroupQuery.value = value;
+    paginationCustomerGroup.page = 1;
     await fetchCustomerGroups();
   } catch (error) {}
 };
@@ -445,6 +446,7 @@ const userQuery = ref("");
 const searchUserHandler = async (value) => {
   try {
     userQuery.value = value;
+    paginationUser.page = 1;
     await fetchUsers();
   } catch (error) {}
 };
@@ -467,6 +469,7 @@ const fetchUsers = async () => {
     paginationUser.totalCount = meta?.filter_count;
   } else {
     Loading.show();
+    params.ids = selectedUser.value.map((item) => item.id);
     const {
       data: { data: users, meta },
     } = await getUsers(params);

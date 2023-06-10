@@ -163,6 +163,7 @@ watch(type, () => {
 const searchHandler = async (searchValue = "") => {
   query.value = searchValue;
   searchLoading.value = true;
+  pagination.page = 1;
   try {
     await fetchInternalGroups();
     searchLoading.value = false;
