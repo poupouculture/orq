@@ -16,7 +16,9 @@
         </q-avatar>
         <div class="flex flex-col">
           <p class="font-semibold text-lg">{{ nameEn }}</p>
-          <p class="text-gray-500">{{ chatNumber }}</p>
+          <p class="text-gray-500">
+            {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
+          </p>
         </div>
       </div>
       <!-- Close button -->
@@ -165,6 +167,7 @@
               size="md"
               class="q-mt-md"
               :disable="isPending || isBot"
+              @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
@@ -495,6 +498,18 @@ const chatNumber = computed<string>(() =>
   getSelectedChat.value.name.replace(/[^\d]/g, "")
 );
 
+const contactNameGet = computed<string>(() => {
+  const contactName =
+    getSelectedChat.value.contact_first_name ??
+    getSelectedChat.value.contact_last_name;
+  return contactName;
+  // return (
+  //    +
+  //   " " +
+  //   getSelectedChat.value.contact_last_name
+  // );
+});
+
 const members = computed<Member[]>(
   () => JSON.parse(getSelectedChat.value.members) || []
 );
@@ -540,11 +555,23 @@ watch(getSelectedChatId, () => {
 });
 
 watch(
+  () => getSelectedChat.value?.conversation_type,
+  async (val) => {
+    console.log(
+      "SELECTED_CHAT:converation_type changed to - ",
+      conversationType
+    );
+    conversationType.value = val;
+    isPending.value = conversationType.value === "pending_inbound";
+  }
+);
+
+watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    console.log("Selected-Chat:expiry", val);
-    conversationType.value = getSelectedChat.value.conversation_type;
-    isPending.value = conversationType.value === "pending_inbound";
+    console.log("SELECTED_CHAT:expiry", val);
+    // conversationType.value = getSelectedChat.value.conversation_type;
+    // isPending.value = conversationType.value === "pending_inbound";
 
     if (val) {
       const expiredDate = new Date(val * 1000);
@@ -559,7 +586,7 @@ watch(
     } else {
       isChatExpired.value = false;
     }
-    console.log("isChatExpired.value");
+    console.log("isChatExpired.value:");
     console.log(isChatExpired.value);
   }
 );
@@ -917,7 +944,7 @@ const fileFilter = (files: readonly any[] | FileList) => {
 
   if (!filterFiles.length) {
     Notify.create({
-      message: `${fileData?.name} cannot exceed ${fileData?.limit}MB`,
+      message: `${fileData?.name} CANNOT exceed ${fileData?.limit}MB`,
       type: "negative",
       color: "purple",
       position: "top",
@@ -937,7 +964,7 @@ const selectBot = async (bot: any) => {
 
   if (status) {
     Notify.create({
-      message: `The ${bot.name} has been initiated`,
+      message: `The ${bot.name} has been Started. Chat disabled.`,
       color: "primary",
       position: "top",
       type: "positive",
@@ -954,7 +981,7 @@ const getChatbots = async () => {
 const confirmCloseBot = () => {
   Dialog.create({
     title: "End Bot",
-    message: "Are you sure you want to end bot?",
+    message: "Close Bot. Confirm?",
     cancel: true,
     persistent: true,
   }).onOk(() => {
