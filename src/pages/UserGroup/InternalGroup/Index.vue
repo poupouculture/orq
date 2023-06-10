@@ -101,6 +101,7 @@
                   <ButtonUserMenu
                     :id="group.id"
                     :user-id="directus_users_id.id"
+                    :userData="directus_users_id"
                     :pagination="pagination"
                   />
                 </div>

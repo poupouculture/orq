@@ -42,7 +42,7 @@
       <BaseLayout mode="show" />
     </div>
   </q-dialog> -->
-  <q-dialog v-model="showUserDetail">
+  <!-- <q-dialog v-model="showUserDetail">
     <div
       class="h-full bg-white w-auto !rounded-2xl px-7 py-4 overflow-y-auto relative"
     >
@@ -115,11 +115,26 @@
         </div>
       </div>
     </div>
+  </q-dialog> -->
+
+  <q-dialog v-model="showUserDetail">
+    <q-card class="w-5/12">
+      <q-card-section>
+        <div class="text-h6">Alert</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        aaa {{ props.userData }}
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="OK" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
   </q-dialog>
 </template>
 <script setup>
 import { Loading } from "quasar";
-import useCustomerStore from "src/stores/modules/customer";
 import useInternalGroup from "src/stores/modules/internalGroup";
 import { ref, computed } from "vue";
 // import BaseLayout from "../Customer/BaseLayout.vue";
@@ -128,24 +143,31 @@ const props = defineProps({
   id: [String, Number],
   userId: [String, Number],
   pagination: Object,
+  userData: Object,
 });
-const customerStore = useCustomerStore();
+
+// const customerStore = useCustomerStore();
+// const user = computed(() => customerStore.user);
+
 const internalGroupStore = useInternalGroup();
-const user = computed(() => customerStore.user);
 const showUserDetail = ref(false);
+const deleteDialog = ref(false);
+
 const pagination = computed(() => props.pagination);
+
+// Methods
 const openUserDetail = async () => {
   Loading.show();
-  await customerStore.fetchUser(props.userId);
   Loading.hide();
   showUserDetail.value = true;
 };
-const deleteDialog = ref(false);
+
 const submitDelete = async () => {
   await internalGroupStore.deleteUser({
     id: props.id,
     userId: props.userId,
   });
+
   await internalGroupStore.getAll({
     rowsPerPage: pagination.value.rowsPerPage,
     page: pagination.value.page,
