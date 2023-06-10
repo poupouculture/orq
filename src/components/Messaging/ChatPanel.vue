@@ -215,11 +215,33 @@ watch(getSelectedChatId, () => {
 watch(tabsTip, (newVal, oldVal) => {
   if (oldVal) {
     isChatsDecreased.value[ChatTypes.PENDING] =
-      oldVal[ChatTypes.PENDING]?.num > newVal[ChatTypes.PENDING]?.num;
+      (oldVal[ChatTypes.PENDING]?.num ?? 0) >
+      (newVal[ChatTypes.PENDING]?.num ?? 0);
     isChatsDecreased.value[ChatTypes.ONGOING] =
-      oldVal[ChatTypes.ONGOING]?.num > newVal[ChatTypes.ONGOING]?.num;
+      (oldVal[ChatTypes.ONGOING]?.num ?? 0) >
+      (newVal[ChatTypes.ONGOING]?.num ?? 0);
     isChatsDecreased.value[ChatTypes.CLOSED] =
-      oldVal[ChatTypes.CLOSED]?.num > newVal[ChatTypes.CLOSED]?.num;
+      (oldVal[ChatTypes.CLOSED]?.num ?? 0) >
+      (newVal[ChatTypes.CLOSED]?.num ?? 0);
+
+    console.log(
+      "pending decreased?",
+      oldVal[ChatTypes.PENDING]?.num,
+      newVal[ChatTypes.PENDING]?.num,
+      oldVal[ChatTypes.PENDING]?.num > newVal[ChatTypes.PENDING]?.num
+    );
+    console.log(
+      "ongoing decreased?",
+      oldVal[ChatTypes.ONGOING]?.num,
+      newVal[ChatTypes.ONGOING]?.num,
+      oldVal[ChatTypes.ONGOING]?.num > newVal[ChatTypes.ONGOING]?.num
+    );
+    console.log(
+      "closed decreased?",
+      oldVal[ChatTypes.CLOSED]?.num,
+      newVal[ChatTypes.CLOSED]?.num,
+      oldVal[ChatTypes.CLOSED]?.num > newVal[ChatTypes.CLOSED]?.num
+    );
   } else {
     isChatsDecreased.value[ChatTypes.PENDING] = false;
     isChatsDecreased.value[ChatTypes.ONGOING] = false;
