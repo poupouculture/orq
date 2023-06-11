@@ -212,6 +212,7 @@ const chooseCustomer = async (customer: any) => {
   customerStore.setCustomer(customer);
 
   data.customer_company_name_en = customerObj.customer_company_name_en;
+  data.last_message = JSON.parse(data.last_message);
   messagingStore.updateChatsList(data);
   messagingStore.onSelectChat(data.id);
 };
