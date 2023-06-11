@@ -207,12 +207,16 @@ const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
   const [data] = await startNewChat(customer.id);
 
-  const response = await getCustomer(customer.id);
-  const customerObj = response.data.data;
+  // const response = await getCustomer(customer.id);
+  // const customerObj = response.data.data;
   customerStore.setCustomer(customer);
 
-  data.customer_company_name_en = customerObj.customer_company_name_en;
-  messagingStore.updateChatsList(data);
+  // data.customer_company_name_en = customerObj.customer_company_name_en;
+  // data.last_message = JSON.parse(data.last_message);
+
+  const chat = await getChatByID(data.id);
+  chat.last_message = JSON.parse(chat.last_message);
+  messagingStore.updateChatsList(chat);
   messagingStore.onSelectChat(data.id);
 };
 
