@@ -142,14 +142,6 @@ const headerColumns = [
     field: "action",
     classes: "text-blue",
   },
-  {
-    name: "company",
-    align: "left",
-    label: "Company",
-    field: "company",
-    sortable: true,
-    classes: "text-black",
-  },
 ];
 const loading = ref(true);
 const data = reactive({
