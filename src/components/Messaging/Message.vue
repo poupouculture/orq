@@ -4,6 +4,11 @@
     class="h-full w-full flex flex-col q-pa-md"
     :style="getHeight()"
   >
+    <!-- ??? jimmy to be refactored -->
+    <!-- <div
+    v-if="getSelectedChatId"
+    class="h-full w-full flex flex-col q-pa-md bg-white"
+  > -->
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
@@ -70,19 +75,19 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
-          <div
-            class="text-primary pb-3 cursor-pointer"
-            @click="toogleChatOption()"
-          >
-            Actions
-          </div>
-        </div>
 
         <div v-if="!isMobile || (isMobile && showChatOption)">
           <ChatConversationButton
             v-if="getSelectedChat.status !== ChatTypes.CLOSED"
           />
+        </div>
+        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
+          <div
+            class="text-primary pb-3 cursor-pointer"
+            @click="toogleChatOption()"
+          >
+            {{ showChatOption ? "Hide Actions" : "Show Actions" }}
+          </div>
         </div>
       </div>
     </template>
@@ -134,7 +139,7 @@
           <q-input
             @click="hideBotOption()"
             v-model="message"
-            placeholder="Enter reply information"
+            placeholder="Enter Message"
             dense
             borderless
             type="textarea"
@@ -142,7 +147,7 @@
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
             :disable="isBot"
-            @paste="onPast"
+            @paste="onPaste"
           />
           <Transition name="fade-scale" appear>
             <div
@@ -392,6 +397,7 @@ import {
   Message,
   MessageStatus,
   SendMessageStatus,
+  Bot,
 } from "src/types/MessagingTypes";
 import { Dialog, Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
@@ -961,7 +967,7 @@ const fileFilter = (files: readonly any[] | FileList) => {
   return filterFiles;
 };
 
-const selectBot = async (bot: any) => {
+const selectBot = async (bot: Bot) => {
   hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
@@ -1000,7 +1006,7 @@ const onCloseBot = async () => {
   getSelectedChat.value.mode = "";
 };
 
-const onPast = (e: ClipboardEvent) => {
+const onPaste = (e: ClipboardEvent) => {
   const items = e.clipboardData?.items || [];
   for (let i = 0; i < items.length; i++) {
     if (items[i].type.indexOf("image") !== -1) {
