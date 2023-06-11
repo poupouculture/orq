@@ -311,12 +311,16 @@ const deleteUser = (index) => {
 
 const toggleUserOverlay = async () => {
   if (!openAddUser.value) {
+    userQuery.value = "";
+    paginationUser.page = 1;
     await fetchUsers();
   }
   openAddUser.value = !openAddUser.value;
 };
 const toggleCustomerGroupOverlay = async () => {
   if (!openAddCustomerGroup.value) {
+    customerGroupQuery.value = "";
+    paginationCustomerGroup.page = 1;
     await fetchCustomerGroups();
   }
   openAddCustomerGroup.value = !openAddCustomerGroup.value;
