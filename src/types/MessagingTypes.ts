@@ -197,3 +197,9 @@ export interface SendMessageErrorResult {
 }
 
 export type FinalSendMessageResult = SendMessageResult | SendMessageErrorResult;
+
+export interface Bot {
+  name: string;
+  trigger_intent: string;
+  id: string;
+}

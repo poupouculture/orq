@@ -174,7 +174,7 @@ const props = defineProps<{
 const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
-const isSend = computed(() => props.message.direction === Direction.OUTGOING);
+const isSend = computed(() => props?.message.direction === Direction.OUTGOING);
 // const isNotImageType = computed(
 //   () => props.message.content.type !== MessageType.IMAGE
 // );
