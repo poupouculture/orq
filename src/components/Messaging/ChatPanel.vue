@@ -8,7 +8,11 @@
         <img class="w-10" src="~assets/images/logo.svg" />
         <p class="font-[800] text-[#231815] text-2xl">ChaQ</p>
       </div>
-
+      <div v-if="errSocket" class="logo-holder mb-3 flex items-center gap-3">
+        <p class="font-[800] text-[#231815] text-2xl">
+          Refresh Your Page to Connect to Chats
+        </p>
+      </div>
       <q-input v-model="seachText" placeholder="Search ..." outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />
@@ -100,7 +104,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, SocketMessage } from "src/types/MessagingTypes";
+import { IChat, SocketEvent, SocketMessage } from "src/types/MessagingTypes";
 import {
   closeBot,
   startNewChat,
@@ -148,6 +152,7 @@ type ChatToggleType = {
   // eslint-disable-next-line prettier/prettier
   state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
 };
+const errSocket = ref(false);
 const seachText = ref("");
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
@@ -227,11 +232,13 @@ const onSearchCustomers = async (
 const initSocket = () => {
   try {
     socket.value.on("connect", () => {
+      console.log(userProfile.value);
       socket.value.emit("join_chat", userProfile?.value?.id);
       console.log("userProfile", userProfile.value);
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
+      errSocket.value = true;
       Notify.create({
         message: "Refresh Your Page to connect to Chats",
         position: "top",
@@ -239,7 +246,7 @@ const initSocket = () => {
         timeout: 86400,
       });
     });
-    socket.value.on("chat_updated", (data: any) => {
+    socket.value.on("chat_updated", (data: SocketEvent) => {
       console.log("chat_updated", data);
       const chat = chatsList.value.find(
         (chat: IChat) => chat.id === data.document?.id

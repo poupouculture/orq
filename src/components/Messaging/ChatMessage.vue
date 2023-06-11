@@ -47,6 +47,7 @@
         :content="message.content"
         :message="message"
         :isSend="isSend"
+        :showAssociated="false"
       />
       <div
         v-if="!isReply"
@@ -166,7 +167,10 @@ import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 
-const props = defineProps<{ message: Message; isReply?: boolean }>();
+const props = defineProps<{
+  message: Message;
+  isReply?: boolean;
+}>();
 const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();

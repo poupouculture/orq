@@ -33,16 +33,34 @@
       "
       class="break-words"
     >
-      <div v-if="message?.waba_associated_message_id != null">
+      <div
+        v-if="
+          props.showAssociated && message?.waba_associated_message_id != null
+        "
+      >
         <div
           class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words"
           :class="[isSend ? 'bg-[#635eeb]' : 'bg-[#ffffff]']"
         >
-          <div :class="[isSend ? 'text-[#f4f4f4]' : 'text-blue-400']">
-            {{ message.user_name ?? message.contact_company_name }}
+          <div
+            v-if="isSend"
+            :class="[isSend ? 'text-[#f4f4f4]' : 'text-blue-400']"
+          >
+            <!-- {{ message.user_name ?? message.contact_company_name }} -->
           </div>
-          <!-- //??? todo fetch message content-->
-          {{ message?.waba_associated_message_id }}
+          <!-- {{ message?.waba_associated_message_id }} -->
+          {{ messageContent(message?.waba_associated_message_id) }}
+          <!-- <component
+            ref="component"
+            :is="componentInnerName"
+            :src="message.waba_associated_message_id?.content?.url"
+            :name="
+              isDocument(message?.waba_associated_message_id?.content)
+                ? message?.waba_associated_message_id?.content?.file_name
+                : message?.waba_associated_message_id?.content?.media_id
+            "
+            :caption="message?.waba_associated_message_id?.content?.caption"
+          /> -->
         </div>
       </div>
       {{ messageContent(message) }}
@@ -62,6 +80,7 @@ interface Props {
   content: any;
   message: any;
   isSend: boolean;
+  showAssociated?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -129,6 +148,28 @@ const components = shallowReactive({
   MessageDocument,
   MessageVideo,
 });
+// const associatedContent = computed(() => message ));
+// const componentInnerName = computed((msg: any) => {
+//   if (msg?.type === MessageType.TEXT && msg?.mime_type !== undefined) {
+//     return components.MessageDocument;
+//   }
+//   switch (msg?.type) {
+//     case MessageType.IMAGE:
+//       return components.MessageImage;
+//     case MessageType.AUDIO:
+//       return components.MessageAudio;
+//     case MessageType.DOCUMENT:
+//       return components.MessageDocument;
+//     case MessageType.APPLICATION:
+//       return components.MessageDocument;
+//     case MessageType.VIDEO:
+//       return components.MessageVideo;
+//     // case MessageType.REACTION: ???
+//     //   return components.REACTION;
+//     default:
+//       return null;
+//   }
+// });
 const componentName = computed(() => {
   if (
     props.content?.type === MessageType.TEXT &&
@@ -147,6 +188,8 @@ const componentName = computed(() => {
       return components.MessageDocument;
     case MessageType.VIDEO:
       return components.MessageVideo;
+    // case MessageType.REACTION: // ???
+    //   return components.REACTION;
     default:
       return null;
   }

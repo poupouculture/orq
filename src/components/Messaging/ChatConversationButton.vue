@@ -142,7 +142,7 @@ import { getChatUsers, assignUser as assignUserAPI } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
-import { ChatTypes } from "src/constants/ChatKeyword";
+// import { ChatTypes } from "src/constants/ChatKeyword";
 import { required } from "src/utils/validation-rules";
 
 const enum Role {
@@ -251,7 +251,7 @@ const closeConversationLoading = ref(false);
 const closeConversation = async () => {
   Dialog.create({
     title: "Are you sure close this conversation?",
-    message: "This action cannot be undone",
+    message: "To start again, find the chat and press Take it",
     cancel: true,
     persistent: true,
   }).onOk(async () => {
@@ -267,7 +267,8 @@ const closeConversation = async () => {
       //   color: "primary",
       // });
       closeConversationLoading.value = false;
-      messagingStore.setSelectedTab(ChatTypes.CLOSED);
+      // ???rido
+      // messagingStore.setSelectedTab(ChatTypes.CLOSED);
 
       Loading.hide();
     } catch (error: any) {
