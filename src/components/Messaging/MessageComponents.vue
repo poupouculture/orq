@@ -114,12 +114,11 @@ const isDocument = (content: any) => {
 };
 
 const messageContent = (content: any) => {
-  if (content?.content?.error_body?.errors) {
-    console.log(content?.content?.error_body);
-    return content.content.error_body?.errors[0]?.title;
-  }
-  if (content?.content?.error_body?.error_data) {
-    return content.content.error_body.error_data.details;
+  if (content?.content?.error_body) {
+    const error = content?.content?.error_body;
+    if (error.errors) return error.errors[0]?.title;
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
   }
   return content?.content?.text ?? content.content;
 };
