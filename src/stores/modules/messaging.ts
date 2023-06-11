@@ -164,7 +164,8 @@ const useMessagingStore = defineStore("messaging", {
               direction: item.direction,
               date_created: item.date_created,
               waba_message_id: item.waba_message_id,
-              waba_associated_message_id: item.waba_associated_message_id
+              waba_associated_message_id: item.waba_associated_message_id,
+              waba_associated_message: item.waba_associated_message_id
                 ? await this.associatedMessageGet(
                     item.waba_associated_message_id
                   )
@@ -211,7 +212,7 @@ const useMessagingStore = defineStore("messaging", {
     async associatedMessageGet(messageId: string) {
       const data = await getMessagesById(messageId);
       const cleaned = data.data[0];
-      console.log("  associatedMessageGet:", cleaned);
+      console.log("---associatedMessageGet:", cleaned);
       return cleaned;
     },
 
