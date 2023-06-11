@@ -464,7 +464,7 @@ const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 const showBot = ref(false);
 const isMobile = ref(false);
-const showChatOption = ref(true);
+const showChatOption = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
