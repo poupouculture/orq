@@ -47,7 +47,7 @@
         :content="message.content"
         :message="message"
         :isSend="isSend"
-        :showAssociated="false"
+        :showAssociated="true"
       />
       <div
         v-if="!isReply"
