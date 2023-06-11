@@ -236,6 +236,7 @@ const initSocket = () => {
         message: "Refresh Your Page to connect to Chats",
         position: "top",
         type: "negative",
+        timeout: 86400,
       });
     });
     socket.value.on("chat_updated", (data: any) => {
