@@ -41,6 +41,7 @@
           <div :class="[isSend ? 'text-[#f4f4f4]' : 'text-blue-400']">
             {{ message.user_name ?? message.contact_company_name }}
           </div>
+          <!-- //??? todo fetch message content-->
           {{ message?.waba_associated_message_id }}
         </div>
       </div>

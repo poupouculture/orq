@@ -41,13 +41,13 @@ export enum SendMessageStatus {
 
 export interface Message {
   id: number;
-  is_cache: true;
+  is_cache?: true;
   contact_name?: string;
   user_name?: string;
   contact?: string;
   content: any;
-  contact_company_name: string;
-  contact_customer_name: string;
+  contact_company_name?: string;
+  contact_customer_name?: string;
   direction?: string;
   status: MessageStatus;
   old_date_created?: string | null;
@@ -69,6 +69,8 @@ export interface IChat {
   chat_id: string;
   contacts_id: string;
   customers_id: string | null;
+  contact_first_name: string;
+  contact_last_name: string;
   first_name: string | null;
   last_name: string | null;
   last_message: Message;
