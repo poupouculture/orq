@@ -116,7 +116,7 @@ const isDocument = (content: any) => {
 const messageContent = (content: any) => {
   if (content?.content?.error_body) {
     const error = content?.content?.error_body;
-    if (error.errors) return error.errors[0].title;
+    if (error.errors) return error.errors[0]?.title;
     if (error.error_data) return error.error_data.details;
     if (error.message) return error.message;
   }
