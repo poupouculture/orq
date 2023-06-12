@@ -147,6 +147,7 @@
             type="textarea"
             :class="{ invisible: showAudio }"
             input-class="h-10"
+            @keypress.enter.prevent="sendMessage"
             :disable="isBot"
             @paste="onPaste"
           />
