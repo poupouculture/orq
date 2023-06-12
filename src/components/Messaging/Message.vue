@@ -94,10 +94,12 @@
 
     <q-separator class="mx-2" size="1px" inset />
     <!-- message content -->
-    <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
+    <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption">
       <div
         class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area"
-        style="height: 75%"
+        :style="`height: ${
+          getSelectedChat.status === ChatTypes.ONGOING ? '75%' : '88%'
+        }`"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -137,7 +139,7 @@
             isReply
           />
           <q-input
-            @click="hideBotOption()"
+            @click="hideBotOption"
             v-model="message"
             placeholder="Enter Message"
             dense
