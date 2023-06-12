@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHr lpR lFr">
+  <q-layout view="lHr lpR lFr" class="!h-screen !min-h-0">
     <q-drawer
       show-if-above
       bordered
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, onBeforeUnmount } from "vue";
+import { ref, provide, onBeforeUnmount, onMounted } from "vue";
 import ChatPanel from "./ChatPanel.vue";
 // import Message from "./Message.vue";
 import Messaging from "pages/Messaging/Index.vue";
@@ -66,6 +66,11 @@ provide("rightDrawerOpen", rightDrawerOpen);
 
 onBeforeUnmount(() => {
   messagingStore.$reset();
+  window.document.documentElement.classList.remove("overflow-hidden");
+});
+
+onMounted(() => {
+  window.document.documentElement.classList.add("overflow-hidden");
 });
 </script>
 

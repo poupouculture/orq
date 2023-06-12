@@ -33,19 +33,43 @@
       "
       class="break-words"
     >
-      <div v-if="message?.waba_associated_message_id != null">
+      <div
+        v-if="
+          props.showAssociated && message?.waba_associated_message_id != null
+        "
+      >
         <div
           class="bg-[#635eeb] rounded-lg p-3 mb-1.5 border-l-4 border-l-blue-300 break-words"
           :class="[isSend ? 'bg-[#635eeb]' : 'bg-[#ffffff]']"
         >
-          <div :class="[isSend ? 'text-[#f4f4f4]' : 'text-blue-400']">
-            {{ message.user_name ?? message.contact_company_name }}
+          <div
+            v-if="isSend"
+            :class="[isSend ? 'text-[#f4f4f4]' : 'text-blue-400']"
+          >
+            <!-- {{ message.user_name ?? message.contact_company_name }} -->
           </div>
-          <!-- //??? todo fetch message content-->
-          {{ message?.waba_associated_message_id }}
+          <!-- {{ message?.waba_associated_message_id }} -->
+          <!-- ****TYPE*****
+          {{ message?.waba_associated_message?.type }} -->
+          <!-- ppp**TYPE2****ppp -->
+          <!-- {{ message?.last_associated_message_content?.type }} -->
+          <!-- zzz**VALUE/OBJECT***zzz -->
+          {{ messageContentType(message) }}
+          <component
+            ref="component"
+            :is="componentNameGet(messageContentGet(message))"
+            :src="messageContentGet(message).url"
+            :name="
+              isDocument(messageContentGet(message))
+                ? content.file_name
+                : content.media_id
+            "
+            :caption="messageContentGet(message).caption"
+            :is-send="isSend"
+          />
         </div>
       </div>
-      {{ messageContent(message) }}
+      {{ messageContentText(message) }}
     </div>
   </div>
 </template>
@@ -62,6 +86,7 @@ interface Props {
   content: any;
   message: any;
   isSend: boolean;
+  showAssociated?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -98,7 +123,8 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
-  // console.log("content:", content);
+  console.log("document_found:", content);
+  console.log("content:", content);
   // console.log(
   //   "is document:",
   //   content?.type === MessageType.DOCUMENT ||
@@ -113,15 +139,68 @@ const isDocument = (content: any) => {
   );
 };
 
-const messageContent = (content: any) => {
-  if (content?.content?.error_body?.errors) {
-    console.log(content?.content?.error_body);
-    return content.content.error_body?.errors[0]?.title;
+/**
+ *
+ * @param msg message from API or Socket
+ */
+const messageContentText = (msg: any) => {
+  if (msg?.content?.error_body) {
+    const error = msg?.content?.error_body;
+    if (error.errors) return error.errors[0]?.title;
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
   }
-  if (content?.content?.error_body?.error_data) {
-    return content.content.error_body.error_data.details;
+  if (msg?.text) {
+    return msg.text;
   }
-  return content?.content?.text ?? content.content;
+  return msg?.content?.text ?? msg?.content;
+};
+
+/**
+ *
+ * @param msg message from associated message
+ */
+const messageContentType = (msg: any) => {
+  const message =
+    msg?.waba_associated_message?.content ??
+    msg?.last_associated_message_content;
+  if (!message) {
+    return "Unsupported Media";
+  }
+  const messageType = message?.type;
+  console.log(messageType);
+  switch (messageType) {
+    case MessageType.IMAGE:
+      return MessageType.IMAGE;
+    case MessageType.AUDIO:
+      return MessageType.AUDIO;
+    case MessageType.DOCUMENT:
+      return MessageType.DOCUMENT;
+    case MessageType.APPLICATION:
+      return MessageType.APPLICATION;
+    case MessageType.VIDEO:
+      return MessageType.VIDEO;
+    // case MessageType.REACTION: // ???
+    //   return components.REACTION;
+  }
+  if (msg?.content?.error_body) {
+    const error = msg?.content?.error_body;
+    if (error.errors) return error.errors[0]?.title;
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  if (msg?.text) {
+    return msg.text;
+  }
+  return message.text;
+  // return msg?.content?.text ?? msg?.content;
+};
+
+const messageContentGet = (msg: any) => {
+  const message =
+    msg?.waba_associated_message?.content ??
+    msg?.last_associated_message_content;
+  return message;
 };
 
 const components = shallowReactive({
@@ -130,6 +209,7 @@ const components = shallowReactive({
   MessageDocument,
   MessageVideo,
 });
+
 const componentName = computed(() => {
   if (
     props.content?.type === MessageType.TEXT &&
@@ -148,10 +228,34 @@ const componentName = computed(() => {
       return components.MessageDocument;
     case MessageType.VIDEO:
       return components.MessageVideo;
+    // case MessageType.REACTION: // ???
+    //   return components.REACTION;
+    default:
+      return "null";
+  }
+});
+
+const componentNameGet = (content: any) => {
+  if (content?.type === MessageType.TEXT && content?.mime_type !== undefined) {
+    return components.MessageDocument;
+  }
+  switch (content?.type) {
+    case MessageType.IMAGE:
+      return components.MessageImage;
+    case MessageType.AUDIO:
+      return components.MessageAudio;
+    case MessageType.DOCUMENT:
+      return components.MessageDocument;
+    case MessageType.APPLICATION:
+      return components.MessageDocument;
+    case MessageType.VIDEO:
+      return components.MessageVideo;
+    // case MessageType.REACTION: // ???
+    //   return components.REACTION;
     default:
       return null;
   }
-});
+};
 defineExpose({
   component,
 });

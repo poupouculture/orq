@@ -13,6 +13,7 @@ export const enum MessageType {
   MEDIA = "media",
   DOCUMENT = "document",
   APPLICATION = "application",
+  REACTION = "reaction",
 }
 
 export const enum MessageStatus {
@@ -59,10 +60,12 @@ export interface Message {
   isEmoticon?: boolean;
   waba_message_id?: string;
   waba_associated_message_id?: string;
+  waba_associated_message?: any;
   associated_message_id?: string;
   chat_id?: string;
   mode?: string;
   channel?: string;
+  last_associated_message_content?: any;
 }
 export interface IChat {
   id: string;
@@ -71,18 +74,18 @@ export interface IChat {
   customers_id: string | null;
   contact_first_name: string;
   contact_last_name: string;
-  first_name: string | null;
-  last_name: string | null;
   last_message: Message;
   members: string;
   name: string;
   status: ChatTypes;
-  totalUnread?: number;
   expiration_timestamp: number;
   customer_company_name_en: string | null;
   mode?: string;
-  caption?: string;
   conversation_type?: string;
+  totalUnread?: number;
+  caption?: string;
+  first_name?: string | null; // customer's first_name
+  last_name?: string | null; // customer's last_name
 }
 
 export interface CachedChatMessages {
@@ -157,13 +160,13 @@ export interface ChatPayloadWabaContentTemplate {
 export interface ChatPayloadWabaContent {
   messaging_product?: string;
   recipient_type?: string;
-  to: string;
-  type: string;
+  type: string; // this is REQUIRED for now.
   text?: ChatPayloadWabaContentText;
   name?: string | undefined;
   languageCode?: string;
   components?: TemplateComponent[];
   context?: any;
+  to?: string; // 'to' value is determined by backend using chat_id
 }
 
 export interface ChatPayload {
@@ -174,6 +177,11 @@ export interface ChatPayload {
 }
 export interface SocketMessage {
   document: Message;
+}
+
+export interface SocketEvent {
+  document: any;
+  update_fields: any;
 }
 
 export interface SendMessageResult {
@@ -191,3 +199,9 @@ export interface SendMessageErrorResult {
 }
 
 export type FinalSendMessageResult = SendMessageResult | SendMessageErrorResult;
+
+export interface Bot {
+  name: string;
+  trigger_intent: string;
+  id: string;
+}

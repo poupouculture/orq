@@ -62,6 +62,8 @@ const userQuery = ref("");
 
 const toggleAddUser = async () => {
   if (!openAddUser.value) {
+    userQuery.value = null;
+    pagination.page = 1;
     await fetchUsers();
   }
   openAddUser.value = !openAddUser.value;
@@ -69,6 +71,7 @@ const toggleAddUser = async () => {
 const searchHandler = async (value) => {
   try {
     userQuery.value = value;
+    pagination.page = 1;
     await fetchUsers();
   } catch (error) {}
 };

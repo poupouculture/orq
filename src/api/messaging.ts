@@ -67,6 +67,13 @@ export const getChatMessagesByChatId = async (
   return data;
 };
 
+export const getMessagesById = async (id: string) => {
+  const { data } = await api.get(`/chat/messages/specific`, {
+    params: { message_id: id },
+  });
+  return data;
+};
+
 // export const loadChatMessages = async (payload: any) => {
 //   const defaultParams = {
 //     page_size: 50,

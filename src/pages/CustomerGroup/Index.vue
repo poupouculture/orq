@@ -131,8 +131,9 @@ const sourceTypeOptions = [
   { label: "div_no", value: "div_no" },
   { label: "salesman_code", value: "salesman_code" },
 ];
-watch(sourceType, async () => {
+watch(sourceType, async (value) => {
   pagination.page = 1;
+  sourceType.value = value;
   customerGroupStore.setMeta({ ...pagination });
   await fetchCustomerGroups();
 });
@@ -158,9 +159,7 @@ const resetSearch = () => {
 };
 
 onMounted(async () => {
-  loading.value = true;
   await fetchCustomerGroups();
-  loading.value = false;
 });
 
 const totalPage = () => {
@@ -173,12 +172,14 @@ const changePage = async (val) => {
 };
 
 const fetchCustomerGroups = async () => {
+  loading.value = true;
   await customerGroupStore.getAll({
     rowsPerPage: pagination.rowsPerPage,
     page: pagination.page,
     search: search.query.length ? search.query : undefined,
     type: "group",
-    sourceType: sourceType.value,
+    source: sourceType.value,
   });
+  loading.value = false;
 };
 </script>
