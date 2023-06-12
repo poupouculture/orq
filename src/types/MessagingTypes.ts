@@ -65,6 +65,7 @@ export interface Message {
   chat_id?: string;
   mode?: string;
   channel?: string;
+  last_associated_message_content?: any;
 }
 export interface IChat {
   id: string;

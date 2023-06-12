@@ -92,7 +92,8 @@ const useMessagingStore = defineStore("messaging", {
               chat.totalUnread = 0;
             }
           }
-
+          lastmessage.waba_associated_message =
+            lastmessage.last_associated_message_content;
           lastmessage.waba_associated_message_id =
             lastmessage.associated_message_id;
           this.cachedChatMessages[chatId]?.push(lastmessage);
