@@ -77,7 +77,7 @@ const updateContacts = async () => {
         <p class="label-style">Number</p>
         <q-input outlined v-model="getContacts.number" disable dense />
         <q-checkbox
-          :disable="!editMode"
+          :disable="true"
           :true-value="true"
           v-model="getContacts.is_active"
           :false-value="false"
