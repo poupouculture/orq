@@ -17,10 +17,10 @@ export const getCustomerGroups = async (
     source = undefined,
     customerIds = undefined,
     customerFilter = "",
-    sourceType = undefined,
   },
   id = null
 ) => {
+  // const offset = page === 1 ? 0 : (page - 1) * limit;
   const url =
     id !== null
       ? "/items/customer_groups/" + id
@@ -30,12 +30,12 @@ export const getCustomerGroups = async (
   // const tags = "tags.*, tags.*.*";
   const param = {
     limit,
-    page,
+    // offset,
     sort: "name",
+    page,
     // fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     fields: `id,type,name,status,source,customers.id,customers.customers_id.*`,
     meta: "*",
-    source: sourceType,
   };
   if (type) {
     if (id) {
@@ -55,10 +55,39 @@ export const getCustomerGroups = async (
   if (customerIds) {
     param[customerFilter] = customerIds.join();
   }
-  const customerGroups = await api.get(url, {
+  const data = await api.get(url, {
     params: param,
   });
-  return customerGroups;
+  return data;
+};
+export const getCustomerGroupsIG = async ({
+  limit = 10,
+  page = 1,
+  search = undefined,
+  type = undefined,
+  source = undefined,
+  customerGroups = [],
+}) => {
+  const url = "/items/customer_groups";
+  const offset = page === 1 ? 0 : (page - 1) * limit;
+  const param = {
+    limit,
+    sort: "name",
+    offset,
+    fields: `id,type,name,status,source`,
+    meta: "*",
+    "filter[_and][0][type][_eq]": type,
+    "filter[_and][0][status][_eq]": "published",
+    "filter[_and][0][source][_eq]": source,
+    "filter[_and][0][id][_nin]": customerGroups.join(),
+  };
+  if (search) {
+    param.search = search;
+  }
+  const data = await api.get(url, {
+    params: param,
+  });
+  return data;
 };
 
 export const getAllCustomerGroups = async () => {

@@ -10,6 +10,7 @@
     color="grey-7"
     active-color="primary"
     padding="6px 14px"
+    :size="size"
   />
 </template>
 <script setup>
@@ -18,6 +19,7 @@ const props = defineProps({
   maxPages: { type: [String, Number], required: true },
   max: { type: [String, Number], required: true },
   modelValue: { type: [String, Number] },
+  size: { type: String },
 });
 const maxPages = window.innerWidth > 756 ? props.maxPages : 5;
 const emits = defineEmits(["updateModel", "update:modelValue"]);
