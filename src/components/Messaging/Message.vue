@@ -666,16 +666,12 @@ const sendMessage = async () => {
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
   if (wabaMessageId) {
     // newMessage.waba_associated_message = replayMessage.value;
-    newMessage.waba_associated_message =
-      await messagingStore.associatedMessageGet(
-        newMessage.waba_associated_message_id
-      );
-    // newMessage.content = newMessage.waba_associated_message;
-    // Swal.fire({
-    //   icon: "error",
-    //   title: "REPLy...",
-    //   text: `${newMessage}`,
-    // });
+    if (!newMessage.waba_associated_message) {
+      newMessage.waba_associated_message =
+        await messagingStore.associatedMessageGet(
+          newMessage.waba_associated_message_id
+        );
+    }
   }
   console.log("---newMessage", newMessage);
   cachedMessage.push(newMessage);
