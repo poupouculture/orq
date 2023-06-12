@@ -61,6 +61,9 @@ const paginationCustomers = ref({
   page: 1,
   rowsPerPage: 10,
 });
+const paginationCustomersTable = ref({
+  rowsPerPage: 10,
+});
 const userGroupType = ref("group");
 
 const allPersonalGroups = computed(() => personalGroups.value.data);
@@ -140,6 +143,7 @@ const openDrawer = async (id: string, type: string) => {
   drawer.value = true;
   drawerType.value = type;
   paginationCustomers.value.page = 1;
+  paginationCustomersTable.value.rowsPerPage = 10;
   if (type === DrawerTypeEnum.DELETE && selectedUserGroup.value.length < 1) {
     return personalGroupStore.resetCustomerGroup();
   }
@@ -247,7 +251,6 @@ const headerColumns = [
     label: "Name",
     field: "name",
     classes: "text-black capitalize",
-    style: "max-width: 10%",
     sortable: true,
   },
   {
@@ -290,17 +293,23 @@ watch(cgType, () => {
   paginationCustomers.value.page = 1;
   paginationCustomers.value.rowsPerPage = 10;
   tableSelected.value = [];
-  if (selectedUserGroup.value.length < 1) {
+  if (
+    drawerType.value === DrawerTypeEnum.DELETE &&
+    selectedUserGroup.value.length < 1
+  ) {
     return personalGroupStore.resetCustomerGroup();
   }
   getCustomerGroupData();
+});
+const isMobile = computed(() => {
+  return window.innerWidth < 1024;
 });
 const rightDrawerWidth = ref(800);
 if (window.innerWidth < 768) {
   rightDrawerWidth.value = window.innerWidth;
 }
 
-watch(paginationCustomers, (val: any, old: any) => {
+watch(paginationCustomersTable, (val: any, old: any) => {
   if (val.rowsPerPage !== old.rowsPerPage) {
     paginationCustomers.value.rowsPerPage = val.rowsPerPage;
     getCustomerGroupData();
@@ -451,7 +460,9 @@ watch(paginationCustomers, (val: any, old: any) => {
     >
       <!-- drawer content -->
       <div class="h-full flex justify-center items-center w-full">
-        <div class="min-h-[90vh] w-full flex flex-col p-5 md:p-10">
+        <div
+          class="min-h-[90vh] w-full flex flex-col p-5 md:p-10 overflow-x-autoD"
+        >
           <div class="flex mb-4 lg:hidden">
             <q-btn
               @click="drawer = false"
@@ -462,7 +473,7 @@ watch(paginationCustomers, (val: any, old: any) => {
             />
           </div>
           <h5 class="text-lg">Customer Group</h5>
-          <div class="flex items-center justify-between mt-3">
+          <div class="flex items-center justify-between mt-3 gap-y-2">
             <SearchTableInput
               :loading="searchLoading"
               @search="searchHandlerCustomers"
@@ -500,11 +511,21 @@ watch(paginationCustomers, (val: any, old: any) => {
               selection="multiple"
               row-key="id"
               :rows-per-page-options="[5, 10, 15, 20, 25, 50]"
-              class="mb-3"
-              v-model:pagination="paginationCustomers"
+              class="mb-3 w-full"
+              v-model:pagination="paginationCustomersTable"
               binary-state-sort
               v-if="allCustomerGroups.length"
             >
+              <template #body-cell-name="props">
+                <q-td
+                  :props="props"
+                  :class="[isMobile ? 'max-w-[10rem]' : 'max-w-[20rem]']"
+                >
+                  <p class="truncate">
+                    {{ props.row.name }}
+                  </p>
+                </q-td>
+              </template>
               <template v-slot:loading>
                 <q-inner-loading showing color="primary" />
               </template>
@@ -512,6 +533,7 @@ watch(paginationCustomers, (val: any, old: any) => {
             <BasePagination
               :max="totalPageCustomers()"
               :max-pages="5"
+              :size="isMobile ? 'sm' : 'md'"
               @update-model="changePageCustomers"
               v-model="paginationCustomers.page"
             />

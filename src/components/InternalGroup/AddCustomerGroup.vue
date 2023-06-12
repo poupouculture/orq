@@ -67,13 +67,16 @@ const selected = ref([]);
 const props = defineProps({
   pagination: Object,
   data: Array,
+  source: String,
+  type: String,
 });
-const sourceType = ref("div_no");
-const sourceTypeOptions = ref(sourceOptionCG);
-const type = ref("group");
-const typeOptions = ref(TypeOptions);
-watch(sourceType, () => {
-  emits("update:source", sourceType.value);
+const sourceType = computed({
+  set: (value) => emits("update:source", value),
+  get: () => props.source,
+});
+const type = computed({
+  set: (value) => emits("update:type", value),
+  get: () => props.type,
 });
 watch(type, () => {
   if (type.value === "personal") {
@@ -83,8 +86,9 @@ watch(type, () => {
     sourceType.value = "div_no";
     sourceTypeOptions.value = sourceOptionCG;
   }
-  emits("update:type", type.value);
 });
+const sourceTypeOptions = ref(sourceOptionCG);
+const typeOptions = ref(TypeOptions);
 const pagination = computed(() => props.pagination);
 const data = computed(() => props.data);
 const headerColumns = ref([

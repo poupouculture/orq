@@ -5,7 +5,7 @@
       <div class="lg:w-10/12 mx-auto">
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
-            <p class="label-style">Name <span class="text-red-600">*</span></p>
+            <p class="mb-2">Name <span class="text-red-600">*</span></p>
             <q-input
               v-model="form.name"
               :rules="[(val) => required(val)]"
@@ -14,20 +14,7 @@
               dense
             />
           </div>
-          <div class="col">
-            <p class="label-style">Status</p>
-            <q-select
-              v-model="form.status"
-              :options="statusOptions"
-              :rules="[(val) => required(val)]"
-              outlined
-              lazy-rules
-              dense
-            />
-          </div>
-        </div>
-        <!-- Tags -->
-        <div class="row q-mb-lg q-gutter-xl">
+          <!-- Tags -->
           <div class="col">
             <BaseMultiOptions
               v-model="tags"
@@ -38,6 +25,17 @@
               @update:multi-options="updateMultiOptions"
             />
           </div>
+          <!-- <div class="col">
+            <p class="label-style">Status</p>
+            <q-select
+              v-model="form.status"
+              :options="statusOptions"
+              :rules="[(val) => required(val)]"
+              outlined
+              lazy-rules
+              dense
+            />
+          </div> -->
         </div>
         <div class="row q-mb-lg q-gutter-xl">
           <div class="col">
@@ -187,8 +185,8 @@
     :pagination="paginationCustomerGroup"
     @search="searchCustomerGroupHandler"
     v-if="openAddCustomerGroup"
-    @update:source="changeSource"
-    @update:type="changeCgType"
+    v-model:source="sourceType"
+    v-model:type="cgType"
   />
   <AddUserOverlay
     @submit="(val) => submitAddUser(val)"
@@ -208,7 +206,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { required } from "src/utils/validation-rules.ts";
 import ReturnDialog from "src/components/Dialogs/ReturnDialog.vue";
@@ -226,7 +224,6 @@ import BaseMultiOptions from "src/components/BaseMultiOptions.vue";
 import { api } from "src/boot/axios";
 import { transformTagPayload } from "src/utils/transform-object";
 
-const statusOptions = ["published", "draft"];
 const typeOptions = [
   { value: "group", label: "Group" },
   // { value: "personal", label: "Customer Service" },
@@ -413,6 +410,12 @@ const searchCustomerGroupHandler = async (value) => {
 };
 const sourceType = ref("div_no");
 const cgType = ref("group");
+watch(sourceType, () => {
+  changeSource(sourceType.value);
+});
+watch(cgType, () => {
+  changeCgType(cgType.value);
+});
 const changeSource = (value) => {
   sourceType.value = value;
   paginationCustomerGroup.page = 1;
