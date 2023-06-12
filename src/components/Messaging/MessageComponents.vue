@@ -54,7 +54,7 @@
           <!-- ppp**TYPE2****ppp -->
           <!-- {{ message?.last_associated_message_content?.type }} -->
           <!-- zzz**VALUE/OBJECT***zzz -->
-          {{ messageContent(message) }}
+          {{ messageContentType(message) }}
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
@@ -159,12 +159,12 @@ const messageContentText = (msg: any) => {
  *
  * @param msg message from associated message
  */
-const messageContent = (msg: any) => {
+const messageContentType = (msg: any) => {
   const message =
     msg?.waba_associated_message?.content ??
     msg?.last_associated_message_content;
   if (!message) {
-    return "";
+    return "Unsupported Media";
   }
   const messageType = message?.type;
   console.log(messageType);
@@ -182,13 +182,6 @@ const messageContent = (msg: any) => {
     // case MessageType.REACTION: // ???
     //   return components.REACTION;
   }
-  // if (messageType === MessageType.TEXT) {
-  //   return message.text;
-  // } else if (messageType === MessageType.IMAGE) {
-  //   return "[IMAGE]";
-  // } else if (messageType === MessageType.IMAGE) {
-  //   return "[IMAGE]";
-  // }
   if (msg?.content?.error_body) {
     const error = msg?.content?.error_body;
     if (error.errors) return error.errors[0]?.title;
@@ -215,28 +208,7 @@ const components = shallowReactive({
   MessageDocument,
   MessageVideo,
 });
-// const associatedContent = computed(() => message ));
-// const componentInnerName = computed((msg: any) => {
-//   if (msg?.type === MessageType.TEXT && msg?.mime_type !== undefined) {
-//     return components.MessageDocument;
-//   }
-//   switch (msg?.type) {
-//     case MessageType.IMAGE:
-//       return components.MessageImage;
-//     case MessageType.AUDIO:
-//       return components.MessageAudio;
-//     case MessageType.DOCUMENT:
-//       return components.MessageDocument;
-//     case MessageType.APPLICATION:
-//       return components.MessageDocument;
-//     case MessageType.VIDEO:
-//       return components.MessageVideo;
-//     // case MessageType.REACTION: ???
-//     //   return components.REACTION;
-//     default:
-//       return null;
-//   }
-// });
+
 const componentName = computed(() => {
   if (
     props.content?.type === MessageType.TEXT &&
@@ -258,7 +230,7 @@ const componentName = computed(() => {
     // case MessageType.REACTION: // ???
     //   return components.REACTION;
     default:
-      return null;
+      return "null";
   }
 });
 
