@@ -5,7 +5,10 @@
       ref="imageRef"
       @click.stop="visible = true"
     />
-    <div class="mt-1 text-white" :class="{ '!text-gray-800': !isSend }">
+    <div
+      class="mt-1 text-white break-all"
+      :class="{ '!text-gray-800': !isSend }"
+    >
       {{ caption }}
     </div>
   </div>
@@ -25,7 +28,7 @@
             @click="scaleImage"
           />
 
-          <span class="mt-4 font-bold">{{ caption }}</span>
+          <span class="mt-4 font-bold break-all">{{ caption }}</span>
         </div>
 
         <q-spinner

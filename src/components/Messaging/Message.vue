@@ -147,7 +147,6 @@
             type="textarea"
             :class="{ invisible: showAudio }"
             input-class="h-10"
-            @keypress.enter.prevent="sendMessage"
             :disable="isBot"
             @paste="onPaste"
           />
@@ -920,7 +919,7 @@ const uploadFile = async (files: readonly File[]) => {
       duration: time.value,
       local: true,
       media_id: decodeURIComponent(file.name),
-      file_name: decodeURIComponent(file.name),
+      file_name: file.name,
     },
     status: MessageStatus.SENT,
     direction: Direction.OUTGOING,
@@ -934,6 +933,7 @@ const uploadFile = async (files: readonly File[]) => {
   const newFileName = new File([file], encodeURIComponent(file.name), {
     type: file.type,
   });
+  console.log(newFileName);
 
   // bodyFormData.append("caption", file.name);
   bodyFormData.append("file", newFileName);
