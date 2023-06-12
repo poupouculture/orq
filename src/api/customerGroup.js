@@ -20,7 +20,7 @@ export const getCustomerGroups = async (
   },
   id = null
 ) => {
-  const offset = page === 1 ? 0 : (page - 1) * limit;
+  // const offset = page === 1 ? 0 : (page - 1) * limit;
   const url =
     id !== null
       ? "/items/customer_groups/" + id
@@ -30,8 +30,9 @@ export const getCustomerGroups = async (
   // const tags = "tags.*, tags.*.*";
   const param = {
     limit,
-    offset,
-    // sort: "name",
+    // offset,
+    sort: "name",
+    page,
     // fields: `id,type,name,status,source,customers.id,customers.customers_id.*,${userGroups},${companies},${tags}`,
     fields: `id,type,name,status,source,customers.id,customers.customers_id.*`,
     meta: "*",
