@@ -1,12 +1,12 @@
 <template>
   <div class="rounded-md mt-1">
     <img
-      class="cursor-zoom-in h-36 rounded"
+      class="cursor-zoom-in max-h-36 rounded max-w-xs w-full object-cover object-center"
       ref="imageRef"
       @click.stop="visible = true"
     />
     <div
-      class="mt-1 text-white break-all"
+      class="mt-1 text-white break-all max-w-xs"
       :class="{ '!text-gray-800': !isSend }"
     >
       {{ caption }}
