@@ -30,6 +30,7 @@
         class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
       >
         {{ message.user_name }}
+        <!-- ??? todo, jimmy comment out user_name {{ message.user_name }} -->
       </span>
       <q-btn
         v-if="isReply"
@@ -46,6 +47,7 @@
         :content="message.content"
         :message="message"
         :isSend="isSend"
+        :showAssociated="true"
       />
       <div
         v-if="!isReply"
@@ -165,11 +167,14 @@ import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 
-const props = defineProps<{ message: Message; isReply?: boolean }>();
+const props = defineProps<{
+  message: Message;
+  isReply?: boolean;
+}>();
 const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
-const isSend = computed(() => props.message.direction === Direction.OUTGOING);
+const isSend = computed(() => props?.message.direction === Direction.OUTGOING);
 // const isNotImageType = computed(
 //   () => props.message.content.type !== MessageType.IMAGE
 // );

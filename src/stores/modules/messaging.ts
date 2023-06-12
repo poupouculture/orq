@@ -12,6 +12,7 @@ import {
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
+  getMessagesById,
 } from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -115,21 +116,14 @@ const useMessagingStore = defineStore("messaging", {
       }
     },
     updateChatTabSelected(status: ChatTypes) {
-      // console.log("hi");
-      // if (status) {
-      //   newchat.status = status;
-      // }
-      // this.chatsList = this.chatsList.filter(
-      //   (chat: IChat) => chat.id !== newchat.id
-      // );
-      // this.chatsList.unshift(newchat);
       this.selectedTab = status;
-      // if ((getSelectedChat.value.mode = newchat.id)) { // only when we are focussed on the current chat, then the selected status moves
-      //   this.selectedTab = newchat.status;
+      // ???
+      // if (status !== ChatTypes.CLOSED) {
+      //   this.selectedTab = status;
       // }
     },
     updateChatsList(newchat: IChat, status?: ChatTypes) {
-      console.log("hi");
+      console.log("updateChatsList-----");
       if (status) {
         newchat.status = status;
       }
@@ -144,6 +138,7 @@ const useMessagingStore = defineStore("messaging", {
     },
     async fetchChats() {
       const chatsList = await getChats();
+      // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
         return item;
@@ -154,23 +149,53 @@ const useMessagingStore = defineStore("messaging", {
       try {
         const { data } = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const messages = data.messages.map((item: any) => ({
-          id: item.id,
-          tracking_id: item.tracking_id,
-          content: item.content,
-          contact_name: item.contact_name,
-          user_name: item.user_name,
-          status: item.status,
-          type: item.type,
-          direction: item.direction,
-          date_created: item.date_created,
-          waba_message_id: item.waba_message_id,
-          waba_associated_message_id: item.waba_associated_message_id,
-          mode: item.mode,
-          contact: item.contact,
-          channel: item.channel,
-          conversation_id: item.conversation_id,
-        }));
+        const showAssociatedMessage = true;
+        let messages = null;
+        if (showAssociatedMessage) {
+          messages = await Promise.all(
+            data.messages.map(async (item: any) => ({
+              id: item.id,
+              tracking_id: item.tracking_id,
+              content: item.content,
+              contact_name: item.contact_name,
+              user_name: item.user_name,
+              status: item.status,
+              type: item.type,
+              direction: item.direction,
+              date_created: item.date_created,
+              waba_message_id: item.waba_message_id,
+              waba_associated_message_id: item.waba_associated_message_id
+                ? await this.associatedMessageGet(
+                    item.waba_associated_message_id
+                  )
+                : null,
+              mode: item.mode,
+              contact: item.contact,
+              channel: item.channel,
+              conversation_id: item.conversation_id,
+            }))
+          );
+          console.log("messages:------", messages);
+        } else {
+          messages = data.messages.map((item: any) => ({
+            id: item.id,
+            tracking_id: item.tracking_id,
+            content: item.content,
+            contact_name: item.contact_name,
+            user_name: item.user_name,
+            status: item.status,
+            type: item.type,
+            direction: item.direction,
+            date_created: item.date_created,
+            waba_message_id: item.waba_message_id,
+            waba_associated_message_id: item.waba_associated_message_id,
+            mode: item.mode,
+            contact: item.contact,
+            channel: item.channel,
+            conversation_id: item.conversation_id,
+          }));
+        }
+
         this.cachedChatMessages[chatId] = [
           ...messages,
           ...this.cachedChatMessages[chatId],
@@ -181,6 +206,13 @@ const useMessagingStore = defineStore("messaging", {
       } catch (e) {
         console.log(e);
       }
+    },
+
+    async associatedMessageGet(messageId: string) {
+      const data = await getMessagesById(messageId);
+      const cleaned = data.data[0];
+      console.log("  associatedMessageGet:", cleaned);
+      return cleaned;
     },
 
     async sendChatTextMessage(payload: SendTextMessage) {
@@ -198,9 +230,19 @@ const useMessagingStore = defineStore("messaging", {
       this.setContactNumber(data.number);
     },
     changeModeChatListById(id: string, mode: string) {
-      console.log("hi");
+      console.log("changeModeChatListById-----");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].mode = mode;
+    },
+    changeConversationType(id: string, conversationType: string) {
+      console.log("changeConversationType-----");
+      const index = this.chatsList.findIndex((chat) => chat.id === id);
+      this.chatsList[index].conversation_type = conversationType;
+    },
+    changeExpiry(id: string, expirationTimestamp: number) {
+      console.log("changeExpiry-----");
+      const index = this.chatsList.findIndex((chat) => chat.id === id);
+      this.chatsList[index].expiration_timestamp = expirationTimestamp;
     },
   },
 });

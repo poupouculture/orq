@@ -13,6 +13,7 @@ export const enum MessageType {
   MEDIA = "media",
   DOCUMENT = "document",
   APPLICATION = "application",
+  REACTION = "reaction",
 }
 
 export const enum MessageStatus {
@@ -41,13 +42,13 @@ export enum SendMessageStatus {
 
 export interface Message {
   id: number;
-  is_cache: true;
+  is_cache?: true;
   contact_name?: string;
   user_name?: string;
   contact?: string;
   content: any;
-  contact_company_name: string;
-  contact_customer_name: string;
+  contact_company_name?: string;
+  contact_customer_name?: string;
   direction?: string;
   status: MessageStatus;
   old_date_created?: string | null;
@@ -69,18 +70,20 @@ export interface IChat {
   chat_id: string;
   contacts_id: string;
   customers_id: string | null;
-  first_name: string | null;
-  last_name: string | null;
+  contact_first_name: string;
+  contact_last_name: string;
   last_message: Message;
   members: string;
   name: string;
   status: ChatTypes;
-  totalUnread?: number;
   expiration_timestamp: number;
   customer_company_name_en: string | null;
   mode?: string;
-  caption?: string;
   conversation_type?: string;
+  totalUnread?: number;
+  caption?: string;
+  first_name?: string | null; // customer's first_name
+  last_name?: string | null; // customer's last_name
 }
 
 export interface CachedChatMessages {
@@ -155,13 +158,13 @@ export interface ChatPayloadWabaContentTemplate {
 export interface ChatPayloadWabaContent {
   messaging_product?: string;
   recipient_type?: string;
-  to: string;
-  type: string;
+  type: string; // this is REQUIRED for now.
   text?: ChatPayloadWabaContentText;
   name?: string | undefined;
   languageCode?: string;
   components?: TemplateComponent[];
   context?: any;
+  to?: string; // 'to' value is determined by backend using chat_id
 }
 
 export interface ChatPayload {
@@ -172,6 +175,11 @@ export interface ChatPayload {
 }
 export interface SocketMessage {
   document: Message;
+}
+
+export interface SocketEvent {
+  document: any;
+  update_fields: any;
 }
 
 export interface SendMessageResult {
@@ -189,3 +197,9 @@ export interface SendMessageErrorResult {
 }
 
 export type FinalSendMessageResult = SendMessageResult | SendMessageErrorResult;
+
+export interface Bot {
+  name: string;
+  trigger_intent: string;
+  id: string;
+}

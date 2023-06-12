@@ -29,6 +29,7 @@ const userGroupOptions = [
 ];
 // State
 const personalGroupStore = userPersonalGroup();
+// const customerGroups = computed(() => personalGroupStore.customerGroups);
 const { personalGroups, customerGroups } = storeToRefs(personalGroupStore);
 const drawerLis = reactive([
   {
@@ -59,9 +60,6 @@ const paginationCustomers = ref({
   sortBy: "desc",
   descending: false,
   page: 1,
-  rowsPerPage: 10,
-});
-const paginationCustomersTable = ref({
   rowsPerPage: 10,
 });
 const userGroupType = ref("group");
@@ -128,14 +126,14 @@ const resetSearchCustomers = () => {
   searchHandlerCustomers();
 };
 
-const changePage = (val: number) => {
+const changePage = async (val: number) => {
   pagination.page = val;
-  getPersonalGroupData();
+  await getPersonalGroupData();
 };
 
-const changePageCustomers = (val: number) => {
+const changePageCustomers = async (val: number) => {
   paginationCustomers.value.page = val;
-  getCustomerGroupData();
+  await getCustomerGroupData();
 };
 
 const openDrawer = async (id: string, type: string) => {
@@ -223,6 +221,12 @@ const getPersonalGroupData = async () => {
 };
 const cgType = ref("personal");
 const getCustomerGroupData = async () => {
+  if (
+    drawerType.value === DrawerTypeEnum.DELETE &&
+    selectedUserGroup.value.length < 1
+  ) {
+    return personalGroupStore.resetCustomerGroup();
+  }
   tableLoading.value = true;
   await personalGroupStore.getCustomerGroup(
     paginationCustomers.value.rowsPerPage,
@@ -292,6 +296,7 @@ watch(cgType, () => {
   tableLoading.value = true;
   paginationCustomers.value.page = 1;
   paginationCustomers.value.rowsPerPage = 10;
+  paginationCustomersTable.value.rowsPerPage = 10;
   tableSelected.value = [];
   if (
     drawerType.value === DrawerTypeEnum.DELETE &&
@@ -308,7 +313,12 @@ const rightDrawerWidth = ref(800);
 if (window.innerWidth < 768) {
   rightDrawerWidth.value = window.innerWidth;
 }
-
+// separate the pagination in the q-table and pagination in the BasePagination
+// because when page is change, q-table automatically call the pagination.page = val
+// That's why the data is empty. please be carefull to change this state!
+const paginationCustomersTable = ref({
+  rowsPerPage: 10,
+});
 watch(paginationCustomersTable, (val: any, old: any) => {
   if (val.rowsPerPage !== old.rowsPerPage) {
     paginationCustomers.value.rowsPerPage = val.rowsPerPage;
@@ -507,14 +517,13 @@ watch(paginationCustomersTable, (val: any, old: any) => {
               v-model:selected="tableSelected"
               :rows="allCustomerGroups"
               :columns="headerColumns"
-              :loading="tableLoading"
               selection="multiple"
               row-key="id"
+              :loading="tableLoading"
               :rows-per-page-options="[5, 10, 15, 20, 25, 50]"
               class="mb-3 w-full"
               v-model:pagination="paginationCustomersTable"
               binary-state-sort
-              v-if="allCustomerGroups.length"
             >
               <template #body-cell-name="props">
                 <q-td

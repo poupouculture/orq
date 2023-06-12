@@ -4,6 +4,11 @@
     class="h-full w-full flex flex-col q-pa-md"
     :style="getHeight()"
   >
+    <!-- ??? jimmy to be refactored -->
+    <!-- <div
+    v-if="getSelectedChatId"
+    class="h-full w-full flex flex-col q-pa-md bg-white"
+  > -->
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
@@ -16,7 +21,9 @@
         </q-avatar>
         <div class="flex flex-col">
           <p class="font-semibold text-lg">{{ nameEn }}</p>
-          <p class="text-gray-500">{{ chatNumber }}</p>
+          <p class="text-gray-500">
+            {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
+          </p>
         </div>
       </div>
       <!-- Close button -->
@@ -68,19 +75,19 @@
             {{ members.length - 3 }} +
           </div>
         </div>
-        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
-          <div
-            class="text-primary pb-3 cursor-pointer"
-            @click="toogleChatOption()"
-          >
-            Actions
-          </div>
-        </div>
 
         <div v-if="!isMobile || (isMobile && showChatOption)">
           <ChatConversationButton
             v-if="getSelectedChat.status !== ChatTypes.CLOSED"
           />
+        </div>
+        <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
+          <div
+            class="text-primary pb-3 cursor-pointer"
+            @click="toogleChatOption()"
+          >
+            {{ showChatOption ? "Hide Actions" : "Show Actions" }}
+          </div>
         </div>
       </div>
     </template>
@@ -132,7 +139,7 @@
           <q-input
             @click="hideBotOption()"
             v-model="message"
-            placeholder="Enter reply information"
+            placeholder="Enter Message"
             dense
             borderless
             type="textarea"
@@ -140,7 +147,7 @@
             input-class="h-10"
             @keypress.enter.prevent="sendMessage"
             :disable="isBot"
-            @paste="onPast"
+            @paste="onPaste"
           />
           <Transition name="fade-scale" appear>
             <div
@@ -165,6 +172,7 @@
               size="md"
               class="q-mt-md"
               :disable="isPending || isBot"
+              @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
@@ -389,6 +397,7 @@ import {
   Message,
   MessageStatus,
   SendMessageStatus,
+  Bot,
 } from "src/types/MessagingTypes";
 import { Dialog, Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
@@ -495,6 +504,18 @@ const chatNumber = computed<string>(() =>
   getSelectedChat.value.name.replace(/[^\d]/g, "")
 );
 
+const contactNameGet = computed<string>(() => {
+  const contactName =
+    getSelectedChat.value.contact_first_name ??
+    getSelectedChat.value.contact_last_name;
+  return contactName;
+  // return (
+  //    +
+  //   " " +
+  //   getSelectedChat.value.contact_last_name
+  // );
+});
+
 const members = computed<Member[]>(
   () => JSON.parse(getSelectedChat.value.members) || []
 );
@@ -522,6 +543,7 @@ const messages = computed<Message[]>(() => {
 const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
+  console.log("loadMore:----------------");
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
     return;
@@ -540,11 +562,23 @@ watch(getSelectedChatId, () => {
 });
 
 watch(
+  () => getSelectedChat.value?.conversation_type,
+  async (val) => {
+    console.log(
+      "SELECTED_CHAT:converation_type changed to - ",
+      conversationType
+    );
+    conversationType.value = val;
+    isPending.value = conversationType.value === "pending_inbound";
+  }
+);
+
+watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    console.log("Selected-Chat:expiry", val);
-    conversationType.value = getSelectedChat.value.conversation_type;
-    isPending.value = conversationType.value === "pending_inbound";
+    console.log("SELECTED_CHAT:expiry", val);
+    // conversationType.value = getSelectedChat.value.conversation_type;
+    // isPending.value = conversationType.value === "pending_inbound";
 
     if (val) {
       const expiredDate = new Date(val * 1000);
@@ -559,7 +593,7 @@ watch(
     } else {
       isChatExpired.value = false;
     }
-    console.log("isChatExpired.value");
+    console.log("isChatExpired.value:");
     console.log(isChatExpired.value);
   }
 );
@@ -917,7 +951,7 @@ const fileFilter = (files: readonly any[] | FileList) => {
 
   if (!filterFiles.length) {
     Notify.create({
-      message: `${fileData?.name} cannot exceed ${fileData?.limit}MB`,
+      message: `${fileData?.name} CANNOT exceed ${fileData?.limit}MB`,
       type: "negative",
       color: "purple",
       position: "top",
@@ -927,7 +961,7 @@ const fileFilter = (files: readonly any[] | FileList) => {
   return filterFiles;
 };
 
-const selectBot = async (bot: any) => {
+const selectBot = async (bot: Bot) => {
   hideBotOption();
   const { status } = await initiateBot(
     getSelectedChatId.value,
@@ -937,7 +971,7 @@ const selectBot = async (bot: any) => {
 
   if (status) {
     Notify.create({
-      message: `The ${bot.name} has been initiated`,
+      message: `The ${bot.name} has been Started. Chat disabled.`,
       color: "primary",
       position: "top",
       type: "positive",
@@ -954,7 +988,7 @@ const getChatbots = async () => {
 const confirmCloseBot = () => {
   Dialog.create({
     title: "End Bot",
-    message: "Are you sure you want to end bot?",
+    message: "Close Bot. Confirm?",
     cancel: true,
     persistent: true,
   }).onOk(() => {
@@ -966,7 +1000,7 @@ const onCloseBot = async () => {
   getSelectedChat.value.mode = "";
 };
 
-const onPast = (e: ClipboardEvent) => {
+const onPaste = (e: ClipboardEvent) => {
   const items = e.clipboardData?.items || [];
   for (let i = 0; i < items.length; i++) {
     if (items[i].type.indexOf("image") !== -1) {

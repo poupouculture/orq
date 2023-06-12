@@ -101,6 +101,7 @@
                   <ButtonUserMenu
                     :id="group.id"
                     :user-id="directus_users_id.id"
+                    :role="directus_users_id.role?.name"
                     :pagination="pagination"
                   />
                 </div>
@@ -123,9 +124,9 @@
           <div class="text-gray-500 mb-2">
             Adjust or clear search filters to see results.
           </div>
-          <q-btn @click="resetSearch()" color="primary" size="sm"
-            >Clear filter</q-btn
-          >
+          <q-btn @click="resetSearch()" color="primary" size="sm">
+            Clear filter
+          </q-btn>
         </template>
       </div>
     </div>
@@ -141,25 +142,33 @@ import ButtonGroupMenu from "src/components/InternalGroup/ButtonGroupMenu.vue";
 import userAvatar from "src/assets/images/profileicon.svg";
 
 const internalGroupStore = useInternalGroupStore();
+
+// Ref
 const query = ref("");
 const searchLoading = ref(false);
 const loading = ref(false);
-const internalGroup = computed(() => internalGroupStore.items);
-const meta = computed(() => internalGroupStore.meta);
+const type = ref("group");
+const typeOptions = ["group"];
+
+// Reactive
 const pagination = reactive({
   sortBy: "desc",
   descending: false,
   page: 1,
   rowsPerPage: 4,
 });
-const type = ref("group");
-const typeOptions = ["group"];
 
+// Computed
+const internalGroup = computed(() => internalGroupStore.items);
+const meta = computed(() => internalGroupStore.meta);
+
+// Watch
 watch(type, () => {
   pagination.page = 1;
   fetchInternalGroups();
 });
 
+// Methods
 const searchHandler = async (searchValue = "") => {
   query.value = searchValue;
   searchLoading.value = true;
@@ -185,11 +194,6 @@ const changePage = async (val) => {
   await fetchInternalGroups();
   internalGroupStore.setMeta({ ...pagination });
 };
-onMounted(async () => {
-  loading.value = true;
-  await fetchInternalGroups();
-  loading.value = false;
-});
 
 const fetchInternalGroups = async () => {
   type.value = type.value === "individual" ? "personal" : "group";
@@ -200,4 +204,10 @@ const fetchInternalGroups = async () => {
     search: query.value.length ? query.value : undefined,
   });
 };
+
+onMounted(async () => {
+  loading.value = true;
+  await fetchInternalGroups();
+  loading.value = false;
+});
 </script>

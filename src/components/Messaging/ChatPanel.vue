@@ -8,7 +8,11 @@
         <img class="w-10" src="~assets/images/logo.svg" />
         <p class="font-[800] text-[#231815] text-2xl">ChaQ</p>
       </div>
-
+      <div v-if="errSocket" class="logo-holder mb-3 flex items-center gap-3">
+        <p class="font-[800] text-[#231815] text-2xl">
+          Refresh Your Page to Connect to Chats
+        </p>
+      </div>
       <q-input v-model="seachText" placeholder="Search ..." outlined dense>
         <template v-slot:prepend>
           <q-icon name="search" />
@@ -100,7 +104,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, SocketMessage } from "src/types/MessagingTypes";
+import { IChat, SocketEvent, SocketMessage } from "src/types/MessagingTypes";
 import {
   closeBot,
   startNewChat,
@@ -148,6 +152,7 @@ type ChatToggleType = {
   // eslint-disable-next-line prettier/prettier
   state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
 };
+const errSocket = ref(false);
 const seachText = ref("");
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
@@ -202,12 +207,16 @@ const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
   const [data] = await startNewChat(customer.id);
 
-  const response = await getCustomer(customer.id);
-  const customerObj = response.data.data;
+  // const response = await getCustomer(customer.id);
+  // const customerObj = response.data.data;
   customerStore.setCustomer(customer);
 
-  data.customer_company_name_en = customerObj.customer_company_name_en;
-  messagingStore.updateChatsList(data);
+  // data.customer_company_name_en = customerObj.customer_company_name_en;
+  // data.last_message = JSON.parse(data.last_message);
+
+  const chat = await getChatByID(data.id);
+  chat.last_message = JSON.parse(chat.last_message);
+  messagingStore.updateChatsList(chat);
   messagingStore.onSelectChat(data.id);
 };
 
@@ -227,17 +236,21 @@ const onSearchCustomers = async (
 const initSocket = () => {
   try {
     socket.value.on("connect", () => {
+      console.log(userProfile.value);
       socket.value.emit("join_chat", userProfile?.value?.id);
+      console.log("userProfile", userProfile.value);
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
+      errSocket.value = true;
       Notify.create({
         message: "Refresh Your Page to connect to Chats",
         position: "top",
         type: "negative",
+        timeout: 86400,
       });
     });
-    socket.value.on("chat_updated", (data: any) => {
+    socket.value.on("chat_updated", (data: SocketEvent) => {
       console.log("chat_updated", data);
       const chat = chatsList.value.find(
         (chat: IChat) => chat.id === data.document?.id
@@ -245,52 +258,59 @@ const initSocket = () => {
       if (chat) {
         messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
         messagingStore.updateChatsList(chat, data.document?.status);
+        if (data?.update_fields?.conversation_type) {
+          console.log("SOCKET: conversation_type");
+          messagingStore.changeConversationType(
+            chat?.id,
+            data?.update_fields?.conversation_type
+          );
+        }
         if (data?.update_fields?.status) {
-          console.log("hi");
+          console.log("SOCKET: status change");
           console.log(getSelectedChat.value);
-          if (getSelectedChat.value.id === data.document.id) {
+          if (
+            getSelectedChat.value &&
+            getSelectedChat.value.id === data.document.id
+          ) {
             messagingStore.updateChatTabSelected(data.update_fields.status);
-            // if (getSelectedChat.value.status !== data.update_fields.status) {
-            //   console.log("change selected chat");
-
-            // }
           }
-          // if ((getSelectedChat.value.mode = newchat.id)) {
-          // only when we are focussed on the current chat, then the selected status moves
-          // this.selectedTab = newchat.status;
-          // }
-          // this.selectedTab = newchat.status;
+          let message;
+          if (data.update_fields.status !== "waiting") {
+            switch (data.update_fields.status) {
+              case "ongoing":
+                message = `Chat has been taken by ${
+                  userProfile.value?.first_name
+                } ${userProfile.value?.last_name || ""}`;
+                break;
+              case "closed":
+                message = `${data.document?.name} chat has been closed`;
+                break;
+            }
+            Notify.create({
+              message,
+              type: "positive",
+              color: "primary",
+              position: "top",
+            });
+          }
+        }
+        if (data.update_fields.expiration_timestamp) {
+          messagingStore.changeExpiry(
+            chat?.id,
+            data?.update_fields?.expiration_timestamp
+          );
         }
 
-        let message;
-        if (
-          data.update_fields.status &&
-          data.update_fields.status !== "waiting"
-        ) {
-          switch (data.update_fields.status) {
-            case "ongoing":
-              message = `Chat has been taken by ${
-                userProfile.value?.first_name
-              } ${userProfile.value?.last_name || ""}`;
-              break;
-            case "closed":
-              message = `${data.document?.name} chat has been closed`;
-              break;
-          }
-          Notify.create({
-            message,
-            type: "positive",
-            color: "primary",
-            position: "top",
-          });
-        }
-        if (data.update_fields.mode) {
-          if (getSelectedChat.value.chat_id === data.document.id) {
+        if (data?.update_fields?.mode) {
+          if (
+            getSelectedChat &&
+            getSelectedChat.value.chat_id === data.document.id
+          ) {
             getSelectedChat.value.mode = data.update_fields.mode;
           }
           if (data.update_fields.mode === "CS-Agent") {
             Notify.create({
-              message: `The ${data.document.name} chatbot has been ended`,
+              message: `The ${data.document.name} Bot has been ended`,
               type: "positive",
               color: "primary",
               position: "top",
@@ -413,7 +433,7 @@ const initSocket = () => {
             await closeBot(chat?.id);
             messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
             Notify.create({
-              message: "The chatbot has been ended",
+              message: "The Bot has been ended",
               color: "primary",
               position: "top",
               type: "positive",
