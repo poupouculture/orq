@@ -62,7 +62,7 @@
                 <q-item-section avatar>
                   <q-icon name="business" />
                 </q-item-section>
-                <q-item-section> About WABA </q-item-section>
+                <q-item-section> About ChaQ </q-item-section>
               </q-item>
 
               <q-separator />

@@ -12,11 +12,11 @@
         no-caps
       >
         <q-tab name="general" label="General Information" />
-        <q-tab name="otherInformation" label="Other Information" />
+        <!-- <q-tab name="otherInformation" label="Other Information" /> -->
         <q-tab name="contact" label="Contact Information" />
-        <q-tab name="remark" label="Remark" />
+        <!-- <q-tab name="remark" label="Remark" />
         <q-tab name="attachment" label="Attachment" />
-        <q-tab name="record" label="Service Record" />
+        <q-tab name="record" label="Service Record" /> -->
       </q-tabs>
 
       <q-separator class="seperator-class" />
@@ -41,17 +41,17 @@
               <ContactInfo />
             </div>
           </q-tab-panel>
-
-          <q-tab-panel name="remark">
+          <!-- ??? 0614 -->
+          <!-- <q-tab-panel name="remark">
             <Remark v-model.modelValue="remarks" />
           </q-tab-panel>
 
           <q-tab-panel name="Attachement">
-            <!-- <Attachement /> -->
+            <Attachement />
           </q-tab-panel>
           <q-tab-panel name="record">
             <ServiceRecord />
-          </q-tab-panel>
+          </q-tab-panel> -->
         </q-tab-panels>
       </div>
     </div>
@@ -62,9 +62,9 @@
 import { ref } from "vue";
 import ContactInfo from "../ContactInfo/ContactInfo.vue";
 import GeneralInformation from "src/components/Customer/GeneralInformation/index.vue";
-import ServiceRecord from "./ServiceRecord.vue";
+// import ServiceRecord from "./ServiceRecord.vue";
 // import OtherInformation from "../OtherInformation/OtherInformation.vue";
-import Remark from "../Remark/Remark.vue";
+// import Remark from "../Remark/Remark.vue";
 import useCustomerStore from "src/stores/modules/customer";
 // import Attachement from "../Attachement/Attachement.vue";
 defineProps({
