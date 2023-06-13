@@ -252,7 +252,7 @@
             <img src="~assets/images/pin.svg" />
             <q-uploader
               ref="fileUplader"
-              accept="*"
+              accept=".mp4,.jpg,.jpeg,.png,.pdf"
               class="hidden invisible"
               :filter="fileFilter"
               @added="uploadFile"
