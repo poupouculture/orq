@@ -29,7 +29,9 @@
     <div
       v-if="
         !content?.type ||
-        (content?.type === MessageType.TEXT && content?.mime_type === undefined)
+        (content?.type === MessageType.TEXT &&
+          content?.mime_type === undefined) ||
+        content?.type == MessageType.REACTION
       "
       class="break-words"
     >
@@ -152,6 +154,11 @@ const messageContentText = (msg: any) => {
   }
   if (msg?.text) {
     return msg.text;
+  }
+
+  if (msg?.content?.emoji) {
+    // console.log("msg?.content?.emoji", msg?.content?.emoji);
+    return msg?.content?.emoji;
   }
   return msg?.content?.text ?? msg?.content;
 };
