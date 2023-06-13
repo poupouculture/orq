@@ -11,6 +11,7 @@ const categoryOptions = ref(["phone"]);
 const statusOptions = ref(["Active"]);
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
+const { getSelectedChat } = storeToRefs(messagingStore);
 
 const contacts = useContactStore();
 const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
@@ -25,6 +26,9 @@ const dissociateContact = async () => {
 
 const updateContacts = async () => {
   await contacts.updateContact(getContacts.value);
+
+  getSelectedChat.value.contact_first_name = getContacts.value.first_name;
+  getSelectedChat.value.contact_last_name = getContacts.value.last_name;
 
   editMode.value = false;
 };
