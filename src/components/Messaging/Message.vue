@@ -913,6 +913,7 @@ const uploadFile = async (files: readonly File[]) => {
 
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
+    // ??? todo, new message needs to ....
     id: Date.now(),
     content: {
       url: "",
