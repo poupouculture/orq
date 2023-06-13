@@ -250,7 +250,7 @@ const customerGroupData = ref([]);
 const userData = ref([]);
 const form = reactive({
   name: "",
-  status: null,
+  // status: null,
   type: "group",
   loading: false,
 });
@@ -258,7 +258,7 @@ const form = reactive({
 onMounted(() => {
   if (data.value && props.id) {
     form.name = data.value.name;
-    form.status = data.value.status;
+    // form.status = data.value.status;
     form.type = data.value.type;
     tags.value = data.value.tags.map((data) => ({
       label: data.tags_id.name,
