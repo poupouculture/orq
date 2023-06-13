@@ -250,7 +250,7 @@ const customerGroupData = ref([]);
 const userData = ref([]);
 const form = reactive({
   name: "",
-  status: "",
+  status: null,
   type: "group",
   loading: false,
 });
