@@ -8,7 +8,7 @@ import { storeToRefs } from "pinia";
 // State
 const editMode = ref(false);
 const categoryOptions = ref(["phone"]);
-const statusOptions = ref(["Active"]);
+// const statusOptions = ref(["Active"]);
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
@@ -80,13 +80,13 @@ const updateContacts = async () => {
       <div class="flex flex-col">
         <p class="label-style">Number</p>
         <q-input outlined v-model="getContacts.number" disable dense />
-        <q-checkbox
+        <!-- <q-checkbox
           :disable="true"
           :true-value="true"
           v-model="getContacts.is_active"
           :false-value="false"
           label="Contact is Active"
-        />
+        /> -->
       </div>
 
       <div class="flex flex-col">
@@ -102,14 +102,14 @@ const updateContacts = async () => {
       </div>
 
       <div class="flex flex-col">
-        <p class="label-style">Status</p>
+        <!-- <p class="label-style">Status</p>
         <q-select
           v-model="getContacts.status"
           :options="statusOptions"
           dense
           outlined
           :disable="!editMode"
-        />
+        /> -->
       </div>
     </div>
 
