@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { differenceInMinutes, format, intlFormatDistance } from "date-fns";
 import { storeToRefs } from "pinia";
 import { IChat, MessageType } from "src/types/MessagingTypes";
@@ -95,6 +95,17 @@ const { selectedChatId, selectedTab } = storeToRefs(messagingStore);
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const name = computed(() => getChatNameEn(props.data));
 const nameContact = computed(() => getContactNameEn(props.data));
+
+let dateTimer: any;
+const now = ref(new Date());
+onMounted(() => {
+  dateTimer = setInterval(() => {
+    console.log("1");
+    now.value = new Date();
+  }, 30000);
+});
+
+onUnmounted(() => clearInterval(dateTimer));
 
 const messageTemplate = (content: any) => {
   const components = content?.template?.components ?? content?.components;
@@ -135,12 +146,12 @@ const time = computed<string>(() => {
 const waitingTime = computed(() => {
   const { last_message: lastMessage } = props.data;
   const dateCreated = lastMessage?.date_created;
-  return intlFormatDistance(new Date(dateCreated), new Date());
+  return intlFormatDistance(new Date(dateCreated), now.value);
 });
 const waitingTimeStatus = computed(() => {
   const { last_message: lastMessage } = props.data;
   const dateCreated = lastMessage?.date_created;
-  const minutes = differenceInMinutes(new Date(), new Date(dateCreated));
+  const minutes = differenceInMinutes(now.value, new Date(dateCreated));
   switch (true) {
     case minutes > 60 && minutes < 120:
       return "orange-status";
