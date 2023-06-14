@@ -252,7 +252,7 @@
             <img src="~assets/images/pin.svg" />
             <q-uploader
               ref="fileUplader"
-              accept=".mp4,.jpg,.jpeg,.png,.pdf"
+              :accept="supportedFiletypes.join()"
               class="hidden invisible"
               :filter="fileFilter"
               @added="uploadFile"
@@ -468,6 +468,13 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const botList: Ref<any[]> = ref([]);
+const supportedFiletypes: Ref<string[]> = ref([
+  ".mp4",
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".pdf",
+]);
 const messageImageDialogRef = ref();
 const {
   getSelectedChat,
@@ -910,6 +917,20 @@ const uploadFile = async (files: readonly File[]) => {
   console.log(file.name, file.type);
   getLimitByType(file.type);
   if (!file) return;
+
+  const fileType = `.${file.type.split("/")[1]}`;
+  console.log("supported files:", supportedFiletypes.value);
+  console.log("current file types:", fileType);
+  if (!supportedFiletypes.value.includes(fileType)) {
+    Notify.create({
+      message: `Media Unsupported`,
+      type: "negative",
+      position: "top",
+    });
+
+    fileUplader.value?.removeQueuedFiles();
+    return;
+  }
 
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
