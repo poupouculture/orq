@@ -109,7 +109,7 @@
           :initial-index="0"
           reverse
           :offset="300"
-          scroll-target=".scroll_area"
+          :scroll-target="scrollAreaRef"
         >
           <ChatMessage
             v-for="item in messages"
@@ -524,7 +524,7 @@ const members = computed<Member[]>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  scrollToBottom();
+  // scrollToBottom();
   return cachedMessage?.map((message, index) => {
     return {
       ...message,
