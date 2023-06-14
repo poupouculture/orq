@@ -82,14 +82,14 @@ const tabs = ref([
     name: "contact",
     label: "Contact",
   },
-  {
-    name: "remark",
-    label: "Remark",
-  },
-  {
-    name: "service_record",
-    label: "Service Record",
-  },
+  // {
+  //   name: "remark",
+  //   label: "Remark",
+  // },
+  // {
+  //   name: "service_record",
+  //   label: "Service Record",
+  // },
 ]);
 
 // Methods
