@@ -46,6 +46,7 @@ export const getChatByID = async (id: string) => {
 };
 
 export const getContactByChatId = async (id: string) => {
+  console.log("DELETE THIS USELESS FUNCTION: getContactByChatId....");
   const params = {
     limit: 1,
     page: 1,

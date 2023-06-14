@@ -40,12 +40,13 @@
           <q-separator />
           <div>
             <q-list>
-              <q-item to="/me" clickable v-close-popup>
+              <!-- ??? 0614 hide -->
+              <!-- <q-item to="/me" clickable v-close-popup>
                 <q-item-section avatar>
                   <q-icon name="assignment" />
                 </q-item-section>
                 <q-item-section>Personal Information</q-item-section>
-              </q-item>
+              </q-item> -->
               <q-item
                 href="https://synque.io/privacy"
                 target="_blank"
@@ -62,7 +63,7 @@
                 <q-item-section avatar>
                   <q-icon name="business" />
                 </q-item-section>
-                <q-item-section> About WABA </q-item-section>
+                <q-item-section> About ChaQ </q-item-section>
               </q-item>
 
               <q-separator />

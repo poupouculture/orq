@@ -94,10 +94,12 @@
 
     <q-separator class="mx-2" size="1px" inset />
     <!-- message content -->
-    <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption()">
+    <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption">
       <div
         class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area"
-        style="height: 75%"
+        :style="`height: ${
+          getSelectedChat.status === ChatTypes.ONGOING ? '75%' : '88%'
+        }`"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -137,7 +139,7 @@
             isReply
           />
           <q-input
-            @click="hideBotOption()"
+            @click="hideBotOption"
             v-model="message"
             placeholder="Enter Message"
             dense
@@ -656,11 +658,23 @@ const sendMessage = async () => {
     is_cache: true,
     waba_associated_message_id:
       replayMessage.value?.waba_message_id || replayMessage.value?.message_id,
+    waba_associated_message: null,
   });
-  cachedMessage.push(newMessage);
+  console.log("newMessage", newMessage);
+
   const wabaMessageId =
     replayMessage.value?.waba_message_id || replayMessage.value?.message_id;
-
+  if (wabaMessageId) {
+    // newMessage.waba_associated_message = replayMessage.value;
+    if (!newMessage.waba_associated_message) {
+      newMessage.waba_associated_message =
+        await messagingStore.associatedMessageGet(
+          newMessage.waba_associated_message_id
+        );
+    }
+  }
+  console.log("---newMessage", newMessage);
+  cachedMessage.push(newMessage);
   scrollToBottom();
   messagingStore.setReplayMessage();
 
@@ -905,6 +919,7 @@ const uploadFile = async (files: readonly File[]) => {
 
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
+    // ??? todo, new message needs to ....
     id: Date.now(),
     content: {
       url: "",
@@ -912,7 +927,7 @@ const uploadFile = async (files: readonly File[]) => {
       duration: time.value,
       local: true,
       media_id: decodeURIComponent(file.name),
-      file_name: decodeURIComponent(file.name),
+      file_name: file.name,
     },
     status: MessageStatus.SENT,
     direction: Direction.OUTGOING,
@@ -926,6 +941,7 @@ const uploadFile = async (files: readonly File[]) => {
   const newFileName = new File([file], encodeURIComponent(file.name), {
     type: file.type,
   });
+  console.log(newFileName);
 
   // bodyFormData.append("caption", file.name);
   bodyFormData.append("file", newFileName);

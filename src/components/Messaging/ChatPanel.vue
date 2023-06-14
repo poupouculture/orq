@@ -1,6 +1,6 @@
 <template>
   <q-list
-    class="chat-panel bg-[#f2f3f7] pb-14 h-full flex flex-col overflow-x-hidden"
+    class="chat-panel bg-[#f2f3f7] pb-14 h-screen flex flex-col overflow-x-hidden"
   >
     <!-- search part -->
     <q-item-label header>

@@ -77,6 +77,8 @@ const selectChat = async (chat: IChat) => {
   }
   getContactById(chat);
   messagingStore.onSelectChat(chat.id);
+  console.log("SELECT CHAT");
+  console.log(chat);
   if (!chat.contacts_id) {
     const contact = await getContactByChatId(chat.id);
     chat.contacts_id = contact.contacts_id;

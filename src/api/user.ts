@@ -4,26 +4,24 @@ export const getUsers = async ({
   limit = 10,
   page = 1,
   search = undefined,
+  ids = [],
 }) => {
   const fields = `id,email,first_name,last_name,gender,date_created,position,role.name`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
   try {
-    const users = await api.get("/users", {
-      params: {
-        fields: `${fields}`,
-        limit,
-        offset,
-        meta: "*",
-        search,
-        filter: {
-          _or: [
-            { role: { name: { _eq: "CS-Manager" } } },
-            { role: { name: { _eq: "CS" } } },
-          ],
-        },
-      },
-    });
+    const params = {
+      fields: `${fields}`,
+      limit,
+      offset,
+      meta: "*",
+      search,
+      "filter[_or][0][role][name][_in]": "CS,CS-Manager",
+    } as any;
+    if (ids?.length) {
+      params["filter[_and][0][id][_nin]"] = ids.join();
+    }
+    const users = await api.get("/users", { params });
     return users;
   } catch (error) {}
 };

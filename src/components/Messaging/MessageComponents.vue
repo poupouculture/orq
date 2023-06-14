@@ -29,7 +29,9 @@
     <div
       v-if="
         !content?.type ||
-        (content?.type === MessageType.TEXT && content?.mime_type === undefined)
+        (content?.type === MessageType.TEXT &&
+          content?.mime_type === undefined) ||
+        content?.type == MessageType.REACTION
       "
       class="break-words"
     >
@@ -49,21 +51,27 @@
             <!-- {{ message.user_name ?? message.contact_company_name }} -->
           </div>
           <!-- {{ message?.waba_associated_message_id }} -->
-          {{ messageContent(message?.waba_associated_message_id) }}
-          <!-- <component
+          <!-- ****TYPE*****
+          {{ message?.waba_associated_message?.type }} -->
+          <!-- ppp**TYPE2****ppp -->
+          <!-- {{ message?.last_associated_message_content?.type }} -->
+          <!-- zzz**VALUE/OBJECT***zzz -->
+          {{ messageContentType(message) }}
+          <component
             ref="component"
-            :is="componentInnerName"
-            :src="message.waba_associated_message_id?.content?.url"
+            :is="componentNameGet(messageContentGet(message))"
+            :src="messageContentGet(message).url"
             :name="
-              isDocument(message?.waba_associated_message_id?.content)
-                ? message?.waba_associated_message_id?.content?.file_name
-                : message?.waba_associated_message_id?.content?.media_id
+              isDocument(messageContentGet(message))
+                ? content.file_name
+                : content.media_id
             "
-            :caption="message?.waba_associated_message_id?.content?.caption"
-          /> -->
+            :caption="messageContentGet(message).caption"
+            :is-send="isSend"
+          />
         </div>
       </div>
-      {{ messageContent(message) }}
+      {{ messageContentText(message) }}
     </div>
   </div>
 </template>
@@ -117,7 +125,8 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
-  // console.log("content:", content);
+  console.log("document_found:", content);
+  console.log("content:", content);
   // console.log(
   //   "is document:",
   //   content?.type === MessageType.DOCUMENT ||
@@ -132,14 +141,73 @@ const isDocument = (content: any) => {
   );
 };
 
-const messageContent = (content: any) => {
-  if (content?.content?.error_body) {
-    const error = content?.content?.error_body;
+/**
+ *
+ * @param msg message from API or Socket
+ */
+const messageContentText = (msg: any) => {
+  if (msg?.content?.error_body) {
+    const error = msg?.content?.error_body;
     if (error.errors) return error.errors[0]?.title;
     if (error.error_data) return error.error_data.details;
     if (error.message) return error.message;
   }
-  return content?.content?.text ?? content.content;
+  if (msg?.text) {
+    return msg.text;
+  }
+
+  if (msg?.content?.emoji) {
+    // console.log("msg?.content?.emoji", msg?.content?.emoji);
+    return msg?.content?.emoji;
+  }
+  return msg?.content?.text ?? msg?.content;
+};
+
+/**
+ *
+ * @param msg message from associated message
+ */
+const messageContentType = (msg: any) => {
+  const message =
+    msg?.waba_associated_message?.content ??
+    msg?.last_associated_message_content;
+  if (!message) {
+    return "Unsupported Media";
+  }
+  const messageType = message?.type;
+  console.log(messageType);
+  switch (messageType) {
+    case MessageType.IMAGE:
+      return MessageType.IMAGE;
+    case MessageType.AUDIO:
+      return MessageType.AUDIO;
+    case MessageType.DOCUMENT:
+      return MessageType.DOCUMENT;
+    case MessageType.APPLICATION:
+      return MessageType.APPLICATION;
+    case MessageType.VIDEO:
+      return MessageType.VIDEO;
+    // case MessageType.REACTION: // ???
+    //   return components.REACTION;
+  }
+  if (msg?.content?.error_body) {
+    const error = msg?.content?.error_body;
+    if (error.errors) return error.errors[0]?.title;
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  if (msg?.text) {
+    return msg.text;
+  }
+  return message.text;
+  // return msg?.content?.text ?? msg?.content;
+};
+
+const messageContentGet = (msg: any) => {
+  const message =
+    msg?.waba_associated_message?.content ??
+    msg?.last_associated_message_content;
+  return message;
 };
 
 const components = shallowReactive({
@@ -148,28 +216,7 @@ const components = shallowReactive({
   MessageDocument,
   MessageVideo,
 });
-// const associatedContent = computed(() => message ));
-// const componentInnerName = computed((msg: any) => {
-//   if (msg?.type === MessageType.TEXT && msg?.mime_type !== undefined) {
-//     return components.MessageDocument;
-//   }
-//   switch (msg?.type) {
-//     case MessageType.IMAGE:
-//       return components.MessageImage;
-//     case MessageType.AUDIO:
-//       return components.MessageAudio;
-//     case MessageType.DOCUMENT:
-//       return components.MessageDocument;
-//     case MessageType.APPLICATION:
-//       return components.MessageDocument;
-//     case MessageType.VIDEO:
-//       return components.MessageVideo;
-//     // case MessageType.REACTION: ???
-//     //   return components.REACTION;
-//     default:
-//       return null;
-//   }
-// });
+
 const componentName = computed(() => {
   if (
     props.content?.type === MessageType.TEXT &&
@@ -191,9 +238,31 @@ const componentName = computed(() => {
     // case MessageType.REACTION: // ???
     //   return components.REACTION;
     default:
-      return null;
+      return "null";
   }
 });
+
+const componentNameGet = (content: any) => {
+  if (content?.type === MessageType.TEXT && content?.mime_type !== undefined) {
+    return components.MessageDocument;
+  }
+  switch (content?.type) {
+    case MessageType.IMAGE:
+      return components.MessageImage;
+    case MessageType.AUDIO:
+      return components.MessageAudio;
+    case MessageType.DOCUMENT:
+      return components.MessageDocument;
+    case MessageType.APPLICATION:
+      return components.MessageDocument;
+    case MessageType.VIDEO:
+      return components.MessageVideo;
+    // case MessageType.REACTION: // ???
+    //   return components.REACTION;
+    default:
+      return null;
+  }
+};
 defineExpose({
   component,
 });

@@ -17,7 +17,7 @@
 
           <img id="image-preview" v-show="selectedImage !== null" />
           <button
-            class="w-full mx-auto border border-dashed py-36 text-center text-2xl text-gray-400"
+            class="w-full mx-auto border border-dashed py-36 text-center text-2xl text-gray-400 rounded-md"
             @click="uplader?.pickFiles"
             v-if="selectedImage === null"
           >
@@ -32,13 +32,13 @@
             Click here to choose image
           </button>
 
-          <input
+          <textarea
             type="text"
-            class="w-full mt-4 p-2 border"
+            class="w-full mt-4 p-2 border rounded-md focus:outline-none focus:ring focus:ring-primary/30 focus:border-primary"
             placeholder="Type your caption here..."
             v-model="caption"
             v-if="selectedImage !== null"
-          />
+          ></textarea>
         </div>
       </div>
 
@@ -111,11 +111,13 @@ const preview = (fileList: any) => {
 
 const hide = () => {
   emit("hide");
+  caption.value = "";
 };
 
 const send = () => {
   emit("send", localFileList.value, caption.value);
   emit("hide");
+  caption.value = "";
 };
 
 onMounted(() => {
