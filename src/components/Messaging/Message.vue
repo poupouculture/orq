@@ -467,6 +467,7 @@ const leftDrawerOpen: any = inject("leftDrawerOpen");
 const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
+const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -524,7 +525,7 @@ const members = computed<Member[]>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  // scrollToBottom();
+  scrollToBottom();
   return cachedMessage?.map((message, index) => {
     return {
       ...message,
@@ -546,6 +547,7 @@ const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   console.log("loadMore:----------------");
+  isLoadMore.value = true;
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
     return;
@@ -603,6 +605,10 @@ watch(
 const scrollToBottom = async () => {
   await nextTick();
   if (!scrollAreaRef.value) return;
+  if (isLoadMore.value) {
+    isLoadMore.value = false;
+    return;
+  }
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 };
 
