@@ -963,6 +963,13 @@ const uploadFile = async (files: readonly File[]) => {
   fileUplader.value?.removeQueuedFiles();
 
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+
+  // clear uploaded file from cache
+  cachedChatMessages.value[getSelectedChatId.value] = cachedChatMessages.value[
+    getSelectedChatId.value
+  ].filter((cm) => cm.id !== newMessage.id);
+  // end clear uploaded file from cache
+
   messageCallback(data, newMessage);
 };
 
