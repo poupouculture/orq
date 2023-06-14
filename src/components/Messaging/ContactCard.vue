@@ -22,6 +22,7 @@
         {{ time }}
       </q-item-label>
       <q-badge
+        :class="{ 'mb-3.5': nameContact !== 'Visitor' && nameContact.length }"
         v-show="props.data.totalUnread"
         rounded
         color="red"
@@ -29,7 +30,13 @@
       />
       <div
         class="absolute bottom-2 flex items-center text-xs gap-x-1"
-        :class="[{ '-bottom-0.5': props.data.totalUnread }, waitingTimeStatus]"
+        :class="[
+          {
+            '-bottom-1': props.data.totalUnread && nameContact == 'Visitor',
+          },
+          waitingTimeStatus,
+          { '-bottom-0.5': nameContact !== 'Visitor' && nameContact.length },
+        ]"
         v-if="selectedTab === ChatTypes.PENDING"
       >
         <svg
