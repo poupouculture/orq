@@ -14,6 +14,7 @@
         <q-input disable outlined v-model="form.number" dense />
         <q-checkbox
           :true-value="true"
+          :disable="true"
           v-model="form.is_active"
           :false-value="false"
           label="Contact is Active"
