@@ -44,14 +44,16 @@ const leftDrawerOpen: any = inject("leftDrawerOpen");
 const { chatsList } = storeToRefs(messagingStore);
 const list = computed(() =>
   chatsList.value.filter((chat) => {
-    const chatName = chat?.customers_id
+    const customerName = chat?.customers_id
       ? chat?.customer_company_name_en?.toLowerCase()
       : "visitor".toLowerCase();
-
+    const contactFirstName = chat?.contact_first_name?.toLocaleLowerCase();
     return (
       chat.status === props.type &&
-      (chatName?.includes(props.filterText) ||
-        chat.name.includes(props.filterText))
+      (customerName?.includes(props.filterText) ||
+        chat.name?.includes(props.filterText) ||
+        contactFirstName?.includes(props.filterText))
+      // || chat.members?.includes(props.filterText))
     );
   })
 );
