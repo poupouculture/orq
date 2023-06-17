@@ -34,6 +34,7 @@
           v-model="form.preferred_language"
           :options="preferedLanguageOptions"
           dense
+          :disable="true"
           outlined
           map-options
           emit-value

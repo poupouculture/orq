@@ -113,7 +113,7 @@ const updateContacts = async () => {
           emit-value
           option-value="value"
           option-label="label"
-          :disable="!editMode"
+          :disable="true"
         />
       </div>
     </div>
