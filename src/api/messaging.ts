@@ -115,6 +115,14 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       context: {},
     },
   };
+  let url = "/waba/handle-cs-waba-message";
+  if (type === "text") {
+    url = "/whatsapp/message/waba";
+  }
+  if (isTemplate) {
+    // ChatKeywords.SEND_TEMPLATE_MESSAGE;
+    url = "/whatsapp/waba-send-template";
+  }
 
   if (isTemplate) {
     if (isIncludedComponent) {
@@ -200,10 +208,6 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   }
 
   currPayload.waba_content.context = { message_id: messageId };
-  let url = "/waba/handle-cs-waba-message";
-  if (type === "text") {
-    url = "/whatsapp/message/waba";
-  }
   const data = await api.post(url, currPayload);
 
   return data.data || null;
