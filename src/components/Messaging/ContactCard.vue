@@ -105,7 +105,7 @@ let dateTimer: any;
 const now = ref(new Date());
 onMounted(() => {
   dateTimer = setInterval(() => {
-    console.log("1");
+    // console.log("1");
     now.value = new Date();
   }, 30000);
 });
