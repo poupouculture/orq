@@ -60,13 +60,13 @@
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
-            :src="messageContentGet(message).url"
+            :src="messageContentGet(message)?.url"
             :name="
               isDocument(messageContentGet(message))
                 ? content.file_name
                 : content.media_id
             "
-            :caption="messageContentGet(message).caption"
+            :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
           />
         </div>
