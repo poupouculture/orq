@@ -125,8 +125,8 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
-  console.log("document_found:", content);
-  console.log("content:", content);
+  // console.log("document_found:", content);
+  // console.log("content:", content);
   // console.log(
   //   "is document:",
   //   content?.type === MessageType.DOCUMENT ||
