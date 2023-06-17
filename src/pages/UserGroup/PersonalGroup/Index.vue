@@ -325,6 +325,9 @@ watch(paginationCustomersTable, (val: any, old: any) => {
     getCustomerGroupData();
   }
 });
+const printUniq = (string: string, index: number) => {
+  return string.split("/")[index];
+};
 </script>
 <template>
   <q-layout view="hHh lpR fFf" class="mt-10">
@@ -426,17 +429,29 @@ watch(paginationCustomersTable, (val: any, old: any) => {
 
                 <!-- customers -->
                 <div
-                  class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
+                  class="flex flex-row justify-between rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
                   v-for="(personal, index) in group.customer_groups"
                   :key="index"
                 >
                   <div
-                    class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
+                    class="flex items-center w-full flex-nowrap overflow-x-hidden px-4 py-2"
                   >
-                    <div class="truncate ml-4">
-                      <div class="relative truncate">
+                    <div>
+                      <div class="relative">
                         {{ personal.customer_groups_id?.name }}
                       </div>
+                      <template
+                        v-if="personal.customer_groups_id?.type === 'personal'"
+                      >
+                        <p>
+                          cust_code:
+                          {{ printUniq(personal.customer_groups_id?.uniq, 1) }}
+                        </p>
+                        <p>
+                          loc_code:
+                          {{ printUniq(personal.customer_groups_id?.uniq, 2) }}
+                        </p>
+                      </template>
                       <div class="text-gray-400 cursor-pointer truncate">
                         {{ cgSource(personal.customer_groups_id?.source) }}
                       </div>
