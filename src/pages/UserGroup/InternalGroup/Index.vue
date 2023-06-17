@@ -31,6 +31,14 @@
         <span>Add</span>
       </q-btn>
     </div>
+    <div class="flex items-center justify-center mt-20">
+      <BasePagination
+        :max="totalPage()"
+        :max-pages="10"
+        @update-model="changePage"
+        v-model="pagination.page"
+      />
+    </div>
     <!-- Content -->
     <h5 class="uppercase mt-6 text-gray-500">Pinned</h5>
     <div v-if="loading" class="flex justify-center">
@@ -108,14 +116,6 @@
               </template>
             </div>
           </div>
-        </div>
-        <div class="flex items-center justify-center mt-20">
-          <BasePagination
-            :max="totalPage()"
-            :max-pages="10"
-            @update-model="changePage"
-            v-model="pagination.page"
-          />
         </div>
       </template>
       <div v-else class="text-center text-gray-700">

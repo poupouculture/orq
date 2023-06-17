@@ -25,7 +25,8 @@ export const getInternalGroups = async ({
     "filter[status][_eq]": "published",
     offset,
     fields:
-      "id,customer_groups.*,customer_groups.*.*,name,type,status,users.*.id,users.*.avatar,users.*.email,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
+      // "id,customer_groups.*,customer_groups.*.*,name,type,status,users.*.id,users.*.avatar,users.*.email,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
+      "id,name,type,status,users.*.id,users.*.avatar,users.*.email,users.*.first_name,users.*.last_name,users.*.avatar,users.*.role.name",
     meta: "*",
   } as any;
   if (type) {
