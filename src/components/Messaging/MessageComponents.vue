@@ -51,20 +51,19 @@
             <!-- {{ message.user_name ?? message.contact_company_name }} -->
           </div>
           <!-- {{ message?.waba_associated_message_id }} -->
-          <!-- ****TYPE*****
-          {{ message?.waba_associated_message?.type }} -->
-          <!-- ppp**TYPE2****ppp -->
+          <!-- {{ message?.waba_associated_message?.type }} -->
+
+          <!-- can display content type here -->
           <!-- {{ message?.last_associated_message_content?.type }} -->
-          <!-- zzz**VALUE/OBJECT***zzz -->
-          {{ messageContentType(message) }}
+          <!-- {{ messageContentType(message) }} -->
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
             :src="messageContentGet(message)?.url"
             :name="
               isDocument(messageContentGet(message))
-                ? content.file_name
-                : content.media_id
+                ? messageContentGet(message).file_name
+                : messageContentGet(message).media_id
             "
             :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
@@ -167,41 +166,41 @@ const messageContentText = (msg: any) => {
  *
  * @param msg message from associated message
  */
-const messageContentType = (msg: any) => {
-  const message =
-    msg?.waba_associated_message?.content ??
-    msg?.last_associated_message_content;
-  if (!message) {
-    return "Unsupported Media";
-  }
-  const messageType = message?.type;
-  console.log(messageType);
-  switch (messageType) {
-    case MessageType.IMAGE:
-      return MessageType.IMAGE;
-    case MessageType.AUDIO:
-      return MessageType.AUDIO;
-    case MessageType.DOCUMENT:
-      return MessageType.DOCUMENT;
-    case MessageType.APPLICATION:
-      return MessageType.APPLICATION;
-    case MessageType.VIDEO:
-      return MessageType.VIDEO;
-    // case MessageType.REACTION: // ???
-    //   return components.REACTION;
-  }
-  if (msg?.content?.error_body) {
-    const error = msg?.content?.error_body;
-    if (error.errors) return error.errors[0]?.title;
-    if (error.error_data) return error.error_data.details;
-    if (error.message) return error.message;
-  }
-  if (msg?.text) {
-    return msg.text;
-  }
-  return message.text;
-  // return msg?.content?.text ?? msg?.content;
-};
+// const messageContentType = (msg: any) => {
+//   const message =
+//     msg?.waba_associated_message?.content ??
+//     msg?.last_associated_message_content;
+//   if (!message) {
+//     return "Unsupported Media";
+//   }
+//   const messageType = message?.type;
+//   console.log(messageType);
+//   switch (messageType) {
+//     case MessageType.IMAGE:
+//       return MessageType.IMAGE;
+//     case MessageType.AUDIO:
+//       return MessageType.AUDIO;
+//     case MessageType.DOCUMENT:
+//       return MessageType.DOCUMENT;
+//     case MessageType.APPLICATION:
+//       return MessageType.APPLICATION;
+//     case MessageType.VIDEO:
+//       return MessageType.VIDEO;
+//     // case MessageType.REACTION: // ???
+//     //   return components.REACTION;
+//   }
+//   if (msg?.content?.error_body) {
+//     const error = msg?.content?.error_body;
+//     if (error.errors) return error.errors[0]?.title;
+//     if (error.error_data) return error.error_data.details;
+//     if (error.message) return error.message;
+//   }
+//   if (msg?.text) {
+//     return msg.text;
+//   }
+//   return message.text;
+//   // return msg?.content?.text ?? msg?.content;
+// };
 
 const messageContentGet = (msg: any) => {
   const message =
