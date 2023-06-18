@@ -733,10 +733,11 @@ const activateChat = async () => {
         });
       else {
         messagingStore.setSelectedTab(ChatTypes.ONGOING);
-        messagingStore.updateChatsList(
-          getSelectedChat.value,
-          ChatTypes.ONGOING
-        );
+        getSelectedChat.value.status = ChatTypes.ONGOING;
+        // messagingStore.updateChatsList(
+        //   getSelectedChat.value,
+        //   ChatTypes.ONGOING
+        // );
       }
     } catch (error: any) {}
     Loading.hide();
