@@ -500,7 +500,7 @@ const toogleChatOption = () => {
 };
 
 const nameEn = computed<string>(() => {
-  return getChatNameEn(getSelectedChat.value);
+  return getChatNameEn(getSelectedChat.value, true);
 });
 
 const chatNumber = computed<string>(() =>
