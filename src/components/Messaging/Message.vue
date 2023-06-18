@@ -683,12 +683,17 @@ const sendMessage = async () => {
   cachedMessage.push(newMessage);
   scrollToBottom();
   messagingStore.setReplayMessage();
-  message.value = "";
 
   const timestamp = getSelectedChat.value?.expiration_timestamp;
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
+  if (!isChatExpired.value && isTemplate.value) {
+    isTemplate.value = false;
+    newMessage.content = message.value;
+  }
+
+  message.value = "";
   try {
     const data = await messagingStore.sendChatTextMessage({
       chatId: getSelectedChatId.value,
@@ -734,10 +739,11 @@ const activateChat = async () => {
         });
       else {
         messagingStore.setSelectedTab(ChatTypes.ONGOING);
-        messagingStore.updateChatsList(
-          getSelectedChat.value,
-          ChatTypes.ONGOING
-        );
+        getSelectedChat.value.status = ChatTypes.ONGOING;
+        // messagingStore.updateChatsList(
+        //   getSelectedChat.value,
+        //   ChatTypes.ONGOING
+        // );
       }
     } catch (error: any) {}
     Loading.hide();
@@ -757,6 +763,7 @@ const sendMessageTemplate = (
   headType: string
 ) => {
   templateName.value = name;
+  console.log("template body:", msg);
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;

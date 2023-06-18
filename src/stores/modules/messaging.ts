@@ -12,6 +12,7 @@ import {
   getChatMessagesByChatId,
   sendChatTextMessage,
   getContact,
+  getChatsByType,
   getMessagesById,
 } from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
@@ -144,6 +145,49 @@ const useMessagingStore = defineStore("messaging", {
         item.last_message = JSON.parse(item.last_message);
         return item;
       });
+    },
+    async loadMoreChats(
+      type?: ChatTypes,
+      pageNumber?: number,
+      limit?: number,
+      order?: string
+    ) {
+      const chats = await getChatsByType(type, pageNumber, limit, order);
+
+      chats.forEach((loadedChat: IChat) => {
+        console.log("loaded chat:", loadedChat);
+
+        const checker = this.chatsList.find(
+          (chat) => chat.id === loadedChat.id
+        );
+
+        console.log("is listed:", checker);
+
+        if (!checker) {
+          if (loadedChat.last_message) {
+            loadedChat.last_message = JSON.parse(
+              loadedChat.last_message.toString()
+            );
+          } else {
+            loadedChat.last_message = {
+              id: 0,
+              content: {
+                type: "text",
+                text: "",
+              },
+              direction: "incoming",
+              is_cache: true,
+              contact_company_name: "",
+              contact_customer_name: "",
+              status: MessageStatus.RECEIVE,
+              date_created: "",
+            };
+          }
+          this.chatsList.push(loadedChat);
+        }
+      });
+
+      return chats;
     },
 
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {

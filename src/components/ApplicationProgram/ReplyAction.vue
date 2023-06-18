@@ -22,7 +22,7 @@ const props = defineProps({
     type: Number,
     default: () => 0,
   },
-  replyText: {
+  replyTextProps: {
     type: String,
     default: () => "",
   },
@@ -44,6 +44,6 @@ const deleteReply = () => {
 };
 
 onMounted(() => {
-  replyText.value = props.replyText;
+  replyText.value = props.replyTextProps;
 });
 </script>
