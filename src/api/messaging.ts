@@ -227,10 +227,15 @@ export const startNewChat = async (customerId: string) => {
 };
 
 export const updateChatStatus = async (id: string, userId: string) => {
-  const data = await api.post(`/waba/assign-chat-user`, {
+  // ??? delete later. after api confirmed
+  // const data = await api.post(`/waba/assign-chat-user`, {
+  //   chat_id: id,
+  //   user_id: userId,
+  //   take_it: true,
+  // });
+  console.log(userId);
+  const data = await api.post(`/chat/take`, {
     chat_id: id,
-    user_id: userId,
-    take_it: true,
   });
 
   return data;

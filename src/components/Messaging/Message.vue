@@ -567,11 +567,11 @@ watch(
   () => getSelectedChat.value?.conversation_type,
   async (val) => {
     console.log(
-      "SELECTED_CHAT:converation_type changed to - ",
+      "SELECTED_CHAT:conversation_type changed to: - ",
       conversationType
     );
     conversationType.value = val;
-    isPending.value = conversationType.value === "pending_inbound";
+    isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
   }
 );
 
@@ -595,8 +595,8 @@ watch(
     } else {
       isChatExpired.value = false;
     }
-    console.log("isChatExpired.value:");
-    console.log(isChatExpired.value);
+    // console.log("isChatExpired.value:");
+    // console.log(isChatExpired.value);
   }
 );
 
@@ -721,12 +721,18 @@ const activateChat = async () => {
       const result = await updateChatStatus(chatId, userId?.id);
       if (!result.data.status)
         Notify.create({
-          message: result.data.message || "User already assigned",
+          message: result.data.message || "Cannot Take it. Refresh Page.",
           type: "negative",
           color: "red-8",
           position: "top",
         });
-      else messagingStore.setSelectedTab(ChatTypes.ONGOING);
+      else {
+        messagingStore.setSelectedTab(ChatTypes.ONGOING);
+        messagingStore.updateChatsList(
+          getSelectedChat.value,
+          ChatTypes.ONGOING
+        );
+      }
     } catch (error: any) {}
     Loading.hide();
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);

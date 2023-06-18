@@ -237,12 +237,12 @@ const useMessagingStore = defineStore("messaging", {
       this.chatsList[index].mode = mode;
     },
     changeConversationType(id: string, conversationType: string) {
-      console.log("changeConversationType-----");
+      console.log("  changeConversationType----fnc");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].conversation_type = conversationType;
     },
     changeExpiry(id: string, expirationTimestamp: number) {
-      console.log("changeExpiry-----");
+      console.log("  changeExpiry-----fnc");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].expiration_timestamp = expirationTimestamp;
     },
