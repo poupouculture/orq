@@ -109,7 +109,7 @@
           :initial-index="0"
           reverse
           :offset="300"
-          scroll-target=".scroll_area"
+          :scroll-target="scrollAreaRef"
         >
           <ChatMessage
             v-for="item in messages"
@@ -467,6 +467,7 @@ const leftDrawerOpen: any = inject("leftDrawerOpen");
 const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
+const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -546,6 +547,7 @@ const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   console.log("loadMore:----------------");
+  isLoadMore.value = true;
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
     return;
@@ -603,6 +605,10 @@ watch(
 const scrollToBottom = async () => {
   await nextTick();
   if (!scrollAreaRef.value) return;
+  if (isLoadMore.value) {
+    isLoadMore.value = false;
+    return;
+  }
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 };
 
