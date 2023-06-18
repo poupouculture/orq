@@ -109,7 +109,7 @@
           :initial-index="0"
           reverse
           :offset="300"
-          scroll-target=".scroll_area"
+          :scroll-target="scrollAreaRef"
         >
           <ChatMessage
             v-for="item in messages"
@@ -467,6 +467,7 @@ const leftDrawerOpen: any = inject("leftDrawerOpen");
 const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
+const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
 const messageImageDialogRef = ref();
 const {
@@ -546,6 +547,7 @@ const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   console.log("loadMore:----------------");
+  isLoadMore.value = true;
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
     return;
@@ -567,11 +569,11 @@ watch(
   () => getSelectedChat.value?.conversation_type,
   async (val) => {
     console.log(
-      "SELECTED_CHAT:converation_type changed to - ",
+      "SELECTED_CHAT:conversation_type changed to: - ",
       conversationType
     );
     conversationType.value = val;
-    isPending.value = conversationType.value === "pending_inbound";
+    isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
   }
 );
 
@@ -595,14 +597,18 @@ watch(
     } else {
       isChatExpired.value = false;
     }
-    console.log("isChatExpired.value:");
-    console.log(isChatExpired.value);
+    // console.log("isChatExpired.value:");
+    // console.log(isChatExpired.value);
   }
 );
 
 const scrollToBottom = async () => {
   await nextTick();
   if (!scrollAreaRef.value) return;
+  if (isLoadMore.value) {
+    isLoadMore.value = false;
+    return;
+  }
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 };
 
@@ -677,12 +683,17 @@ const sendMessage = async () => {
   cachedMessage.push(newMessage);
   scrollToBottom();
   messagingStore.setReplayMessage();
-  message.value = "";
 
   const timestamp = getSelectedChat.value?.expiration_timestamp;
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
+  if (!isChatExpired.value && isTemplate.value) {
+    isTemplate.value = false;
+    newMessage.content = message.value;
+  }
+
+  message.value = "";
   try {
     const data = await messagingStore.sendChatTextMessage({
       chatId: getSelectedChatId.value,
@@ -721,12 +732,19 @@ const activateChat = async () => {
       const result = await updateChatStatus(chatId, userId?.id);
       if (!result.data.status)
         Notify.create({
-          message: result.data.message || "User already assigned",
+          message: result.data.message || "Cannot Take it. Refresh Page.",
           type: "negative",
           color: "red-8",
           position: "top",
         });
-      else messagingStore.setSelectedTab(ChatTypes.ONGOING);
+      else {
+        messagingStore.setSelectedTab(ChatTypes.ONGOING);
+        getSelectedChat.value.status = ChatTypes.ONGOING;
+        // messagingStore.updateChatsList(
+        //   getSelectedChat.value,
+        //   ChatTypes.ONGOING
+        // );
+      }
     } catch (error: any) {}
     Loading.hide();
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
@@ -745,6 +763,7 @@ const sendMessageTemplate = (
   headType: string
 ) => {
   templateName.value = name;
+  console.log("template body:", msg);
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;

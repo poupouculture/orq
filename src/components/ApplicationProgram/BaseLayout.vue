@@ -135,7 +135,7 @@
 
           <MediaChooser
             @updateMedia="updateMedia"
-            :media="media"
+            :media-props="media"
             v-if="header === 'MEDIA'"
           />
 
@@ -256,7 +256,7 @@
               :index="index"
               v-for="(replyText, index) of replies"
               :key="index"
-              :replyText="replyText"
+              :reply-text-props="replyText"
               @updateReply="updateReply"
               @deleteReply="deleteReply"
             />

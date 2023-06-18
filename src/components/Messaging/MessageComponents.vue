@@ -51,22 +51,22 @@
             <!-- {{ message.user_name ?? message.contact_company_name }} -->
           </div>
           <!-- {{ message?.waba_associated_message_id }} -->
-          <!-- ****TYPE*****
-          {{ message?.waba_associated_message?.type }} -->
-          <!-- ppp**TYPE2****ppp -->
+          <!-- {{ message?.waba_associated_message?.type }} -->
+
+          <!-- can display content type here -->
           <!-- {{ message?.last_associated_message_content?.type }} -->
-          <!-- zzz**VALUE/OBJECT***zzz -->
+          <!-- {{ messageContentText(message) }} -->
           {{ messageContentType(message) }}
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
-            :src="messageContentGet(message).url"
+            :src="messageContentGet(message)?.url"
             :name="
               isDocument(messageContentGet(message))
-                ? content.file_name
-                : content.media_id
+                ? messageContentGet(message).file_name
+                : messageContentGet(message).media_id
             "
-            :caption="messageContentGet(message).caption"
+            :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
           />
         </div>
@@ -125,8 +125,8 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
-  console.log("document_found:", content);
-  console.log("content:", content);
+  // console.log("document_found:", content);
+  // console.log("content:", content);
   // console.log(
   //   "is document:",
   //   content?.type === MessageType.DOCUMENT ||
@@ -164,7 +164,9 @@ const messageContentText = (msg: any) => {
 };
 
 /**
- *
+ * used to display type of message
+ * OR
+ * message text
  * @param msg message from associated message
  */
 const messageContentType = (msg: any) => {
