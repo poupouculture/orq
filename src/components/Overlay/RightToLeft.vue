@@ -3,7 +3,7 @@
     class="fixed w-full min-h-screen bg-black/50 z-[1000] top-0 bottom-0 right-0 flex justify-end"
     @click="showContent = false"
   >
-    <Transition name="right-to-left" appear @after-leave="close()">
+    <Transition name="right-to-left" appear @after-leave="closeOverlay()">
       <div
         class="w-full md:w-10/12 lg:w-8/12 h-full bg-white px-5 py-6 overflow-y-scroll"
         @click.stop
@@ -31,7 +31,7 @@ watch(
     showContent.value = false;
   }
 );
-const close = () => {
+const closeOverlay = () => {
   emits("close");
 };
 </script>

@@ -323,9 +323,10 @@ const showMoreChats = async () => {
 const initSocket = () => {
   try {
     socket.value.on("connect", () => {
-      console.log(userProfile.value);
+      console.log("SOCKET: connect -------");
+      console.log(userProfile.value?.id);
       socket.value.emit("join_chat", userProfile?.value?.id);
-      console.log("userProfile", userProfile.value);
+      // console.log("userProfile", userProfile.value);
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
@@ -337,13 +338,11 @@ const initSocket = () => {
       // });
     });
     socket.value.on("chat_updated", (data: SocketEvent) => {
-      console.log("chat_updated", data);
+      console.log("SOCKET: chat_updated", data);
       const chat = chatsList.value.find(
         (chat: IChat) => chat.id === data.document?.id
       );
       if (chat) {
-        messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
-        messagingStore.updateChatsList(chat, data.document?.status);
         if (data?.update_fields?.conversation_type) {
           console.log("SOCKET: conversation_type");
           messagingStore.changeConversationType(
@@ -352,21 +351,24 @@ const initSocket = () => {
           );
         }
         if (data?.update_fields?.status) {
-          console.log("SOCKET: status change");
+          messagingStore.updateChatsList(chat, data.document?.status);
+          console.log("  SOCKET:status change");
           console.log(getSelectedChat.value);
           if (
             getSelectedChat.value &&
             getSelectedChat.value.id === data.document.id
           ) {
             messagingStore.updateChatTabSelected(data.update_fields.status);
+            // messagingStore.setSelectedTab(data.update_fields.status);
           }
           let message;
           if (data.update_fields.status !== "waiting") {
             switch (data.update_fields.status) {
               case "ongoing":
-                message = `Chat has been taken by ${
-                  userProfile.value?.first_name
-                } ${userProfile.value?.last_name || ""}`;
+                // message = `Chat has been taken by ${
+                //   userProfile.value?.first_name
+                // } ${userProfile.value?.last_name || ""}`;
+                message = `Chat ${data.document?.name} has been taken. Check ONGOING state`;
                 break;
               case "closed":
                 message = `${data.document?.name} chat has been closed`;
@@ -388,6 +390,7 @@ const initSocket = () => {
         }
 
         if (data?.update_fields?.mode) {
+          messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
           if (
             getSelectedChat &&
             getSelectedChat.value.chat_id === data.document.id

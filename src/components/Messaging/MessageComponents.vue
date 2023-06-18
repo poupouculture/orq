@@ -60,13 +60,13 @@
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
-            :src="messageContentGet(message).url"
+            :src="messageContentGet(message)?.url"
             :name="
               isDocument(messageContentGet(message))
                 ? content.file_name
                 : content.media_id
             "
-            :caption="messageContentGet(message).caption"
+            :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
           />
         </div>
@@ -125,8 +125,8 @@ const messageTemplateHeader = (content: any) => {
 };
 
 const isDocument = (content: any) => {
-  console.log("document_found:", content);
-  console.log("content:", content);
+  // console.log("document_found:", content);
+  // console.log("content:", content);
   // console.log(
   //   "is document:",
   //   content?.type === MessageType.DOCUMENT ||

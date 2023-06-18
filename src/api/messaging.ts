@@ -123,6 +123,14 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       context: {},
     },
   };
+  let url = "/waba/handle-cs-waba-message";
+  if (type === "text") {
+    url = "/whatsapp/message/waba";
+  }
+  if (isTemplate) {
+    // ChatKeywords.SEND_TEMPLATE_MESSAGE;
+    url = "/whatsapp/waba-send-template";
+  }
 
   if (isTemplate) {
     if (isIncludedComponent) {
@@ -208,10 +216,6 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   }
 
   currPayload.waba_content.context = { message_id: messageId };
-  let url = "/waba/handle-cs-waba-message";
-  if (type === "text") {
-    url = "/whatsapp/message/waba";
-  }
   const data = await api.post(url, currPayload);
 
   return data.data || null;
@@ -231,10 +235,15 @@ export const startNewChat = async (customerId: string) => {
 };
 
 export const updateChatStatus = async (id: string, userId: string) => {
-  const data = await api.post(`/waba/assign-chat-user`, {
+  // ??? delete later. after api confirmed
+  // const data = await api.post(`/waba/assign-chat-user`, {
+  //   chat_id: id,
+  //   user_id: userId,
+  //   take_it: true,
+  // });
+  console.log(userId);
+  const data = await api.post(`/chat/take`, {
     chat_id: id,
-    user_id: userId,
-    take_it: true,
   });
 
   return data;
