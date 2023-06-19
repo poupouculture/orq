@@ -27,6 +27,7 @@ export const getPersonalGroups = async (
       limit,
       search,
       "filter[type][_eq]": type,
+      "filter[status][_eq]": "published",
       offset,
       fields: `id,name,type,status,${cgFields}`,
       meta: "*",
