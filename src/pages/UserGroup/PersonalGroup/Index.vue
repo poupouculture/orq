@@ -386,17 +386,17 @@ watch(paginationCustomersTable, (val: any, old: any) => {
                 :key="group.id"
               >
                 <div
-                  class="flex flex-row justify-between h-16 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
+                  class="flex flex-row justify-between min-h-[4rem] max-h-24 rounded-lg overflow-hidden bg-white border-gray-300 border shrink-0 w-full"
                 >
                   <div
-                    class="flex items-center w-10/12 flex-nowrap overflow-x-hidden"
+                    class="flex items-center w-10/12 flex-nowrap overflow-hidden h-full"
                   >
                     <div
-                      class="w-16 h-16 text-xl items-center justify-center flex text-white mr-3 bg-primary px-2 text-center"
+                      class="w-16 h-full text-xl items-center justify-center flex text-white mr-3 bg-primary px-2 text-center"
                     >
                       UG
                     </div>
-                    <div class="">
+                    <div class="break-all py-2">
                       <div class="">{{ group.name }}</div>
                     </div>
                   </div>
