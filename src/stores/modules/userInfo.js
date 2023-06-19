@@ -51,10 +51,11 @@ const useUserInfoStore = defineStore("userInfo", {
         const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
         if (userinfo) {
           api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
-
+          // "/users/me?fields=*,role.description,role.name,role.tags,role.pages.pages_id.*,role.pages.pages_id.children.*"
           const data = await api.get(
-            "/users/me?fields=*,role.description,role.name,role.tags,role.pages.pages_id.*,role.pages.pages_id.children.*"
+            "/users/me?fields=id,first_name,last_name,email,role.name,role.pages.pages_id.id,role.pages.pages_id.name,role.pages.pages_id.status,role.pages.pages_id.children.id,role.pages.pages_id.children.parent_id,role.pages.pages_id.children.status,role.pages.pages_id.children.url,role.pages.pages_id.children.name,role.pages.pages_id.page_actions.*"
           );
+
           if (data) {
             const user = data.data.data;
             this.userProfile = user;

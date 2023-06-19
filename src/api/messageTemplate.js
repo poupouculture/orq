@@ -7,7 +7,8 @@ export const getMessageTemplates = async ({
   search = "",
   isApproved = "",
 }) => {
-  const fields = `*, directus_users.*`;
+  // const fields = `*, directus_users.*`;
+  const fields = `*`;
 
   const offset = page === 1 ? 0 : (page - 1) * limit;
 
