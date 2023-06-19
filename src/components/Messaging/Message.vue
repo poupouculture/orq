@@ -13,14 +13,16 @@
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
       <div
-        class="flex items-center space-x-3 cursor-pointer"
+        class="flex items-center space-x-3 cursor-pointer flex-nowrap"
         @click="showCustomerInfoInMobile"
       >
         <q-avatar class="rounded-avatar">
           <img :src="profileIcon" />
         </q-avatar>
-        <div class="flex flex-col">
-          <p class="font-semibold text-lg">{{ nameEn }}</p>
+        <div class="flex flex-col w-full">
+          <p class="font-semibold text-lg max-w-[60%] md:max-w-full truncate">
+            {{ nameEn }}
+          </p>
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
@@ -28,7 +30,7 @@
       </div>
       <!-- Close button -->
       <q-btn
-        class="cursor-pointer lg:hidden max-[1023]:block"
+        class="cursor-pointer lg:hidden absolute right-4"
         @click="closeChat"
         style="color: #64748b"
         flat
