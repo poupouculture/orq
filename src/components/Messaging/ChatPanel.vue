@@ -207,11 +207,13 @@ const tabsTip = computed(() => {
   return result;
 });
 
-watch(chatsList, (list) => {
-  list.forEach((chat) => {
-    socket.value.emit("join_chat", chat.id);
-  });
-});
+// watch(chatsList, (list) => {
+//   list.forEach((chat) => {
+//     console.log("SOCKET: join_chat by chat_id.........");
+//     // console.log(`join_chat.........${chat.id}`);
+//     socket.value.emit("join_chat", chat.id);
+//   });
+// });
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
@@ -324,9 +326,15 @@ const initSocket = () => {
   try {
     socket.value.on("connect", () => {
       console.log("SOCKET: connect -------");
+      console.log("SOCKET: join_chat -------");
       console.log(userProfile.value?.id);
       socket.value.emit("join_chat", userProfile?.value?.id);
       // console.log("userProfile", userProfile.value);
+      chatsList.value.forEach((chat) => {
+        console.log("SOCKET: join_chat by chat_id.........");
+        // console.log(`join_chat.........${chat.id}`);
+        socket.value.emit("join_chat", chat.id);
+      });
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
