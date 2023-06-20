@@ -79,6 +79,7 @@
               round
               color="primary"
               icon="edit"
+              v-if="canEdit"
             >
               <q-tooltip
                 anchor="top middle"
@@ -100,16 +101,19 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { getCustomers } from "src/api/customers";
+import useUserInfoStore from "src/stores/modules/userInfo";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import useCustomerStore from "src/stores/modules/customer";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { format } from "date-fns";
+import { storeToRefs } from "pinia";
 
 const customerStore = useCustomerStore();
-
+const userInfoStore = useUserInfoStore();
+const { getPages } = storeToRefs(userInfoStore);
 const headerColumns = [
   {
     name: "name",
@@ -162,6 +166,16 @@ const headerColumns = [
   },
 ];
 
+const canEdit = computed(() => {
+  const customerPage = getPages.value?.filter(
+    (page) => page.pages_id.id === "F03"
+  );
+  if (!customerPage) return false;
+  const pageAction = customerPage.map((page) =>
+    page.pages_id.page_actions.find((action) => action.name === "Edit")
+  );
+  return pageAction[0]?.status === "published";
+});
 const loading = ref(true);
 const selected = ref([]);
 
@@ -199,8 +213,11 @@ const data = reactive({
   rowsPerPage: 10,
 });
 const groupedCompanies = (companies) => {
-  const grouped = companies.map((company) => company.companies_id.name_english);
-  return grouped.join(", ");
+  return companies
+    ? companies
+        .map((company) => company.companies_id.name_english)
+        .grouped.join(", ")
+    : "";
 };
 
 const fetchCustomers = async () => {

@@ -17,6 +17,9 @@ const useUserInfoStore = defineStore("userInfo", {
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
     getUserRoleName: (state) => state.userRoleName,
+    getPages: (state) => {
+      return state.userProfile?.role.pages || [];
+    },
   },
   actions: {
     async login(params) {
