@@ -333,7 +333,6 @@ watch(paginationCustomersTable, (val: any, old: any) => {
         <div
           class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5"
         >
-          <q-icon name="keyboard_backspace" />
           <span>Relationship Mapping </span>
         </div>
         <!-- Search and Add -->
