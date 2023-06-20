@@ -41,11 +41,19 @@
             class="mb-5"
             dense
             label="Input Your Password"
-            type="Password"
+            :type="hidePassword ? 'Password' : 'text'"
             debounce="500"
             v-model.trim="login.password"
             outlined
-          />
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="hidePassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="hidePassword = !hidePassword"
+              />
+            </template>
+          </q-input>
 
           <!-- <div class="control flex no-wrap items-center justify-between">
             <div>
@@ -97,11 +105,11 @@ import logo from "assets/images/logo.svg";
 import loginIllustration from "assets/images/login_illustration.svg";
 // import LoginFb from "./LoginFb.vue";
 
-const login = ref({ email: "", password: "" }),
-  loading = ref(false),
-  userInfo = useUserInfoStore();
+const userInfo = useUserInfoStore();
 
-// const remember = ref(false);
+const login = ref({ email: "", password: "" });
+const loading = ref(false);
+const hidePassword = ref(true);
 
 const submit = () => {
   if (login.value.email && login.value.password) {
