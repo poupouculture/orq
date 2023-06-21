@@ -427,7 +427,7 @@ const initSocket = () => {
       }
     });
     socket.value.on("contact_created", async (data: any) => {
-      console.log("contact_created", data);
+      console.log("SOCKET: contact_created", data);
       const response = await getCustomer(data.customers_id);
       const customer = response.data.data;
       const currentChat = chatsList.value.find(
