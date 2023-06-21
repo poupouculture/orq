@@ -432,6 +432,7 @@ const initSocket = () => {
       console.log("SOCKET: contact_created", data);
       const response = await getCustomer(data.customers_id);
       const customer = response.data.data;
+      console.log(customer);
       const currentChat = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
