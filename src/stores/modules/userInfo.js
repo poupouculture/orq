@@ -17,11 +17,23 @@ const useUserInfoStore = defineStore("userInfo", {
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
     getUserRoleName: (state) => state.userRoleName,
-    getPages: (state) => {
+    getAllUserPages: (state) => {
       return state.userProfile?.role.pages || [];
     },
   },
   actions: {
+    getPageActionsByPageId(id, pageActionName) {
+      const pages = this.getAllUserPages.filter(
+        (page) => page.pages_id.id === id
+      );
+      return (
+        pages.map((page) =>
+          page.pages_id.page_actions.find(
+            (action) => action.name === pageActionName
+          )
+        )[0].status === "published"
+      );
+    },
     async login(params) {
       try {
         api.defaults.headers.common.Authorization = "";
