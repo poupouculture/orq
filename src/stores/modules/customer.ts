@@ -106,10 +106,14 @@ const useCustomerStore = defineStore("customer", {
       try {
         const data = await getCustomer(id);
         if (data) {
-          const customer = data.data.data;
+          const customer = data?.data?.data;
           this.setCustomer(customer);
+          return customer;
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
     },
     setCustomer(customer: ICustomer | null) {
       if (customer === null) {

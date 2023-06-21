@@ -7,11 +7,12 @@ import {
   MessageStatus,
 } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
+import { getContact } from "src/api/contact";
 import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
-  getContact,
+  // getContact,
   getChatsByType,
   getMessagesById,
 } from "src/api/messaging";
@@ -256,7 +257,7 @@ const useMessagingStore = defineStore("messaging", {
 
     async associatedMessageGet(messageId: string) {
       const data = await getMessagesById(messageId);
-      const cleaned = data.data[0];
+      const cleaned = data?.data[0];
       console.log("---associatedMessageGet:", cleaned);
       return cleaned;
     },
@@ -273,7 +274,10 @@ const useMessagingStore = defineStore("messaging", {
 
     async fetchContactNumber(contactId: string) {
       const { data } = await getContact(contactId);
-      this.setContactNumber(data.number);
+      // console.log(data);
+      const contact = data?.data[0];
+      this.setContactNumber(contact.number);
+      return contact;
     },
     changeModeChatListById(id: string, mode: string) {
       console.log("changeModeChatListById-----");

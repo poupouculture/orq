@@ -580,14 +580,14 @@ watch(
 watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    console.log("SELECTED_CHAT:expiry", val);
+    // console.log("SELECTED_CHAT:expiry", val);
     // conversationType.value = getSelectedChat.value.conversation_type;
     // isPending.value = conversationType.value === "pending_inbound";
 
     if (val) {
       const expiredDate = new Date(val * 1000);
-      console.log("expiredDate:", expiredDate);
-      console.log("now:", new Date());
+      // console.log("expiredDate:", expiredDate);
+      // console.log("now:", new Date());
       if (expiredDate) {
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;

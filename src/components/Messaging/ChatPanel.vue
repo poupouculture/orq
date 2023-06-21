@@ -120,7 +120,10 @@ import {
 } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-import { searchCustomers, getCustomer } from "src/api/customers";
+// import useContactStore from "src/stores/modules/contact";
+// import { getContact } from "src/api/contact";
+// import { searchCustomers, getCustomer } from "src/api/customers";
+import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
@@ -326,8 +329,10 @@ const initSocket = () => {
   try {
     socket.value.on("connect", () => {
       console.log("SOCKET: connect -------");
-      console.log("SOCKET: join_chat -------");
-      console.log(userProfile.value?.id);
+      console.log(
+        "SOCKET: join_chat by user_id -------",
+        userProfile.value?.id
+      );
       socket.value.emit("join_chat", userProfile?.value?.id);
       // console.log("userProfile", userProfile.value);
       chatsList.value.forEach((chat) => {
@@ -428,8 +433,12 @@ const initSocket = () => {
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("SOCKET: contact_created", data);
-      const response = await getCustomer(data.customers_id);
-      const customer = response.data.data;
+      // const response = await getCustomer(data.customers_id);
+      // const customer = respose?.data?.data;
+      const customer = await customerStore.fetchCustomer(data.customers_id);
+      console.log(customer);
+      const contact = customer?.contacts[0].contacts_id;
+
       const currentChat = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
@@ -438,8 +447,16 @@ const initSocket = () => {
         currentChat.customers_id = data.customers_id;
         currentChat.customer_company_name_en =
           customer.customer_company_name_en;
-        socket.value.emit("join_chat", data.id);
+        // socket.value.emit("join_chat", data.id);
+        currentChat.contact_first_name = contact.first_name;
+        currentChat.contact_last_name = contact.last_name;
+        // useContactStore().setFirstname(contact.first_name);
       }
+      // no need to explictly call getContact. comment out for now.
+      // const contact = await getContact(data.document.contact_id);
+      // getSelectedChat.value.contact_first_name =
+      //   contact.data.data[0].first_name;
+      // useContactStore().setFirstname(contact.data.data[0].first_name);
       // customerStore.setCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
