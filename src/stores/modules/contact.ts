@@ -6,35 +6,43 @@ import {
   dissociateContactApi,
   saveContact,
 } from "src/api/contact";
+import { Contact } from "src/types/ContactTypes";
+import { IChat } from "src/types/MessagingTypes";
 
 const useContactStore = defineStore("useContact", {
-  state() {
-    return {
-      contact: {},
-      currentCustomerId: "",
-    };
-  },
+  state: () => ({
+    contact: {
+      id: "",
+      first_name: "",
+      last_name: "",
+      number: "",
+    },
+    currentCustomerId: "",
+  }),
   getters: {
     getContacts: (state) => state.contact,
     getCurrentCustomerId: (state) => state.currentCustomerId,
   },
 
   actions: {
-    setCurrentCustomerId(customerID) {
+    setCurrentCustomerId(customerID: string) {
       this.currentCustomerId = customerID;
     },
-    setFirstname(firstName) {
+    setFirstname(firstName: string) {
       this.contact.first_name = firstName;
     },
-    async getContactById(chat) {
+    async getContactById(chat: IChat) {
       console.log("chat:", chat);
-      this.currentCustomerId = chat.customers_id;
+      this.currentCustomerId = chat?.customers_id ?? "";
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
-
       this.contact = data[0];
+      return this.contact;
     },
-    async saveContact(payload) {
+    async setContact(contact: Contact) {
+      this.contact = contact;
+    },
+    async saveContact(payload: any) {
       const getObj = {
         first_name: payload.first_name,
         last_name: payload.last_name,
@@ -56,7 +64,7 @@ const useContactStore = defineStore("useContact", {
       }
       Loading.hide();
     },
-    async updateContact(payload) {
+    async updateContact(payload: any) {
       const getObj = {
         first_name: payload.first_name,
         last_name: payload.last_name,
