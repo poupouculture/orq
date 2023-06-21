@@ -64,15 +64,20 @@ const selectChat = async (chat: IChat) => {
   if (window.innerWidth <= 1024) {
     leftDrawerOpen.value = false;
   }
-  getContactById(chat);
+
   messagingStore.onSelectChat(chat.id);
   console.log("SELECT CHAT");
   console.log(chat);
   if (!chat.contacts_id) {
+    console.log(" fnc: selectChat- no contact_id");
     const contact = await getContactByChatId(chat.id);
     chat.contacts_id = contact.contacts_id;
   }
-  messagingStore.fetchContactNumber(chat.contacts_id);
+  // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
+  const contact = await getContactById(chat);
+  console.log("  GET contact:....", contact);
+  // contactStore.setContact(contact);
+  messagingStore.setContactNumber(contact.number);
   customerStore.$reset();
   if (chat.customers_id) {
     await customerStore.fetchCustomer(chat.customers_id);
