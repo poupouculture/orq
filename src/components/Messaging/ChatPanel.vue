@@ -440,7 +440,7 @@ const initSocket = () => {
         currentChat.customers_id = data.customers_id;
         currentChat.customer_company_name_en =
           customer.customer_company_name_en;
-        socket.value.emit("join_chat", data.id);
+        // socket.value.emit("join_chat", data.id);
       }
       const contact = await getContact(data.document.contact_id);
       getSelectedChat.value.contact_first_name =
