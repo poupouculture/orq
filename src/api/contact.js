@@ -40,13 +40,14 @@ export const getContacts = async (payload) => {
   return contact;
 };
 export const getContact = async (id) => {
-  const fields = "*";
-  const limit = -1;
+  console.log("api: getContact...");
+  const fields =
+    "id,first_name,last_name,number,status,category,preferred_language";
+  // "*";
 
   const contact = await api.get("items/contacts", {
     params: {
-      fields,
-      limit,
+      fields: `${fields}`,
       "filter[id][_eq]": id,
     },
   });
