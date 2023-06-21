@@ -3,6 +3,7 @@ export interface PersonalItem {
   name: string;
   status: string;
   type: string;
+  uniq: string;
   avatar: string;
   source: string;
 }

@@ -166,7 +166,7 @@ const messageContentText = (msg: any) => {
 /**
  * used to display type of message
  * OR
- * message text
+ * message text or reaction
  * @param msg message from associated message
  */
 const messageContentType = (msg: any) => {
@@ -189,8 +189,10 @@ const messageContentType = (msg: any) => {
       return MessageType.APPLICATION;
     case MessageType.VIDEO:
       return MessageType.VIDEO;
-    // case MessageType.REACTION: // ???
-    //   return components.REACTION;
+    case MessageType.REACTION: // ???
+      console.log(msg);
+      return message?.emoji;
+    // return MessageType.REACTION;
   }
   if (msg?.content?.error_body) {
     const error = msg?.content?.error_body;
