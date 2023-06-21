@@ -4,10 +4,10 @@
   >
     <!-- search part -->
     <q-item-label header>
-      <div class="logo-holder mb-3 flex items-center gap-3">
+      <router-link to="/" class="logo-holder mb-3 flex items-center gap-3">
         <img class="w-10" src="~assets/images/logo.svg" />
         <p class="font-[800] text-[#231815] text-2xl">ChaQ</p>
-      </div>
+      </router-link>
       <div v-if="errSocket" class="logo-holder mb-3 flex items-center gap-3">
         <p class="font-[800] text-[#231815] text-2xl">
           Refresh Your Page to Connect to Chats
