@@ -23,6 +23,9 @@ const useContactStore = defineStore("useContact", {
     setCurrentCustomerId(customerID) {
       this.currentCustomerId = customerID;
     },
+    setFirstname(firstName) {
+      this.contact.first_name = firstName;
+    },
     async getContactById(chat) {
       console.log("chat:", chat);
       this.currentCustomerId = chat.customers_id;
@@ -35,7 +38,7 @@ const useContactStore = defineStore("useContact", {
       const getObj = {
         first_name: payload.first_name,
         last_name: payload.last_name,
-        is_active: payload.is_active,
+        // is_active: payload.is_active,
         number: payload.number,
         status: payload.status,
       };

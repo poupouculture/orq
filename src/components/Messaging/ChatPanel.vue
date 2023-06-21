@@ -120,6 +120,8 @@ import {
 } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
+import { getContact } from "src/api/contact";
 import { searchCustomers, getCustomer } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
@@ -440,6 +442,10 @@ const initSocket = () => {
           customer.customer_company_name_en;
         socket.value.emit("join_chat", data.id);
       }
+      const contact = await getContact(data.document.contact_id);
+      getSelectedChat.value.contact_first_name =
+        contact.data.data[0].first_name;
+      useContactStore().setFirstname(contact.data.data[0].first_name);
       // customerStore.setCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
