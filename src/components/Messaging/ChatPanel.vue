@@ -120,9 +120,10 @@ import {
 } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-import useContactStore from "src/stores/modules/contact";
+// import useContactStore from "src/stores/modules/contact";
 // import { getContact } from "src/api/contact";
-import { searchCustomers, getCustomer } from "src/api/customers";
+// import { searchCustomers, getCustomer } from "src/api/customers";
+import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
@@ -432,10 +433,12 @@ const initSocket = () => {
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("SOCKET: contact_created", data);
-      const response = await getCustomer(data.customers_id);
-      const customer = response.data.data;
-      const contact = customer.contacts[0].contacts_id;
+      // const response = await getCustomer(data.customers_id);
+      // const customer = respose?.data?.data;
+      const customer = await customerStore.fetchCustomer(data.customers_id);
       console.log(customer);
+      const contact = customer?.contacts[0].contacts_id;
+
       const currentChat = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
@@ -447,7 +450,7 @@ const initSocket = () => {
         // socket.value.emit("join_chat", data.id);
         currentChat.contact_first_name = contact.first_name;
         currentChat.contact_last_name = contact.last_name;
-        useContactStore().setFirstname(contact.first_name);
+        // useContactStore().setFirstname(contact.first_name);
       }
       // no need to explictly call getContact. comment out for now.
       // const contact = await getContact(data.document.contact_id);

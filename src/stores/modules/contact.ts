@@ -16,6 +16,7 @@ const useContactStore = defineStore("useContact", {
       first_name: "",
       last_name: "",
       number: "",
+      category: "",
     },
     currentCustomerId: "",
   }),
@@ -23,16 +24,18 @@ const useContactStore = defineStore("useContact", {
     getContacts: (state) => state.contact,
     getCurrentCustomerId: (state) => state.currentCustomerId,
   },
-
   actions: {
     setCurrentCustomerId(customerID: string) {
       this.currentCustomerId = customerID;
+    },
+    clearCurrentCustomerId() {
+      this.currentCustomerId = "";
     },
     setFirstname(firstName: string) {
       this.contact.first_name = firstName;
     },
     async getContactById(chat: IChat) {
-      console.log("chat:", chat);
+      // console.log("chat:", chat);
       this.currentCustomerId = chat?.customers_id ?? "";
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
