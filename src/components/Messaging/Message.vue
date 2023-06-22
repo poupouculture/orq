@@ -20,7 +20,7 @@
           <img :src="profileIcon" />
         </q-avatar>
         <div class="flex flex-col w-full">
-          <p class="font-semibold text-lg max-w-[60%] md:max-w-full truncate">
+          <p class="font-semibold text-lg leading-snug">
             {{ nameEn }}
           </p>
           <p class="text-gray-500">
@@ -30,7 +30,7 @@
       </div>
       <!-- Close button -->
       <q-btn
-        class="cursor-pointer lg:hidden absolute right-4"
+        class="cursor-pointer lg:hidden absolute right-4 top-4"
         @click="closeChat"
         style="color: #64748b"
         flat
