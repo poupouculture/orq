@@ -40,7 +40,6 @@ const useInternalGroupStore = defineStore("internalGroup", {
           total_count: meta?.total_count,
           filter_count: meta?.filter_count,
         };
-        return;
       } catch (error) {
         console.log(error);
       }

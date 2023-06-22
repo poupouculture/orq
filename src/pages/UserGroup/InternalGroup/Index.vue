@@ -2,7 +2,6 @@
   <div class="mt-10 px-2">
     <!-- Heading -->
     <div class="flex items-center gap-x-3 text-lg sm:text-2xl font-medium mb-5">
-      <q-icon name="keyboard_backspace" />
       <span>Internal Groups</span>
     </div>
     <!-- Search and Add -->
@@ -30,6 +29,14 @@
         <q-icon name="add" class="text-white mr-2" />
         <span>Add</span>
       </q-btn>
+    </div>
+    <div class="flex items-center justify-center mt-20">
+      <BasePagination
+        :max="totalPage()"
+        :max-pages="10"
+        @update-model="changePage"
+        v-model="pagination.page"
+      />
     </div>
     <!-- Content -->
     <h5 class="uppercase mt-6 text-gray-500">Pinned</h5>
@@ -108,14 +115,6 @@
               </template>
             </div>
           </div>
-        </div>
-        <div class="flex items-center justify-center mt-20">
-          <BasePagination
-            :max="totalPage()"
-            :max-pages="10"
-            @update-model="changePage"
-            v-model="pagination.page"
-          />
         </div>
       </template>
       <div v-else class="text-center text-gray-700">

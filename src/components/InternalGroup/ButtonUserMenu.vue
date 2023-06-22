@@ -76,12 +76,12 @@ const submitDelete = async () => {
       <q-card-section class="q-pt-none">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
           <div class="col-span-2 lg:col-span-1">
-            <p class="mb-2">Firstname</p>
+            <p class="mb-2">First Name</p>
             <q-input dense outlined disable v-model="user.first_name" />
           </div>
 
           <div class="col-span-2 lg:col-span-1">
-            <p class="mb-2">Lastname</p>
+            <p class="mb-2">Last Name</p>
             <q-input dense outlined disable v-model="user.last_name" />
           </div>
 

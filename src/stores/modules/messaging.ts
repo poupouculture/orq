@@ -7,11 +7,13 @@ import {
   MessageStatus,
 } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
+import { getContact } from "src/api/contact";
 import {
   getChats,
   getChatMessagesByChatId,
   sendChatTextMessage,
-  getContact,
+  // getContact,
+  getChatsByType,
   getMessagesById,
 } from "src/api/messaging";
 const useMessagingStore = defineStore("messaging", {
@@ -145,6 +147,49 @@ const useMessagingStore = defineStore("messaging", {
         return item;
       });
     },
+    async loadMoreChats(
+      type?: ChatTypes,
+      pageNumber?: number,
+      limit?: number,
+      order?: string
+    ) {
+      const chats = await getChatsByType(type, pageNumber, limit, order);
+
+      chats.forEach((loadedChat: IChat) => {
+        console.log("loaded chat:", loadedChat);
+
+        const checker = this.chatsList.find(
+          (chat) => chat.id === loadedChat.id
+        );
+
+        console.log("is listed:", checker);
+
+        if (!checker) {
+          if (loadedChat.last_message) {
+            loadedChat.last_message = JSON.parse(
+              loadedChat.last_message.toString()
+            );
+          } else {
+            loadedChat.last_message = {
+              id: 0,
+              content: {
+                type: "text",
+                text: "",
+              },
+              direction: "incoming",
+              is_cache: true,
+              contact_company_name: "",
+              contact_customer_name: "",
+              status: MessageStatus.RECEIVE,
+              date_created: "",
+            };
+          }
+          this.chatsList.push(loadedChat);
+        }
+      });
+
+      return chats;
+    },
 
     async fetchChatMessagesById(chatId: string, page?: number, limit?: number) {
       try {
@@ -212,7 +257,7 @@ const useMessagingStore = defineStore("messaging", {
 
     async associatedMessageGet(messageId: string) {
       const data = await getMessagesById(messageId);
-      const cleaned = data.data[0];
+      const cleaned = data?.data[0];
       console.log("---associatedMessageGet:", cleaned);
       return cleaned;
     },
@@ -229,7 +274,10 @@ const useMessagingStore = defineStore("messaging", {
 
     async fetchContactNumber(contactId: string) {
       const { data } = await getContact(contactId);
-      this.setContactNumber(data.number);
+      // console.log(data);
+      const contact = data?.data[0];
+      this.setContactNumber(contact.number);
+      return contact;
     },
     changeModeChatListById(id: string, mode: string) {
       console.log("changeModeChatListById-----");
@@ -237,12 +285,12 @@ const useMessagingStore = defineStore("messaging", {
       this.chatsList[index].mode = mode;
     },
     changeConversationType(id: string, conversationType: string) {
-      console.log("changeConversationType-----");
+      console.log("  changeConversationType----fnc");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].conversation_type = conversationType;
     },
     changeExpiry(id: string, expirationTimestamp: number) {
-      console.log("changeExpiry-----");
+      console.log("  changeExpiry-----fnc");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].expiration_timestamp = expirationTimestamp;
     },

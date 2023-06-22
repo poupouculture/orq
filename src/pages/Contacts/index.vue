@@ -452,7 +452,7 @@ const headerColumns = [
   {
     name: "first_name",
     align: "left",
-    label: "Firstname",
+    label: "First Name",
     field: "first_name",
     classes: "text-black",
     style: "max-width: 10%",

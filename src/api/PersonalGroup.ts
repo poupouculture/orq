@@ -20,13 +20,14 @@ export const getPersonalGroups = async (
   type?: string
 ) => {
   const offset = page === 1 ? 0 : (page - 1) * limit;
-  const cgFields =
-    "customer_groups.customer_groups_id.source,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id,customer_groups.customer_groups_id.type";
+  const cgFields = // 0616
+    "customer_groups.customer_groups_id.source,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.uniq,customer_groups.customer_groups_id.id,customer_groups.customer_groups_id.type";
   const PersonalGroup = await api.get("/items/user_groups", {
     params: {
       limit,
       search,
       "filter[type][_eq]": type,
+      "filter[status][_eq]": "published",
       offset,
       fields: `id,name,type,status,${cgFields}`,
       meta: "*",
@@ -43,10 +44,11 @@ export const getCustomerGroup = async (
   selectedCustomerGroups?: CustomerGroup[],
   customerFilter?: string
 ) => {
-  const offset = page === 1 ? 0 : (page - 1) * limit;
+  // const offset = page === 1 ? 0 : (page - 1) * limit;
   const param = {
     limit,
-    offset,
+    page,
+    // offset,
     fields: `id,type,name,status`,
     meta: "*",
   } as any;
@@ -94,7 +96,7 @@ export const getPersonalGroup = async (id: string) => {
   const PersonalGroup = await api.get("/items/user_groups/" + id, {
     params: {
       fields:
-        "id,name,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.status,customer_groups.customer_groups_id.id",
+        "id,name,status,customer_groups.customer_groups_id.name,customer_groups.customer_groups_id.uniq,customer_groups.customer_groups_id.id",
     },
   });
   return PersonalGroup;

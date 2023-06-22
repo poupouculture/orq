@@ -15,7 +15,7 @@
       class="flex justify-center items-center gap-2 flex-col"
     >
       <q-icon size="4rem" name="inbox" color="grey" />
-      <p class="text-h6 text-grey">No Chat Availables</p>
+      <p class="text-h6 text-grey">No Chats Available</p>
     </div>
   </div>
 </template>
@@ -36,22 +36,26 @@ const props = defineProps({
   type: { type: String, default: ChatTypes.PENDING },
   filterText: { type: String, default: "" },
 });
-const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 const { getContactById } = useContactStore();
+const contactStore = useContactStore();
+const { getCurrentCustomerId } = storeToRefs(contactStore);
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 
+const messagingStore = useMessagingStore();
 const { chatsList } = storeToRefs(messagingStore);
 const list = computed(() =>
   chatsList.value.filter((chat) => {
-    const chatName = chat?.customers_id
+    const customerName = chat?.customers_id
       ? chat?.customer_company_name_en?.toLowerCase()
       : "visitor".toLowerCase();
-
+    const contactFirstName = chat?.contact_first_name?.toLocaleLowerCase();
     return (
       chat.status === props.type &&
-      (chatName?.includes(props.filterText) ||
-        chat.name.includes(props.filterText))
+      (customerName?.includes(props.filterText) ||
+        chat.name?.includes(props.filterText) ||
+        contactFirstName?.includes(props.filterText))
+      // || chat.members?.includes(props.filterText))
     );
   })
 );
@@ -62,19 +66,32 @@ const selectChat = async (chat: IChat) => {
   if (window.innerWidth <= 1024) {
     leftDrawerOpen.value = false;
   }
-  getContactById(chat);
+
   messagingStore.onSelectChat(chat.id);
   console.log("SELECT CHAT");
   console.log(chat);
   if (!chat.contacts_id) {
+    console.log(" fnc: selectChat- no contact_id");
     const contact = await getContactByChatId(chat.id);
     chat.contacts_id = contact.contacts_id;
   }
-  messagingStore.fetchContactNumber(chat.contacts_id);
+  // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
   customerStore.$reset();
+  contactStore.$reset();
+  let contact = null;
   if (chat.customers_id) {
-    await customerStore.fetchCustomer(chat.customers_id);
+    const customer = await customerStore.fetchCustomer(chat.customers_id);
+    contact = customer.contacts[0].contacts_id;
+    useContactStore().setContact(contact);
+    console.log("getCurrentCustomerId:...", getCurrentCustomerId.value);
+    contactStore.setCurrentCustomerId(customer.id);
+  } else {
+    customerStore.setCustomer(null);
+    contact = await getContactById(chat);
+    console.log("  GET contact:....", contact);
   }
+  // contactStore.setContact(contact);
+  messagingStore.setContactNumber(contact.number);
 };
 </script>
 
