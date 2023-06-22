@@ -204,9 +204,7 @@ const data = reactive({
 });
 const groupedCompanies = (companies) => {
   return companies
-    ? companies
-        .map((company) => company.companies_id.name_english)
-        .grouped.join(", ")
+    ? companies.map((company) => company.companies_id.name_english).join(", ")
     : "";
 };
 
