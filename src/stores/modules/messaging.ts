@@ -77,7 +77,12 @@ const useMessagingStore = defineStore("messaging", {
         if (index !== -1) {
           const [chat] = this.chatsList.splice(index, 1);
           // chat.mode = lastmessage.mode;
-          this.chatsList.unshift(chat);
+          // this.chatsList.unshift(chat);
+          if (chat?.status === ChatTypes.PENDING) {
+            this.chatsList.push(chat);
+          } else {
+            this.chatsList.unshift(chat);
+          }
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
