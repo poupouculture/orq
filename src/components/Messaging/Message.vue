@@ -1034,7 +1034,7 @@ const confirmCloseBot = () => {
 };
 const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  getSelectedChat.value.mode = "";
+  getSelectedChat.value.mode = "CS-Agent";
 };
 
 const onPaste = (e: ClipboardEvent) => {
