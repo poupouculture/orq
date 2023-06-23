@@ -66,7 +66,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { differenceInMinutes, format, intlFormatDistance } from "date-fns";
+import {
+  differenceInMinutes,
+  format,
+  intlFormatDistance,
+  isToday,
+} from "date-fns";
 import { storeToRefs } from "pinia";
 import { IChat, MessageType } from "src/types/MessagingTypes";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -141,7 +146,10 @@ const message = computed<string>(() => {
 const time = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
   const dateCreated = lastMessage?.date_created;
-  return dateCreated && format(new Date(dateCreated), "p, d LLL");
+  if (isToday(new Date(dateCreated))) {
+    return dateCreated && format(new Date(dateCreated), "p") + ", Today";
+  }
+  return dateCreated && format(new Date(dateCreated), "p, d MMM");
 });
 const waitingTime = computed(() => {
   const { last_message: lastMessage } = props.data;

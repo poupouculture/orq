@@ -18,3 +18,13 @@ export const typeOptions = [
     value: "group",
   },
 ];
+export const preferedLanguageOptions = [
+  {
+    label: "English",
+    value: "en-US",
+  },
+  {
+    label: "Chinese",
+    value: "zh-HK",
+  },
+];

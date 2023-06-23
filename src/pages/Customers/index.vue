@@ -79,6 +79,7 @@
               round
               color="primary"
               icon="edit"
+              v-if="canEdit"
             >
               <q-tooltip
                 anchor="top middle"
@@ -102,6 +103,7 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { getCustomers } from "src/api/customers";
+import useUserInfoStore from "src/stores/modules/userInfo";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import useCustomerStore from "src/stores/modules/customer";
@@ -109,7 +111,7 @@ import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
 import { format } from "date-fns";
 
 const customerStore = useCustomerStore();
-
+const userInfoStore = useUserInfoStore();
 const headerColumns = [
   {
     name: "name",
@@ -162,6 +164,8 @@ const headerColumns = [
   },
 ];
 
+const canEdit = ref(true);
+
 const loading = ref(true);
 const selected = ref([]);
 
@@ -199,8 +203,9 @@ const data = reactive({
   rowsPerPage: 10,
 });
 const groupedCompanies = (companies) => {
-  const grouped = companies.map((company) => company.companies_id.name_english);
-  return grouped.join(", ");
+  return companies
+    ? companies.map((company) => company.companies_id.name_english).join(", ")
+    : "";
 };
 
 const fetchCustomers = async () => {
@@ -218,6 +223,8 @@ const fetchCustomers = async () => {
 };
 
 onMounted(() => {
+  console.log(userInfoStore.getPageActionsByPageId("F03", "Edit"));
+  canEdit.value = userInfoStore.getPageActionsByPageId("F03", "Edit");
   fetchCustomers();
 });
 

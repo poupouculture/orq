@@ -25,9 +25,11 @@ export const getChatName = (chat: IChat) => {
 //   }
 // };
 
-export const getChatNameEn = (chat: IChat) => {
+export const getChatNameEn = (chat: IChat, noTrim?: boolean) => {
   if (chat.customers_id) {
-    return trimWord(`${chat.customer_company_name_en}`);
+    return noTrim
+      ? chat.customer_company_name_en
+      : trimWord(`${chat.customer_company_name_en}`);
   } else {
     return "Visitor";
   }

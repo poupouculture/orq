@@ -17,8 +17,23 @@ const useUserInfoStore = defineStore("userInfo", {
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
     getUserRoleName: (state) => state.userRoleName,
+    getAllUserPages: (state) => {
+      return state.userProfile?.role.pages || [];
+    },
   },
   actions: {
+    getPageActionsByPageId(id, pageActionName) {
+      const pages = this.getAllUserPages.filter(
+        (page) => page.pages_id.id === id
+      );
+      return (
+        pages.map((page) =>
+          page.pages_id.page_actions.find(
+            (action) => action.name === pageActionName
+          )
+        )[0].status === "published"
+      );
+    },
     async login(params) {
       try {
         api.defaults.headers.common.Authorization = "";
@@ -51,10 +66,11 @@ const useUserInfoStore = defineStore("userInfo", {
         const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
         if (userinfo) {
           api.defaults.headers.common.Authorization = `Bearer ${userinfo.access_token}`;
-
+          // "/users/me?fields=*,role.description,role.name,role.tags,role.pages.pages_id.*,role.pages.pages_id.children.*"
           const data = await api.get(
-            "/users/me?fields=*,role.description,role.name,role.tags,role.pages.pages_id.*,role.pages.pages_id.children.*"
+            "/users/me?fields=id,first_name,last_name,email,role.name,role.pages.pages_id.id,role.pages.pages_id.name,role.pages.pages_id.status,role.pages.pages_id.url,role.pages.pages_id.children.id,role.pages.pages_id.children.parent_id,role.pages.pages_id.children.status,role.pages.pages_id.children.url,role.pages.pages_id.children.name,role.pages.pages_id.children.group_by,role.pages.pages_id.page_actions.*"
           );
+
           if (data) {
             const user = data.data.data;
             this.userProfile = user;

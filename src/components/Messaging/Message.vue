@@ -13,14 +13,16 @@
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
     >
       <div
-        class="flex items-center space-x-3 cursor-pointer"
+        class="flex items-center space-x-3 cursor-pointer flex-nowrap"
         @click="showCustomerInfoInMobile"
       >
         <q-avatar class="rounded-avatar">
           <img :src="profileIcon" />
         </q-avatar>
-        <div class="flex flex-col">
-          <p class="font-semibold text-lg">{{ nameEn }}</p>
+        <div class="flex flex-col w-full">
+          <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
+            {{ nameEn }}
+          </p>
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
@@ -28,7 +30,7 @@
       </div>
       <!-- Close button -->
       <q-btn
-        class="cursor-pointer lg:hidden max-[1023]:block"
+        class="cursor-pointer lg:hidden absolute right-4 top-4"
         @click="closeChat"
         style="color: #64748b"
         flat
@@ -109,7 +111,7 @@
           :initial-index="0"
           reverse
           :offset="300"
-          scroll-target=".scroll_area"
+          :scroll-target="scrollAreaRef"
         >
           <ChatMessage
             v-for="item in messages"
@@ -467,6 +469,7 @@ const leftDrawerOpen: any = inject("leftDrawerOpen");
 const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
+const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
 const supportedFiletypes: Ref<string[]> = ref([
   ".mp4",
@@ -506,7 +509,7 @@ const toogleChatOption = () => {
 };
 
 const nameEn = computed<string>(() => {
-  return getChatNameEn(getSelectedChat.value);
+  return getChatNameEn(getSelectedChat.value, true);
 });
 
 const chatNumber = computed<string>(() =>
@@ -553,6 +556,7 @@ const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   console.log("loadMore:----------------");
+  isLoadMore.value = true;
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
     return;
@@ -574,25 +578,25 @@ watch(
   () => getSelectedChat.value?.conversation_type,
   async (val) => {
     console.log(
-      "SELECTED_CHAT:converation_type changed to - ",
+      "SELECTED_CHAT:conversation_type changed to: - ",
       conversationType
     );
     conversationType.value = val;
-    isPending.value = conversationType.value === "pending_inbound";
+    isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
   }
 );
 
 watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    console.log("SELECTED_CHAT:expiry", val);
+    // console.log("SELECTED_CHAT:expiry", val);
     // conversationType.value = getSelectedChat.value.conversation_type;
     // isPending.value = conversationType.value === "pending_inbound";
 
     if (val) {
       const expiredDate = new Date(val * 1000);
-      console.log("expiredDate:", expiredDate);
-      console.log("now:", new Date());
+      // console.log("expiredDate:", expiredDate);
+      // console.log("now:", new Date());
       if (expiredDate) {
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
@@ -602,14 +606,18 @@ watch(
     } else {
       isChatExpired.value = false;
     }
-    console.log("isChatExpired.value:");
-    console.log(isChatExpired.value);
+    // console.log("isChatExpired.value:");
+    // console.log(isChatExpired.value);
   }
 );
 
 const scrollToBottom = async () => {
   await nextTick();
   if (!scrollAreaRef.value) return;
+  if (isLoadMore.value) {
+    isLoadMore.value = false;
+    return;
+  }
   scrollAreaRef.value.scrollTop = scrollAreaRef.value?.scrollHeight;
 };
 
@@ -684,12 +692,17 @@ const sendMessage = async () => {
   cachedMessage.push(newMessage);
   scrollToBottom();
   messagingStore.setReplayMessage();
-  message.value = "";
 
   const timestamp = getSelectedChat.value?.expiration_timestamp;
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
+  if (!isChatExpired.value && isTemplate.value) {
+    isTemplate.value = false;
+    newMessage.content = message.value;
+  }
+
+  message.value = "";
   try {
     const data = await messagingStore.sendChatTextMessage({
       chatId: getSelectedChatId.value,
@@ -728,12 +741,19 @@ const activateChat = async () => {
       const result = await updateChatStatus(chatId, userId?.id);
       if (!result.data.status)
         Notify.create({
-          message: result.data.message || "User already assigned",
+          message: result.data.message || "Cannot Take it. Refresh Page.",
           type: "negative",
           color: "red-8",
           position: "top",
         });
-      else messagingStore.setSelectedTab(ChatTypes.ONGOING);
+      else {
+        messagingStore.setSelectedTab(ChatTypes.ONGOING);
+        getSelectedChat.value.status = ChatTypes.ONGOING;
+        // messagingStore.updateChatsList(
+        //   getSelectedChat.value,
+        //   ChatTypes.ONGOING
+        // );
+      }
     } catch (error: any) {}
     Loading.hide();
     // messagingStore.setChatStatus(getSelectedChatId.value, ChatTypes.ONGOING);
@@ -752,6 +772,7 @@ const sendMessageTemplate = (
   headType: string
 ) => {
   templateName.value = name;
+  console.log("template body:", msg);
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;

@@ -6,36 +6,50 @@ import {
   dissociateContactApi,
   saveContact,
 } from "src/api/contact";
+import { Contact } from "src/types/ContactTypes";
+import { IChat } from "src/types/MessagingTypes";
 
 const useContactStore = defineStore("useContact", {
-  state() {
-    return {
-      contact: {},
-      currentCustomerId: "",
-    };
-  },
+  state: () => ({
+    contact: {
+      id: "",
+      first_name: "",
+      last_name: "",
+      number: "",
+      category: "",
+    },
+    currentCustomerId: "",
+  }),
   getters: {
     getContacts: (state) => state.contact,
     getCurrentCustomerId: (state) => state.currentCustomerId,
   },
-
   actions: {
-    setCurrentCustomerId(customerID) {
+    setCurrentCustomerId(customerID: string) {
       this.currentCustomerId = customerID;
     },
-    async getContactById(chat) {
-      console.log("chat:", chat);
-      this.currentCustomerId = chat.customers_id;
+    clearCurrentCustomerId() {
+      this.currentCustomerId = "";
+    },
+    setFirstname(firstName: string) {
+      this.contact.first_name = firstName;
+    },
+    async getContactById(chat: IChat) {
+      // console.log("chat:", chat);
+      this.currentCustomerId = chat?.customers_id ?? "";
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
-
       this.contact = data[0];
+      return this.contact;
     },
-    async saveContact(payload) {
+    async setContact(contact: Contact) {
+      this.contact = contact;
+    },
+    async saveContact(payload: any) {
       const getObj = {
         first_name: payload.first_name,
         last_name: payload.last_name,
-        is_active: payload.is_active,
+        // is_active: payload.is_active,
         number: payload.number,
         status: payload.status,
       };
@@ -53,13 +67,14 @@ const useContactStore = defineStore("useContact", {
       }
       Loading.hide();
     },
-    async updateContact(payload) {
+    async updateContact(payload: any) {
       const getObj = {
         first_name: payload.first_name,
         last_name: payload.last_name,
         is_active: payload.is_active,
         number: payload.number,
         status: payload.status,
+        preferred_language: payload.preferred_language,
       };
       Loading.show();
       try {
