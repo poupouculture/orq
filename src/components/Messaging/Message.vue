@@ -20,7 +20,7 @@
           <img :src="profileIcon" />
         </q-avatar>
         <div class="flex flex-col w-full">
-          <p class="font-semibold text-lg leading-snug">
+          <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
             {{ nameEn }}
           </p>
           <p class="text-gray-500">
