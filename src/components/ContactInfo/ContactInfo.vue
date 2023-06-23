@@ -18,9 +18,12 @@ const contacts = useContactStore();
 const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
 
 const dissociateContact = async () => {
-  await contacts.dissociateContact();
-
-  await messagingStore.fetchChats();
+  const response = await contacts.dissociateContact();
+  console.log(response);
+  if (messagingStore.getSelectedChat) {
+    messagingStore.clearChatCustomer();
+  }
+  // await messagingStore.fetchChats();
 
   customerStore.setCustomer(null);
 };

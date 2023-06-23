@@ -515,7 +515,11 @@ const initSocket = () => {
         const chat = await getChatByID(data.id);
         console.log("SOCKET chat_created:", chat);
         chat.last_message = JSON.parse(chat.last_message);
-        chatsList.value.unshift(chat);
+        if (chat?.status === ChatTypes.PENDING) {
+          chatsList.value.push(chat);
+        } else {
+          chatsList.value.unshift(chat);
+        }
         socket.value.emit("join_chat", data.id);
       }
     });

@@ -3,7 +3,7 @@ import { api } from "boot/axios";
 
 interface CustomerPayload {
   limit: number;
-  page: number;
+  page?: number | null;
   search: string;
   filter?: {
     key: string;
@@ -46,7 +46,8 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
   // const offset = search ? 0 : page === 1 ? 0 : (page - 1) * limit;
 
   // "/items/customers"
-  const customers = await api.get("/chat/valid-customers", {
+  // const customers = await api.get("/chat/valid-customers", {
+  const customers = await api.get("/chat/contacts/valid", {
     params: {
       // fields: `${fields}`,
       // sort: "-date_created",

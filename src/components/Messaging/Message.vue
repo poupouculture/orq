@@ -512,8 +512,8 @@ const nameEn = computed<string>(() => {
   return getChatNameEn(getSelectedChat.value, true);
 });
 
-const chatNumber = computed<string>(() =>
-  getSelectedChat.value.name.replace(/[^\d]/g, "")
+const chatNumber = computed<string>(
+  () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
 const contactNameGet = computed<string>(() => {
@@ -1062,7 +1062,7 @@ const confirmCloseBot = () => {
 };
 const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  getSelectedChat.value.mode = "";
+  getSelectedChat.value.mode = "CS-Agent";
 };
 
 const onPaste = (e: ClipboardEvent) => {

@@ -102,6 +102,11 @@ const useCustomerStore = defineStore("customer", {
           // }
         });
     },
+    /**
+     * fetch from api and set customer store
+     * @param id
+     * @returns
+     */
     async fetchCustomer(id: string) {
       try {
         const data = await getCustomer(id);

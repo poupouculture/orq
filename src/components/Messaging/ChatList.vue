@@ -24,21 +24,21 @@
 import { computed, inject } from "vue";
 import { storeToRefs } from "pinia";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import { getContactByChatId } from "src/api/messaging";
+// import { getContactByChatId } from "src/api/messaging";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { cancelGetCustomerRequest } from "src/api/customers";
-import useCustomerStore from "src/stores/modules/customer";
-import useContactStore from "src/stores/modules/contact";
+// import useCustomerStore from "src/stores/modules/customer";
+// import useContactStore from "src/stores/modules/contact";
 import { IChat } from "src/types/MessagingTypes";
 
 const props = defineProps({
   type: { type: String, default: ChatTypes.PENDING },
   filterText: { type: String, default: "" },
 });
-const customerStore = useCustomerStore();
-const { getContactById } = useContactStore();
-const contactStore = useContactStore();
+// const customerStore = useCustomerStore();
+// const { getContactById } = useContactStore();
+// const contactStore = useContactStore();
 // const { getCurrentCustomerId } = storeToRefs(contactStore);
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 
@@ -69,29 +69,28 @@ const selectChat = async (chat: IChat) => {
 
   messagingStore.onSelectChat(chat.id);
   console.log("SELECT CHAT");
-  console.log(chat);
-  if (!chat.contacts_id) {
-    console.log(" fnc: selectChat- no contact_id");
-    const contact = await getContactByChatId(chat.id);
-    chat.contacts_id = contact.contacts_id;
-  }
-  // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
-  customerStore.$reset();
-  contactStore.$reset();
-  let contact = null;
-  if (chat.customers_id) {
-    const customer = await customerStore.fetchCustomer(chat.customers_id);
-    // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
-    contactStore.setCurrentCustomerId(customer.id);
-    contact = customer?.contacts[0].contacts_id;
-    useContactStore().setContact(contact);
-  } else {
-    customerStore.setCustomer(null);
-    contact = await getContactById(chat);
-    console.log("  GET contact:....", contact);
-  }
-  // contactStore.setContact(contact);
-  messagingStore.setContactNumber(contact.number);
+  messagingStore.setChatCustomerContact(chat);
+  // console.log(chat);
+  // if (!chat.contacts_id) {
+  //   console.log(" fnc: selectChat- no contact_id");
+  //   const contact = await getContactByChatId(chat.id);
+  //   chat.contacts_id = contact.contacts_id;
+  // }
+  // // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
+  // customerStore.$reset();
+  // contactStore.$reset();
+  // let contact = null;
+  // if (chat.customers_id) {
+  //   const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
+  //   contactStore.setCurrentCustomerId(customer.id);
+  //   contact = customer?.contacts[0].contacts_id;
+  //   useContactStore().setContact(contact);
+  // } else {
+  //   customerStore.setCustomer(null);
+  //   contact = await getContactById(chat);
+  //   console.log("  GET contact:....", contact);
+  // }
+  // messagingStore.setContactNumber(contact.number);
 };
 </script>
 
