@@ -13,7 +13,12 @@
           Refresh Your Page to Connect to Chats
         </p>
       </div>
-      <q-input v-model="seachText" placeholder="Search ..." outlined dense>
+      <q-input
+        v-model="seachText"
+        placeholder="Search Chat on screen..."
+        outlined
+        dense
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
