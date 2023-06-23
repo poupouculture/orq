@@ -484,10 +484,18 @@ const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
 const supportedFiletypes: Ref<string[]> = ref([
   ".mp4",
+  ".3gp",
   ".jpg",
   ".jpeg",
   ".png",
   ".pdf",
+  ".txt",
+  ".ppt",
+  ".pptx",
+  ".doc",
+  ".docx",
+  ".xls",
+  ".xlsx",
 ]);
 const messageImageDialogRef = ref();
 const {
