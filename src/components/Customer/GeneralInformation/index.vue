@@ -355,10 +355,21 @@ const mappingCustomerGroups = () => {
 const associateContactLoading = ref(false);
 const associateContact = async () => {
   associateContactLoading.value = true;
-  await customerStore.addContact(getCustomer.value.id, getContacts.value.id);
-  await messagingStore.fetchChats();
-  contactStore.setCurrentCustomerId(getCustomer.value.id);
-  associateContactLoading.value = false;
+  const response = await customerStore.addContact(
+    getCustomer.value.id,
+    getContacts.value.id
+  );
+  console.log(response);
+  if (response?.data?.status) {
+    console.log(" associating: SUCCESS");
+    // await messagingStore.fetchChats();
+    contactStore.setCurrentCustomerId(getCustomer.value.id);
+    associateContactLoading.value = false;
+    messagingStore.assignChatCustomer(getCustomer.value.id);
+    // messagingStore.setChatCustomerContact(getSelectedChat.value);
+  } else {
+    console.log(" associating: FAILURE");
+  }
 };
 </script>
 <template>

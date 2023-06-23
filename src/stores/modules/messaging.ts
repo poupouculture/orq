@@ -1,4 +1,7 @@
 import { defineStore } from "pinia";
+import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
+
 import {
   IState,
   IChat,
@@ -11,11 +14,16 @@ import { getContact } from "src/api/contact";
 import {
   getChats,
   getChatMessagesByChatId,
+  getContactByChatId,
   sendChatTextMessage,
   // getContact,
   getChatsByType,
   getMessagesById,
 } from "src/api/messaging";
+
+const customerStore = useCustomerStore();
+const { getContactById } = useContactStore();
+const contactStore = useContactStore();
 const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
@@ -284,6 +292,40 @@ const useMessagingStore = defineStore("messaging", {
     async onSelectChat(chatId: string) {
       this.selectedChatId = chatId;
       this.rightDrawerOpen = true;
+    },
+    async clearChatCustomer() {
+      const targetChat = this.getSelectedChat;
+      // targetChat.customer_company_name_en = "Visitor";
+      targetChat.customers_id = null;
+    },
+    async assignChatCustomer(customerId: string) {
+      const targetChat = this.getSelectedChat;
+      // targetChat.customer_company_name_en = "Visitor";
+      targetChat.customers_id = customerId;
+    },
+    async setChatCustomerContact(chat: IChat) {
+      // console.log("SELECT CHAT");
+      console.log(chat);
+      if (!chat.contacts_id) {
+        console.log(" fnc: selectChat- no contact_id");
+        const contact = await getContactByChatId(chat.id);
+        chat.contacts_id = contact.contacts_id;
+      }
+      // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
+      customerStore.$reset();
+      contactStore.$reset();
+      let contact = null;
+      if (chat.customers_id) {
+        const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
+        contactStore.setCurrentCustomerId(customer.id);
+        contact = customer?.contacts[0].contacts_id;
+        useContactStore().setContact(contact);
+      } else {
+        customerStore.setCustomer(null);
+        contact = await getContactById(chat);
+        console.log("  GET contact:....", contact);
+      }
+      this.setContactNumber(contact.number);
     },
 
     async fetchContactNumber(contactId: string) {

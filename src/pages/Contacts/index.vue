@@ -395,7 +395,7 @@ const handleDelete = async () => {
       }));
     await dissociateContacts(payload);
     Notify.create({
-      message: "Successful to disassociate contact",
+      message: "Successful: disassociated contact",
       position: "top",
       color: "primary",
       type: "positive",

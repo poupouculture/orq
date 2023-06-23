@@ -505,8 +505,8 @@ const nameEn = computed<string>(() => {
   return getChatNameEn(getSelectedChat.value, true);
 });
 
-const chatNumber = computed<string>(() =>
-  getSelectedChat.value.name.replace(/[^\d]/g, "")
+const chatNumber = computed<string>(
+  () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
 const contactNameGet = computed<string>(() => {
