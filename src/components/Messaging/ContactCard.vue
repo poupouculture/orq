@@ -155,7 +155,9 @@ const time = computed<string>(() => {
 });
 const waitingTime = computed(() => {
   const { last_message: lastMessage } = props.data;
-  const dateCreated = lastMessage?.date_created;
+  // const dateCreated = lastMessage?.date_created;
+  const dateCreated = lastMessage?.date_created ?? now.value;
+
   return intlFormatDistance(new Date(dateCreated), now.value);
 });
 const waitingTimeStatus = computed(() => {
