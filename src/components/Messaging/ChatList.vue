@@ -39,7 +39,7 @@ const props = defineProps({
 const customerStore = useCustomerStore();
 const { getContactById } = useContactStore();
 const contactStore = useContactStore();
-const { getCurrentCustomerId } = storeToRefs(contactStore);
+// const { getCurrentCustomerId } = storeToRefs(contactStore);
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 
 const messagingStore = useMessagingStore();
@@ -81,7 +81,7 @@ const selectChat = async (chat: IChat) => {
   let contact = null;
   if (chat.customers_id) {
     const customer = await customerStore.fetchCustomer(chat.customers_id);
-    console.log("getCurrentCustomerId:...", getCurrentCustomerId.value);
+    // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
     contactStore.setCurrentCustomerId(customer.id);
     contact = customer?.contacts[0].contacts_id;
     useContactStore().setContact(contact);

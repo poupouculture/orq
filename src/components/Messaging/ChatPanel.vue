@@ -125,7 +125,7 @@ import {
 } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-// import useContactStore from "src/stores/modules/contact";
+import useContactStore from "src/stores/modules/contact";
 // import { getContact } from "src/api/contact";
 // import { searchCustomers, getCustomer } from "src/api/customers";
 import { searchCustomers } from "src/api/customers";
@@ -177,6 +177,8 @@ const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
+const contactStore = useContactStore();
+
 const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
@@ -448,17 +450,21 @@ const initSocket = () => {
       console.log(customer);
       const contact = customer?.contacts[0].contacts_id;
 
-      const currentChat = chatsList.value.find(
+      const chatFound = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
-
-      if (currentChat !== undefined) {
-        currentChat.customers_id = data.customers_id;
-        currentChat.customer_company_name_en =
-          customer.customer_company_name_en;
+      if (chatFound !== undefined) {
+        if (getSelectedChat.value.id === chatFound.id) {
+          console.log("current chat found");
+          contactStore.setCurrentCustomerId(customer.id);
+          contactStore.setContact(contact);
+          customerStore.setCustomer(customer);
+        }
+        chatFound.customers_id = data.customers_id;
+        chatFound.customer_company_name_en = customer.customer_company_name_en;
+        chatFound.contact_first_name = contact.first_name;
+        chatFound.contact_last_name = contact.last_name;
         // socket.value.emit("join_chat", data.id);
-        currentChat.contact_first_name = contact.first_name;
-        currentChat.contact_last_name = contact.last_name;
         // useContactStore().setFirstname(contact.first_name);
       }
       // no need to explictly call getContact. comment out for now.
@@ -466,7 +472,6 @@ const initSocket = () => {
       // getSelectedChat.value.contact_first_name =
       //   contact.data.data[0].first_name;
       // useContactStore().setFirstname(contact.data.data[0].first_name);
-      // customerStore.setCustomer(customer);
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
