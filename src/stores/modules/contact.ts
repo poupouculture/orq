@@ -74,6 +74,7 @@ const useContactStore = defineStore("useContact", {
         is_active: payload.is_active,
         number: payload.number,
         status: payload.status,
+        preferred_language: payload.preferred_language,
       };
       Loading.show();
       try {

@@ -339,6 +339,7 @@ const openEditContact = async (id: string) => {
     form.last_name = contact.last_name;
     form.number = contact.number;
     form.is_active = contact.is_active;
+    form.preferred_language = contact.preferred_language;
     form.category = contact.category;
     form.status = contact.status;
   }
@@ -352,6 +353,7 @@ const form = reactive({
   is_active: false,
   category: null,
   status: null,
+  preferred_language: "en-US",
 });
 
 const search = reactive({

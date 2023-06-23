@@ -30,6 +30,19 @@
           :options="categoryOptions"
         />
       </div>
+      <div class="flex flex-col">
+        <q-select
+          v-model="form.preferred_language"
+          :options="preferedLanguageOptions"
+          dense
+          :disable="true"
+          outlined
+          map-options
+          emit-value
+          option-value="value"
+          option-label="label"
+        />
+      </div>
     </div>
     <div class="flex items-center gap-x-3 mt-5 justify-end">
       <q-btn @click="emits('close')" color="secondary" outline label="Cancel" />
@@ -38,6 +51,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { preferedLanguageOptions } from "src/utils/typeOptions";
 import { reactive } from "vue";
 
 const emits = defineEmits(["close", "save"]);
@@ -48,6 +62,7 @@ const form = reactive({
   number: props.form?.number || "",
   is_active: props.form?.is_active || true,
   category: props.form?.category || "",
+  preferred_language: props.form?.preferred_language || "en-US",
 });
 const categoryOptions = ["phone"];
 </script>
