@@ -286,9 +286,13 @@ const chooseCustomer = async (customer: any) => {
   // data.last_message = JSON.parse(data.last_message);
 
   const chat = await getChatByID(data.id);
-  chat.last_message = JSON.parse(chat.last_message);
-  messagingStore.updateChatsList(chat);
-  messagingStore.onSelectChat(data.id);
+  if (chat) {
+    chat.last_message = JSON.parse(chat.last_message);
+    messagingStore.updateChatsList(chat); // if chat is NOT on screen
+    messagingStore.setChatsLastMessage(data.id, chat.last_message);
+    messagingStore.setSelectedTab(chat.status);
+    messagingStore.onSelectChat(data.id);
+  }
 };
 
 const onSearchCustomers = async (

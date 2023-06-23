@@ -81,10 +81,10 @@ const selectChat = async (chat: IChat) => {
   let contact = null;
   if (chat.customers_id) {
     const customer = await customerStore.fetchCustomer(chat.customers_id);
-    contact = customer.contacts[0].contacts_id;
-    useContactStore().setContact(contact);
     console.log("getCurrentCustomerId:...", getCurrentCustomerId.value);
     contactStore.setCurrentCustomerId(customer.id);
+    contact = customer?.contacts[0].contacts_id;
+    useContactStore().setContact(contact);
   } else {
     customerStore.setCustomer(null);
     contact = await getContactById(chat);

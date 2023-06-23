@@ -125,6 +125,11 @@ const useMessagingStore = defineStore("messaging", {
       //   this.selectedTab = status;
       // }
     },
+    /**
+     * adds chat into the cached. this prevents duplicate chats
+     * @param newchat
+     * @param status
+     */
     updateChatsList(newchat: IChat, status?: ChatTypes) {
       console.log("updateChatsList-----");
       if (status) {
@@ -267,6 +272,10 @@ const useMessagingStore = defineStore("messaging", {
       return data;
     },
 
+    /**
+     * sets the screen to display the current chat
+     * @param chatId
+     */
     async onSelectChat(chatId: string) {
       this.selectedChatId = chatId;
       this.rightDrawerOpen = true;
