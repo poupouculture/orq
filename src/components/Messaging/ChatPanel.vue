@@ -495,11 +495,11 @@ const initSocket = () => {
         type: "positive",
       });
       console.log("chat_created", data);
-      const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
+      const findChat = chatsList.value.find((chat) => chat.id === data.id);
       console.log("findChat:", findChat);
       if (!findChat) {
         const chat = await getChatByID(data.id);
-        console.log("created chat:", chat);
+        console.log("SOCKET chat_created:", chat);
         chat.last_message = JSON.parse(chat.last_message);
         chatsList.value.unshift(chat);
         socket.value.emit("join_chat", data.id);
