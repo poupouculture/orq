@@ -108,7 +108,7 @@
                     <img src="../../assets/images/profileavatar.png" />
                   </q-avatar>
                   <div class="q-ml-md">
-                    <div class="text-weight-bold">
+                    <div class="text-weight-bold break-all">
                       {{ user.first_name }} {{ user.last_name }}
                     </div>
                     <div class="text-weight-light">
