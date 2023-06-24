@@ -106,7 +106,7 @@ const headerColumns = [
   {
     name: "contact_first_name",
     align: "left",
-    label: "Firstname",
+    label: "First Name",
     field: "contact_first_name",
     sortable: true,
     classes: "text-black",
