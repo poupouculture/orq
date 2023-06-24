@@ -387,7 +387,7 @@ const associateContact = async () => {
         <div
           class="q-mb-lg flex"
           :class="[
-            isCustomerExist && getCustomer?.id !== getCurrentCustomerId
+            isCustomerExist && !getCurrentCustomerId
               ? 'justify-between'
               : 'justify-end',
           ]"
@@ -396,7 +396,7 @@ const associateContact = async () => {
           <q-btn
             @click="associateContact"
             :loading="associateContactLoading"
-            v-if="isCustomerExist && getCustomer?.id !== getCurrentCustomerId"
+            v-if="isCustomerExist && !getCurrentCustomerId"
             color="primary"
             label="ASSOCIATE"
             class="dark-btn"
