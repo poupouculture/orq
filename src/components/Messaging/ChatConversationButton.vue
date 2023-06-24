@@ -41,13 +41,14 @@
               @click="assignUser(user, true)"
             >
               <q-item-section>
-                <div class="flex items-center">
+                <div class="flex flex-nowrap items-center">
                   <q-avatar size="md">
                     <img src="../../assets/images/profileavatar.png" />
                   </q-avatar>
                   <div class="q-ml-md">
-                    <div class="text-weight-bold">
-                      {{ user.first_name }} {{ user.last_name }}
+                    <div class="text-weight-bold break-all">
+                      {{ user.first_name }}
+                      {{ user.last_name }}
                     </div>
                     <div class="text-weight-light">
                       {{ user.role_name }}
@@ -102,7 +103,7 @@
               @click="assignUser(user)"
             >
               <q-item-section>
-                <div class="flex items-center">
+                <div class="flex flex-nowrap items-center">
                   <q-avatar size="md">
                     <img src="../../assets/images/profileavatar.png" />
                   </q-avatar>
