@@ -365,10 +365,11 @@ const associateContact = async () => {
     // await messagingStore.fetchChats();
     contactStore.setCurrentCustomerId(getCustomer.value.id);
     associateContactLoading.value = false;
-    messagingStore.assignChatCustomer(getCustomer.value.id);
+    // messagingStore.assignChatCustomer(getCustomer.value.id, customer);
     // messagingStore.setChatCustomerContact(getSelectedChat.value);
   } else {
     console.log(" associating: FAILURE");
+    // tbd show error
   }
 };
 </script>

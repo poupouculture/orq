@@ -21,9 +21,15 @@ import {
   getMessagesById,
 } from "src/api/messaging";
 
+import { ref } from "vue";
+import { io } from "socket.io-client";
+const socket = ref();
+const socketUrl = process.env.SOCKETS_URL as string;
+
 const customerStore = useCustomerStore();
 const { getContactById } = useContactStore();
 const contactStore = useContactStore();
+
 const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
@@ -37,6 +43,7 @@ const useMessagingStore = defineStore("messaging", {
       cachedChatMessages: {},
       contactNumber: null,
       replayMessage: {},
+      socket,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -164,6 +171,19 @@ const useMessagingStore = defineStore("messaging", {
         item.last_message = JSON.parse(item.last_message);
         return item;
       });
+    },
+    async socketConnect(userInfo: any) {
+      console.log(socketUrl);
+      socket.value = io(socketUrl, {
+        reconnectionDelayMax: 30000,
+        extraHeaders: {
+          authorization: `${userInfo.value.access_token}`,
+        },
+        // transports: ["websocket"],
+      });
+    },
+    async socketEventsInit() {
+      console.log("Listening EVENTS:", socketUrl);
     },
     async loadMoreChats(
       type?: ChatTypes,
@@ -298,10 +318,16 @@ const useMessagingStore = defineStore("messaging", {
       // targetChat.customer_company_name_en = "Visitor";
       targetChat.customers_id = null;
     },
-    async assignChatCustomer(customerId: string) {
+    async assignChatCustomer(customerId: string, customer?: any) {
       const targetChat = this.getSelectedChat;
       // targetChat.customer_company_name_en = "Visitor";
       targetChat.customers_id = customerId;
+      if (customer) {
+        targetChat.customer_company_name_en =
+          customer?.customer_company_name_en;
+      }
+      // targetChat.contact_first_name = contact.first_name;
+      // targetChat.contact_last_name = contact.last_name;
     },
     async setChatCustomerContact(chat: IChat) {
       // console.log("SELECT CHAT");

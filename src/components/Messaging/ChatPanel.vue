@@ -14,7 +14,7 @@
         </p>
       </div>
       <q-input
-        v-model="seachText"
+        v-model="searchText"
         placeholder="Search Chat on screen..."
         outlined
         dense
@@ -79,7 +79,7 @@
         :name="tab.name"
         ref="chatListScroller"
       >
-        <ChatList :type="tab.name" :filter-text="seachText" />
+        <ChatList :type="tab.name" :filter-text="searchText" />
       </q-tab-panel>
     </q-tab-panels>
     <q-btn
@@ -170,7 +170,7 @@ type ChatToggleType = {
 
 const chatListScroller = ref(null);
 const errSocket = ref(false);
-const seachText = ref("");
+const searchText = ref("");
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
@@ -329,7 +329,11 @@ const showMoreChats = async () => {
     15,
     selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
-
+  chats.forEach((chat: IChat) => {
+    console.log("SOCKET: LOAD MORE join_chat by chat_id.........");
+    // console.log(`join_chat.........${chat.id}`);
+    socket.value.emit("join_chat", chat.id);
+  });
   chatListScroller.value[0]?.$el?.scrollTo({ top: 0, behavior: "smooth" });
 
   isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
@@ -368,7 +372,7 @@ const initSocket = () => {
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
-          console.log("SOCKET: conversation_type");
+          console.log("  SOCKET: conversation_type");
           messagingStore.changeConversationType(
             chat?.id,
             data?.update_fields?.conversation_type
@@ -592,6 +596,7 @@ const initSocket = () => {
 onMounted(() => {
   messagingStore.fetchChats();
   initSocket();
+  // messagingStore.initSocket();
 });
 
 onBeforeUnmount(() => {
