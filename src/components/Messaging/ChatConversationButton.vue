@@ -41,7 +41,7 @@
               @click="assignUser(user, true)"
             >
               <q-item-section>
-                <div class="row items-center">
+                <div class="flex items-center">
                   <q-avatar size="md">
                     <img src="../../assets/images/profileavatar.png" />
                   </q-avatar>
@@ -102,7 +102,7 @@
               @click="assignUser(user)"
             >
               <q-item-section>
-                <div class="row items-center">
+                <div class="flex items-center">
                   <q-avatar size="md">
                     <img src="../../assets/images/profileavatar.png" />
                   </q-avatar>
