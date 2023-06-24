@@ -226,9 +226,13 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 //   return data;
 // };
 
-export const startNewChat = async (customerId: string) => {
+export const startNewChat = async (
+  customerId: string,
+  contactNumber?: string
+) => {
   const { data } = await api.post(`/waba/create-chat`, {
     customer_id: customerId,
+    contact_number: contactNumber,
   });
 
   return data;

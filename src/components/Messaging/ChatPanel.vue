@@ -283,7 +283,8 @@ const fetchCustomers = async () => {
 
 const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
-  const [data] = await startNewChat(customer.id);
+  // const [data] = await startNewChat(customer.id, customer.contact_number);
+  const [data] = await startNewChat(customer.id, customer.contact_number);
 
   // const response = await getCustomer(customer.id);
   // const customerObj = response.data.data;
