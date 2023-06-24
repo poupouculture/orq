@@ -11,11 +11,9 @@
   > -->
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
+      @click="showCustomerInfo"
     >
-      <div
-        class="flex items-center space-x-3 cursor-pointer flex-nowrap"
-        @click="showCustomerInfoInMobile"
-      >
+      <div class="flex items-center space-x-3 cursor-pointer flex-nowrap">
         <q-avatar class="rounded-avatar">
           <img :src="profileIcon" />
         </q-avatar>
@@ -28,6 +26,19 @@
           </p>
         </div>
       </div>
+      <!-- <q-input
+        v-model="searchText"
+        placeholder="Search Chat Messages..."
+        outlined
+        dense
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="reorder" class="cursor-pointer" />
+        </template>
+      </q-input> -->
       <!-- Close button -->
       <q-btn
         class="cursor-pointer lg:hidden absolute right-4 top-4"
@@ -629,7 +640,7 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const showCustomerInfoInMobile = () => {
+const showCustomerInfo = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 
