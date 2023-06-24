@@ -701,10 +701,10 @@ const sendMessage = async () => {
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
-  if (!isChatExpired.value && isTemplate.value) {
-    isTemplate.value = false;
-    newMessage.content = message.value;
-  }
+  // if (!isChatExpired.value && isTemplate.value) {??? todo, save on message template
+  //   isTemplate.value = false;
+  //   newMessage.content = message.value;
+  // }
 
   message.value = "";
   try {
