@@ -6,7 +6,7 @@
     >
       <q-card-section>
         <div class="flex justify-between">
-          <p class="text-lg mb-2">Profile</p>
+          <p class="text-lg mb-2">Contacts</p>
           <q-icon name="close" class="cursor-pointer" @click="hide" />
         </div>
 
@@ -15,7 +15,7 @@
             v-model="search"
             @change="handleSearch"
             @keypress.enter.prevent="handleSearch"
-            placeholder="Search Profile..."
+            placeholder="Search Profile/ Contact..."
             outlined
             dense
           >
