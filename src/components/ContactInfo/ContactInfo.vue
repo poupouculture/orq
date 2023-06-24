@@ -4,6 +4,7 @@ import useContactStore from "src/stores/modules/contact";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
 import { storeToRefs } from "pinia";
+import { preferedLanguageOptions } from "src/utils/typeOptions";
 
 // State
 const editMode = ref(false);
@@ -17,9 +18,12 @@ const contacts = useContactStore();
 const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
 
 const dissociateContact = async () => {
-  await contacts.dissociateContact();
-
-  await messagingStore.fetchChats();
+  const response = await contacts.dissociateContact();
+  console.log(response);
+  if (messagingStore.getSelectedChat) {
+    messagingStore.clearChatCustomer();
+  }
+  // await messagingStore.fetchChats();
 
   customerStore.setCustomer(null);
 };
@@ -102,14 +106,18 @@ const updateContacts = async () => {
       </div>
 
       <div class="flex flex-col">
-        <!-- <p class="label-style">Status</p>
+        <p class="label-style">Prefered Language</p>
         <q-select
-          v-model="getContacts.status"
-          :options="statusOptions"
+          v-model="getContacts.preferred_language"
+          :options="preferedLanguageOptions"
           dense
           outlined
-          :disable="!editMode"
-        /> -->
+          map-options
+          emit-value
+          option-value="value"
+          option-label="label"
+          :disable="true"
+        />
       </div>
     </div>
 

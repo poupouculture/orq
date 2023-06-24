@@ -6,7 +6,7 @@
     >
       <q-card-section>
         <div class="flex justify-between">
-          <p class="text-lg mb-2">Profile</p>
+          <p class="text-lg mb-2">Contacts</p>
           <q-icon name="close" class="cursor-pointer" @click="hide" />
         </div>
 
@@ -15,7 +15,7 @@
             v-model="search"
             @change="handleSearch"
             @keypress.enter.prevent="handleSearch"
-            placeholder="Search Profile..."
+            placeholder="Search Profile/ Contact..."
             outlined
             dense
           >
@@ -106,7 +106,7 @@ const headerColumns = [
   {
     name: "contact_first_name",
     align: "left",
-    label: "Firstname",
+    label: "First Name",
     field: "contact_first_name",
     sortable: true,
     classes: "text-black",
@@ -157,13 +157,21 @@ const groupedCompanies = (companies) => {
   return grouped.join(", ");
 };
 
-const fetchCustomers = async () => {
+/**
+ *
+ * @param isSearch , if true, then search
+ */
+const fetchCustomers = async (isSearch = false) => {
+  let pageTarget = null;
+  if (!isSearch) {
+    pageTarget = data.page;
+  }
   try {
     const {
       data: { data: customers },
     } = await getCustomersWithContacts({
       limit: data.rowsPerPage,
-      page: data.page,
+      page: pageTarget,
       search: search.value,
     });
 
@@ -185,7 +193,7 @@ const changePage = (page) => {
 };
 
 const handleSearch = () => {
-  fetchCustomers();
+  fetchCustomers(true);
 };
 
 const hide = () => {

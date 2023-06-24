@@ -355,10 +355,22 @@ const mappingCustomerGroups = () => {
 const associateContactLoading = ref(false);
 const associateContact = async () => {
   associateContactLoading.value = true;
-  await customerStore.addContact(getCustomer.value.id, getContacts.value.id);
-  await messagingStore.fetchChats();
-  contactStore.setCurrentCustomerId(getCustomer.value.id);
-  associateContactLoading.value = false;
+  const response = await customerStore.addContact(
+    getCustomer.value.id,
+    getContacts.value.id
+  );
+  console.log(response);
+  if (response?.data?.status) {
+    console.log(" associating: SUCCESS");
+    // await messagingStore.fetchChats();
+    contactStore.setCurrentCustomerId(getCustomer.value.id);
+    associateContactLoading.value = false;
+    // messagingStore.assignChatCustomer(getCustomer.value.id, customer);
+    // messagingStore.setChatCustomerContact(getSelectedChat.value);
+  } else {
+    console.log(" associating: FAILURE");
+    // tbd show error
+  }
 };
 </script>
 <template>
@@ -375,7 +387,7 @@ const associateContact = async () => {
         <div
           class="q-mb-lg flex"
           :class="[
-            isCustomerExist && getCustomer?.id !== getCurrentCustomerId
+            isCustomerExist && !getCurrentCustomerId
               ? 'justify-between'
               : 'justify-end',
           ]"
@@ -384,7 +396,7 @@ const associateContact = async () => {
           <q-btn
             @click="associateContact"
             :loading="associateContactLoading"
-            v-if="isCustomerExist && getCustomer?.id !== getCurrentCustomerId"
+            v-if="isCustomerExist && !getCurrentCustomerId"
             color="primary"
             label="ASSOCIATE"
             class="dark-btn"

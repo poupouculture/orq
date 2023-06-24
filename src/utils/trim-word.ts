@@ -9,6 +9,9 @@ const trimWord = (word: string, maxLength: number = 15) => {
 
 export const getChatName = (chat: IChat) => {
   if (chat.customers_id) {
+    // ???tbd
+    console.log("getChatName");
+    console.log(getChatName);
     return trimWord(`${chat.first_name} ${chat.last_name}`);
   } else return "Visitor";
 };
@@ -25,9 +28,12 @@ export const getChatName = (chat: IChat) => {
 //   }
 // };
 
-export const getChatNameEn = (chat: IChat) => {
-  if (chat.customers_id) {
-    return trimWord(`${chat.customer_company_name_en}`);
+export const getChatNameEn = (chat: IChat, noTrim?: boolean) => {
+  if (chat?.customers_id) {
+    // ??? tbd
+    return noTrim
+      ? chat.customer_company_name_en
+      : trimWord(`${chat.customer_company_name_en}`);
   } else {
     return "Visitor";
   }

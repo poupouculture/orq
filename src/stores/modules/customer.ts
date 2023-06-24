@@ -102,14 +102,23 @@ const useCustomerStore = defineStore("customer", {
           // }
         });
     },
+    /**
+     * fetch from api and set customer store
+     * @param id
+     * @returns
+     */
     async fetchCustomer(id: string) {
       try {
         const data = await getCustomer(id);
         if (data) {
-          const customer = data.data.data;
+          const customer = data?.data?.data;
           this.setCustomer(customer);
+          return customer;
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
     },
     setCustomer(customer: ICustomer | null) {
       if (customer === null) {

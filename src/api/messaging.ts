@@ -15,9 +15,9 @@ export const getChats = async (limit = 15, pageNumber = 1) => {
     },
   });
 
-  const ongoingChats = data.data.ongoing;
-  const waitingChats = data.data.waiting;
-  const closedChats = data.data.closed;
+  const ongoingChats = data?.data.ongoing;
+  const waitingChats = data?.data.waiting;
+  const closedChats = data?.data.closed;
   return ongoingChats.concat(waitingChats, closedChats);
 };
 
@@ -221,14 +221,18 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   return data.data || null;
 };
 
-export const getContact = async (contactId: string) => {
-  const { data } = await api.get(`/items/contacts/${contactId}`);
-  return data;
-};
+// export const getContact = async (contactId: string) => {
+//   const { data } = await api.get(`/items/contacts/${contactId}`);
+//   return data;
+// };
 
-export const startNewChat = async (customerId: string) => {
+export const startNewChat = async (
+  customerId: string,
+  contactNumber?: string
+) => {
   const { data } = await api.post(`/waba/create-chat`, {
     customer_id: customerId,
+    contact_number: contactNumber,
   });
 
   return data;

@@ -4,16 +4,21 @@
   >
     <!-- search part -->
     <q-item-label header>
-      <div class="logo-holder mb-3 flex items-center gap-3">
+      <router-link to="/" class="logo-holder mb-3 flex items-center gap-3">
         <img class="w-10" src="~assets/images/logo.svg" />
         <p class="font-[800] text-[#231815] text-2xl">ChaQ</p>
-      </div>
+      </router-link>
       <div v-if="errSocket" class="logo-holder mb-3 flex items-center gap-3">
         <p class="font-[800] text-[#231815] text-2xl">
           Refresh Your Page to Connect to Chats
         </p>
       </div>
-      <q-input v-model="seachText" placeholder="Search ..." outlined dense>
+      <q-input
+        v-model="searchText"
+        placeholder="Search Chat on screen..."
+        outlined
+        dense
+      >
         <template v-slot:prepend>
           <q-icon name="search" />
         </template>
@@ -74,7 +79,7 @@
         :name="tab.name"
         ref="chatListScroller"
       >
-        <ChatList :type="tab.name" :filter-text="seachText" />
+        <ChatList :type="tab.name" :filter-text="searchText" />
       </q-tab-panel>
     </q-tab-panels>
     <q-btn
@@ -120,7 +125,10 @@ import {
 } from "src/api/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
-import { searchCustomers, getCustomer } from "src/api/customers";
+import useContactStore from "src/stores/modules/contact";
+// import { getContact } from "src/api/contact";
+// import { searchCustomers, getCustomer } from "src/api/customers";
+import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
@@ -162,13 +170,15 @@ type ChatToggleType = {
 
 const chatListScroller = ref(null);
 const errSocket = ref(false);
-const seachText = ref("");
+const searchText = ref("");
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
   state: ChatToggleLabel.SHOW,
 });
 const messagingStore = useMessagingStore();
+const contactStore = useContactStore();
+
 const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
@@ -207,11 +217,13 @@ const tabsTip = computed(() => {
   return result;
 });
 
-watch(chatsList, (list) => {
-  list.forEach((chat) => {
-    socket.value.emit("join_chat", chat.id);
-  });
-});
+// watch(chatsList, (list) => {
+//   list.forEach((chat) => {
+//     console.log("SOCKET: join_chat by chat_id.........");
+//     // console.log(`join_chat.........${chat.id}`);
+//     socket.value.emit("join_chat", chat.id);
+//   });
+// });
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
@@ -219,15 +231,24 @@ watch(getSelectedChatId, () => {
 
 watch(tabsTip, (newVal, oldVal) => {
   if (oldVal) {
-    isChatsDecreased.value[ChatTypes.PENDING] =
-      (oldVal[ChatTypes.PENDING]?.num ?? 0) >
-      (newVal[ChatTypes.PENDING]?.num ?? 0);
-    isChatsDecreased.value[ChatTypes.ONGOING] =
-      (oldVal[ChatTypes.ONGOING]?.num ?? 0) >
-      (newVal[ChatTypes.ONGOING]?.num ?? 0);
-    isChatsDecreased.value[ChatTypes.CLOSED] =
-      (oldVal[ChatTypes.CLOSED]?.num ?? 0) >
-      (newVal[ChatTypes.CLOSED]?.num ?? 0);
+    isChatsDecreased.value[ChatTypes.PENDING] = isChatsDecreased.value[
+      ChatTypes.PENDING
+    ]
+      ? true
+      : (oldVal[ChatTypes.PENDING]?.num ?? 0) >
+        (newVal[ChatTypes.PENDING]?.num ?? 0);
+    isChatsDecreased.value[ChatTypes.ONGOING] = isChatsDecreased.value[
+      ChatTypes.ONGOING
+    ]
+      ? true
+      : (oldVal[ChatTypes.ONGOING]?.num ?? 0) >
+        (newVal[ChatTypes.ONGOING]?.num ?? 0);
+    isChatsDecreased.value[ChatTypes.CLOSED] = isChatsDecreased.value[
+      ChatTypes.CLOSED
+    ]
+      ? true
+      : (oldVal[ChatTypes.CLOSED]?.num ?? 0) >
+        (newVal[ChatTypes.CLOSED]?.num ?? 0);
 
     console.log(
       "pending decreased?",
@@ -271,7 +292,8 @@ const fetchCustomers = async () => {
 
 const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
-  const [data] = await startNewChat(customer.id);
+  // const [data] = await startNewChat(customer.id, customer.contact_number);
+  const [data] = await startNewChat(customer.id, customer.contact_number);
 
   // const response = await getCustomer(customer.id);
   // const customerObj = response.data.data;
@@ -281,9 +303,13 @@ const chooseCustomer = async (customer: any) => {
   // data.last_message = JSON.parse(data.last_message);
 
   const chat = await getChatByID(data.id);
-  chat.last_message = JSON.parse(chat.last_message);
-  messagingStore.updateChatsList(chat);
-  messagingStore.onSelectChat(data.id);
+  if (chat) {
+    chat.last_message = JSON.parse(chat.last_message);
+    messagingStore.updateChatsList(chat); // if chat is NOT on screen
+    messagingStore.setChatsLastMessage(data.id, chat.last_message);
+    messagingStore.setSelectedTab(chat.status);
+    messagingStore.onSelectChat(data.id);
+  }
 };
 
 const onSearchCustomers = async (
@@ -313,7 +339,11 @@ const showMoreChats = async () => {
     15,
     selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
-
+  chats.forEach((chat: IChat) => {
+    console.log("SOCKET: LOAD MORE join_chat by chat_id.........");
+    // console.log(`join_chat.........${chat.id}`);
+    socket.value.emit("join_chat", chat.id);
+  });
   chatListScroller.value[0]?.$el?.scrollTo({ top: 0, behavior: "smooth" });
 
   isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
@@ -324,9 +354,17 @@ const initSocket = () => {
   try {
     socket.value.on("connect", () => {
       console.log("SOCKET: connect -------");
-      console.log(userProfile.value?.id);
+      console.log(
+        "SOCKET: join_chat by user_id -------",
+        userProfile.value?.id
+      );
       socket.value.emit("join_chat", userProfile?.value?.id);
       // console.log("userProfile", userProfile.value);
+      chatsList.value.forEach((chat) => {
+        console.log("SOCKET: join_chat by chat_id.........");
+        // console.log(`join_chat.........${chat.id}`);
+        socket.value.emit("join_chat", chat.id);
+      });
     });
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
@@ -344,7 +382,7 @@ const initSocket = () => {
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
-          console.log("SOCKET: conversation_type");
+          console.log("  SOCKET: conversation_type");
           messagingStore.changeConversationType(
             chat?.id,
             data?.update_fields?.conversation_type
@@ -419,20 +457,35 @@ const initSocket = () => {
       }
     });
     socket.value.on("contact_created", async (data: any) => {
-      console.log("contact_created", data);
-      const response = await getCustomer(data.customers_id);
-      const customer = response.data.data;
-      const currentChat = chatsList.value.find(
+      console.log("SOCKET: contact_created", data);
+      // const response = await getCustomer(data.customers_id);
+      // const customer = respose?.data?.data;
+      const customer = await customerStore.fetchCustomer(data.customers_id);
+      console.log(customer);
+      const contact = customer?.contacts[0].contacts_id;
+
+      const chatFound = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
-
-      if (currentChat !== undefined) {
-        currentChat.customers_id = data.customers_id;
-        currentChat.customer_company_name_en =
-          customer.customer_company_name_en;
-        socket.value.emit("join_chat", data.id);
+      if (chatFound !== undefined) {
+        if (getSelectedChat.value.id === chatFound.id) {
+          console.log("current chat found");
+          contactStore.setCurrentCustomerId(customer.id);
+          contactStore.setContact(contact);
+          customerStore.setCustomer(customer);
+        }
+        chatFound.customers_id = data.customers_id;
+        chatFound.customer_company_name_en = customer.customer_company_name_en;
+        chatFound.contact_first_name = contact.first_name;
+        chatFound.contact_last_name = contact.last_name;
+        // socket.value.emit("join_chat", data.id);
+        // useContactStore().setFirstname(contact.first_name);
       }
-      // customerStore.setCustomer(customer);
+      // no need to explictly call getContact. comment out for now.
+      // const contact = await getContact(data.document.contact_id);
+      // getSelectedChat.value.contact_first_name =
+      //   contact.data.data[0].first_name;
+      // useContactStore().setFirstname(contact.data.data[0].first_name);
     });
     socket.value.on("user_added", async (data: any) => {
       console.log("SOCKET_EVENT: user_added", data);
@@ -470,13 +523,17 @@ const initSocket = () => {
         type: "positive",
       });
       console.log("chat_created", data);
-      const findChat = chatsList.value.find((chat) => chat.chat_id === data.id);
+      const findChat = chatsList.value.find((chat) => chat.id === data.id);
       console.log("findChat:", findChat);
       if (!findChat) {
         const chat = await getChatByID(data.id);
-        console.log("created chat:", chat);
+        console.log("SOCKET chat_created:", chat);
         chat.last_message = JSON.parse(chat.last_message);
-        chatsList.value.unshift(chat);
+        if (chat?.status === ChatTypes.PENDING) {
+          chatsList.value.push(chat);
+        } else {
+          chatsList.value.unshift(chat);
+        }
         socket.value.emit("join_chat", data.id);
       }
     });
@@ -549,6 +606,7 @@ const initSocket = () => {
 onMounted(() => {
   messagingStore.fetchChats();
   initSocket();
+  // messagingStore.initSocket();
 });
 
 onBeforeUnmount(() => {

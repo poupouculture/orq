@@ -102,7 +102,8 @@
               >
                 <q-item-section>
                   {{ customer.customer_company_name_en }} -
-                  {{ customer.customer_code }}
+                  {{ customer.customer_code }} / {{ customer.location_code }} /
+                  {{ customer.div_no }}
                 </q-item-section>
               </q-item>
             </q-list>

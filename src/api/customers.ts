@@ -3,7 +3,7 @@ import { api } from "boot/axios";
 
 interface CustomerPayload {
   limit: number;
-  page: number;
+  page?: number | null;
   search: string;
   filter?: {
     key: string;
@@ -46,7 +46,8 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
   // const offset = search ? 0 : page === 1 ? 0 : (page - 1) * limit;
 
   // "/items/customers"
-  const customers = await api.get("/chat/valid-customers", {
+  // const customers = await api.get("/chat/valid-customers", {
+  const customers = await api.get("/chat/contacts/valid", {
     params: {
       // fields: `${fields}`,
       // sort: "-date_created",
@@ -67,17 +68,22 @@ export const cancelGetCustomerRequest = () => {
   if (cancelGetCustomerToken) cancelGetCustomerToken.cancel();
 };
 export const getCustomer = async (id: string) => {
+  console.log("fnc:getCustomer-----");
   const fields = "*";
-  const companies = "companies.*,companies.companies_id.*";
-  const contacts = "contacts.contacts_id.*";
-  const customerGroups =
-    "customer_groups.*,customer_groups.customer_groups_id.*";
+  // const companies = "companies.*,companies.companies_id.*";
+  const contacts =
+    "contacts.contacts_id.id,contacts.contacts_id.first_name,contacts.contacts_id.last_name,contacts.contacts_id.number,contacts.contacts_id.status,contacts.contacts_id.category,contacts.contacts_id.preferred_language";
+  // "contacts.contacts_id.*";
+  // const customerGroups = "";
+  // "customer_groups.*,customer_groups.customer_groups_id.*";
   const tags = "tags.*,tags.tags_id.*";
 
   const axiosSource = axios.CancelToken.source();
   cancelGetCustomerToken = { cancel: axiosSource.cancel };
   const customer = await api.get(
-    `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`,
+    `/items/customers/${id}?fields=${fields},${contacts},${tags}`,
+    // `/items/customers/${id}?fields=${fields},${companies},${contacts},${tags}`,
+    // `/items/customers/${id}?fields=${fields},${companies},${contacts},${customerGroups},${tags}`,
     {
       cancelToken: axiosSource.token,
     }

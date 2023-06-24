@@ -66,11 +66,11 @@ provide("rightDrawerOpen", rightDrawerOpen);
 
 onBeforeUnmount(() => {
   messagingStore.$reset();
-  window.document.documentElement.classList.remove("overflow-hidden");
+  // window.document.documentElement.classList.remove("overflow-hidden");
 });
 
 onMounted(() => {
-  window.document.documentElement.classList.add("overflow-hidden");
+  // window.document.documentElement.classList.add("overflow-hidden");
 });
 </script>
 

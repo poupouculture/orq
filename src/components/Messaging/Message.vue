@@ -10,25 +10,38 @@
     class="h-full w-full flex flex-col q-pa-md bg-white"
   > -->
     <header
-      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
+      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
+      @click="showCustomerInfo"
     >
-      <div
-        class="flex items-center space-x-3 cursor-pointer"
-        @click="showCustomerInfoInMobile"
-      >
+      <div class="flex items-center space-x-3 flex-nowrap">
         <q-avatar class="rounded-avatar">
           <img :src="profileIcon" />
         </q-avatar>
-        <div class="flex flex-col">
-          <p class="font-semibold text-lg">{{ nameEn }}</p>
+        <div class="flex flex-col w-full">
+          <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
+            {{ nameEn }}
+          </p>
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
         </div>
       </div>
+      <!-- <q-input
+        v-model="searchText"
+        placeholder="Search Chat Messages..."
+        outlined
+        dense
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="reorder" class="cursor-pointer" />
+        </template>
+      </q-input> -->
       <!-- Close button -->
       <q-btn
-        class="cursor-pointer lg:hidden max-[1023]:block"
+        class="cursor-pointer lg:hidden absolute right-4 top-4"
         @click="closeChat"
         style="color: #64748b"
         flat
@@ -500,11 +513,11 @@ const toogleChatOption = () => {
 };
 
 const nameEn = computed<string>(() => {
-  return getChatNameEn(getSelectedChat.value);
+  return getChatNameEn(getSelectedChat.value, true);
 });
 
-const chatNumber = computed<string>(() =>
-  getSelectedChat.value.name.replace(/[^\d]/g, "")
+const chatNumber = computed<string>(
+  () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
 const contactNameGet = computed<string>(() => {
@@ -580,14 +593,14 @@ watch(
 watch(
   () => getSelectedChat.value?.expiration_timestamp,
   async (val) => {
-    console.log("SELECTED_CHAT:expiry", val);
+    // console.log("SELECTED_CHAT:expiry", val);
     // conversationType.value = getSelectedChat.value.conversation_type;
     // isPending.value = conversationType.value === "pending_inbound";
 
     if (val) {
       const expiredDate = new Date(val * 1000);
-      console.log("expiredDate:", expiredDate);
-      console.log("now:", new Date());
+      // console.log("expiredDate:", expiredDate);
+      // console.log("now:", new Date());
       if (expiredDate) {
         isChatExpired.value = new Date() >= expiredDate;
         // differenceInDays(new Date(), new Date(expiredDate)) < 0;
@@ -627,7 +640,7 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const showCustomerInfoInMobile = () => {
+const showCustomerInfo = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 
@@ -688,10 +701,10 @@ const sendMessage = async () => {
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
-  if (!isChatExpired.value && isTemplate.value) {
-    isTemplate.value = false;
-    newMessage.content = message.value;
-  }
+  // if (!isChatExpired.value && isTemplate.value) {??? todo, save on message template
+  //   isTemplate.value = false;
+  //   newMessage.content = message.value;
+  // }
 
   message.value = "";
   try {
@@ -1032,7 +1045,7 @@ const confirmCloseBot = () => {
 };
 const onCloseBot = async () => {
   await closeBot(getSelectedChatId.value);
-  getSelectedChat.value.mode = "";
+  getSelectedChat.value.mode = "CS-Agent";
 };
 
 const onPaste = (e: ClipboardEvent) => {
