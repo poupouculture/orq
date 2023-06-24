@@ -157,13 +157,21 @@ const groupedCompanies = (companies) => {
   return grouped.join(", ");
 };
 
-const fetchCustomers = async () => {
+/**
+ *
+ * @param isSearch , if true, then search
+ */
+const fetchCustomers = async (isSearch = false) => {
+  let pageTarget = null;
+  if (!isSearch) {
+    pageTarget = data.page;
+  }
   try {
     const {
       data: { data: customers },
     } = await getCustomersWithContacts({
       limit: data.rowsPerPage,
-      page: data.page,
+      page: pageTarget,
       search: search.value,
     });
 
@@ -185,7 +193,7 @@ const changePage = (page) => {
 };
 
 const handleSearch = () => {
-  fetchCustomers();
+  fetchCustomers(true);
 };
 
 const hide = () => {

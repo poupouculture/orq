@@ -1,4 +1,7 @@
 import { defineStore } from "pinia";
+import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
+
 import {
   IState,
   IChat,
@@ -11,11 +14,22 @@ import { getContact } from "src/api/contact";
 import {
   getChats,
   getChatMessagesByChatId,
+  getContactByChatId,
   sendChatTextMessage,
   // getContact,
   getChatsByType,
   getMessagesById,
 } from "src/api/messaging";
+
+import { ref } from "vue";
+import { io } from "socket.io-client";
+const socket = ref();
+const socketUrl = process.env.SOCKETS_URL as string;
+
+const customerStore = useCustomerStore();
+const { getContactById } = useContactStore();
+const contactStore = useContactStore();
+
 const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
@@ -29,6 +43,7 @@ const useMessagingStore = defineStore("messaging", {
       cachedChatMessages: {},
       contactNumber: null,
       replayMessage: {},
+      socket,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -77,7 +92,12 @@ const useMessagingStore = defineStore("messaging", {
         if (index !== -1) {
           const [chat] = this.chatsList.splice(index, 1);
           // chat.mode = lastmessage.mode;
-          this.chatsList.unshift(chat);
+          // this.chatsList.unshift(chat);
+          if (chat?.status === ChatTypes.PENDING) {
+            this.chatsList.push(chat);
+          } else {
+            this.chatsList.unshift(chat);
+          }
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
@@ -151,6 +171,19 @@ const useMessagingStore = defineStore("messaging", {
         item.last_message = JSON.parse(item.last_message);
         return item;
       });
+    },
+    async socketConnect(userInfo: any) {
+      console.log(socketUrl);
+      socket.value = io(socketUrl, {
+        reconnectionDelayMax: 30000,
+        extraHeaders: {
+          authorization: `${userInfo.value.access_token}`,
+        },
+        // transports: ["websocket"],
+      });
+    },
+    async socketEventsInit() {
+      console.log("Listening EVENTS:", socketUrl);
     },
     async loadMoreChats(
       type?: ChatTypes,
@@ -279,6 +312,46 @@ const useMessagingStore = defineStore("messaging", {
     async onSelectChat(chatId: string) {
       this.selectedChatId = chatId;
       this.rightDrawerOpen = true;
+    },
+    async clearChatCustomer() {
+      const targetChat = this.getSelectedChat;
+      // targetChat.customer_company_name_en = "Visitor";
+      targetChat.customers_id = null;
+    },
+    async assignChatCustomer(customerId: string, customer?: any) {
+      const targetChat = this.getSelectedChat;
+      // targetChat.customer_company_name_en = "Visitor";
+      targetChat.customers_id = customerId;
+      if (customer) {
+        targetChat.customer_company_name_en =
+          customer?.customer_company_name_en;
+      }
+      // targetChat.contact_first_name = contact.first_name;
+      // targetChat.contact_last_name = contact.last_name;
+    },
+    async setChatCustomerContact(chat: IChat) {
+      // console.log("SELECT CHAT");
+      console.log(chat);
+      if (!chat.contacts_id) {
+        console.log(" fnc: selectChat- no contact_id");
+        const contact = await getContactByChatId(chat.id);
+        chat.contacts_id = contact.contacts_id;
+      }
+      // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
+      customerStore.$reset();
+      contactStore.$reset();
+      let contact = null;
+      if (chat.customers_id) {
+        const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
+        contactStore.setCurrentCustomerId(customer.id);
+        contact = customer?.contacts[0].contacts_id;
+        useContactStore().setContact(contact);
+      } else {
+        customerStore.setCustomer(null);
+        contact = await getContactById(chat);
+        console.log("  GET contact:....", contact);
+      }
+      this.setContactNumber(contact.number);
     },
 
     async fetchContactNumber(contactId: string) {

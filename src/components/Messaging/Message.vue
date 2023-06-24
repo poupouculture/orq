@@ -11,7 +11,7 @@
   > -->
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
-      @click="showCustomerInfoInMobile"
+      @click="showCustomerInfo"
     >
       <div class="flex items-center space-x-3 flex-nowrap">
         <q-avatar class="rounded-avatar">
@@ -26,6 +26,19 @@
           </p>
         </div>
       </div>
+      <!-- <q-input
+        v-model="searchText"
+        placeholder="Search Chat Messages..."
+        outlined
+        dense
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="reorder" class="cursor-pointer" />
+        </template>
+      </q-input> -->
       <!-- Close button -->
       <q-btn
         class="cursor-pointer lg:hidden absolute right-4 top-4"
@@ -503,8 +516,8 @@ const nameEn = computed<string>(() => {
   return getChatNameEn(getSelectedChat.value, true);
 });
 
-const chatNumber = computed<string>(() =>
-  getSelectedChat.value.name.replace(/[^\d]/g, "")
+const chatNumber = computed<string>(
+  () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
 const contactNameGet = computed<string>(() => {
@@ -627,7 +640,7 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const showCustomerInfoInMobile = () => {
+const showCustomerInfo = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 
