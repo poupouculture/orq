@@ -10,12 +10,10 @@
     class="h-full w-full flex flex-col q-pa-md bg-white"
   > -->
     <header
-      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
+      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
+      @click="showCustomerInfoInMobile"
     >
-      <div
-        class="flex items-center space-x-3 cursor-pointer flex-nowrap"
-        @click="showCustomerInfoInMobile"
-      >
+      <div class="flex items-center space-x-3 flex-nowrap">
         <q-avatar class="rounded-avatar">
           <img :src="profileIcon" />
         </q-avatar>
