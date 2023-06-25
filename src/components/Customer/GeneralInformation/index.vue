@@ -365,10 +365,11 @@ const associateContact = async () => {
     // await messagingStore.fetchChats();
     contactStore.setCurrentCustomerId(getCustomer.value.id);
     associateContactLoading.value = false;
-    messagingStore.assignChatCustomer(getCustomer.value.id);
+    // messagingStore.assignChatCustomer(getCustomer.value.id, customer);
     // messagingStore.setChatCustomerContact(getSelectedChat.value);
   } else {
     console.log(" associating: FAILURE");
+    // tbd show error
   }
 };
 </script>
@@ -386,7 +387,7 @@ const associateContact = async () => {
         <div
           class="q-mb-lg flex"
           :class="[
-            isCustomerExist && getCustomer?.id !== getCurrentCustomerId
+            isCustomerExist && !getCurrentCustomerId
               ? 'justify-between'
               : 'justify-end',
           ]"
@@ -395,7 +396,7 @@ const associateContact = async () => {
           <q-btn
             @click="associateContact"
             :loading="associateContactLoading"
-            v-if="isCustomerExist && getCustomer?.id !== getCurrentCustomerId"
+            v-if="isCustomerExist && !getCurrentCustomerId"
             color="primary"
             label="ASSOCIATE"
             class="dark-btn"

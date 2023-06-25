@@ -226,9 +226,13 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
 //   return data;
 // };
 
-export const startNewChat = async (customerId: string) => {
+export const startNewChat = async (
+  customerId: string,
+  contactNumber?: string
+) => {
   const { data } = await api.post(`/waba/create-chat`, {
     customer_id: customerId,
+    contact_number: contactNumber,
   });
 
   return data;
@@ -260,7 +264,7 @@ export const closeChat = async (id: string) => {
 };
 
 export const uploadMedia = async (chatId: string, payload: any) => {
-  const data = await api.post(`/waba/media-message/${chatId}`, payload, {
+  const data = await api.post(`/whatsapp/waba-send-media/${chatId}`, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;

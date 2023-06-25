@@ -14,7 +14,7 @@
         </p>
       </div>
       <q-input
-        v-model="seachText"
+        v-model="searchText"
         placeholder="Search Chat on screen..."
         outlined
         dense
@@ -79,7 +79,7 @@
         :name="tab.name"
         ref="chatListScroller"
       >
-        <ChatList :type="tab.name" :filter-text="seachText" />
+        <ChatList :type="tab.name" :filter-text="searchText" />
       </q-tab-panel>
     </q-tab-panels>
     <q-btn
@@ -170,7 +170,7 @@ type ChatToggleType = {
 
 const chatListScroller = ref(null);
 const errSocket = ref(false);
-const seachText = ref("");
+const searchText = ref("");
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
@@ -231,15 +231,24 @@ watch(getSelectedChatId, () => {
 
 watch(tabsTip, (newVal, oldVal) => {
   if (oldVal) {
-    isChatsDecreased.value[ChatTypes.PENDING] =
-      (oldVal[ChatTypes.PENDING]?.num ?? 0) >
-      (newVal[ChatTypes.PENDING]?.num ?? 0);
-    isChatsDecreased.value[ChatTypes.ONGOING] =
-      (oldVal[ChatTypes.ONGOING]?.num ?? 0) >
-      (newVal[ChatTypes.ONGOING]?.num ?? 0);
-    isChatsDecreased.value[ChatTypes.CLOSED] =
-      (oldVal[ChatTypes.CLOSED]?.num ?? 0) >
-      (newVal[ChatTypes.CLOSED]?.num ?? 0);
+    isChatsDecreased.value[ChatTypes.PENDING] = isChatsDecreased.value[
+      ChatTypes.PENDING
+    ]
+      ? true
+      : (oldVal[ChatTypes.PENDING]?.num ?? 0) >
+        (newVal[ChatTypes.PENDING]?.num ?? 0);
+    isChatsDecreased.value[ChatTypes.ONGOING] = isChatsDecreased.value[
+      ChatTypes.ONGOING
+    ]
+      ? true
+      : (oldVal[ChatTypes.ONGOING]?.num ?? 0) >
+        (newVal[ChatTypes.ONGOING]?.num ?? 0);
+    isChatsDecreased.value[ChatTypes.CLOSED] = isChatsDecreased.value[
+      ChatTypes.CLOSED
+    ]
+      ? true
+      : (oldVal[ChatTypes.CLOSED]?.num ?? 0) >
+        (newVal[ChatTypes.CLOSED]?.num ?? 0);
 
     console.log(
       "pending decreased?",
@@ -283,7 +292,8 @@ const fetchCustomers = async () => {
 
 const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
-  const [data] = await startNewChat(customer.id);
+  // const [data] = await startNewChat(customer.id, customer.contact_number);
+  const [data] = await startNewChat(customer.id, customer.contact_number);
 
   // const response = await getCustomer(customer.id);
   // const customerObj = response.data.data;
@@ -329,7 +339,11 @@ const showMoreChats = async () => {
     15,
     selectedTab.value === ChatTypes.PENDING ? "asc" : "desc"
   );
-
+  chats.forEach((chat: IChat) => {
+    console.log("SOCKET: LOAD MORE join_chat by chat_id.........");
+    // console.log(`join_chat.........${chat.id}`);
+    socket.value.emit("join_chat", chat.id);
+  });
   chatListScroller.value[0]?.$el?.scrollTo({ top: 0, behavior: "smooth" });
 
   isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
@@ -368,7 +382,7 @@ const initSocket = () => {
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
-          console.log("SOCKET: conversation_type");
+          console.log("  SOCKET: conversation_type");
           messagingStore.changeConversationType(
             chat?.id,
             data?.update_fields?.conversation_type
@@ -592,6 +606,7 @@ const initSocket = () => {
 onMounted(() => {
   messagingStore.fetchChats();
   initSocket();
+  // messagingStore.initSocket();
 });
 
 onBeforeUnmount(() => {

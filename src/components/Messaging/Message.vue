@@ -10,12 +10,10 @@
     class="h-full w-full flex flex-col q-pa-md bg-white"
   > -->
     <header
-      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex"
+      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
+      @click="showCustomerInfo"
     >
-      <div
-        class="flex items-center space-x-3 cursor-pointer flex-nowrap"
-        @click="showCustomerInfoInMobile"
-      >
+      <div class="flex items-center space-x-3 flex-nowrap">
         <q-avatar class="rounded-avatar">
           <img :src="profileIcon" />
         </q-avatar>
@@ -28,6 +26,19 @@
           </p>
         </div>
       </div>
+      <!-- <q-input
+        v-model="searchText"
+        placeholder="Search Chat Messages..."
+        outlined
+        dense
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="reorder" class="cursor-pointer" />
+        </template>
+      </q-input> -->
       <!-- Close button -->
       <q-btn
         class="cursor-pointer lg:hidden absolute right-4 top-4"
@@ -644,7 +655,7 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const showCustomerInfoInMobile = () => {
+const showCustomerInfo = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 };
 
@@ -705,10 +716,10 @@ const sendMessage = async () => {
   const expiredDate = new Date(timestamp * 1000);
   isChatExpired.value = new Date() >= expiredDate;
 
-  if (!isChatExpired.value && isTemplate.value) {
-    isTemplate.value = false;
-    newMessage.content = message.value;
-  }
+  // if (!isChatExpired.value && isTemplate.value) {??? todo, save on message template
+  //   isTemplate.value = false;
+  //   newMessage.content = message.value;
+  // }
 
   message.value = "";
   try {
@@ -943,7 +954,7 @@ const upload = async (fileList: readonly File[], caption: string) => {
 
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
-  console.log(file.name, file.type);
+
   getLimitByType(file.type);
   if (!file) return;
 
