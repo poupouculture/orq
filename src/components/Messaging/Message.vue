@@ -482,6 +482,8 @@ const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
+
+// filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<string[]> = ref([
   ".mp4",
   ".3gp",
