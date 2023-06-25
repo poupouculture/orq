@@ -939,7 +939,7 @@ const upload = async (fileList: readonly File[], caption: string) => {
 
 const uploadFile = async (files: readonly File[]) => {
   const file = files[0];
-  console.log(file.name, file.type);
+
   getLimitByType(file.type);
   if (!file) return;
 
