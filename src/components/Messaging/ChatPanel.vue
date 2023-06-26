@@ -431,7 +431,7 @@ const initSocket = () => {
           messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
           if (
             getSelectedChat &&
-            getSelectedChat.value.chat_id === data.document.id
+            getSelectedChat.value.id === data.document.id
           ) {
             getSelectedChat.value.mode = data.update_fields.mode;
           }
