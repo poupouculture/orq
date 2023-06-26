@@ -11,6 +11,7 @@ const useUserInfoStore = defineStore("userInfo", {
     },
     userProfile: null,
     userRoleName: "",
+    pageActions: null,
   }),
   getters: {
     token: (state) => state.userInfo?.access_token,
@@ -23,16 +24,23 @@ const useUserInfoStore = defineStore("userInfo", {
   },
   actions: {
     getPageActionsByPageId(id, pageActionName) {
-      const pages = this.getAllUserPages.filter(
-        (page) => page.pages_id.id === id
-      );
-      return (
-        pages.map((page) =>
-          page.pages_id.page_actions.find(
-            (action) => action.name === pageActionName
-          )
-        )[0].status === "published"
-      );
+      if (!this.pageActions) {
+        this.refreshPageActions();
+      }
+      if (!this.pageActions[id]) {
+        return false;
+      }
+      return this.pageActions[id][pageActionName];
+      // const pages = this.getAllUserPages.filter(
+      //   (page) => page?.pages_id?.id === id
+      // );
+      // return (
+      //   pages.map((page) =>
+      //     page?.pages_id?.page_actions.find(
+      //       (action) => action.name === pageActionName
+      //     )
+      //   )[0]?.status === "published"
+      // );
     },
     async login(params) {
       try {
@@ -75,12 +83,45 @@ const useUserInfoStore = defineStore("userInfo", {
             const user = data.data.data;
             this.userProfile = user;
             this.userRoleName = user?.role.name;
+            this.refreshPageActions();
           }
           return data;
         }
       } catch (err) {
         this.router.push("/login");
       }
+    },
+    async refreshPageActions() {
+      // const pages = this.getAllUserPages.filter(
+      //   (page) => page?.pages_id?.id === id
+      // );
+      if (this.pageActions && Object.keys(this.pageActions).length > 0) return;
+      if (!this.pageActions) this.pageActions = {};
+      const pages = this.getAllUserPages.filter(
+        (page) => page?.pages_id?.page_actions != null
+      );
+      // console.log("pages with pageActions", pages);
+      pages.forEach((page) => {
+        // console.log(page);
+        page?.pages_id?.page_actions.forEach((action) => {
+          console.log(action);
+          if (action.status === "published") {
+            const pageId = page?.pages_id?.id;
+            if (!this.pageActions[pageId]) {
+              this.pageActions[pageId] = {};
+            }
+            this.pageActions[pageId][action.name] = true;
+          }
+        });
+      });
+      console.log("pageActions", this.pageActions);
+      // return (
+      //   pages.map((page) =>
+      //     page?.pages_id?.page_actions.find(
+      //       (action) => action.name === this.pageActionName
+      //     )
+      //   )[0]?.status === "published"
+      // );
     },
     async refreshToken() {
       try {
@@ -100,12 +141,12 @@ const useUserInfoStore = defineStore("userInfo", {
         this.$reset();
         LocalStorage.clear();
         this.router.push("/login");
-        // Notify.create({
-        //   message: "login timeout",
-        //   type: "positive",
-        //   position: "top",
-        //   color: "primary",
-        // });
+        Notify.create({
+          message: "Login timeout. Please Log in again",
+          type: "positive",
+          position: "top",
+          color: "primary",
+        });
       }
     },
     setUserInfo(params) {

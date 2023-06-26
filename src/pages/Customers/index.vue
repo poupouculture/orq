@@ -164,7 +164,7 @@ const headerColumns = [
   },
 ];
 
-const canEdit = ref(true);
+const canEdit = ref(false);
 
 const loading = ref(true);
 const selected = ref([]);
@@ -223,7 +223,7 @@ const fetchCustomers = async () => {
 };
 
 onMounted(() => {
-  console.log(userInfoStore.getPageActionsByPageId("F03", "Edit"));
+  // console.log(userInfoStore.getPageActionsByPageId("F03", "Edit"));
   canEdit.value = userInfoStore.getPageActionsByPageId("F03", "Edit");
   fetchCustomers();
 });
