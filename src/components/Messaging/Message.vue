@@ -11,7 +11,7 @@
   > -->
     <header
       class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
-      @click="showCustomerInfo"
+      @click.stop="showCustomerInfo"
     >
       <div class="flex items-center space-x-3 flex-nowrap">
         <q-avatar class="rounded-avatar">
@@ -42,7 +42,7 @@
       <!-- Close button -->
       <q-btn
         class="cursor-pointer lg:hidden absolute right-4 top-4"
-        @click="closeChat"
+        @click.stop="closeChat"
         style="color: #64748b"
         flat
         round
