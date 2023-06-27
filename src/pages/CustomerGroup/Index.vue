@@ -9,33 +9,28 @@
       </div>
       <!-- Search and Add -->
       <div class="flex items-center justify-between">
-        <div class="flex items-center justify-between space-x-3">
-          <div class="w-52 ml-3">
+        <div class="flex flex-col w-full sm:flex-row gap-3 items-center">
+          <div class="w-full sm:w-52">
             <SearchTableInput
               :loading="search.loading"
               @search="searchHandler"
               @reset="resetSearch"
             />
           </div>
-          <q-select
-            dense
-            outlined
-            v-model="sourceType"
-            option-value="value"
-            option-label="label"
-            :options="sourceTypeOptions"
-            map-options
-            emit-value
-            label="Source"
-          />
+          <div class="w-full sm:w-40 ml-0">
+            <q-select
+              dense
+              outlined
+              v-model="sourceType"
+              option-value="value"
+              option-label="label"
+              :options="sourceTypeOptions"
+              map-options
+              emit-value
+              label="Source"
+            />
+          </div>
         </div>
-        <!-- <q-btn
-          :to="{ name: 'customergroups.create' }"
-          class="bg-primary text-white"
-        >
-          <q-icon name="add" class="text-white mr-2" />
-          <span>Add</span>
-        </q-btn> -->
       </div>
       <div
         class="flex items-center justify-center mt-4"
