@@ -127,7 +127,7 @@
             </div>
             <input
               type="text"
-              class="w-8/12 block border rounded-lg pl-4"
+              class="w-full py-2 md:w-8/12 block border rounded-lg pl-4"
               v-if="header === 'TEXT'"
               v-model="headerMessage"
             />

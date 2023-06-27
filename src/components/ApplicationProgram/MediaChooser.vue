@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-3 gap-14 mb-4">
+  <div class="grid sm:grid-cols-3 gap-14 mb-4">
     <div
       class="p-4 shadow-md"
       @click="setMedia('image')"
