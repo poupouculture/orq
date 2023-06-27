@@ -464,16 +464,17 @@ const initSocket = () => {
       // const customer = respose?.data?.data;
       const customer = await customerStore.fetchCustomer(data.customers_id);
       console.log(customer);
-      let contact = null;
-      if (customer?.contacts.length === 1) {
-        contact = customer?.contacts[0].contacts_id;
-      } else {
-        contact = await getContact(data.contacts_id);
-      }
 
       const chatFound = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
+      let contact = null;
+      if (customer?.contacts.length === 1) {
+        contact = customer?.contacts[0].contacts_id;
+      } else {
+        const resContact = await getContact(data.contacts_id);
+        contact = resContact?.data?.data[0];
+      }
       if (chatFound !== undefined) {
         if (getSelectedChat.value.id === chatFound.id) {
           console.log("current chat found");
