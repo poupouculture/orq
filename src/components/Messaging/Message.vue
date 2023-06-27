@@ -160,7 +160,7 @@
             type="textarea"
             :class="{ invisible: showAudio }"
             input-class="h-10"
-            @keypress.enter.prevent="sendMessage"
+            @keydown="inputHandler"
             :disable="isBot"
             @paste="onPaste"
           />
@@ -657,6 +657,13 @@ const messageCallback = async (data: any, newMessage: any) => {
     newMessage.id = data.derp_chats_messages_id;
     newMessage.sendMessageStatus = SendMessageStatus.DEFAULT;
     newMessage.waba_message_id = data.waba_message_id;
+  }
+};
+
+const inputHandler = (e: any) => {
+  if (e.keyCode === 13 && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
   }
 };
 
