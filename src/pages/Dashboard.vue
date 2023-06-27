@@ -8,7 +8,7 @@
 
     <CustomerOverview />
 
-    <!-- <q-tabs
+    <q-tabs
       v-model="active"
       dense
       align="left"
@@ -77,14 +77,14 @@
           />
         </div>
       </q-tab-panel>
-    </q-tab-panels> -->
+    </q-tab-panels>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-// import Statistics from "components/charts/Statistics.vue";
-// import Satisfaction from "components/charts/Satisfaction.vue";
+import Statistics from "components/charts/Statistics.vue";
+import Satisfaction from "components/charts/Satisfaction.vue";
 import Jumbotron from "components/Dashboard/Jumbotron.vue";
 import AnalyticOverview from "components/Dashboard/AnalyticOverview/index.vue";
 import CustomerOverview from "components/Dashboard/CustomerOverview.vue";
@@ -99,15 +99,15 @@ const isShowJumbotron = ref(true);
 const closeJumbotron = () => {
   isShowJumbotron.value = false;
 };
-// const tabs = ref([
-//   "Basic",
-//   "Conversation",
-//   "Customer",
-//   "Work order",
-//   "Staff",
-//   "Chat",
-// ]);
-// const active = ref("Basic");
+const tabs = ref([
+  "Basic",
+  "Conversation",
+  "Customer",
+  "Work order",
+  "Staff",
+  "Chat",
+]);
+const active = ref("Basic");
 </script>
 
 <style lang="scss" scoped>
