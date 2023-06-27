@@ -108,10 +108,10 @@ const { selectedChatId, selectedTab } = storeToRefs(messagingStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const isErrorLastMessage = computed<boolean>(() => {
-  console.log("isErrorLastMessage");
+  // console.log("isErrorLastMessage");
   const { last_message: lastMessage } = props.data;
-  console.log(lastMessage);
-  return messagingStore.parseMessage(lastMessage);
+  // console.log(lastMessage);
+  return messagingStore.parseError(lastMessage);
 });
 const name = computed(() => getChatNameEn(props.data));
 const nameContact = computed(() => getContactNameEn(props.data));

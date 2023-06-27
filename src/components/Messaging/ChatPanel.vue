@@ -433,6 +433,8 @@ const initSocket = () => {
             getSelectedChat &&
             getSelectedChat.value.id === data.document.id
           ) {
+            // console.log(data);
+            // console.log(data.document.id);
             getSelectedChat.value.mode = data.update_fields.mode;
           }
           if (data.update_fields.mode === "CS-Agent") {
@@ -466,7 +468,7 @@ const initSocket = () => {
       if (customer?.contacts.length === 1) {
         contact = customer?.contacts[0].contacts_id;
       } else {
-        contact = await getContact(data.document.contact_id);
+        contact = await getContact(data.contacts_id);
       }
 
       const chatFound = chatsList.value.find(
