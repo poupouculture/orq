@@ -84,9 +84,9 @@ const useMessagingStore = defineStore("messaging", {
     setMessageMembers(members: string) {
       this.getSelectedChat.members = members;
     },
-    parseMessage(msg: Message) {
-      console.log("parseMessage");
-      console.log(msg);
+    parseError(msg: Message) {
+      // console.log("parseError");
+      // console.log(msg);
       if (msg?.status === MessageStatus.FAILURE) {
         return true;
       }
@@ -94,7 +94,7 @@ const useMessagingStore = defineStore("messaging", {
     },
     setChatsLastMessage(chatId: string, lastmessage: Message) {
       try {
-        console.log("fnc-setChatsLastMessage:---");
+        // console.log("fnc-setChatsLastMessage:---");
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
@@ -110,7 +110,7 @@ const useMessagingStore = defineStore("messaging", {
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
-          const isError = this.parseMessage(lastmessage);
+          const isError = this.parseError(lastmessage);
           if (isError) {
             console.log("ERRORRRRR");
             chat.conversation_type = ChatTypes.PENDING_INBOUND;
