@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import useContactStore from "src/stores/modules/contact";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
@@ -27,7 +27,9 @@ const dissociateContact = async () => {
 
   customerStore.setCustomer(null);
 };
-
+watch(getContacts, () => {
+  editMode.value = false;
+});
 const updateContacts = async () => {
   await contacts.updateContact(getContacts.value);
 
