@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full grid grid-cols-12 bg-gray-200 ml-4 rounded-md p-4 gap-4">
+  <div class="w-full grid sm:grid-cols-12 bg-gray-200 rounded-md p-4 gap-4">
     <div class="col-span-4 flex flex-col">
       <span class="font-semibold"> Type of Action </span>
       <InputSelect
@@ -19,7 +19,10 @@
         @change="handleAllChange"
       />
     </div>
-    <div class="col-span-2 flex flex-col" v-if="actionType === at.CALL_PHONE">
+    <div
+      class="col-span-2 sm:col-span-3 md:col-span-2 flex flex-col"
+      v-if="actionType === at.CALL_PHONE"
+    >
       <span class="font-semibold"> Country: </span>
       <InputSelect
         :options="actionCountryOptions"
@@ -30,10 +33,10 @@
       />
     </div>
     <div
-      class="flex flex-col"
+      class="flex flex-col sm:col-span-4"
       :class="{
-        'col-span-3': actionType === at.CALL_PHONE,
-        'col-span-5': actionType !== at.CALL_PHONE,
+        'col-span-4': actionType === at.CALL_PHONE,
+        'col-span-6': actionType !== at.CALL_PHONE,
       }"
     >
       <span class="font-semibold">
