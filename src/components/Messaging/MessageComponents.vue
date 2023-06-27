@@ -147,8 +147,7 @@ const isDocument = (content: any) => {
  * @param msg message from API or Socket
  */
 const messageContentText = (msg: any) => {
-  console.log("DOCCCC");
-  console.log(msg.type);
+  // console.log(msg.type);
   if (msg?.content?.error_body) {
     const error = msg?.content?.error_body;
     if (error.errors) return error.errors[0]?.title;
