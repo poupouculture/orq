@@ -56,7 +56,7 @@
           <!-- can display content type here -->
           <!-- {{ message?.last_associated_message_content?.type }} -->
           <!-- {{ messageContentText(message) }} -->
-          <!-- {{ messageContentType(message) }} -->
+          {{ messageContentType(message) }}
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
@@ -172,43 +172,43 @@ const messageContentText = (msg: any) => {
  * message text or reaction
  * @param msg message from associated message
  */
-// const messageContentType = (msg: any) => {
-//   const message =
-//     msg?.waba_associated_message?.content ??
-//     msg?.last_associated_message_content;
-//   if (!message) {
-//     return "Unsupported Media";
-//   }
-//   const messageType = message?.type;
-//   console.log(messageType);
-//   switch (messageType) {
-//     case MessageType.IMAGE:
-//       return MessageType.IMAGE;
-//     case MessageType.AUDIO:
-//       return MessageType.AUDIO;
-//     case MessageType.DOCUMENT:
-//       return MessageType.DOCUMENT;
-//     case MessageType.APPLICATION:
-//       return MessageType.APPLICATION;
-//     case MessageType.VIDEO:
-//       return MessageType.VIDEO;
-//     case MessageType.REACTION: // ???
-//       console.log(msg);
-//       return message?.emoji;
-//     // return MessageType.REACTION;
-//   }
-//   if (msg?.content?.error_body) {
-//     const error = msg?.content?.error_body;
-//     if (error.errors) return error.errors[0]?.title;
-//     if (error.error_data) return error.error_data.details;
-//     if (error.message) return error.message;
-//   }
-//   if (msg?.text) {
-//     return msg.text;
-//   }
-//   return message.text;
-//   // return msg?.content?.text ?? msg?.content;
-// };
+const messageContentType = (msg: any) => {
+  const message =
+    msg?.waba_associated_message?.content ??
+    msg?.last_associated_message_content;
+  if (!message) {
+    return "Unsupported Media";
+  }
+  const messageType = message?.type;
+  console.log(messageType);
+  switch (messageType) {
+    case MessageType.IMAGE:
+      return MessageType.IMAGE;
+    case MessageType.AUDIO:
+      return MessageType.AUDIO;
+    case MessageType.DOCUMENT:
+      return MessageType.DOCUMENT;
+    case MessageType.APPLICATION:
+      return MessageType.APPLICATION;
+    case MessageType.VIDEO:
+      return MessageType.VIDEO;
+    case MessageType.REACTION: // ???
+      console.log(msg);
+      return message?.emoji;
+    // return MessageType.REACTION;
+  }
+  if (msg?.content?.error_body) {
+    const error = msg?.content?.error_body;
+    if (error.errors) return error.errors[0]?.title;
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  if (msg?.text) {
+    return msg.text;
+  }
+  return message.text;
+  // return msg?.content?.text ?? msg?.content;
+};
 
 const messageContentGet = (msg: any) => {
   const message =
