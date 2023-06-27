@@ -122,6 +122,7 @@ export interface SendTextMessage {
   countParams?: any[];
   headerType: string;
   messageId?: string;
+  channel?: string;
 }
 
 export interface ChatPayloadWabaContentText {
