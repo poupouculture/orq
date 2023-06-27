@@ -126,7 +126,7 @@ import {
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import useContactStore from "src/stores/modules/contact";
-// import { getContact } from "src/api/contact";
+import { getContact } from "src/api/contact";
 // import { searchCustomers, getCustomer } from "src/api/customers";
 import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
@@ -462,7 +462,12 @@ const initSocket = () => {
       // const customer = respose?.data?.data;
       const customer = await customerStore.fetchCustomer(data.customers_id);
       console.log(customer);
-      const contact = customer?.contacts[0].contacts_id;
+      let contact = null;
+      if (customer?.contacts.length === 1) {
+        contact = customer?.contacts[0].contacts_id;
+      } else {
+        contact = await getContact(data.document.contact_id);
+      }
 
       const chatFound = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id

@@ -344,10 +344,21 @@ const useMessagingStore = defineStore("messaging", {
       if (chat.customers_id) {
         const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
         contactStore.setCurrentCustomerId(customer.id);
-        contact = customer?.contacts[0].contacts_id;
-        useContactStore().setContact(contact);
+        if (customer?.contacts.length === 1) {
+          // a customer can be related to MANY contacts
+          contact = customer?.contacts[0].contacts_id;
+          contactStore.setCurrentCustomerId(chat.customers_id);
+          useContactStore().setContact(contact);
+        }
+        // else {
+        //   contact = await getContactById(chat);
+        //   useContactStore().setContact(contact);
+        // }
       } else {
         customerStore.setCustomer(null);
+      }
+      if (!contact) {
+        // the invariant is that there is always a contact
         contact = await getContactById(chat);
         console.log("  GET contact:....", contact);
       }
