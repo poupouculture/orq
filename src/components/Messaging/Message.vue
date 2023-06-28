@@ -556,7 +556,7 @@ const messages = computed<Message[]>(() => {
   });
 });
 
-const isBot = computed<boolean>(() => getSelectedChat.value.mode === "Bot");
+const isBot = computed<boolean>(() => getSelectedChat?.value?.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
   console.log("loadMore:----------------");
