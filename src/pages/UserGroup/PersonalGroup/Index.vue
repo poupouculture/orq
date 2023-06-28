@@ -477,6 +477,7 @@ const printUniq = (string: string, index: number) => {
 
     <q-drawer
       overlay
+      behavior="mobile"
       :width="rightDrawerWidth"
       :breakpoint="768"
       v-model="drawer"
@@ -567,7 +568,7 @@ const printUniq = (string: string, index: number) => {
         </div>
       </div>
 
-      <div class="q-mini-drawer-hide absolute" style="top: 15px; left: -16px">
+      <div class="absolute top-[15px] -left-[16px] hidden md:!block">
         <q-btn
           @click="closeDrawer"
           dense
