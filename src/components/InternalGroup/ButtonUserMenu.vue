@@ -69,7 +69,7 @@ const submitDelete = async () => {
 
   <!-- Modal / Dialog Customer detail -->
   <q-dialog v-model="showUserDetail">
-    <q-card class="w-5/12">
+    <q-card class="w-full sm:w-10/12 md:w-5/12">
       <q-card-actions align="right">
         <q-btn flat round icon="close" v-close-popup />
       </q-card-actions>
