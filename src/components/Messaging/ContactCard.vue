@@ -4,6 +4,13 @@
     class="flex w-full contact-card q-pa-sm relative"
   >
     <q-avatar class="rounded-avatar q-mr-sm">
+      <q-icon
+        v-if="isErrorLastMessage"
+        class="absolute right-full top-1/2 -translate-y-2/4 pr-1"
+        name="warning"
+        color="negative"
+        size="1.2rem"
+      />
       <img :src="profileIcon" />
     </q-avatar>
     <q-item-section>
@@ -100,6 +107,12 @@ const messagingStore = useMessagingStore();
 const { selectedChatId, selectedTab } = storeToRefs(messagingStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
+const isErrorLastMessage = computed<boolean>(() => {
+  // console.log("isErrorLastMessage");
+  const { last_message: lastMessage } = props.data;
+  // console.log(lastMessage);
+  return messagingStore.parseError(lastMessage);
+});
 const name = computed(() => getChatNameEn(props.data));
 const nameContact = computed(() => getContactNameEn(props.data));
 
@@ -125,7 +138,6 @@ const messageTemplate = (content: any) => {
 
   return content?.template_content || content?.template?.text;
 };
-
 const message = computed<string>(() => {
   const { last_message: lastMessage } = props.data;
   if (!lastMessage) return;

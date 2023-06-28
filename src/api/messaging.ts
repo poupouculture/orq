@@ -264,7 +264,7 @@ export const closeChat = async (id: string) => {
 };
 
 export const uploadMedia = async (chatId: string, payload: any) => {
-  const data = await api.post(`/waba/media-message/${chatId}`, payload, {
+  const data = await api.post(`/whatsapp/waba-send-media/${chatId}`, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;

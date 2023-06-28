@@ -69,7 +69,7 @@ export interface Message {
 }
 export interface IChat {
   id: string;
-  chat_id: string;
+  chat_id?: string;
   contacts_id: string;
   customers_id: string | null;
   contact_first_name: string;
@@ -122,6 +122,7 @@ export interface SendTextMessage {
   countParams?: any[];
   headerType: string;
   messageId?: string;
+  channel?: string;
 }
 
 export interface ChatPayloadWabaContentText {

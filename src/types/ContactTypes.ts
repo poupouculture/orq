@@ -4,4 +4,5 @@ export interface Contact {
   last_name: string;
   number: string;
   category: string;
+  preferred_language: string;
 }

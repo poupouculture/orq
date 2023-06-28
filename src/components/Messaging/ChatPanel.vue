@@ -126,7 +126,7 @@ import {
 import useUserInfoStore from "src/stores/modules/userInfo";
 import useCustomerStore from "src/stores/modules/customer";
 import useContactStore from "src/stores/modules/contact";
-// import { getContact } from "src/api/contact";
+import { getContact } from "src/api/contact";
 // import { searchCustomers, getCustomer } from "src/api/customers";
 import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
@@ -369,11 +369,11 @@ const initSocket = () => {
     socket.value.io.on("error", (err: any) => {
       console.log("socket error", err);
       errSocket.value = true;
-      // Notify.create({
-      //   message: "Refresh Your Page to connect to Chats",
-      //   position: "top",
-      //   type: "negative",
-      // });
+      Notify.create({
+        message: "Refresh Your Page to connect to Chats",
+        position: "top",
+        type: "negative",
+      });
     });
     socket.value.on("chat_updated", (data: SocketEvent) => {
       console.log("SOCKET: chat_updated", data);
@@ -431,8 +431,10 @@ const initSocket = () => {
           messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
           if (
             getSelectedChat &&
-            getSelectedChat.value.chat_id === data.document.id
+            getSelectedChat.value.id === data.document.id
           ) {
+            // console.log(data);
+            // console.log(data.document.id);
             getSelectedChat.value.mode = data.update_fields.mode;
           }
           if (data.update_fields.mode === "CS-Agent") {
@@ -462,11 +464,17 @@ const initSocket = () => {
       // const customer = respose?.data?.data;
       const customer = await customerStore.fetchCustomer(data.customers_id);
       console.log(customer);
-      const contact = customer?.contacts[0].contacts_id;
 
       const chatFound = chatsList.value.find(
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
+      let contact = null;
+      if (customer?.contacts.length === 1) {
+        contact = customer?.contacts[0].contacts_id;
+      } else {
+        const resContact = await getContact(data.contacts_id);
+        contact = resContact?.data?.data[0];
+      }
       if (chatFound !== undefined) {
         if (getSelectedChat.value.id === chatFound.id) {
           console.log("current chat found");

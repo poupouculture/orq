@@ -164,7 +164,7 @@ const headerColumns = [
   },
 ];
 
-const canEdit = ref(true);
+const canEdit = ref(false);
 
 const loading = ref(true);
 const selected = ref([]);
@@ -209,13 +209,20 @@ const groupedCompanies = (companies) => {
 };
 
 const fetchCustomers = async () => {
-  const {
-    data: { data: customers, meta },
-  } = await getCustomers({
+  const params = {
     limit: data.rowsPerPage,
     page: data.page,
     search: search.query.length ? search.query : undefined,
-  });
+  };
+  if (search.query) {
+    params.filter = {
+      key: "filter[_or][0][customer_company_name_en][_contains]",
+      value: search.query,
+    };
+  }
+  const {
+    data: { data: customers, meta },
+  } = await getCustomers(params);
   data.customers = customers;
   data.totalCount = meta?.total_count;
   data.filterCount = meta?.filter_count;
@@ -223,7 +230,7 @@ const fetchCustomers = async () => {
 };
 
 onMounted(() => {
-  console.log(userInfoStore.getPageActionsByPageId("F03", "Edit"));
+  // console.log(userInfoStore.getPageActionsByPageId("F03", "Edit"));
   canEdit.value = userInfoStore.getPageActionsByPageId("F03", "Edit");
   fetchCustomers();
 });

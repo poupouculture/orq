@@ -70,6 +70,7 @@
             :is-send="isSend"
           />
         </div>
+        Replied:
       </div>
       {{ messageContentText(message) }}
     </div>
@@ -146,6 +147,7 @@ const isDocument = (content: any) => {
  * @param msg message from API or Socket
  */
 const messageContentText = (msg: any) => {
+  // console.log(msg.type);
   if (msg?.content?.error_body) {
     const error = msg?.content?.error_body;
     if (error.errors) return error.errors[0]?.title;
@@ -164,6 +166,7 @@ const messageContentText = (msg: any) => {
 };
 
 /**
+ * for associated message
  * used to display type of message
  * OR
  * message text or reaction
