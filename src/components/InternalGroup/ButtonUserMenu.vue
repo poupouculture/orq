@@ -39,6 +39,7 @@ const submitDelete = async () => {
     id: props.id,
     userId: props.userId,
   });
+  deleteDialog.value = false;
 
   await internalGroupStore.getAll({
     rowsPerPage: pagination.value.rowsPerPage,
