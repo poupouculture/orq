@@ -476,7 +476,7 @@ const initSocket = () => {
         contact = resContact?.data?.data[0];
       }
       if (chatFound !== undefined) {
-        if (getSelectedChat.value.id === chatFound.id) {
+        if (getSelectedChat && getSelectedChat.value.id === chatFound.id) {
           console.log("current chat found");
           contactStore.setCurrentCustomerId(customer.id);
           contactStore.setContact(contact);
