@@ -12,14 +12,14 @@ export default boot(async ({ app, router }) => {
     integrations: [
       new BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-        tracePropagationTargets: [
-          "localhost",
-          "waba.synque.ca",
-          "waba-dev.synque.ca",
-          "ang-dev.synque.ca",
-          "angliss-chaq-dev.synque.ca",
-          /^\//,
-        ],
+        // tracePropagationTargets: [
+        //   "localhost",
+        //   "waba.synque.ca",
+        //   "waba-dev.synque.ca",
+        //   "ang-dev.synque.ca",
+        //   "angliss-chaq-dev.synque.ca",
+        //   /^\//,
+        // ],
       }),
     ],
     // Set tracesSampleRate to 1.0 to capture 100%
