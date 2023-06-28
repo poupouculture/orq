@@ -75,6 +75,7 @@ module.exports = configure(function () {
       env: {
         BACKEND_URL: process.env.BACKEND_URL,
         SENTRY_DSN: process.env.SENTRY_DSN,
+        MODE: process.env.MODE,
         API_KEY: process.env.API_KEY,
         AUTH_DOMAIN: process.env.AUTH_DOMAIN,
         PROJECT_ID: process.env.PROJECT_ID,
