@@ -387,6 +387,7 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import { Screen, Dialog, Loading, Notify } from "quasar";
 import Swal from "sweetalert2";
 import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
@@ -414,7 +415,6 @@ import {
   SendMessageStatus,
   Bot,
 } from "src/types/MessagingTypes";
-import { Dialog, Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
@@ -661,9 +661,15 @@ const messageCallback = async (data: any, newMessage: any) => {
 };
 
 const inputHandler = (e: any) => {
-  if (e.keyCode === 13 && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
+  if (Screen.lt.md) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+    }
+  } else {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   }
 };
 
