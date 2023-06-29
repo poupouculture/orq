@@ -665,11 +665,10 @@ const messageCallback = async (data: any, newMessage: any) => {
 const inputkey = ref();
 
 const inputHandler = (e: any) => {
-  console.log(e);
-  inputkey.value = e.keyCode;
   if (Screen.lt.md) {
     if (e.keyCode === 13) {
       e.preventDefault();
+      inputkey.value = e.keyCode;
     }
   } else {
     if (e.keyCode === 13 && !e.shiftKey) {
