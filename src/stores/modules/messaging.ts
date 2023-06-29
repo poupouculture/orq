@@ -84,8 +84,17 @@ const useMessagingStore = defineStore("messaging", {
     setMessageMembers(members: string) {
       this.getSelectedChat.members = members;
     },
+    parseError(msg: Message) {
+      // console.log("parseError");
+      // console.log(msg);
+      if (msg?.status === MessageStatus.FAILURE) {
+        return true;
+      }
+      return false;
+    },
     setChatsLastMessage(chatId: string, lastmessage: Message) {
       try {
+        // console.log("fnc-setChatsLastMessage:---");
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
@@ -101,6 +110,11 @@ const useMessagingStore = defineStore("messaging", {
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
+          const isError = this.parseError(lastmessage);
+          if (isError) {
+            console.log("ERRORRRRR");
+            chat.conversation_type = ChatTypes.PENDING_INBOUND;
+          }
           chat.last_message = lastmessage;
           console.log(cachedMessageIndex);
           // delete cache when cache is exists
@@ -233,7 +247,7 @@ const useMessagingStore = defineStore("messaging", {
       try {
         const { data } = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const showAssociatedMessage = true;
+        const showAssociatedMessage = false;
         let messages = null;
         if (showAssociatedMessage) {
           messages = await Promise.all(
@@ -254,6 +268,8 @@ const useMessagingStore = defineStore("messaging", {
                     item.waba_associated_message_id
                   )
                 : null,
+              last_associated_message_content:
+                item.last_associated_message_content,
               mode: item.mode,
               contact: item.contact,
               channel: item.channel,
@@ -274,6 +290,9 @@ const useMessagingStore = defineStore("messaging", {
             date_created: item.date_created,
             waba_message_id: item.waba_message_id,
             waba_associated_message_id: item.waba_associated_message_id,
+            last_associated_message_content: item.waba_associated_message_id
+              ? item.last_associated_message_content
+              : null,
             mode: item.mode,
             contact: item.contact,
             channel: item.channel,
