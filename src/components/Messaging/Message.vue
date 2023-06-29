@@ -160,7 +160,7 @@
             type="textarea"
             :class="{ invisible: showAudio }"
             input-class="h-10"
-            @keydown="inputHandler"
+            @keyup="inputHandler"
             :disable="isBot"
             @paste="onPaste"
           />
@@ -294,8 +294,6 @@
           </button>
         </div>
       </div>
-
-      {{ inputkey }}
     </footer>
   </div>
   <!-- empty -->
@@ -662,13 +660,10 @@ const messageCallback = async (data: any, newMessage: any) => {
   }
 };
 
-const inputkey = ref();
-
 const inputHandler = (e: any) => {
   if (Screen.lt.md) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      inputkey.value = e.keyCode;
     }
   } else {
     if (e.keyCode === 13 && !e.shiftKey) {
