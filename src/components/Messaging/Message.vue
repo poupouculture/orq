@@ -260,7 +260,7 @@
             size="md"
             class="q-mt-md"
             :disable="isPending || isBot"
-            @click="fileUplader?.pickFiles"
+            @click="pickFiles()"
           >
             <img src="~assets/images/pin.svg" />
             <q-uploader
@@ -268,7 +268,7 @@
               accept="*"
               class="hidden invisible"
               :filter="fileFilter"
-              @added="uploadFile"
+              @added="openFilePreview($event)"
             />
           </q-btn>
           <q-btn
@@ -314,6 +314,13 @@
     v-model="showMessageImage"
     @hide="showMessageImage = false"
     @send="upload"
+  />
+  <FilePreviewDialog
+    ref="FilePreviewDialogRef"
+    v-model="showFilePreviewDialog"
+    @hide="showFilePreviewDialog = false"
+    @send="uploadFile"
+    :file="file"
   />
   <Transition
     enter-active-class="duration-200 ease-out"
@@ -418,6 +425,7 @@ import { Dialog, Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
+import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
 
@@ -463,6 +471,7 @@ const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const showMessageImage: Ref<boolean> = ref(false);
+const showFilePreviewDialog: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const fileUplader: any = ref(null);
@@ -490,6 +499,60 @@ const {
   replayMessage,
 } = storeToRefs(messagingStore);
 
+const file = ref();
+const openFilePreview = (files: any) => {
+  showFilePreviewDialog.value = !showFilePreviewDialog.value;
+  file.value = files;
+};
+const pickFiles = () => {
+  fileUplader.value?.reset();
+  setTimeout(() => {
+    fileUplader.value?.pickFiles();
+  }, 100);
+};
+const uploadFile = async (payload: {
+  files: readonly File[];
+  caption: string;
+}) => {
+  const file = payload.files[0];
+  showFilePreviewDialog.value = false;
+  getLimitByType(file.type);
+  if (!file) return;
+
+  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
+  const newMessage = reactive({
+    // ??? todo, new message needs to ....
+    id: Date.now(),
+    content: {
+      url: "",
+      type: MessageType.DOCUMENT,
+      duration: time.value,
+      local: true,
+      media_id: decodeURIComponent(file.name),
+      file_name: file.name,
+    },
+    status: MessageStatus.SENT,
+    direction: Direction.OUTGOING,
+    date_created: new Date().toUTCString(),
+    sendMessageStatus: SendMessageStatus.PENDING,
+  });
+  cachedMessage.push(newMessage);
+  scrollToBottom();
+  messagingStore.setReplayMessage();
+  const bodyFormData = new FormData();
+  const newFileName = new File([file], encodeURIComponent(file.name), {
+    type: file.type,
+  });
+  console.log(newFileName);
+
+  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("caption", payload.caption);
+  bodyFormData.append("file", newFileName);
+  fileUplader.value?.removeQueuedFiles();
+
+  const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+  messageCallback(data, newMessage);
+};
 const toggleInfo = () => {
   if (window.innerWidth < 1024) {
     isMobile.value = true;
@@ -940,46 +1003,6 @@ const upload = async (fileList: readonly File[], caption: string) => {
   bodyFormData.append("caption", caption);
   bodyFormData.append("file", file);
   // uplader.value.removeQueuedFiles();
-  const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
-  messageCallback(data, newMessage);
-};
-
-const uploadFile = async (files: readonly File[]) => {
-  const file = files[0];
-
-  getLimitByType(file.type);
-  if (!file) return;
-
-  const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  const newMessage = reactive({
-    // ??? todo, new message needs to ....
-    id: Date.now(),
-    content: {
-      url: "",
-      type: MessageType.DOCUMENT,
-      duration: time.value,
-      local: true,
-      media_id: decodeURIComponent(file.name),
-      file_name: file.name,
-    },
-    status: MessageStatus.SENT,
-    direction: Direction.OUTGOING,
-    date_created: new Date().toUTCString(),
-    sendMessageStatus: SendMessageStatus.PENDING,
-  });
-  cachedMessage.push(newMessage);
-  scrollToBottom();
-  messagingStore.setReplayMessage();
-  const bodyFormData = new FormData();
-  const newFileName = new File([file], encodeURIComponent(file.name), {
-    type: file.type,
-  });
-  console.log(newFileName);
-
-  // bodyFormData.append("caption", file.name);
-  bodyFormData.append("file", newFileName);
-  fileUplader.value?.removeQueuedFiles();
-
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
