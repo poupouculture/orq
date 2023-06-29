@@ -294,6 +294,8 @@
           </button>
         </div>
       </div>
+
+      {{ inputkey }}
     </footer>
   </div>
   <!-- empty -->
@@ -660,7 +662,11 @@ const messageCallback = async (data: any, newMessage: any) => {
   }
 };
 
+const inputkey = ref();
+
 const inputHandler = (e: any) => {
+  console.log(e);
+  inputkey.value = e.keyCode;
   if (Screen.lt.md) {
     if (e.keyCode === 13) {
       e.preventDefault();
