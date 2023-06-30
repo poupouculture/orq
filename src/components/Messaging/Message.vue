@@ -187,7 +187,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isPending || isBot"
+              :disable="isPending || isBot || chaqMode"
               @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
@@ -229,13 +229,13 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isPending || isBot"
+            :disable="isPending || isBot || chaqMode"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
           <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :disable="!isPending || isBot"
+            :disable="!isPending || isBot || chaqMode"
             round
             color="primary"
             icon="insert_comment"
@@ -250,7 +250,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot"
+            :disable="isPending || isBot || chaqMode"
             @click="showMessageImage = true"
           />
 
@@ -260,7 +260,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot"
+            :disable="isPending || isBot || chaqMode"
             @click="fileUplader?.pickFiles"
           >
             <img src="~assets/images/pin.svg" />
@@ -544,6 +544,10 @@ const inputEvent = computed(() => {
 
 const members = computed<Member[]>(
   () => JSON.parse(getSelectedChat.value.members) || []
+);
+
+const chaqMode = computed<boolean>(
+  () => getSelectedChat.value.meta_phone_number_id === "ChaQ"
 );
 
 const messages = computed<Message[]>(() => {
