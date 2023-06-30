@@ -23,7 +23,7 @@
         v-if="!isSend"
         class="bottom-full left-0 scale-90 origin-left text-black text-semibold"
       >
-        {{ message.contact_name }}
+        {{ !isChaq ? message.contact_name : message.user_name }}
       </span>
       <span
         v-if="isSend"
@@ -166,6 +166,7 @@ import {
 import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const props = defineProps<{
   message: Message;
@@ -174,13 +175,22 @@ const props = defineProps<{
 const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
-const isSend = computed(() => props?.message.direction === Direction.OUTGOING);
+const userStore = useUserInfoStore();
+
+const isSend = computed(() => {
+  if (isChaq.value) {
+    return props?.message?.employee === userStore.getUserId;
+  }
+  return props?.message.direction === Direction.OUTGOING;
+});
 // const isNotImageType = computed(
 //   () => props.message.content.type !== MessageType.IMAGE
 // );
 const timestamp = computed(() => {
   return format(new Date(props.message.date_created), "p");
 });
+const isChaq = computed(() => props?.message?.channel === "chaq");
+
 const list = [
   { text: "Reply" },
   { text: "Download", visible: ["image", "document", "application"] },

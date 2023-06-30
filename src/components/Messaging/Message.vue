@@ -24,6 +24,7 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
+          <p class="text-gray-500">{{ metaPhoneNumberId }}</p>
         </div>
       </div>
       <!-- <q-input
@@ -491,6 +492,7 @@ const {
 } = storeToRefs(messagingStore);
 
 const toggleInfo = () => {
+  // getChatbots();
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
@@ -518,6 +520,10 @@ const nameEn = computed<string>(() => {
 
 const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
+);
+
+const metaPhoneNumberId = computed<string>(
+  () => getSelectedChat.value?.meta_phone_number_id // jimmy
 );
 
 const contactNameGet = computed<string>(() => {
@@ -726,6 +732,10 @@ const sendMessage = async () => {
   message.value = "";
   try {
     const data = await messagingStore.sendChatTextMessage({
+      channel:
+        getSelectedChat.value.meta_phone_number_id === "ChaQ"
+          ? "chaq"
+          : "whatsapp",
       chatId: getSelectedChatId.value,
       messageProduct: Product.WHATSAPP,
       to: chatNumber.value,
@@ -1046,8 +1056,10 @@ const selectBot = async (bot: Bot) => {
 };
 
 const getChatbots = async () => {
+  // if (botList.value) {
   const { data } = await chatbots();
   botList.value = data;
+  // }
 };
 
 const confirmCloseBot = () => {
