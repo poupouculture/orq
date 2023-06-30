@@ -160,7 +160,7 @@
             type="textarea"
             :class="{ invisible: showAudio }"
             input-class="h-10"
-            @keyup="inputHandler"
+            @[inputEvent]="inputHandler"
             :disable="isBot"
             @paste="onPaste"
           />
@@ -530,6 +530,10 @@ const contactNameGet = computed<string>(() => {
   //   " " +
   //   getSelectedChat.value.contact_last_name
   // );
+});
+
+const inputEvent = computed(() => {
+  return Screen.lt.md ? "keyup" : "keydown";
 });
 
 const members = computed<Member[]>(
