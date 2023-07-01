@@ -547,7 +547,7 @@ const members = computed<Member[]>(
 );
 
 const chaqMode = computed<boolean>(
-  () => getSelectedChat.value.meta_phone_number_id === "ChaQ"
+  () => getSelectedChat.value?.meta_phone_number_id === "ChaQ"
 );
 
 const messages = computed<Message[]>(() => {
@@ -737,7 +737,7 @@ const sendMessage = async () => {
   try {
     const data = await messagingStore.sendChatTextMessage({
       channel:
-        getSelectedChat.value.meta_phone_number_id === "ChaQ"
+        getSelectedChat.value?.meta_phone_number_id === "ChaQ"
           ? "chaq"
           : "whatsapp",
       chatId: getSelectedChatId.value,
