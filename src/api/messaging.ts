@@ -109,6 +109,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     isIncludedComponent,
     countParams,
     headerType,
+    headerMessage,
     messageId,
   } = payload;
 
@@ -140,6 +141,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       const parameters: ComponentParameter[] = [];
       const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
       console.log("header type: ", headerType);
+      console.log("header message: ", headerMessage);
 
       if (mediaHeader.includes(headerType)) {
         const headerParam = {
@@ -182,6 +184,13 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
           text: messageBody.replaceAll("\n", ""),
         });
       }
+
+      // if (headerMessage !== "") {
+      //   components.push({
+      //     type: "header",
+      //     parameters: [{ type: "text", text: headerMessage }],
+      //   });
+      // }
 
       components.push({
         type: "body",
