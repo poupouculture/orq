@@ -41,10 +41,15 @@
           v-model="name"
           @keypress="checkName"
           @change="checkDuplication"
+          @focusout="validateName"
         />
 
         <div class="w-full text-red-400 mb-4" v-if="isShowDuplicateName">
           Name is not valid because it's already used
+        </div>
+
+        <div class="w-full text-red-400 mb-4" v-if="isShowEmptyName">
+          Name cannot be null
         </div>
 
         <div class="label flex flex-col">
@@ -268,7 +273,7 @@
           <button
             class="py-2 px-6 rounded bg-primary text-white"
             @click="submitGeneralInformation"
-            v-if="!isShowDuplicateName"
+            v-if="!isShowDuplicateName && !isShowEmptyName"
           >
             Save
           </button>
@@ -347,6 +352,7 @@ const categories = [
 ];
 const actions = ref(Array(2).fill(null));
 const isShowDuplicateName = ref(false);
+const isShowEmptyName = ref(false);
 const showReturnDialog = ref(false);
 const router = useRouter();
 
@@ -538,6 +544,7 @@ const updateReply = (value) => {
 };
 
 const checkName = (event) => {
+  isShowEmptyName.value = false;
   const keyCode = event.keyCode;
   if (
     (keyCode === 32 ||
@@ -556,6 +563,10 @@ const checkDuplication = async () => {
   const responseWaba = await checkDuplicateWaba(name.value);
   isShowDuplicateName.value =
     responseFB.data.status !== 200 || responseWaba.data?.data?.length > 0;
+};
+
+const validateName = () => {
+  isShowEmptyName.value = !name.value;
 };
 
 const listNumbers = (str) => {
