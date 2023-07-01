@@ -465,6 +465,7 @@ const showMessageTemplate: Ref<boolean> = ref(false);
 const showMessageImage: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
+const headerMessage: Ref<string> = ref("");
 const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -587,7 +588,7 @@ watch(
   async (val) => {
     console.log(
       "SELECTED_CHAT:conversation_type changed to: - ",
-      conversationType
+      conversationType.value
     );
     conversationType.value = val;
     isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
@@ -737,6 +738,7 @@ const sendMessage = async () => {
       isIncludedComponent: isIncludeComponent.value,
       countParams: paramsCount.value,
       headerType: headerType.value,
+      headerMessage: headerMessage.value,
       messageId: wabaMessageId,
     });
     messageCallback(data, newMessage);
@@ -790,16 +792,18 @@ const sendMessageTemplate = (
   lang: string,
   isIncComponent: boolean,
   componentCount: any[],
-  headType: string
+  headType: string,
+  headMessage: string
 ) => {
+  console.log("head type:", headType);
   templateName.value = name;
-  console.log("template body:", msg);
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
   isIncludeComponent.value = isIncComponent;
   paramsCount.value = componentCount;
   headerType.value = headType;
+  headerMessage.value = headMessage;
   sendMessage();
 };
 
