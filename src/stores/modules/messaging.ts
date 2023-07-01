@@ -84,17 +84,51 @@ const useMessagingStore = defineStore("messaging", {
     setMessageMembers(members: string) {
       this.getSelectedChat.members = members;
     },
-    parseError(msg: Message) {
+    setConversationType(chat: IChat, conversationType: string) {
+      // console.log("fnc-setConversationType");
+      chat.conversation_type = conversationType;
+    },
+    parseLastMessageError(msg: Message) {
       // console.log("parseError");
       // console.log(msg);
+      const errObj: any = {};
       if (msg?.status === MessageStatus.FAILURE) {
-        return true;
+        console.log("fnc-parseLastMessageError");
+        errObj.status = true;
+        if (msg.content?.error_body?.errors) {
+          console.log(msg.content?.error_body?.errors[0]);
+          errObj.conversation_type = this.errorCode(
+            msg.content?.error_body?.errors[0]
+          );
+        }
       }
-      return false;
+      console.log(errObj);
+      return errObj;
+    },
+    errorCode(errObj: any) {
+      switch (errObj.code) {
+        case 131047:
+          console.log("ERR:", ChatTypes.PENDING_INBOUND);
+          return ChatTypes.PENDING_INBOUND;
+        case 132000:
+          //
+          // return "132000";
+          break;
+        case 131053:
+          //
+          // return "131053";
+          break;
+        default:
+          return "";
+        // if (errObj.code === 131047) {
+        //   return ChatTypes.PENDING_INBOUND;
+        // }
+      }
+      return "";
     },
     setChatsLastMessage(chatId: string, lastmessage: Message) {
       try {
-        // console.log("fnc-setChatsLastMessage:---");
+        console.log("fnc-setChatsLastMessage:---");
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
@@ -110,10 +144,14 @@ const useMessagingStore = defineStore("messaging", {
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
-          const isError = this.parseError(lastmessage);
-          if (isError) {
+          const errObj = this.parseLastMessageError(lastmessage);
+          if (errObj.status) {
             console.log("ERRORRRRR");
-            chat.conversation_type = ChatTypes.PENDING_INBOUND;
+            if (errObj.conversation_type) {
+              console.log("ERRORRRRR:type");
+              console.log(errObj.type);
+              chat.conversation_type = errObj.type;
+            }
           }
           chat.last_message = lastmessage;
           console.log(cachedMessageIndex);
@@ -234,6 +272,8 @@ const useMessagingStore = defineStore("messaging", {
               contact_customer_name: "",
               status: MessageStatus.RECEIVE,
               date_created: "",
+              user_created: "",
+              employee: "",
             };
           }
           this.chatsList.push(loadedChat);
