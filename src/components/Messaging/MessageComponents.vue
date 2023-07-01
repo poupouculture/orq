@@ -24,7 +24,7 @@
       </video>
     </div>
     <span v-if="content?.type === MessageType.TEMPLATE">
-      {{ messageTemplate(content) }}
+      {{ messageTemplateBody(content) }}
     </span>
     <div
       v-if="
@@ -70,6 +70,7 @@
             :is-send="isSend"
           />
         </div>
+        Replied:
       </div>
       {{ messageContentText(message) }}
     </div>
@@ -99,7 +100,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const component = ref("");
 
-const messageTemplate = (content: any) => {
+const messageTemplateBody = (content: any) => {
+  // console.log("messageTemplate");
+  if (content.error_body) {
+    return errorParser(content);
+    // return "";
+  }
   const components = content?.template?.components ?? content?.components;
   if (components) {
     const bodyComponent = components?.find(
@@ -112,6 +118,7 @@ const messageTemplate = (content: any) => {
 };
 
 const messageTemplateHeader = (content: any) => {
+  console.log("messageTemplateHeader");
   const components = content?.template?.components ?? content?.components;
   if (components) {
     const headerComponent = components?.find(
@@ -141,12 +148,25 @@ const isDocument = (content: any) => {
   );
 };
 
+const errorParser = (content: any) => {
+  if (content?.error_body) {
+    console.log(content.error_body);
+    const error = content?.error_body;
+    if (error.errors) return error.errors[0]?.title;
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  return "";
+};
+
 /**
  *
  * @param msg message from API or Socket
  */
 const messageContentText = (msg: any) => {
+  // console.log(msg.type);
   if (msg?.content?.error_body) {
+    // console.log(msg.content.error_body);
     const error = msg?.content?.error_body;
     if (error.errors) return error.errors[0]?.title;
     if (error.error_data) return error.error_data.details;
@@ -164,6 +184,7 @@ const messageContentText = (msg: any) => {
 };
 
 /**
+ * for associated message
  * used to display type of message
  * OR
  * message text or reaction

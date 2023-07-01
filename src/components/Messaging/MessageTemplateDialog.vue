@@ -233,6 +233,9 @@ const hideModal = () => {
   hide();
 };
 
+/**
+ * emits "send" event to trigger send message template
+ */
 const send = () => {
   const numbers = listNumbers(bodyMessage.value);
 

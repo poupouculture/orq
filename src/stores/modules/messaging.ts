@@ -84,8 +84,17 @@ const useMessagingStore = defineStore("messaging", {
     setMessageMembers(members: string) {
       this.getSelectedChat.members = members;
     },
+    parseError(msg: Message) {
+      // console.log("parseError");
+      // console.log(msg);
+      if (msg?.status === MessageStatus.FAILURE) {
+        return true;
+      }
+      return false;
+    },
     setChatsLastMessage(chatId: string, lastmessage: Message) {
       try {
+        // console.log("fnc-setChatsLastMessage:---");
         const index = this.chatsList.findIndex(
           (chat: IChat) => chat.id === chatId
         );
@@ -101,6 +110,11 @@ const useMessagingStore = defineStore("messaging", {
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
+          const isError = this.parseError(lastmessage);
+          if (isError) {
+            console.log("ERRORRRRR");
+            chat.conversation_type = ChatTypes.PENDING_INBOUND;
+          }
           chat.last_message = lastmessage;
           console.log(cachedMessageIndex);
           // delete cache when cache is exists
@@ -233,8 +247,9 @@ const useMessagingStore = defineStore("messaging", {
       try {
         const { data } = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
-        const showAssociatedMessage = true;
+        const showAssociatedMessage = false;
         let messages = null;
+        // console.log("fetchChatMessagesById");
         if (showAssociatedMessage) {
           messages = await Promise.all(
             data.messages.map(async (item: any) => ({
@@ -247,6 +262,8 @@ const useMessagingStore = defineStore("messaging", {
               type: item.type,
               direction: item.direction,
               date_created: item.date_created,
+              user_created: item.user_created,
+              employee: item.employee,
               waba_message_id: item.waba_message_id,
               waba_associated_message_id: item.waba_associated_message_id,
               waba_associated_message: item.waba_associated_message_id
@@ -254,6 +271,8 @@ const useMessagingStore = defineStore("messaging", {
                     item.waba_associated_message_id
                   )
                 : null,
+              last_associated_message_content:
+                item.last_associated_message_content,
               mode: item.mode,
               contact: item.contact,
               channel: item.channel,
@@ -272,8 +291,13 @@ const useMessagingStore = defineStore("messaging", {
             type: item.type,
             direction: item.direction,
             date_created: item.date_created,
+            user_created: item.user_created,
+            employee: item.employee,
             waba_message_id: item.waba_message_id,
             waba_associated_message_id: item.waba_associated_message_id,
+            last_associated_message_content: item.waba_associated_message_id
+              ? item.last_associated_message_content
+              : null,
             mode: item.mode,
             contact: item.contact,
             channel: item.channel,
@@ -344,10 +368,21 @@ const useMessagingStore = defineStore("messaging", {
       if (chat.customers_id) {
         const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
         contactStore.setCurrentCustomerId(customer.id);
-        contact = customer?.contacts[0].contacts_id;
-        useContactStore().setContact(contact);
+        if (customer?.contacts.length === 1) {
+          // a customer can be related to MANY contacts
+          contact = customer?.contacts[0].contacts_id;
+          contactStore.setCurrentCustomerId(chat.customers_id);
+          useContactStore().setContact(contact);
+        }
+        // else {
+        //   contact = await getContactById(chat);
+        //   useContactStore().setContact(contact);
+        // }
       } else {
         customerStore.setCustomer(null);
+      }
+      if (!contact) {
+        // the invariant is that there is always a contact
         contact = await getContactById(chat);
         console.log("  GET contact:....", contact);
       }

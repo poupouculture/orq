@@ -17,6 +17,7 @@ const useContactStore = defineStore("useContact", {
       last_name: "",
       number: "",
       category: "",
+      preferred_language: "",
     },
     currentCustomerId: "",
   }),

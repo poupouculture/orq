@@ -36,6 +36,7 @@
             type="text"
             class="w-full mt-4 p-2 border rounded-md focus:outline-none focus:ring focus:ring-primary/30 focus:border-primary"
             placeholder="Type your caption here..."
+            @keydown="inputHandler"
             v-model="caption"
             v-if="selectedImage !== null"
           ></textarea>
@@ -93,6 +94,13 @@ const imageSizeFilter = (files: readonly any[] | FileList) => {
   }
 
   return filterFiles;
+};
+
+const inputHandler = (e: any) => {
+  if (e.keyCode === 13 && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
 };
 
 const preview = (fileList: any) => {

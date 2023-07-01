@@ -4,16 +4,17 @@
 
     <Jumbotron v-if="isShowJumbotron" @close="closeJumbotron" />
 
-    <AnalyticOverview />
+    <AnalyticOverview v-if="canView" />
 
-    <CustomerOverview />
+    <CustomerOverview v-if="canView" />
 
-    <!-- <q-tabs
+    <q-tabs
       v-model="active"
       dense
       align="left"
       active-color="primary"
       narrow-indicator
+      v-if="canView"
     >
       <q-tab
         v-for="(tab, index) in tabs"
@@ -23,9 +24,9 @@
       />
     </q-tabs>
 
-    <q-separator class="q-mt-none" />
+    <q-separator class="q-mt-none" v-if="canView" />
 
-    <q-tab-panels v-model="active" animated>
+    <q-tab-panels v-model="active" animated v-if="canView">
       <q-tab-panel
         name="Basic"
         style="height: 600px"
@@ -77,17 +78,18 @@
           />
         </div>
       </q-tab-panel>
-    </q-tab-panels> -->
+    </q-tab-panels>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-// import Statistics from "components/charts/Statistics.vue";
-// import Satisfaction from "components/charts/Satisfaction.vue";
+import { onMounted, ref } from "vue";
+import Statistics from "components/charts/Statistics.vue";
+import Satisfaction from "components/charts/Satisfaction.vue";
 import Jumbotron from "components/Dashboard/Jumbotron.vue";
 import AnalyticOverview from "components/Dashboard/AnalyticOverview/index.vue";
 import CustomerOverview from "components/Dashboard/CustomerOverview.vue";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 // export default defineComponent({
 //   name: "DashBoard",
@@ -99,15 +101,25 @@ const isShowJumbotron = ref(true);
 const closeJumbotron = () => {
   isShowJumbotron.value = false;
 };
-// const tabs = ref([
-//   "Basic",
-//   "Conversation",
-//   "Customer",
-//   "Work order",
-//   "Staff",
-//   "Chat",
-// ]);
-// const active = ref("Basic");
+const tabs = ref([
+  "Basic",
+  "Conversation",
+  "Customer",
+  "Work order",
+  "Staff",
+  "Chat",
+]);
+const active = ref("Basic");
+
+const userInfoStore = useUserInfoStore();
+const canView = ref(false);
+
+onMounted(() => {
+  canView.value = userInfoStore.getPageActionsByPageId(
+    "F02",
+    "ViewAnalyticsAction"
+  );
+});
 </script>
 
 <style lang="scss" scoped>

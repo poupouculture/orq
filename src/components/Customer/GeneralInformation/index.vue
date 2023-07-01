@@ -354,6 +354,7 @@ const mappingCustomerGroups = () => {
 
 const associateContactLoading = ref(false);
 const associateContact = async () => {
+  // console.log("associateContact");
   associateContactLoading.value = true;
   const response = await customerStore.addContact(
     getCustomer.value.id,
