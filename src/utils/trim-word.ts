@@ -29,6 +29,9 @@ export const getChatName = (chat: IChat) => {
 // };
 
 export const getChatNameEn = (chat: IChat, noTrim?: boolean) => {
+  if (chat.meta_phone_number_id === "ChaQ") {
+    return chat.name;
+  }
   if (chat?.customers_id) {
     // ??? tbd
     return noTrim

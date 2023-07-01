@@ -66,6 +66,8 @@ export interface Message {
   mode?: string;
   channel?: string;
   last_associated_message_content?: any;
+  employee: string;
+  user_created: string;
 }
 export interface IChat {
   id: string;
@@ -86,6 +88,7 @@ export interface IChat {
   caption?: string;
   first_name?: string | null; // customer's first_name
   last_name?: string | null; // customer's last_name
+  meta_phone_number_id: string;
 }
 
 export interface CachedChatMessages {
@@ -172,6 +175,7 @@ export interface ChatPayloadWabaContent {
 }
 
 export interface ChatPayload {
+  channel?: string;
   chat_id: string;
   keyword: string;
   template_content?: string;
