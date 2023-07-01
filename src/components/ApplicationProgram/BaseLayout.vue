@@ -587,6 +587,9 @@ const bodyMessageChange = () => {
 };
 
 const submitGeneralInformation = () => {
+  if (name.value === "" || name.value === null)
+    return (isShowEmptyName.value = true);
+
   let buttonValues = {};
   if (actionCategory.value !== ac.NONE) {
     if (actionCategory.value === ac.CALL_TO_ACTION) {
