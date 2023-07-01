@@ -487,7 +487,7 @@ const botList: Ref<any[]> = ref([]);
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
   ".mp4": "video/mp4",
-  ".3gp": "video/3gp",
+  ".3gp": "video/3gpp",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
