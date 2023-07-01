@@ -354,6 +354,7 @@ const initSocket = () => {
   try {
     socket.value.on("connect", () => {
       console.log("SOCKET: connect -------");
+      errSocket.value = false;
       console.log(
         "SOCKET: join_chat by user_id -------",
         userProfile.value?.id

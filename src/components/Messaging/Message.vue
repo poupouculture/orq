@@ -24,6 +24,7 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
+          <p class="text-gray-500">{{ metaPhoneNumberId }}</p>
         </div>
       </div>
       <!-- <q-input
@@ -160,7 +161,7 @@
             type="textarea"
             :class="{ invisible: showAudio }"
             input-class="h-10"
-            @keydown="inputHandler"
+            @[inputEvent]="inputHandler"
             :disable="isBot"
             @paste="onPaste"
           />
@@ -186,7 +187,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isPending || isBot"
+              :disable="isPending || isBot || chaqMode"
               @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
@@ -228,13 +229,13 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isPending || isBot"
+            :disable="isPending || isBot || chaqMode"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
           <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :disable="!isPending || isBot"
+            :disable="!isPending || isBot || chaqMode"
             round
             color="primary"
             icon="insert_comment"
@@ -249,7 +250,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot"
+            :disable="isPending || isBot || chaqMode"
             @click="showMessageImage = true"
           />
 
@@ -259,7 +260,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot"
+            :disable="isPending || isBot || chaqMode"
             @click="fileUplader?.pickFiles"
           >
             <img src="~assets/images/pin.svg" />
@@ -387,6 +388,7 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
+import { Screen, Dialog, Loading, Notify } from "quasar";
 import Swal from "sweetalert2";
 import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
@@ -414,7 +416,6 @@ import {
   SendMessageStatus,
   Bot,
 } from "src/types/MessagingTypes";
-import { Dialog, Loading, Notify } from "quasar";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
@@ -491,6 +492,7 @@ const {
 } = storeToRefs(messagingStore);
 
 const toggleInfo = () => {
+  // getChatbots();
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
@@ -520,6 +522,10 @@ const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
+const metaPhoneNumberId = computed<string>(
+  () => getSelectedChat.value?.meta_phone_number_id // jimmy
+);
+
 const contactNameGet = computed<string>(() => {
   const contactName =
     getSelectedChat.value.contact_first_name ??
@@ -532,8 +538,16 @@ const contactNameGet = computed<string>(() => {
   // );
 });
 
+const inputEvent = computed(() => {
+  return Screen.lt.md ? "keyup" : "keydown";
+});
+
 const members = computed<Member[]>(
   () => JSON.parse(getSelectedChat.value.members) || []
+);
+
+const chaqMode = computed<boolean>(
+  () => getSelectedChat.value.meta_phone_number_id === "ChaQ"
 );
 
 const messages = computed<Message[]>(() => {
@@ -661,9 +675,15 @@ const messageCallback = async (data: any, newMessage: any) => {
 };
 
 const inputHandler = (e: any) => {
-  if (e.keyCode === 13 && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
+  if (Screen.lt.md) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+    }
+  } else {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   }
 };
 
@@ -716,6 +736,10 @@ const sendMessage = async () => {
   message.value = "";
   try {
     const data = await messagingStore.sendChatTextMessage({
+      channel:
+        getSelectedChat.value.meta_phone_number_id === "ChaQ"
+          ? "chaq"
+          : "whatsapp",
       chatId: getSelectedChatId.value,
       messageProduct: Product.WHATSAPP,
       to: chatNumber.value,
@@ -1036,8 +1060,10 @@ const selectBot = async (bot: Bot) => {
 };
 
 const getChatbots = async () => {
+  // if (botList.value) {
   const { data } = await chatbots();
   botList.value = data;
+  // }
 };
 
 const confirmCloseBot = () => {

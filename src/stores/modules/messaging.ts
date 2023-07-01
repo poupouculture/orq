@@ -249,6 +249,7 @@ const useMessagingStore = defineStore("messaging", {
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
         const showAssociatedMessage = false;
         let messages = null;
+        // console.log("fetchChatMessagesById");
         if (showAssociatedMessage) {
           messages = await Promise.all(
             data.messages.map(async (item: any) => ({
@@ -261,6 +262,8 @@ const useMessagingStore = defineStore("messaging", {
               type: item.type,
               direction: item.direction,
               date_created: item.date_created,
+              user_created: item.user_created,
+              employee: item.employee,
               waba_message_id: item.waba_message_id,
               waba_associated_message_id: item.waba_associated_message_id,
               waba_associated_message: item.waba_associated_message_id
@@ -288,6 +291,8 @@ const useMessagingStore = defineStore("messaging", {
             type: item.type,
             direction: item.direction,
             date_created: item.date_created,
+            user_created: item.user_created,
+            employee: item.employee,
             waba_message_id: item.waba_message_id,
             waba_associated_message_id: item.waba_associated_message_id,
             last_associated_message_content: item.waba_associated_message_id
