@@ -89,6 +89,10 @@ const useUserInfoStore = defineStore("userInfo", {
             this.refreshPageActions();
           }
           return data;
+        } else {
+          this.$reset();
+          LocalStorage.clear();
+          this.router.push("/login");
         }
       } catch (err) {
         this.router.push("/login");
@@ -144,6 +148,10 @@ const useUserInfoStore = defineStore("userInfo", {
           this.userInfo = data;
           LocalStorage.set("userinfo", JSON.stringify(data));
           return data;
+        } else {
+          this.$reset();
+          LocalStorage.clear();
+          this.router.push("/login");
         }
       } catch (err) {
         this.$reset();
