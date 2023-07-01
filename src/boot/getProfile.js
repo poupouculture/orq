@@ -1,9 +1,18 @@
 import { boot } from "quasar/wrappers";
 import { LocalStorage } from "quasar";
 import useUserInfoStore from "stores/modules/userInfo";
+const userStore = useUserInfoStore();
 
 export default boot(async ({ router }) => {
   let userData = LocalStorage.getItem("userinfo");
+  // console.log(userData);
+  if (!userData) {
+    LocalStorage.remove("userinfo");
+    userStore.$reset();
+    router.push("/login");
+    return;
+  }
+
   userData = JSON.parse(userData);
 
   if (!userData?.access_token) {
