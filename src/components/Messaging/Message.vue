@@ -274,7 +274,7 @@
             <img src="~assets/images/pin.svg" />
             <q-uploader
               ref="fileUplader"
-              accept="*"
+              :accept="Object.keys(supportedFiletypes).join()"
               class="hidden invisible"
               :filter="fileFilter"
               @added="uploadFile"
@@ -492,6 +492,25 @@ const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
+
+// filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+const supportedFiletypes: Ref<any> = ref({
+  ".mp4": "video/mp4",
+  ".3gp": "video/3gpp",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".pdf": "application/pdf",
+  ".txt": "text/plain",
+  ".ppt": "application/vnd.ms-powerpoint",
+  ".pptx":
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  ".doc": "application/msword",
+  ".docx":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".xls": "application/vnd.ms-excel",
+  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+});
 const messageImageDialogRef = ref();
 const {
   getSelectedChat,
@@ -986,6 +1005,20 @@ const uploadFile = async (files: readonly File[]) => {
   getLimitByType(file.type);
   if (!file) return;
 
+  // const fileType = `${file.type.split("/")[1]}`;
+  console.log("supported files:", Object.values(supportedFiletypes.value));
+  console.log("current file types:", file.type);
+  if (!Object.values(supportedFiletypes.value).includes(file.type)) {
+    Notify.create({
+      message: `Media Unsupported`,
+      type: "negative",
+      position: "top",
+    });
+
+    fileUplader.value?.removeQueuedFiles();
+    return;
+  }
+
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
     // ??? todo, new message needs to ....
@@ -1017,6 +1050,13 @@ const uploadFile = async (files: readonly File[]) => {
   fileUplader.value?.removeQueuedFiles();
 
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+
+  // clear uploaded file from cache
+  cachedChatMessages.value[getSelectedChatId.value] = cachedChatMessages.value[
+    getSelectedChatId.value
+  ].filter((cm) => cm.id !== newMessage.id);
+  // end clear uploaded file from cache
+
   messageCallback(data, newMessage);
 };
 
