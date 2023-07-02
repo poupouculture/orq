@@ -24,7 +24,7 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
-          <p class="text-gray-500">{{ metaPhoneNumberId }}</p>
+          <p class="text-gray-500">{{ envMetaPhoneNumberId }}</p>
         </div>
       </div>
 
@@ -484,6 +484,7 @@ const showFilePreviewDialog: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const headerMessage: Ref<string> = ref("");
+// const metaPhoneNumberId: Ref<string> = ref("");
 const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -570,10 +571,44 @@ const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
-const metaPhoneNumberId = computed<string>(
-  () => getSelectedChat.value?.meta_phone_number_id // jimmy
-);
+// const metaPhoneNumberId = computed<string>(() => {
+//   if (getSelectedChat.value?.meta_phone_number_id) {
+//     return getSelectedChat.value?.meta_phone_number_id;
+//   }
+//   return "";
+// });
 
+const envMetaPhoneNumberId = computed<string>(() => {
+  let metaPhoneNumberId = "";
+  if (getSelectedChat?.value?.meta_phone_number_id) {
+    metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
+  } else {
+    return "";
+  }
+  let envMetaPhoneNumberId = "";
+  if (process.env.META_PHONE_NUMBER_ID) {
+    envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
+  } else {
+    return "";
+  }
+  console.log("process.env.META_PHONE_NUMBER_ID:------");
+  return metaPhoneNumberId === envMetaPhoneNumberId
+    ? ""
+    : phoneMapping(metaPhoneNumberId);
+});
+
+const phoneMapping = (metaPhoneNumberId: string) => {
+  switch (metaPhoneNumberId) {
+    case "104844065999210":
+      return "Angliss";
+    case "106296152305955":
+      return "Synque";
+    case "100327786191815":
+      return "Dev";
+    default:
+      return "";
+  }
+};
 const contactNameGet = computed<string>(() => {
   const contactName =
     getSelectedChat.value.contact_first_name ??
