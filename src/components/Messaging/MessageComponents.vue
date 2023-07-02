@@ -63,8 +63,8 @@
             :src="messageContentGet(message)?.url"
             :name="
               isDocument(messageContentGet(message))
-                ? messageContentGet(message).file_name
-                : messageContentGet(message).media_id
+                ? messageContentGet(message)?.file_name
+                : messageContentGet(message)?.media_id
             "
             :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
@@ -220,7 +220,7 @@ const messageContentType = (msg: any) => {
     case MessageType.DOCUMENT:
       return MessageType.DOCUMENT;
     case MessageType.APPLICATION:
-      return MessageType.APPLICATION;
+      return MessageType.DOCUMENT;
     case MessageType.VIDEO:
       return MessageType.VIDEO;
     case MessageType.REACTION: // ???
@@ -281,6 +281,7 @@ const componentName = computed(() => {
 });
 
 const componentNameGet = (content: any) => {
+  // console.log("componentNameGet");
   if (content?.type === MessageType.TEXT && content?.mime_type !== undefined) {
     return components.MessageDocument;
   }
