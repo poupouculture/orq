@@ -354,6 +354,7 @@ const initSocket = () => {
   try {
     socket.value.on("connect", () => {
       console.log("SOCKET: connect -------");
+      errSocket.value = false;
       console.log(
         "SOCKET: join_chat by user_id -------",
         userProfile.value?.id
@@ -393,8 +394,8 @@ const initSocket = () => {
           console.log("  SOCKET:status change");
           console.log(getSelectedChat.value);
           if (
-            getSelectedChat.value &&
-            getSelectedChat.value.id === data.document.id
+            getSelectedChat?.value &&
+            getSelectedChat?.value.id === data.document.id
           ) {
             messagingStore.updateChatTabSelected(data.update_fields.status);
             // messagingStore.setSelectedTab(data.update_fields.status);
@@ -430,7 +431,7 @@ const initSocket = () => {
         if (data?.update_fields?.mode) {
           messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
           if (
-            getSelectedChat &&
+            getSelectedChat?.value &&
             getSelectedChat.value.id === data.document.id
           ) {
             // console.log(data);
@@ -476,7 +477,10 @@ const initSocket = () => {
         contact = resContact?.data?.data[0];
       }
       if (chatFound !== undefined) {
-        if (getSelectedChat.value.id === chatFound.id) {
+        if (
+          getSelectedChat?.value &&
+          getSelectedChat.value.id === chatFound.id
+        ) {
           console.log("current chat found");
           contactStore.setCurrentCustomerId(customer.id);
           contactStore.setContact(contact);

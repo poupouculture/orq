@@ -8,10 +8,18 @@ export default boot(async ({ app, router }) => {
   Sentry.init({
     app,
     dsn: process.env.SENTRY_DSN,
+    environment: process.env.MODE,
     integrations: [
       new BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-        tracePropagationTargets: ["localhost", "my-site-url.com", /^\//],
+        // tracePropagationTargets: [
+        //   "localhost",
+        //   "waba.synque.ca",
+        //   "waba-dev.synque.ca",
+        //   "ang-dev.synque.ca",
+        //   "angliss-chaq-dev.synque.ca",
+        //   /^\//,
+        // ],
       }),
     ],
     // Set tracesSampleRate to 1.0 to capture 100%

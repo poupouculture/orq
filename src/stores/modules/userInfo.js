@@ -10,6 +10,7 @@ const useUserInfoStore = defineStore("userInfo", {
       refresh_token: "",
     },
     userProfile: null,
+    userId: "",
     userRoleName: "",
     pageActions: null,
   }),
@@ -17,6 +18,7 @@ const useUserInfoStore = defineStore("userInfo", {
     token: (state) => state.userInfo?.access_token,
     getUserInfo: (state) => state.userInfo,
     getUserProfile: (state) => state.userProfile,
+    getUserId: (state) => state.userId,
     getUserRoleName: (state) => state.userRoleName,
     getAllUserPages: (state) => {
       return state.userProfile?.role.pages || [];
@@ -82,26 +84,36 @@ const useUserInfoStore = defineStore("userInfo", {
           if (data) {
             const user = data.data.data;
             this.userProfile = user;
+            this.userId = user?.id;
             this.userRoleName = user?.role.name;
             this.refreshPageActions();
           }
           return data;
+        } else {
+          this.$reset();
+          LocalStorage.clear();
+          this.router.push("/login");
         }
       } catch (err) {
         this.router.push("/login");
       }
     },
+    /**
+     * looks at all pages with status='published' and established accessible actions
+     * @returns
+     */
     async refreshPageActions() {
       // const pages = this.getAllUserPages.filter(
       //   (page) => page?.pages_id?.id === id
       // );
+      console.log("refreshPageActions");
       if (this.pageActions && Object.keys(this.pageActions).length > 0) return;
       if (!this.pageActions) this.pageActions = {};
-      const pages = this.getAllUserPages.filter(
+      const pagesWithActions = this.getAllUserPages.filter(
         (page) => page?.pages_id?.page_actions != null
       );
       // console.log("pages with pageActions", pages);
-      pages.forEach((page) => {
+      pagesWithActions.forEach((page) => {
         // console.log(page);
         page?.pages_id?.page_actions.forEach((action) => {
           console.log(action);
@@ -136,6 +148,10 @@ const useUserInfoStore = defineStore("userInfo", {
           this.userInfo = data;
           LocalStorage.set("userinfo", JSON.stringify(data));
           return data;
+        } else {
+          this.$reset();
+          LocalStorage.clear();
+          this.router.push("/login");
         }
       } catch (err) {
         this.$reset();

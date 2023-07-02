@@ -26,7 +26,8 @@ const submit = async (payload) => {
     position: "top",
   });
   Loading.hide();
-  router.push("/application-programs/message-templates");
+  await router.push("/application-programs/message-templates");
+  location.reload();
 };
 </script>
 
