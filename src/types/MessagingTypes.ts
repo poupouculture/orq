@@ -88,7 +88,7 @@ export interface IChat {
   caption?: string;
   first_name?: string | null; // customer's first_name
   last_name?: string | null; // customer's last_name
-  meta_phone_number_id: string;
+  meta_phone_number_id?: string;
 }
 
 export interface CachedChatMessages {

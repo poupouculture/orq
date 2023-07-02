@@ -4,6 +4,7 @@ import useUserInfoStore from "stores/modules/userInfo";
 const userStore = useUserInfoStore();
 
 export default boot(async ({ router }) => {
+  console.log("boot: getProfile");
   let userData = LocalStorage.getItem("userinfo");
   // console.log(userData);
   if (!userData) {
