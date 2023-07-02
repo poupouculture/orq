@@ -124,6 +124,7 @@ export interface SendTextMessage {
   isIncludedComponent?: boolean;
   countParams?: any[];
   headerType: string;
+  headerMessage: string;
   messageId?: string;
   channel?: string;
 }
