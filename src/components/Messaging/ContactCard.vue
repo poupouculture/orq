@@ -5,7 +5,7 @@
   >
     <q-avatar class="rounded-avatar q-mr-sm">
       <q-icon
-        v-if="isErrorLastMessage"
+        v-if="errorLastMessageType.status"
         class="absolute right-full top-1/2 -translate-y-2/4 pr-1"
         name="warning"
         color="negative"
@@ -107,12 +107,18 @@ const messagingStore = useMessagingStore();
 const { selectedChatId, selectedTab } = storeToRefs(messagingStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
-const isErrorLastMessage = computed<boolean>(() => {
-  // console.log("isErrorLastMessage");
+const errorLastMessageType = computed(() => {
   const { last_message: lastMessage } = props.data;
   // console.log(lastMessage);
-  return messagingStore.parseError(lastMessage);
+  const errObj = messagingStore.parseLastMessageError(lastMessage);
+  if (errObj.conversation_type) {
+    console.log("isErrorLastMessage");
+    messagingStore.setConversationType(props.data, errObj.conversation_type);
+  }
+  return errObj;
+  // return messagingStore.parseError(lastMessage);
 });
+
 const name = computed(() => getChatNameEn(props.data));
 const nameContact = computed(() => getContactNameEn(props.data));
 

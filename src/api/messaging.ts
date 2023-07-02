@@ -112,7 +112,9 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     messageId,
   } = payload;
 
+  console.log("sendChatTextMessage");
   const currPayload: ChatPayload = {
+    channel: payload.channel,
     chat_id: chatId,
     keyword: isTemplate
       ? ChatKeywords.SEND_TEMPLATE_MESSAGE
