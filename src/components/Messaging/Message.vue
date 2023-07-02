@@ -269,7 +269,7 @@
             size="md"
             class="q-mt-md"
             :disable="isPending || isBot || chaqMode"
-            @click="fileUplader?.pickFiles"
+            @click="pickFiles()"
           >
             <img src="~assets/images/pin.svg" />
             <q-uploader
@@ -277,7 +277,7 @@
               :accept="Object.keys(supportedFiletypes).join()"
               class="hidden invisible"
               :filter="fileFilter"
-              @added="uploadFile"
+              @added="openFilePreview($event)"
             />
           </q-btn>
           <q-btn
@@ -323,6 +323,13 @@
     v-model="showMessageImage"
     @hide="showMessageImage = false"
     @send="upload"
+  />
+  <FilePreviewDialog
+    ref="FilePreviewDialogRef"
+    v-model="showFilePreviewDialog"
+    @hide="showFilePreviewDialog = false"
+    @send="uploadFile"
+    :file="file"
   />
   <Transition
     enter-active-class="duration-200 ease-out"
@@ -427,6 +434,7 @@ import {
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
+import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
 
@@ -472,6 +480,7 @@ const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const showMessageImage: Ref<boolean> = ref(false);
+const showFilePreviewDialog: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const headerMessage: Ref<string> = ref("");
@@ -519,6 +528,17 @@ const {
   replayMessage,
 } = storeToRefs(messagingStore);
 
+const file = ref();
+const openFilePreview = (files: any) => {
+  showFilePreviewDialog.value = !showFilePreviewDialog.value;
+  file.value = files;
+};
+const pickFiles = () => {
+  fileUplader.value?.reset();
+  setTimeout(() => {
+    fileUplader.value?.pickFiles();
+  }, 100);
+};
 const toggleInfo = () => {
   // getChatbots();
   if (window.innerWidth < 1024) {
@@ -999,8 +1019,12 @@ const upload = async (fileList: readonly File[], caption: string) => {
   messageCallback(data, newMessage);
 };
 
-const uploadFile = async (files: readonly File[]) => {
-  const file = files[0];
+const uploadFile = async (payload: {
+  files: readonly File[];
+  caption: string;
+}) => {
+  const file = payload.files[0];
+  showFilePreviewDialog.value = false;
 
   getLimitByType(file.type);
   if (!file) return;
@@ -1045,7 +1069,7 @@ const uploadFile = async (files: readonly File[]) => {
   });
   console.log(newFileName);
 
-  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("caption", payload.caption);
   bodyFormData.append("file", newFileName);
   fileUplader.value?.removeQueuedFiles();
 
