@@ -220,7 +220,7 @@ const messageContentType = (msg: any) => {
     case MessageType.DOCUMENT:
       return MessageType.DOCUMENT;
     case MessageType.APPLICATION:
-      return MessageType.APPLICATION;
+      return MessageType.DOCUMENT;
     case MessageType.VIDEO:
       return MessageType.VIDEO;
     case MessageType.REACTION: // ???
