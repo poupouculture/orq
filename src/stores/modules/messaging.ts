@@ -101,8 +101,9 @@ const useMessagingStore = defineStore("messaging", {
             msg.content?.error_body?.errors[0]
           );
         }
+        console.log(errObj);
       }
-      console.log(errObj);
+
       return errObj;
     },
     errorCode(errObj: any) {
