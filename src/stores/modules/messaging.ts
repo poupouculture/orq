@@ -101,8 +101,9 @@ const useMessagingStore = defineStore("messaging", {
             msg.content?.error_body?.errors[0]
           );
         }
+        console.log(errObj);
       }
-      console.log(errObj);
+
       return errObj;
     },
     errorCode(errObj: any) {
@@ -117,6 +118,10 @@ const useMessagingStore = defineStore("messaging", {
         case 131053:
           //
           // return "131053";
+          break;
+        case 131026:
+          // Message Undeliverable.
+          // not a valid number
           break;
         default:
           return "";
