@@ -10,7 +10,7 @@
     class="h-full w-full flex flex-col q-pa-md bg-white"
   > -->
     <header
-      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
+      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-end md:items-center flex cursor-pointer"
       @click.stop="showCustomerInfo"
     >
       <div class="flex items-center space-x-3 flex-nowrap">
@@ -27,6 +27,7 @@
           <p class="text-gray-500">{{ metaPhoneNumberId }}</p>
         </div>
       </div>
+
       <!-- <q-input
         v-model="searchText"
         placeholder="Search Chat Messages..."
@@ -49,6 +50,7 @@
         round
         icon="close"
       />
+      <img src="~assets/icons/whatsapp.svg" alt="" width="40" />
     </header>
     <template v-if="isBot">
       <div class="flex justify-between items-center">
