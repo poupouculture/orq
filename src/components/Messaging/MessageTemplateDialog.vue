@@ -253,7 +253,8 @@ const send = () => {
     language.value,
     customVariables.value?.length > 0,
     customVariables.value,
-    header.value.toUpperCase()
+    header.value.toUpperCase(),
+    headerMessage.value
   );
   emit("hide");
 };
@@ -299,9 +300,9 @@ const applyTemplateComponent = (val: any) => {
     header.value = headerComponent?.format;
     console.log("used template", headerComponent);
     if (header.value?.toUpperCase() === "TEXT") {
-      headerMessage.value = headerComponent.value?.text;
+      headerMessage.value = headerComponent.text;
     } else {
-      media.value = headerComponent.value?.text;
+      media.value = headerComponent.text;
     }
 
     const bodyComponent = val.components.find((c: any) => c?.type === "BODY");
