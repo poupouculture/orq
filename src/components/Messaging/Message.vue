@@ -2,7 +2,7 @@
   <div
     v-if="getSelectedChatId"
     class="h-full w-full flex flex-col q-pa-md"
-    :style="getHeight()"
+    :class="{ fixed: isMobile }"
   >
     <!-- ??? jimmy to be refactored -->
     <!-- <div
@@ -1215,9 +1215,7 @@ const onPaste = (e: ClipboardEvent) => {
     }
   }
 };
-const getHeight = () => {
-  return "height: " + window.innerHeight + "px";
-};
+
 onMounted(() => {
   if (window.innerWidth < 1024) {
     isMobile.value = true;
