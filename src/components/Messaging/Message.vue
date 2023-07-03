@@ -24,7 +24,8 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
-          <p class="text-gray-500">{{ envMetaPhoneNumberId }}</p>
+          <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
+          <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
         </div>
       </div>
 
@@ -50,13 +51,16 @@
         round
         icon="close"
       />
-      <img
-        v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
-        src="~assets/icons/whatsapp.svg"
-        alt=""
-        class="w-8 md:w-10"
-      />
-      <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
+      <div>
+        <img
+          v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
+          src="~assets/icons/whatsapp.svg"
+          alt=""
+          class="w-8 md:w-10"
+        />
+        <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
+        <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
+      </div>
     </header>
     <template v-if="isBot">
       <div class="flex justify-between items-center">
@@ -484,7 +488,6 @@ const showFilePreviewDialog: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const headerMessage: Ref<string> = ref("");
-// const metaPhoneNumberId: Ref<string> = ref("");
 const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
@@ -578,37 +581,45 @@ const chatNumber = computed<string>(
 //   return "";
 // });
 
-const envMetaPhoneNumberId = computed<string>(() => {
+const wabaChannelIdentity = computed<string>(() => {
+  let envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
+  console.log(envMetaPhoneNumberId);
+  if (envMetaPhoneNumberId) {
+    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
+  } else {
+    envMetaPhoneNumberId = "";
+  }
   let metaPhoneNumberId = "";
   if (getSelectedChat?.value?.meta_phone_number_id) {
     metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
   } else {
     return "";
   }
-  let envMetaPhoneNumberId = "";
-  if (process.env.META_PHONE_NUMBER_ID) {
-    envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
-  } else {
+  if (metaPhoneNumberId === envMetaPhoneNumberId) {
     return "";
+  } else {
+    return phoneMapping(metaPhoneNumberId);
   }
-  console.log("process.env.META_PHONE_NUMBER_ID:------");
-  return metaPhoneNumberId === envMetaPhoneNumberId
-    ? ""
-    : phoneMapping(metaPhoneNumberId);
 });
 
 const phoneMapping = (metaPhoneNumberId: string) => {
+  let identity = "";
   switch (metaPhoneNumberId) {
     case "104844065999210":
-      return "Angliss";
+      identity = "Angliss";
+      break;
     case "106296152305955":
-      return "Synque";
+      identity = "Synque";
+      break;
     case "100327786191815":
-      return "Dev";
+      identity = "Dev";
+      break;
     default:
-      return "";
+      break;
   }
+  return identity;
 };
+
 const contactNameGet = computed<string>(() => {
   const contactName =
     getSelectedChat.value.contact_first_name ??
