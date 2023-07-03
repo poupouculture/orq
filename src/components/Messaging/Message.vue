@@ -597,16 +597,21 @@ const channelIdentity = computed<string>(() => {
 });
 
 const phoneMapping = (metaPhoneNumberId: string) => {
+  let identity = "";
   switch (metaPhoneNumberId) {
     case "104844065999210":
-      return "Angliss";
+      identity = "Angliss";
+      break;
     case "106296152305955":
-      return "Synque";
+      identity = "Synque";
+      break;
     case "100327786191815":
-      return "Dev";
+      identity = "Dev";
+      break;
     default:
-      return "";
+      break;
   }
+  return identity;
 };
 const contactNameGet = computed<string>(() => {
   const contactName =
