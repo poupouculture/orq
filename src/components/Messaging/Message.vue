@@ -484,7 +484,6 @@ const showFilePreviewDialog: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const headerMessage: Ref<string> = ref("");
-// const metaPhoneNumberId: Ref<string> = ref("");
 const fileUplader: any = ref(null);
 const rec: any = ref(null);
 const wave: any = ref(null);
