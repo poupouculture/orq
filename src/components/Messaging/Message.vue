@@ -25,6 +25,7 @@
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
           <p class="text-gray-500">{{ channelIdentity }}</p>
+          <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
         </div>
       </div>
 
@@ -584,9 +585,9 @@ const channelIdentity = computed<string>(() => {
   } else {
     return "";
   }
-  let envMetaPhoneNumberId = "";
-  if (process.env.META_PHONE_NUMBER_ID) {
-    envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
+  const envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
+  if (envMetaPhoneNumberId) {
+    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
   } else {
     return "";
   }
