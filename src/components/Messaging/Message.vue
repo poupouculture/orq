@@ -24,8 +24,8 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
-          <p class="text-gray-500">{{ channelIdentity }}</p>
-          <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
+          <!-- <p class="text-gray-500">{{ channelIdentity }}</p> -->
+          <p class="text-gray-500">{{ metaPhoneNumberId }}</p>
         </div>
       </div>
 
@@ -571,49 +571,50 @@ const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
-// const metaPhoneNumberId = computed<string>(() => {
-//   if (getSelectedChat.value?.meta_phone_number_id) {
-//     return getSelectedChat.value?.meta_phone_number_id;
-//   }
-//   return "";
-// });
-
-const channelIdentity = computed<string>(() => {
-  let metaPhoneNumberId = "";
-  if (getSelectedChat?.value?.meta_phone_number_id) {
-    metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
-  } else {
-    return "";
+const metaPhoneNumberId = computed<string>(() => {
+  if (getSelectedChat.value?.meta_phone_number_id) {
+    return getSelectedChat.value?.meta_phone_number_id;
   }
-  const envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
-  if (envMetaPhoneNumberId) {
-    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
-  } else {
-    return "";
-  }
-  console.log("process.env.META_PHONE_NUMBER_ID:------");
-  return metaPhoneNumberId === envMetaPhoneNumberId
-    ? ""
-    : phoneMapping(metaPhoneNumberId);
+  return "";
 });
 
-const phoneMapping = (metaPhoneNumberId: string) => {
-  let identity = "";
-  switch (metaPhoneNumberId) {
-    case "104844065999210":
-      identity = "Angliss";
-      break;
-    case "106296152305955":
-      identity = "Synque";
-      break;
-    case "100327786191815":
-      identity = "Dev";
-      break;
-    default:
-      break;
-  }
-  return identity;
-};
+// const channelIdentity = computed<string>(() => {
+//   let metaPhoneNumberId = "";
+//   if (getSelectedChat?.value?.meta_phone_number_id) {
+//     metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
+//   } else {
+//     return "";
+//   }
+//   const envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
+//   if (envMetaPhoneNumberId) {
+//     // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
+//   } else {
+//     return "";
+//   }
+//   console.log("process.env.META_PHONE_NUMBER_ID:------");
+//   return metaPhoneNumberId === envMetaPhoneNumberId
+//     ? ""
+//     : phoneMapping(metaPhoneNumberId);
+// });
+
+// const phoneMapping = (metaPhoneNumberId: string) => {
+//   let identity = "";
+//   switch (metaPhoneNumberId) {
+//     case "104844065999210":
+//       identity = "Angliss";
+//       break;
+//     case "106296152305955":
+//       identity = "Synque";
+//       break;
+//     case "100327786191815":
+//       identity = "Dev";
+//       break;
+//     default:
+//       break;
+//   }
+//   return identity;
+// };
+
 const contactNameGet = computed<string>(() => {
   const contactName =
     getSelectedChat.value.contact_first_name ??
