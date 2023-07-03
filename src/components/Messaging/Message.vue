@@ -579,22 +579,24 @@ const chatNumber = computed<string>(
 // });
 
 const channelIdentity = computed<string>(() => {
+  const envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
+  console.log(envMetaPhoneNumberId);
+  if (envMetaPhoneNumberId) {
+    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
+  } else {
+    return "";
+  }
   let metaPhoneNumberId = "";
   if (getSelectedChat?.value?.meta_phone_number_id) {
     metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
   } else {
     return "";
   }
-  const envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
-  if (envMetaPhoneNumberId) {
-    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
-  } else {
+  if (metaPhoneNumberId === envMetaPhoneNumberId) {
     return "";
+  } else {
+    return phoneMapping(metaPhoneNumberId);
   }
-  console.log("process.env.META_PHONE_NUMBER_ID:------");
-  return metaPhoneNumberId === envMetaPhoneNumberId
-    ? ""
-    : phoneMapping(metaPhoneNumberId);
 });
 
 const phoneMapping = (metaPhoneNumberId: string) => {
@@ -614,6 +616,7 @@ const phoneMapping = (metaPhoneNumberId: string) => {
   }
   return identity;
 };
+
 const contactNameGet = computed<string>(() => {
   const contactName =
     getSelectedChat.value.contact_first_name ??
