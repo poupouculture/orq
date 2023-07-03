@@ -24,7 +24,7 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
-          <p class="text-gray-500">{{ channelIdentity }}</p>
+          <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
           <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
         </div>
       </div>
@@ -51,13 +51,16 @@
         round
         icon="close"
       />
-      <img
-        v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
-        src="~assets/icons/whatsapp.svg"
-        alt=""
-        class="w-8 md:w-10"
-      />
-      <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
+      <div>
+        <img
+          v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
+          src="~assets/icons/whatsapp.svg"
+          alt=""
+          class="w-8 md:w-10"
+        />
+        <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
+        <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
+      </div>
     </header>
     <template v-if="isBot">
       <div class="flex justify-between items-center">
@@ -578,13 +581,13 @@ const chatNumber = computed<string>(
 //   return "";
 // });
 
-const channelIdentity = computed<string>(() => {
-  const envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
+const wabaChannelIdentity = computed<string>(() => {
+  let envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
   console.log(envMetaPhoneNumberId);
   if (envMetaPhoneNumberId) {
     // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
   } else {
-    return "";
+    envMetaPhoneNumberId = "";
   }
   let metaPhoneNumberId = "";
   if (getSelectedChat?.value?.meta_phone_number_id) {
