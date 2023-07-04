@@ -355,7 +355,8 @@ const useMessagingStore = defineStore("messaging", {
           ...this.cachedChatMessages[chatId],
         ];
         const hasmore =
-          this.cachedChatMessages[chatId].length < data.total_count;
+          this.cachedChatMessages[chatId].length < data.total_count &&
+          messages.length >= (limit ?? 15);
         return hasmore;
       } catch (e) {
         console.log(e);
