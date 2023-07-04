@@ -12,6 +12,7 @@ export const getChats = async (limit = 15, pageNumber = 1) => {
       page_number: pageNumber,
       page_size: limit,
       type: "all",
+      multi: true,
     },
   });
 
@@ -34,6 +35,7 @@ export const getChatsByType = async (
       page_size: limit,
       sort,
       type: typeSend,
+      multi: true,
     },
   });
   return data.data.length > 0 ? data.data : [];

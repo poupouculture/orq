@@ -110,7 +110,7 @@ const useContactStore = defineStore("useContact", {
         });
       } else {
         Notify.create({
-          message: "Successfully",
+          message: `Successfully Dissociated: ${this.contact?.number}`,
           position: "top",
           type: "positive",
           color: "blue-9",
