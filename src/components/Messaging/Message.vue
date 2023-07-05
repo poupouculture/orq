@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="getSelectedChatId"
-    class="h-full w-full flex flex-col q-pa-md"
+    class="h-full w-full flex flex-col md:pt-4 pt-2"
     :class="{ fixed: isMobile }"
   >
     <!-- ??? jimmy to be refactored -->
@@ -9,61 +9,62 @@
     v-if="getSelectedChatId"
     class="h-full w-full flex flex-col q-pa-md bg-white"
   > -->
-    <header
-      class="pt-1.5 pb-2 px-2 bg-white w-full justify-between items-end md:items-center flex cursor-pointer flex-nowrap"
-      @click.stop="showCustomerInfo"
-    >
-      <div class="flex items-center space-x-3 flex-nowrap">
-        <q-avatar class="rounded-avatar">
-          <img :src="profileIcon" />
-        </q-avatar>
-        <div class="flex flex-col w-full">
-          <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
-            {{ nameEn }}
-          </p>
-          <p class="text-gray-500">
-            {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
-          </p>
-          <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
-          <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
-        </div>
-      </div>
-
-      <!-- <q-input
-        v-model="searchText"
-        placeholder="Search Chat Messages..."
-        outlined
-        dense
+    <div class="px-2 md:px-4">
+      <header
+        class="pt-1.5 pb-2 px-2 bg-white w-full justify-between items-end md:items-center flex cursor-pointer flex-nowrap"
+        @click.stop="showCustomerInfo"
       >
-        <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-        <template v-slot:append>
-          <q-icon name="reorder" class="cursor-pointer" />
-        </template>
-      </q-input> -->
-      <!-- Close button -->
-      <q-btn
-        class="cursor-pointer lg:hidden absolute right-4 top-2"
-        @click.stop="closeChat"
-        style="color: #64748b"
-        flat
-        round
-        icon="close"
-      />
-      <div>
-        <img
-          v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
-          src="~assets/icons/whatsapp.svg"
-          alt=""
-          class="w-8 md:w-10"
+        <div class="flex items-center space-x-3 flex-nowrap">
+          <q-avatar class="rounded-avatar">
+            <img :src="profileIcon" />
+          </q-avatar>
+          <div class="flex flex-col w-full">
+            <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
+              {{ nameEn }}
+            </p>
+            <p class="text-gray-500">
+              {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
+            </p>
+            <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
+            <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
+          </div>
+        </div>
+        <!-- <q-input
+          v-model="searchText"
+          placeholder="Search Chat Messages..."
+          outlined
+          dense
+        >
+          <template v-slot:prepend>
+            <q-icon name="search" />
+          </template>
+          <template v-slot:append>
+            <q-icon name="reorder" class="cursor-pointer" />
+          </template>
+        </q-input> -->
+        <!-- Close button -->
+        <q-btn
+          class="cursor-pointer lg:hidden absolute right-4 top-2"
+          @click.stop="closeChat"
+          style="color: #64748b"
+          flat
+          round
+          icon="close"
         />
-        <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
-        <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
-      </div>
-    </header>
+        <div>
+          <img
+            v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
+            src="~assets/icons/whatsapp.svg"
+            alt=""
+            class="w-8 md:w-10"
+          />
+          <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
+          <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
+        </div>
+      </header>
+    </div>
     <template v-if="isBot">
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center q-pa-md">
         <div class="flex items-center space-x-3 cursor-pointer p-2">
           <q-avatar size="md" class="rounded-avatar">
             <img src="~assets/images/bot.svg" />
@@ -83,7 +84,7 @@
         <q-btn color="primary" label="End Bot" @click="confirmCloseBot()" />
       </div>
     </template>
-    <template v-else>
+    <div v-else class="px-2 md:py-2 md:px-4">
       <div class="p-2 text-gray-400">Members</div>
       <div class="flex justify-between p-2 items-center">
         <div class="flex pb-3">
@@ -116,16 +117,13 @@
           </div>
         </div>
       </div>
-    </template>
+    </div>
 
-    <q-separator class="mx-2" size="1px" inset />
+    <q-separator class="md:mx-4" size="1px" inset />
     <!-- message content -->
     <main class="flex-1 relative z-10 w-full h-full" @click="hideBotOption">
       <div
-        class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area"
-        :style="`height: ${
-          getSelectedChat.status === ChatTypes.ONGOING ? '75%' : '88%'
-        }`"
+        class="absolute top-0 scrollbar overflow-y-auto w-full z-50 px-2 scroll_area h-full md:px-4"
         ref="scrollAreaRef"
       >
         <q-infinite-scroll
@@ -151,13 +149,10 @@
       </div>
     </main>
     <!-- footer -->
-    <footer
-      class="q-pa-xs q-pb-xs bg-white w-full px-2 pt-2.5 z-20 fixed bottom-1 inset-x-0"
-      :style="getWidthFooter()"
-    >
-      <div v-if="getSelectedChat.status === ChatTypes.ONGOING">
+    <footer class="q-pa-xs q-pb-xs bg-white w-full px-3 pt-2.5 z-20 pb-4">
+      <template v-if="getSelectedChat.status === ChatTypes.ONGOING">
         <div
-          class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2"
+          class="relative rounded-xl overflow-hidden px-4 py-4 sm:h-auto bg-grey-2 w-full"
         >
           <ChatMessage
             v-if="replayMessage?.id"
@@ -171,6 +166,7 @@
             dense
             borderless
             type="textarea"
+            class="w-full"
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @[inputEvent]="inputHandler"
@@ -292,7 +288,7 @@
             @click="sendMessage"
           />
         </div>
-      </div>
+      </template>
       <div v-else>
         <div class="w-full p-4 flex gap-2 items-center bg-gray-200 rounded-md">
           <p class="text-gray-400 text-xs w-7/12">
@@ -1020,20 +1016,6 @@ function recClose() {
   rec.value = null;
   showAudio.value = false;
 }
-
-const getWidthFooter = () => {
-  let property = "";
-  if (window.innerWidth > 768) {
-    property = "padding-left: 360px;";
-  }
-  if (window.innerWidth > 768 && !leftDrawerOpen.value) {
-    property = "padding-left: 0px";
-  }
-  if (window.innerWidth > 768 && rightDrawerOpen.value) {
-    property = "padding-left: 360px; padding-right: 560px";
-  }
-  return property;
-};
 
 const upload = async (fileList: readonly File[], caption: string) => {
   const file = fileList[0];
