@@ -1,8 +1,8 @@
 {
-  "name": "waba-quasar",
+  "name": "ChaQ",
   "version": "0.0.1",
-  "description": "WhatsApp API Communication Dashboard",
-  "productName": "com.synque.waba",
+  "description": "Synque Business Ecosystem",
+  "productName": "com.synque.chaq",
   "author": "mac <mac@synque.io>",
   "private": true,
   "scripts": {
