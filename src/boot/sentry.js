@@ -5,10 +5,12 @@ import { BrowserTracing } from "@sentry/tracing";
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files
 export default boot(async ({ app, router }) => {
+  console.log("boot: sentry");
+  // console.log(process.env.MODE);
   Sentry.init({
     app,
     dsn: process.env.SENTRY_DSN,
-    environment: process.env.MODE,
+    environment: process.env.RUNNING,
     integrations: [
       new BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
