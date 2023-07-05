@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Synque Business Ecosystem",
   "productName": "com.synque.chaq",
-  "author": "mac <mac@synque.io>",
+  "author": "Synque <devadmin@synque.io>",
   "private": true,
   "scripts": {
     "dev": "quasar dev",
