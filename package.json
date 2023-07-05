@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Synque Platform",
   "productName": "com.synque.chaq",
-  "author": "Synque <devadmin@synque.io>",
+  "author": "Synque <admin@synque.io>",
   "private": true,
   "scripts": {
     "dev": "quasar dev",
