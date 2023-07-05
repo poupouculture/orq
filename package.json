@@ -1,7 +1,7 @@
 {
   "name": "ChaQ",
   "version": "1.0.0",
-  "description": "Synque Business Ecosystem",
+  "description": "Synque Platform",
   "productName": "com.synque.chaq",
   "author": "Synque <devadmin@synque.io>",
   "private": true,
