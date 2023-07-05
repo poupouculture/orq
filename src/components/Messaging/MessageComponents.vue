@@ -63,8 +63,8 @@
             :src="messageContentGet(message)?.url"
             :name="
               isDocument(messageContentGet(message))
-                ? messageContentGet(message).file_name
-                : messageContentGet(message).media_id
+                ? messageContentGet(message)?.file_name
+                : messageContentGet(message)?.media_id
             "
             :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
@@ -103,8 +103,7 @@ const component = ref("");
 const messageTemplateBody = (content: any) => {
   // console.log("messageTemplate");
   if (content.error_body) {
-    return errorParser(content);
-    // return "";
+    return errorRender(content);
   }
   const components = content?.template?.components ?? content?.components;
   if (components) {
@@ -148,11 +147,18 @@ const isDocument = (content: any) => {
   );
 };
 
-const errorParser = (content: any) => {
+const errorRender = (content: any) => {
   if (content?.error_body) {
     console.log(content.error_body);
     const error = content?.error_body;
-    if (error.errors) return error.errors[0]?.title;
+    if (error.errors) {
+      if (error.errors.details) {
+        // from derp, to be refactored???
+        return error.errors.details;
+      }
+      // from waba
+      return error.errors[0]?.title;
+    }
     if (error.error_data) return error.error_data.details;
     if (error.message) return error.message;
   }
@@ -168,7 +174,14 @@ const messageContentText = (msg: any) => {
   if (msg?.content?.error_body) {
     // console.log(msg.content.error_body);
     const error = msg?.content?.error_body;
-    if (error.errors) return error.errors[0]?.title;
+    if (error.errors) {
+      if (error.errors.details) {
+        // from derp, to be refactored???
+        return error.errors.details;
+      }
+      // from waba
+      return error.errors[0]?.title;
+    }
     if (error.error_data) return error.error_data.details;
     if (error.message) return error.message;
   }
@@ -207,7 +220,7 @@ const messageContentType = (msg: any) => {
     case MessageType.DOCUMENT:
       return MessageType.DOCUMENT;
     case MessageType.APPLICATION:
-      return MessageType.APPLICATION;
+      return MessageType.DOCUMENT;
     case MessageType.VIDEO:
       return MessageType.VIDEO;
     case MessageType.REACTION: // ???
@@ -268,6 +281,7 @@ const componentName = computed(() => {
 });
 
 const componentNameGet = (content: any) => {
+  // console.log("componentNameGet");
   if (content?.type === MessageType.TEXT && content?.mime_type !== undefined) {
     return components.MessageDocument;
   }

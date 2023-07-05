@@ -24,6 +24,7 @@ const api = axios.create({
 const axiosInstance = axios.create({ baseURL: process.env.BACKEND_URL });
 
 export default boot(({ app, store, router }) => {
+  console.log("boot: axios.js");
   const userStore = useUserInfoStore(store);
   userStore.setUserInfo(userinfo);
 

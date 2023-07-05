@@ -2,7 +2,7 @@
   <div
     v-if="getSelectedChatId"
     class="h-full w-full flex flex-col q-pa-md"
-    :style="getHeight()"
+    :class="{ fixed: isMobile }"
   >
     <!-- ??? jimmy to be refactored -->
     <!-- <div
@@ -10,7 +10,7 @@
     class="h-full w-full flex flex-col q-pa-md bg-white"
   > -->
     <header
-      class="pt-1 pb-2 px-2 bg-white w-full justify-between items-center flex cursor-pointer"
+      class="pt-1.5 pb-2 px-2 bg-white w-full justify-between items-end md:items-center flex cursor-pointer flex-nowrap"
       @click.stop="showCustomerInfo"
     >
       <div class="flex items-center space-x-3 flex-nowrap">
@@ -24,9 +24,11 @@
           <p class="text-gray-500">
             {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
           </p>
-          <p class="text-gray-500">{{ metaPhoneNumberId }}</p>
+          <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
+          <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
         </div>
       </div>
+
       <!-- <q-input
         v-model="searchText"
         placeholder="Search Chat Messages..."
@@ -42,13 +44,23 @@
       </q-input> -->
       <!-- Close button -->
       <q-btn
-        class="cursor-pointer lg:hidden absolute right-4 top-4"
+        class="cursor-pointer lg:hidden absolute right-4 top-2"
         @click.stop="closeChat"
         style="color: #64748b"
         flat
         round
         icon="close"
       />
+      <div>
+        <img
+          v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
+          src="~assets/icons/whatsapp.svg"
+          alt=""
+          class="w-8 md:w-10"
+        />
+        <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
+        <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
+      </div>
     </header>
     <template v-if="isBot">
       <div class="flex justify-between items-center">
@@ -261,15 +273,15 @@
             size="md"
             class="q-mt-md"
             :disable="isPending || isBot || chaqMode"
-            @click="fileUplader?.pickFiles"
+            @click="pickFiles()"
           >
             <img src="~assets/images/pin.svg" />
             <q-uploader
               ref="fileUplader"
-              accept="*"
+              :accept="Object.keys(supportedFiletypes).join()"
               class="hidden invisible"
               :filter="fileFilter"
-              @added="uploadFile"
+              @added="openFilePreview($event)"
             />
           </q-btn>
           <q-btn
@@ -315,6 +327,13 @@
     v-model="showMessageImage"
     @hide="showMessageImage = false"
     @send="upload"
+  />
+  <FilePreviewDialog
+    ref="FilePreviewDialogRef"
+    v-model="showFilePreviewDialog"
+    @hide="showFilePreviewDialog = false"
+    @send="uploadFile"
+    :file="file"
   />
   <Transition
     enter-active-class="duration-200 ease-out"
@@ -419,6 +438,7 @@ import {
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
+import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
 
@@ -464,6 +484,7 @@ const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
 const showMessageTemplate: Ref<boolean> = ref(false);
 const showMessageImage: Ref<boolean> = ref(false);
+const showFilePreviewDialog: Ref<boolean> = ref(false);
 const paramsCount: Ref<any[]> = ref([]);
 const headerType: Ref<string> = ref("TEXT");
 const headerMessage: Ref<string> = ref("");
@@ -484,6 +505,25 @@ const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
 const botList: Ref<any[]> = ref([]);
+
+// filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+const supportedFiletypes: Ref<any> = ref({
+  ".mp4": "video/mp4",
+  ".3gp": "video/3gpp",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".pdf": "application/pdf",
+  ".txt": "text/plain",
+  ".ppt": "application/vnd.ms-powerpoint",
+  ".pptx":
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  ".doc": "application/msword",
+  ".docx":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".xls": "application/vnd.ms-excel",
+  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+});
 const messageImageDialogRef = ref();
 const {
   getSelectedChat,
@@ -492,6 +532,17 @@ const {
   replayMessage,
 } = storeToRefs(messagingStore);
 
+const file = ref();
+const openFilePreview = (files: any) => {
+  showFilePreviewDialog.value = !showFilePreviewDialog.value;
+  file.value = files;
+};
+const pickFiles = () => {
+  fileUplader.value?.reset();
+  setTimeout(() => {
+    fileUplader.value?.pickFiles();
+  }, 100);
+};
 const toggleInfo = () => {
   // getChatbots();
   if (window.innerWidth < 1024) {
@@ -523,9 +574,51 @@ const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
 
-const metaPhoneNumberId = computed<string>(
-  () => getSelectedChat.value?.meta_phone_number_id // jimmy
-);
+// const metaPhoneNumberId = computed<string>(() => {
+//   if (getSelectedChat.value?.meta_phone_number_id) {
+//     return getSelectedChat.value?.meta_phone_number_id;
+//   }
+//   return "";
+// });
+
+const wabaChannelIdentity = computed<string>(() => {
+  let envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
+  console.log(envMetaPhoneNumberId);
+  if (envMetaPhoneNumberId) {
+    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
+  } else {
+    envMetaPhoneNumberId = "";
+  }
+  let metaPhoneNumberId = "";
+  if (getSelectedChat?.value?.meta_phone_number_id) {
+    metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
+  } else {
+    return "";
+  }
+  if (metaPhoneNumberId === envMetaPhoneNumberId) {
+    return "";
+  } else {
+    return phoneMapping(metaPhoneNumberId);
+  }
+});
+
+const phoneMapping = (metaPhoneNumberId: string) => {
+  let identity = "";
+  switch (metaPhoneNumberId) {
+    case "104844065999210":
+      identity = "Angliss";
+      break;
+    case "106296152305955":
+      identity = "Synque";
+      break;
+    case "100327786191815":
+      identity = "Dev";
+      break;
+    default:
+      break;
+  }
+  return identity;
+};
 
 const contactNameGet = computed<string>(() => {
   const contactName =
@@ -548,7 +641,7 @@ const members = computed<Member[]>(
 );
 
 const chaqMode = computed<boolean>(
-  () => getSelectedChat.value.meta_phone_number_id === "ChaQ"
+  () => getSelectedChat.value?.meta_phone_number_id === "ChaQ"
 );
 
 const messages = computed<Message[]>(() => {
@@ -738,7 +831,7 @@ const sendMessage = async () => {
   try {
     const data = await messagingStore.sendChatTextMessage({
       channel:
-        getSelectedChat.value.meta_phone_number_id === "ChaQ"
+        getSelectedChat.value?.meta_phone_number_id === "ChaQ"
           ? "chaq"
           : "whatsapp",
       chatId: getSelectedChatId.value,
@@ -972,11 +1065,29 @@ const upload = async (fileList: readonly File[], caption: string) => {
   messageCallback(data, newMessage);
 };
 
-const uploadFile = async (files: readonly File[]) => {
-  const file = files[0];
+const uploadFile = async (payload: {
+  files: readonly File[];
+  caption: string;
+}) => {
+  const file = payload.files[0];
+  showFilePreviewDialog.value = false;
 
   getLimitByType(file.type);
   if (!file) return;
+
+  // const fileType = `${file.type.split("/")[1]}`;
+  console.log("supported files:", Object.values(supportedFiletypes.value));
+  console.log("current file types:", file.type);
+  if (!Object.values(supportedFiletypes.value).includes(file.type)) {
+    Notify.create({
+      message: `Media Unsupported`,
+      type: "negative",
+      position: "top",
+    });
+
+    fileUplader.value?.removeQueuedFiles();
+    return;
+  }
 
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
   const newMessage = reactive({
@@ -1004,11 +1115,18 @@ const uploadFile = async (files: readonly File[]) => {
   });
   console.log(newFileName);
 
-  // bodyFormData.append("caption", file.name);
+  bodyFormData.append("caption", payload.caption);
   bodyFormData.append("file", newFileName);
   fileUplader.value?.removeQueuedFiles();
 
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
+
+  // clear uploaded file from cache
+  cachedChatMessages.value[getSelectedChatId.value] = cachedChatMessages.value[
+    getSelectedChatId.value
+  ].filter((cm) => cm.id !== newMessage.id);
+  // end clear uploaded file from cache
+
   messageCallback(data, newMessage);
 };
 
@@ -1097,9 +1215,7 @@ const onPaste = (e: ClipboardEvent) => {
     }
   }
 };
-const getHeight = () => {
-  return "height: " + window.innerHeight + "px";
-};
+
 onMounted(() => {
   if (window.innerWidth < 1024) {
     isMobile.value = true;

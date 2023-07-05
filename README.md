@@ -7,6 +7,12 @@ A Quasar Project
 yarn
 ```
 
+## Environment
+https://quasar.dev/quasar-cli-vite/handling-process-env#adding-to-process-env
+
+## PWA:
+https://web.dev/pwa-checklist/
+
 ## Application Design
 ### Content Management System **ERP**
 - login: https://{{env_url}}/admin/login
