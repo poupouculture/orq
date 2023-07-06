@@ -148,12 +148,13 @@ const menus = computed(() => {
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <router-link to="/messaging">
-        <q-btn
+        <!-- <q-btn
           icon="forum"
           color="deep-purple-13"
           style="border-radius: 10px; height: 45px"
         >
-        </q-btn>
+        </q-btn> -->
+        <img class="w-16 md:w-20" src="~assets/images/logo.svg" />
       </router-link>
     </q-page-sticky>
   </q-layout>
