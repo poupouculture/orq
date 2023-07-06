@@ -282,6 +282,7 @@ const updateMultiOptions = async (val) => {
     params: {
       fields: "*",
       search: payload,
+      "filter[status][_neq]": "draft",
     },
   });
   options[variableName] = data.map((item) => {
