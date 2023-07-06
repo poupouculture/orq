@@ -15,7 +15,7 @@
       </div>
       <q-input
         v-model="searchText"
-        placeholder="Search Chat on screen..."
+        placeholder="Search Chats on screen..."
         outlined
         dense
       >
@@ -30,7 +30,7 @@
             unelevated
             color="primary"
             :icon="chatToggleLabel.state.icon"
-            @click="fetchCustomers"
+            @click="fetchContacts"
           >
           </q-btn>
         </template>
@@ -285,7 +285,7 @@ socket.value = io(socketUrl, {
   // transports: ["websocket"],
 });
 
-const fetchCustomers = async () => {
+const fetchContacts = async () => {
   showCustomerDialog.value =
     chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon;
 };
