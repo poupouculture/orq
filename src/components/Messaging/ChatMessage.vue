@@ -42,7 +42,20 @@
         color="primary"
         @click="closeReply"
       />
+      <Preview
+        v-if="message.content.type === MessageType.TEMPLATE"
+        :header="header"
+        :headerMessage="headerMessage"
+        :media="media"
+        :bodyMessage="bodyMessage"
+        :footerMessage="footerMessage"
+        :actionCategory="actionCategory"
+        :actions="actions"
+        :replies="replies"
+        :isRealMessage="isRealMessage"
+      />
       <MessageComponents
+        v-else
         ref="image"
         :content="message.content"
         :message="message"
@@ -167,6 +180,7 @@ import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import Preview from "../ApplicationProgram/Preview.vue";
 
 const props = defineProps<{
   message: Message;
@@ -176,6 +190,15 @@ const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
 const userStore = useUserInfoStore();
+const header = ref("TEXT");
+const headerMessage = ref("Header Message");
+const media = ref("None");
+const bodyMessage = ref("Body Message should be very very very long");
+const footerMessage = ref("Footer Message");
+const actionCategory = ref("");
+const actions = ref([]);
+const replies = ref([]);
+const isRealMessage = ref(true);
 
 const isSend = computed(() => {
   if (isChaq.value) {

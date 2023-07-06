@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="w-full flex justify-center mt-4">
-      <div class="w-10/12 flex flex-col bg-primary rounded-lg p-4 text-white">
+      <div
+        class="flex flex-col bg-primary rounded-lg text-white"
+        :class="{ 'w-10/12 p-4': !isRealMessage, 'w-full': isRealMessage }"
+      >
         <div
           class="w-full bg-gray-300 py-8 flex justify-center"
           v-if="
@@ -80,7 +83,7 @@
         </div>
       </div>
     </div>
-    <div class="w-full flex justify-end">
+    <div class="w-full flex justify-end" v-if="!isRealMessage">
       <span class="text-xs">11:42 AM</span>
     </div>
   </div>
@@ -128,6 +131,10 @@ const props = defineProps({
   filePreview: {
     type: Object,
     default: () => null,
+  },
+  isRealMessage: {
+    type: Boolean,
+    default: () => true,
   },
 });
 
