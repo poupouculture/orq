@@ -153,13 +153,6 @@ const menus = computed(() => {
           color="deep-purple-13"
           style="border-radius: 10px; height: 45px"
         >
-          <q-badge
-            rounded
-            color="orange"
-            floating
-            style="height: 20px; width: 20px"
-            >3</q-badge
-          >
         </q-btn>
       </router-link>
     </q-page-sticky>
