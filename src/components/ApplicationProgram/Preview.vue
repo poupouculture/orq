@@ -140,7 +140,7 @@ const props = defineProps({
   },
   isRealMessage: {
     type: Boolean,
-    default: () => true,
+    default: () => false,
   },
   username: {
     type: String,
