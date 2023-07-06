@@ -44,11 +44,12 @@
       />
       <Preview
         v-if="message.content.type === MessageType.TEMPLATE"
+        :username="message.user_name"
         :header="header"
-        :headerMessage="headerMessage"
+        :headerMessage="messageTemplateComponent(message.content, 'header')"
         :media="media"
-        :bodyMessage="bodyMessage"
-        :footerMessage="footerMessage"
+        :bodyMessage="messageTemplateBody(message.content)"
+        :footerMessage="messageTemplateComponent(message.content, 'footer')"
         :actionCategory="actionCategory"
         :actions="actions"
         :replies="replies"
@@ -191,10 +192,7 @@ const image = ref();
 const messagingStore = useMessagingStore();
 const userStore = useUserInfoStore();
 const header = ref("TEXT");
-const headerMessage = ref("Header Message");
 const media = ref("None");
-const bodyMessage = ref("Body Message should be very very very long");
-const footerMessage = ref("Footer Message");
 const actionCategory = ref("");
 const actions = ref([]);
 const replies = ref([]);
@@ -248,5 +246,52 @@ const onhandleClick = (type: string) => {
 };
 const closeReply = () => {
   messagingStore.setReplayMessage();
+};
+
+const errorRender = (content: any) => {
+  if (content?.error_body) {
+    console.log(content.error_body);
+    const error = content?.error_body;
+    if (error.errors) {
+      if (error.errors.details) {
+        // from derp, to be refactored???
+        return error.errors.details;
+      }
+      // from waba
+      return error.errors[0]?.title;
+    }
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  return "";
+};
+
+const messageTemplateComponent = (content: any, type: string) => {
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
+      (component: any) => component?.type === type
+    );
+    if (component) return component?.parameters[0];
+    return null;
+  }
+
+  return null;
+};
+
+const messageTemplateBody = (content: any) => {
+  // console.log("messageTemplate");
+  if (content.error_body) {
+    return errorRender(content);
+  }
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const bodyComponent = components?.find(
+      (component: any) => component?.type === "body"
+    );
+    if (bodyComponent) return bodyComponent?.parameters[0].text;
+  }
+
+  return content?.template_content || content?.template?.text;
 };
 </script>

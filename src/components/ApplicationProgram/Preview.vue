@@ -1,10 +1,16 @@
 <template>
   <div>
-    <div class="w-full flex justify-center mt-4">
+    <div class="w-full flex justify-center">
       <div
         class="flex flex-col bg-primary rounded-lg text-white"
-        :class="{ 'w-10/12 p-4': !isRealMessage, 'w-full': isRealMessage }"
+        :class="{
+          'w-10/12 p-4': !props.isRealMessage,
+          'w-full': props.isRealMessage,
+        }"
       >
+        <h5 class="font-semibold" v-if="props.isRealMessage">
+          {{ props.username }}
+        </h5>
         <div
           class="w-full bg-gray-300 py-8 flex justify-center"
           v-if="
@@ -34,7 +40,7 @@
             "
           />
         </div>
-        <div class="w-full py-2 flex justify-center" v-else>
+        <div class="w-full flex justify-center" v-else>
           <video
             id="video-preview"
             controls
@@ -83,7 +89,7 @@
         </div>
       </div>
     </div>
-    <div class="w-full flex justify-end" v-if="!isRealMessage">
+    <div class="w-full flex justify-end" v-if="!props.isRealMessage">
       <span class="text-xs">11:42 AM</span>
     </div>
   </div>
@@ -135,6 +141,10 @@ const props = defineProps({
   isRealMessage: {
     type: Boolean,
     default: () => true,
+  },
+  username: {
+    type: String,
+    default: () => "",
   },
 });
 
