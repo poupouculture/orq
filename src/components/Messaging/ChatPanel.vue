@@ -197,7 +197,14 @@ type ChatToggleType = {
 
 const chatListScroller = ref(null);
 const errSocket = ref(false);
+
 const searchText = ref("");
+watch(searchText, () => {
+  if (searchText.value == null) {
+    searchText.value = "";
+  }
+});
+
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
