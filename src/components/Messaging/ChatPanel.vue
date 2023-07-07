@@ -116,7 +116,13 @@ import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, SocketEvent, SocketMessage } from "src/types/MessagingTypes";
+import {
+  IChat,
+  SocketChat,
+  SocketChatUpdated,
+  // SocketEvent,
+  SocketMessage,
+} from "src/types/MessagingTypes";
 import {
   closeBot,
   startNewChat,
@@ -363,8 +369,14 @@ const initSocket = () => {
       // console.log("userProfile", userProfile.value);
       chatsList.value.forEach((chat) => {
         console.log("SOCKET: join_chat by chat_id.........");
-        // console.log(`join_chat.........${chat.id}`);
-        socket.value.emit("join_chat", chat.id);
+        // ??? 0707
+        console.log(chat.id);
+        console.log(typeof chat.id);
+        // console.log(typeof chat.id.toString());
+        console.log(`join_chat.........${chat.id}`);
+        socket.value.emit("join_chat", chat.id); // original
+        // socket.value.emit("join_chat", chat.id.toString()); //??? 0707
+        // socket.value.emit("join_chat", parseInt(chat.id));
       });
     });
     socket.value.io.on("error", (err: any) => {
@@ -376,10 +388,12 @@ const initSocket = () => {
         type: "negative",
       });
     });
-    socket.value.on("chat_updated", (data: SocketEvent) => {
+    socket.value.on("chat_updated", (data: SocketChatUpdated) => {
       console.log("SOCKET: chat_updated", data);
+      const targetChatId = data.document?.id;
+
       const chat = chatsList.value.find(
-        (chat: IChat) => chat.id === data.document?.id
+        (chat: IChat) => chat.id === targetChatId
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
@@ -390,7 +404,7 @@ const initSocket = () => {
           );
         }
         if (data?.update_fields?.status) {
-          messagingStore.updateChatsList(chat, data.document?.status);
+          messagingStore.updateChatsList(chat, data.document.status);
           console.log("  SOCKET:status change");
           console.log(getSelectedChat.value);
           if (
@@ -527,20 +541,22 @@ const initSocket = () => {
       //   type: "positive",
       // });
     });
-    socket.value.on("chat_created", async (data: any) => {
+    socket.value.on("chat_created", async (data: SocketChat) => {
       Notify.create({
         message: `You have been added to chat ${data.name}`,
         color: "blue-9",
         position: "top",
         type: "positive",
       });
-      console.log("chat_created", data);
-      const findChat = chatsList.value.find((chat) => chat.id === data.id);
-      console.log("findChat:", findChat);
+      console.log("SOCKET chat_created:", data);
+      const findChat = chatsList.value.find((chat) => chat.id === data.id); // ??? 0707
+      console.log(" CHAT_FOUND:", findChat);
       if (!findChat) {
         const chat = await getChatByID(data.id);
-        console.log("SOCKET chat_created:", chat);
+        // chat.id = chat.id.toString(); // ??? 0707
+        console.log(" CHAT_CREATE:", chat);
         chat.last_message = JSON.parse(chat.last_message);
+        console.log(chat.last_message);
         if (chat?.status === ChatTypes.PENDING) {
           chatsList.value.push(chat);
         } else {

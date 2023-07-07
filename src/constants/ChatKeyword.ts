@@ -13,4 +13,5 @@ export const enum ChatTypes {
   CLOSED = "closed",
   ALL = "all",
   PENDING_INBOUND = "pending_inbound",
+  DRAFT = "draft",
 }

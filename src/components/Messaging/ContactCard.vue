@@ -158,6 +158,8 @@ const message = computed<string>(() => {
       return messageTemplate(lastMessage.content);
     case MessageType.DOCUMENT:
       return "[file]";
+    case MessageType.UNSUPPORTED:
+      return "[unsupported]";
     default:
       return lastMessage?.content?.file_name;
   }
