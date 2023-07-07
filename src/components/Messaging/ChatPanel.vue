@@ -18,14 +18,33 @@
         placeholder="Search Chats on screen..."
         outlined
         dense
+        clearable
+        clear-icon="close"
+        @focus="isSearchFocused = true"
+        @blur="isSearchFocused = false"
       >
         <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-        <template v-slot:append>
-          <q-icon name="reorder" class="cursor-pointer" />
+          <q-icon
+            v-if="!isSearchFocused && searchText.length === 0"
+            name="search"
+          />
+          <q-btn
+            v-else
+            flat
+            round
+            icon="arrow_back"
+            size="s"
+            padding="none"
+            @click="
+              () => {
+                searchText = '';
+                isSearchFocused = false;
+              }
+            "
+          />
         </template>
         <template v-slot:after>
+          <q-btn class="mr-1" padding="none" flat rounded icon="filter_list" />
           <q-btn
             unelevated
             color="primary"
@@ -137,6 +156,8 @@ import { getContact } from "src/api/contact";
 import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
+
+const isSearchFocused = ref(false);
 
 const ChatToggleLabel = {
   SHOW: {
