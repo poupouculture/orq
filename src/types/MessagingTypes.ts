@@ -14,6 +14,7 @@ export const enum MessageType {
   DOCUMENT = "document",
   APPLICATION = "application",
   REACTION = "reaction",
+  UNSUPPORTED = "unsupported",
 }
 
 export const enum MessageStatus {

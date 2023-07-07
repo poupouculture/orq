@@ -227,6 +227,8 @@ const messageContentType = (msg: any) => {
       console.log(msg);
       return message?.emoji;
     // return MessageType.REACTION;
+    case MessageType.UNSUPPORTED: // ???
+      return MessageType.UNSUPPORTED;
   }
   if (msg?.content?.error_body) {
     const error = msg?.content?.error_body;
