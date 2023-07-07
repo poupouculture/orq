@@ -432,7 +432,6 @@ import {
   MessageStatus,
   SendMessageStatus,
   Bot,
-  IChat,
 } from "src/types/MessagingTypes";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
@@ -570,13 +569,12 @@ const toogleChatOption = () => {
 //   return getChatNameEn(getSelectedChat.value, true);
 // });
 
-const chatName = computed<string>((chat: IChat) => {
-  // return "s";
-  if (chat?.meta_phone_number_id === "ChaQ") {
-    return chat?.name;
+const chatName = computed<string>(() => {
+  if (getSelectedChat.value?.meta_phone_number_id === "ChaQ") {
+    return getSelectedChat.value?.name;
   }
-  if (chat?.customer_company_name_en) {
-    return chat.customer_company_name_en;
+  if (getSelectedChat.value?.customer_company_name_en) {
+    return getSelectedChat.value.customer_company_name_en;
   } else {
     return "Visitor";
   }
