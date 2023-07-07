@@ -20,7 +20,8 @@
           </q-avatar>
           <div class="flex flex-col w-full">
             <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
-              {{ nameEn }}
+              <!-- {{ nameEn }} -->
+              {{ chatName }}
             </p>
             <p class="text-gray-500">
               {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
@@ -59,7 +60,7 @@
             class="w-8 md:w-10"
           />
           <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
-          <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
+          <p class="text-gray-500">{{ channelIdentity }}</p>
         </div>
       </header>
     </div>
@@ -170,7 +171,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @[inputEvent]="inputHandler"
-            :disable="isBot"
+            :disable="isBot || !canSend"
             @paste="onPaste"
           />
           <Transition name="fade-scale" appear>
@@ -195,7 +196,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isPending || isBot || chaqMode"
+              :disable="isPending || isBot || chaqMode || !canSend"
               @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
@@ -237,13 +238,13 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isPending || isBot || chaqMode"
+            :disable="isPending || isBot || chaqMode || !canSend"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
           <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :disable="!isPending || isBot || chaqMode"
+            :disable="!isPending || isBot || chaqMode || !canSend"
             round
             color="primary"
             icon="insert_comment"
@@ -258,7 +259,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot || chaqMode"
+            :disable="isPending || isBot || chaqMode || !canSend"
             @click="showMessageImage = true"
           />
 
@@ -268,7 +269,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot || chaqMode"
+            :disable="isPending || isBot || chaqMode || !canSend"
             @click="pickFiles()"
           >
             <img src="~assets/images/pin.svg" />
@@ -284,7 +285,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isBot"
+            :disable="isBot || !canSend"
             @click="sendMessage"
           />
         </div>
@@ -411,7 +412,8 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatNameEn, uuid, blobToBase64 } from "src/utils/trim-word";
+// import { getChatNameEn, uuid, blobToBase64 } from "src/utils/trim-word";
+import { uuid, blobToBase64 } from "src/utils/trim-word";
 import {
   updateChatStatus,
   uploadMedia,
@@ -430,6 +432,7 @@ import {
   MessageStatus,
   SendMessageStatus,
   Bot,
+  IChat,
 } from "src/types/MessagingTypes";
 import useUserInfoStore from "src/stores/modules/userInfo";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
@@ -470,6 +473,7 @@ const FileLimit = [
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
+const canSend: Ref<boolean> = ref(true);
 const isChatExpired: Ref<boolean> = ref(false);
 const conversationType: Ref<string | undefined> = ref("");
 const isPending: Ref<boolean> = ref(false);
@@ -562,13 +566,29 @@ const toogleChatOption = () => {
   showChatOption.value = !showChatOption.value;
 };
 
-const nameEn = computed<string>(() => {
-  return getChatNameEn(getSelectedChat.value, true);
+// const nameEn = computed<string>(() => {
+//   return getChatNameEn(getSelectedChat.value, true);
+// });
+
+const chatName = computed<string>((chat: IChat) => {
+  // return "s";
+  if (chat?.meta_phone_number_id === "ChaQ") {
+    return chat?.name;
+  }
+  if (chat?.customer_company_name_en) {
+    return chat.customer_company_name_en;
+  } else {
+    return "Visitor";
+  }
 });
 
 const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
+
+const setCanSend = (val: boolean) => {
+  canSend.value = val;
+};
 
 // const metaPhoneNumberId = computed<string>(() => {
 //   if (getSelectedChat.value?.meta_phone_number_id) {
@@ -577,25 +597,33 @@ const chatNumber = computed<string>(
 //   return "";
 // });
 
-const wabaChannelIdentity = computed<string>(() => {
+/**
+ * each chat can have multiple contacts. we are ONLY supporting single contact right now
+ * when we support multiple contacts, then this function can be reused.
+ */
+const channelIdentity = computed<string>(() => {
   let envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
   console.log(envMetaPhoneNumberId);
-  if (envMetaPhoneNumberId) {
-    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
-  } else {
+  if (!envMetaPhoneNumberId) {
     envMetaPhoneNumberId = "";
+    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
   }
   let metaPhoneNumberId = "";
   if (getSelectedChat?.value?.meta_phone_number_id) {
     metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
   } else {
+    setCanSend(false);
     return "";
   }
-  if (metaPhoneNumberId === envMetaPhoneNumberId) {
-    return "";
+  if (envMetaPhoneNumberId && metaPhoneNumberId !== envMetaPhoneNumberId) {
+    setCanSend(false);
+    if (envMetaPhoneNumberId === "ChaQ") {
+      setCanSend(true);
+    }
   } else {
-    return phoneMapping(metaPhoneNumberId);
+    setCanSend(true);
   }
+  return phoneMapping(metaPhoneNumberId);
 });
 
 const phoneMapping = (metaPhoneNumberId: string) => {
