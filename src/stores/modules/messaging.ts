@@ -226,6 +226,7 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
+        item.id = item.id.toString(); // ??? 0707
         return item;
       });
     },

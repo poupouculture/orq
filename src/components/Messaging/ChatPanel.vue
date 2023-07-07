@@ -363,8 +363,14 @@ const initSocket = () => {
       // console.log("userProfile", userProfile.value);
       chatsList.value.forEach((chat) => {
         console.log("SOCKET: join_chat by chat_id.........");
-        // console.log(`join_chat.........${chat.id}`);
-        socket.value.emit("join_chat", chat.id);
+        // ??? 0707
+        console.log(chat.id);
+        console.log(typeof chat.id);
+        console.log(typeof chat.id.toString());
+        console.log(`join_chat.........${chat.id}`);
+        // socket.value.emit("join_chat", chat.id); // original
+        socket.value.emit("join_chat", chat.id.toString());
+        // socket.value.emit("join_chat", parseInt(chat.id));
       });
     });
     socket.value.io.on("error", (err: any) => {
