@@ -40,6 +40,7 @@ const customerStore = useCustomerStore();
 // const { getContactById } = useContactStore();
 const contactStore = useContactStore();
 // const { getCurrentCustomerId } = storeToRefs(contactStore);
+const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 
 const messagingStore = useMessagingStore();
@@ -69,8 +70,10 @@ const selectChat = async (chat: IChat) => {
 
   messagingStore.onSelectChat(chat.id);
   console.log("SELECT CHAT");
+  customerStore.$reset();
+  contactStore.$reset();
 
-  // messagingStore.setChatCustomerContact(chat);
+  if (rightDrawerOpen.value) messagingStore.setChatCustomerContact(chat);
   // console.log(chat);
   // if (!chat.contacts_id) {
   //   console.log(" fnc: selectChat- no contact_id");
@@ -78,8 +81,6 @@ const selectChat = async (chat: IChat) => {
   //   chat.contacts_id = contact.contacts_id;
   // }
   // // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
-  customerStore.$reset();
-  contactStore.$reset();
   // let contact = null;
   // if (chat.customers_id) {
   //   const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
