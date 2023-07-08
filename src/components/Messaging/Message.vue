@@ -778,27 +778,38 @@ const showCustomerInfo = async () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
   console.log("click chat header:", contactStore.getCurrentCustomerId);
 
-  const checkNullChatCustomer =
-    getSelectedChat.value.customers_id !== "" ||
-    getSelectedChat.value.customers_id !== null;
-  const checkNullContactCustomer =
-    contactStore.getCurrentCustomerId === "" ||
-    contactStore.getCurrentCustomerId === null;
-
-  if (checkNullChatCustomer && checkNullContactCustomer) {
+  // const checkNullChatCustomer =
+  //   !getSelectedChat.value.customers_id ||
+  //   getSelectedChat.value.customers_id === "" ||
+  //   getSelectedChat.value.customers_id === null;
+  // const checkNullContactCustomer =
+  //   !contactStore.getCurrentCustomerId ||
+  //   contactStore.getCurrentCustomerId === "" ||
+  //   contactStore.getCurrentCustomerId === null;
+  let contact = null;
+  if (getSelectedChat?.value.customers_id) {
+    // if (checkNullChatCustomer && checkNullContactCustomer) {
     const customer = await customerStore.fetchCustomer(
       getSelectedChat.value.customers_id
     );
     contactStore.setCurrentCustomerId(customer.id);
     if (customer?.contacts.length === 1) {
       // a customer can be related to MANY contacts
-      const contact = customer?.contacts[0].contacts_id;
+      contact = customer?.contacts[0].contacts_id;
       contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
       useContactStore().setContact(contact);
     }
-  } else if (!getSelectedChat.value.customers_id) {
+  } else {
+    // } else if (!getSelectedChat.value.customers_id) {
     customerStore.setCustomer(null);
   }
+
+  if (!contact) {
+    // the invariant is that there is always a contact
+    contact = await contactStore.getContactById(getSelectedChat.value);
+    console.log("  GET contact:....", contact);
+  }
+  // this.setContactNumber(contact.number);
 };
 
 const messageCallback = async (data: any, newMessage: any) => {

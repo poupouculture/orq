@@ -509,7 +509,7 @@ const initSocket = () => {
       console.log(customer);
 
       const chatFound = chatsList.value.find(
-        (chat: IChat) => chat.contacts_id === data.contacts_id
+        (chat: IChat) => chat.contacts_id.toString() === data.contacts_id
       );
       let contact = null;
       if (customer?.contacts.length === 1) {

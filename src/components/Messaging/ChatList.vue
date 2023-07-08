@@ -72,7 +72,12 @@ const selectChat = async (chat: IChat) => {
   console.log("SELECT CHAT");
   customerStore.$reset();
   contactStore.$reset();
-
+  useContactStore().setContact({
+    id: chat.contacts_id,
+    first_name: "",
+    last_name: "",
+  });
+  console.log("rightDrawerOpen.value", rightDrawerOpen.value);
   if (rightDrawerOpen.value) messagingStore.setChatCustomerContact(chat);
   // console.log(chat);
   // if (!chat.contacts_id) {
