@@ -36,7 +36,7 @@ const useContactStore = defineStore("useContact", {
       this.contact.first_name = firstName;
     },
     async getContactById(chat: IChat) {
-      // console.log("chat:", chat);
+      console.log("fnc:getContactById");
       this.currentCustomerId = chat?.customers_id ?? "";
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
