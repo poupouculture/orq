@@ -434,6 +434,8 @@ import {
   Bot,
 } from "src/types/MessagingTypes";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
 import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
@@ -496,6 +498,8 @@ const time = ref(0);
 const audioData = ref();
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
+const customerStore = useCustomerStore();
+const contactStore = useContactStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
@@ -770,8 +774,31 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const showCustomerInfo = () => {
+const showCustomerInfo = async () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
+  console.log("click chat header:", contactStore.getCurrentCustomerId);
+
+  const checkNullChatCustomer =
+    getSelectedChat.value.customers_id !== "" ||
+    getSelectedChat.value.customers_id !== null;
+  const checkNullContactCustomer =
+    contactStore.getCurrentCustomerId === "" ||
+    contactStore.getCurrentCustomerId === null;
+
+  if (checkNullChatCustomer && checkNullContactCustomer) {
+    const customer = await customerStore.fetchCustomer(
+      getSelectedChat.value.customers_id
+    );
+    contactStore.setCurrentCustomerId(customer.id);
+    if (customer?.contacts.length === 1) {
+      // a customer can be related to MANY contacts
+      const contact = customer?.contacts[0].contacts_id;
+      contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
+      useContactStore().setContact(contact);
+    }
+  } else if (!getSelectedChat.value.customers_id) {
+    customerStore.setCustomer(null);
+  }
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
