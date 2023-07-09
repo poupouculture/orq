@@ -466,7 +466,7 @@ const useMessagingStore = defineStore("messaging", {
       console.log("setBotList");
       const canAccessBot = userInfoStore.getPageActionsByPageId(
         "F10",
-        "ReplyMessage"
+        "BotAction"
       );
 
       if (canAccessBot && this.botList.length < 1) {
