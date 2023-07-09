@@ -386,7 +386,7 @@ const useMessagingStore = defineStore("messaging", {
     },
     async clearChatCustomer() {
       const targetChat = this.getSelectedChat;
-      // targetChat.customer_company_name_en = "Visitor";
+      targetChat.customer_company_name_en = "Visitor";
       targetChat.customers_id = null;
     },
     async assignChatCustomer(customerId: string, customer?: any) {
