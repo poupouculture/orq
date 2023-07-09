@@ -417,7 +417,6 @@ import { uuid, blobToBase64 } from "src/utils/trim-word";
 import {
   updateChatStatus,
   uploadMedia,
-  chatbots,
   initiateBot,
   closeBot,
 } from "src/api/messaging";
@@ -507,7 +506,6 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
-const botList: Ref<any[]> = ref([]);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -533,6 +531,7 @@ const {
   getSelectedChatId,
   cachedChatMessages,
   replayMessage,
+  botList,
 } = storeToRefs(messagingStore);
 
 const file = ref();
@@ -1227,13 +1226,6 @@ const selectBot = async (bot: Bot) => {
   }
 };
 
-const getChatbots = async () => {
-  // if (botList.value) {
-  const { data } = await chatbots();
-  botList.value = data;
-  // }
-};
-
 const confirmCloseBot = () => {
   Dialog.create({
     title: "End Bot",
@@ -1262,11 +1254,13 @@ const onPaste = (e: ClipboardEvent) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
-  getChatbots();
+
+  await messagingStore.setBotList();
+  console.log("botlist:", botList.value);
 });
 
 onBeforeUnmount(() => {
