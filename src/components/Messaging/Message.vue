@@ -169,7 +169,7 @@
             type="textarea"
             class="w-full"
             :class="{ invisible: showAudio }"
-            input-class="h-10"
+            input-class="h-1"
             @[inputEvent]="inputHandler"
             :disable="isBot || !canSend"
             @paste="onPaste"
