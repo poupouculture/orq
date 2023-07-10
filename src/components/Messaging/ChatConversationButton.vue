@@ -19,22 +19,22 @@
         <q-list separator>
           <q-item-section class="px-4 pt-3">
             <q-input
-              v-model="query"
+              v-model="queryAddUser"
               :rules="[(val) => required(val)]"
               outlined
               :debounce="400"
-              @update:model-value="searchUser"
+              @update:model-value="searchUser('add-user')"
               lazy-rules
               dense
               placeholder="Search user ..."
             />
           </q-item-section>
-          <q-item v-if="!users.length">
+          <q-item v-if="!usersAdd.length">
             <q-item-section>No user found.</q-item-section>
           </q-item>
           <template v-else>
             <q-item
-              v-for="(user, index) in users"
+              v-for="(user, index) in usersAdd"
               :key="index"
               clickable
               v-close-popup
@@ -162,16 +162,25 @@ const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
 
 const query: Ref<string> = ref("");
+const queryAddUser: Ref<string> = ref("");
 const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
+const usersAdd: Ref<Array<User>> = ref([]);
 const { getSelectedChat } = storeToRefs(messagingStore);
 
-const searchUser = () => {
-  users.value = usersData.value.filter((obj) => {
-    const name = `${obj.first_name} ${obj.last_name}`.split(" ");
-    return name.some((val) => val.includes(query.value));
-  });
+const searchUser = (type?: string) => {
+  if (type !== "add-user") {
+    users.value = usersData.value.filter((obj) => {
+      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+      return name.some((val) => val.includes(query.value));
+    });
+  } else {
+    usersAdd.value = usersData.value.filter((obj) => {
+      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+      return name.some((val) => val.includes(queryAddUser.value));
+    });
+  }
 };
 
 // const getDirectionComponent = () => {
@@ -195,6 +204,7 @@ onMounted(async () => {
   data = sortData(data);
   users.value = data;
   usersData.value = data;
+  usersAdd.value = data;
 
   userRole.value = userInfo.getUserRoleName;
   Loading.hide();
