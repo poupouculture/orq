@@ -287,6 +287,7 @@
             class="dark-btn q-mt-md"
             :disable="isBot || !canSend"
             @click="sendMessage"
+            size="md"
           />
         </div>
       </template>
