@@ -41,6 +41,12 @@ export enum SendMessageStatus {
   SUCCESS = "success",
 }
 
+export interface Bot {
+  name: string;
+  trigger_intent: string;
+  id: string;
+}
+
 export interface Message {
   id: number;
   is_cache?: true;
@@ -111,6 +117,7 @@ export interface IState {
   chatSnapshotMessage: ChatSnapshotMessage;
   contactNumber: string;
   replayMessage: Message | undefined;
+  botList: Bot[];
 }
 
 export interface SendTextMessage {
@@ -222,9 +229,3 @@ export interface SendMessageErrorResult {
 }
 
 export type FinalSendMessageResult = SendMessageResult | SendMessageErrorResult;
-
-export interface Bot {
-  name: string;
-  trigger_intent: string;
-  id: string;
-}
