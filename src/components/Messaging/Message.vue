@@ -15,6 +15,15 @@
         @click.stop="showCustomerInfo"
       >
         <div class="flex items-center space-x-3 flex-nowrap">
+          <q-btn
+            class="cursor-pointer lg:hidden"
+            @click.stop="closeChat"
+            style="color: #64748b"
+            flat
+            round
+            padding="none"
+            icon="arrow_back"
+          />
           <q-avatar class="rounded-avatar">
             <img :src="profileIcon" />
           </q-avatar>
@@ -43,15 +52,6 @@
             <q-icon name="reorder" class="cursor-pointer" />
           </template>
         </q-input> -->
-        <!-- Close button -->
-        <q-btn
-          class="cursor-pointer lg:hidden absolute right-4 top-2"
-          @click.stop="closeChat"
-          style="color: #64748b"
-          flat
-          round
-          icon="close"
-        />
         <div>
           <img
             v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
