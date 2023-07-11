@@ -853,11 +853,11 @@ const inputHandler = (e: any) => {
   if (Platform.is.mobile) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      Swal.fire({
-        icon: "error",
-        title: "Mobile...",
-        text: "Mobile",
-      });
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "Mobile...",
+      //   text: "Mobile",
+      // });
     }
   } else {
     if (e.keyCode === 13 && !e.shiftKey) {
@@ -1287,11 +1287,11 @@ const onPaste = (e: ClipboardEvent) => {
 
 onMounted(async () => {
   console.log("PLATFORM:", Platform.is);
-  Swal.fire({
-    icon: "error",
-    title: "Mobile...",
-    text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
-  });
+  // Swal.fire({
+  //   icon: "error",
+  //   title: "Mobile...",
+  //   text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
+  // });
 
   if (window.innerWidth < 1024) {
     isMobile.value = true;
