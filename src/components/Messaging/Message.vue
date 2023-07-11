@@ -989,6 +989,7 @@ const sendMedia = async (blob: Blob) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
   cachedMessage.push(newMessage);
   scrollToBottom();
@@ -1097,6 +1098,7 @@ const upload = async (fileList: readonly File[], caption: string) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
 
   cachedMessage.push(newMessage);
@@ -1150,6 +1152,7 @@ const uploadFile = async (payload: {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
   cachedMessage.push(newMessage);
   scrollToBottom();
