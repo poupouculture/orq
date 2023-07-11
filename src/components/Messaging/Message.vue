@@ -404,7 +404,7 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import { Screen, Dialog, Loading, Notify } from "quasar";
+import { Platform, Screen, Dialog, Loading, Notify } from "quasar";
 import Swal from "sweetalert2";
 import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
@@ -827,13 +827,41 @@ const messageCallback = async (data: any, newMessage: any) => {
   }
 };
 
+// const inputHandler = (e: any) => {
+//   console.log("bug");
+//   console.log(Platform.is);
+//   console.log(Screen.lt);
+//   if (Screen.lt.md) {
+//     if (e.keyCode === 13) {
+//       e.preventDefault();
+//     }
+//   } else {
+//     if (e.keyCode === 13 && !e.shiftKey) {
+//       console.log(e.shiftKey);
+//       e.preventDefault();
+//       sendMessage();
+//     }
+//   }
+// };
+
+/**
+ * https://quasar.dev/options/platform-detection
+ * @param e
+ */
 const inputHandler = (e: any) => {
-  if (Screen.lt.md) {
+  // console.log("PLATFORM:", Platform.is.mobile);
+  if (Platform.is.mobile) {
     if (e.keyCode === 13) {
       e.preventDefault();
+      Swal.fire({
+        icon: "error",
+        title: "Mobile...",
+        text: "Mobile",
+      });
     }
   } else {
     if (e.keyCode === 13 && !e.shiftKey) {
+      console.log(e.shiftKey);
       e.preventDefault();
       sendMessage();
     }
@@ -1258,6 +1286,7 @@ const onPaste = (e: ClipboardEvent) => {
 };
 
 onMounted(async () => {
+  console.log("PLATFORM:", Platform.is);
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
