@@ -1287,6 +1287,12 @@ const onPaste = (e: ClipboardEvent) => {
 
 onMounted(async () => {
   console.log("PLATFORM:", Platform.is);
+  Swal.fire({
+    icon: "error",
+    title: "Mobile...",
+    text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
+  });
+
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
