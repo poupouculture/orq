@@ -25,6 +25,7 @@ export const getCustomers = async (payload: CustomerPayload) => {
     fields: `${fields},${companies},${tags}`,
     sort: "-date_created",
     ...filterField,
+    "filter[status][_ne]": "draft",
     limit,
     offset,
     search,
