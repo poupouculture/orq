@@ -85,7 +85,7 @@
         <q-btn color="primary" label="End Bot" @click="confirmCloseBot()" />
       </div>
     </template>
-    <div v-else class="px-2 md:py-2 md:px-4">
+    <!-- <div v-else class="px-2 md:py-2 md:px-4">
       <div class="p-2 text-gray-400">Members</div>
       <div class="flex justify-between p-2 items-center">
         <div class="flex pb-3">
@@ -117,6 +117,24 @@
             {{ showChatOption ? "Hide Actions" : "Show Actions" }}
           </div>
         </div>
+      </div>
+    </div> -->
+
+    <ChatMembersBar
+      v-else
+      :show-chat-option="showChatOption"
+      :members="members"
+      :is-mobile="isMobile"
+      :selected-chat="getSelectedChat"
+    />
+    <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
+      <div class="text-primary pb-3 cursor-pointer" @click="toogleChatOption()">
+        {{ showChatOption ? "Hide Actions" : "Show Actions" }}
+      </div>
+      <div v-if="!isMobile || (isMobile && showChatOption)">
+        <ChatConversationButton
+          v-if="getSelectedChat?.status !== ChatTypes.CLOSED"
+        />
       </div>
     </div>
 
@@ -442,6 +460,7 @@ import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue"
 import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
+import ChatMembersBar from "./ChatMembersBar.vue";
 
 interface HasMore {
   [key: string]: boolean;
@@ -764,16 +783,16 @@ const closeChat = async () => {
   leftDrawerOpen.value = true;
 };
 
-const initialName = (name: string) => {
-  const firstName = name.split(" ")[0];
-  let initial = firstName.charAt(0).toUpperCase();
+// const initialName = (name: string) => {
+//   const firstName = name.split(" ")[0];
+//   let initial = firstName.charAt(0).toUpperCase();
 
-  if (name.split(" ").length !== 1) {
-    const lastName = name.split(" ")[1];
-    initial += lastName.charAt(0).toUpperCase();
-  }
-  return initial;
-};
+//   if (name.split(" ").length !== 1) {
+//     const lastName = name.split(" ")[1];
+//     initial += lastName.charAt(0).toUpperCase();
+//   }
+//   return initial;
+// };
 
 const showCustomerInfo = async () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
