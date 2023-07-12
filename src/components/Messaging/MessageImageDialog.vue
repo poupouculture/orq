@@ -15,7 +15,10 @@
             <div class="text-h7">Choose Image</div>
           </q-card-section>
 
-          <img id="image-preview" v-show="selectedImage !== null" />
+          <div class="w-full flex justify-center items-center">
+            <img id="image-preview" v-show="selectedImage !== null" />
+          </div>
+
           <button
             class="w-full mx-auto border border-dashed py-36 text-center text-2xl text-gray-400 rounded-md"
             @click="uplader?.pickFiles"

@@ -15,22 +15,41 @@
       </div>
       <q-input
         v-model="searchText"
-        placeholder="Search Chat on screen..."
+        placeholder="Search Chats on screen..."
         outlined
         dense
+        clearable
+        clear-icon="close"
+        @focus="isSearchFocused = true"
+        @blur="isSearchFocused = false"
       >
         <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-        <template v-slot:append>
-          <q-icon name="reorder" class="cursor-pointer" />
+          <q-icon
+            v-if="!isSearchFocused && searchText.length === 0"
+            name="search"
+          />
+          <q-btn
+            v-else
+            flat
+            round
+            icon="arrow_back"
+            size="s"
+            padding="none"
+            @click="
+              () => {
+                searchText = '';
+                isSearchFocused = false;
+              }
+            "
+          />
         </template>
         <template v-slot:after>
+          <q-btn class="mr-1" padding="none" flat rounded icon="filter_list" />
           <q-btn
             unelevated
             color="primary"
             :icon="chatToggleLabel.state.icon"
-            @click="fetchCustomers"
+            @click="fetchContacts"
           >
           </q-btn>
         </template>
@@ -116,7 +135,13 @@ import useMessagingStore from "src/stores/modules/messaging";
 import ChatList from "./ChatList.vue";
 import ChatListFooter from "./ChatListFooter.vue";
 import CustomerDialog from "./CustomerDialog.vue";
-import { IChat, SocketEvent, SocketMessage } from "src/types/MessagingTypes";
+import {
+  IChat,
+  SocketChat,
+  SocketChatUpdated,
+  // SocketEvent,
+  SocketMessage,
+} from "src/types/MessagingTypes";
 import {
   closeBot,
   startNewChat,
@@ -131,6 +156,8 @@ import { getContact } from "src/api/contact";
 import { searchCustomers } from "src/api/customers";
 import { Notify } from "quasar";
 const rightDrawerOpen: any = inject("rightDrawerOpen");
+
+const isSearchFocused = ref(false);
 
 const ChatToggleLabel = {
   SHOW: {
@@ -170,7 +197,14 @@ type ChatToggleType = {
 
 const chatListScroller = ref(null);
 const errSocket = ref(false);
+
 const searchText = ref("");
+watch(searchText, () => {
+  if (searchText.value == null) {
+    searchText.value = "";
+  }
+});
+
 const userInfoStore = useUserInfoStore();
 const { userInfo, userProfile } = storeToRefs(userInfoStore);
 const chatToggleLabel: ChatToggleType = reactive({
@@ -285,7 +319,7 @@ socket.value = io(socketUrl, {
   // transports: ["websocket"],
 });
 
-const fetchCustomers = async () => {
+const fetchContacts = async () => {
   showCustomerDialog.value =
     chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon;
 };
@@ -363,8 +397,14 @@ const initSocket = () => {
       // console.log("userProfile", userProfile.value);
       chatsList.value.forEach((chat) => {
         console.log("SOCKET: join_chat by chat_id.........");
-        // console.log(`join_chat.........${chat.id}`);
-        socket.value.emit("join_chat", chat.id);
+        // ??? 0707
+        console.log(chat.id);
+        console.log(typeof chat.id);
+        // console.log(typeof chat.id.toString());
+        console.log(`join_chat.........${chat.id}`);
+        socket.value.emit("join_chat", chat.id); // original
+        // socket.value.emit("join_chat", chat.id.toString()); //??? 0707
+        // socket.value.emit("join_chat", parseInt(chat.id));
       });
     });
     socket.value.io.on("error", (err: any) => {
@@ -376,10 +416,12 @@ const initSocket = () => {
         type: "negative",
       });
     });
-    socket.value.on("chat_updated", (data: SocketEvent) => {
+    socket.value.on("chat_updated", (data: SocketChatUpdated) => {
       console.log("SOCKET: chat_updated", data);
+      const targetChatId = data.document?.id;
+
       const chat = chatsList.value.find(
-        (chat: IChat) => chat.id === data.document?.id
+        (chat: IChat) => chat.id === targetChatId
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
@@ -390,7 +432,7 @@ const initSocket = () => {
           );
         }
         if (data?.update_fields?.status) {
-          messagingStore.updateChatsList(chat, data.document?.status);
+          messagingStore.updateChatsList(chat, data.document.status);
           console.log("  SOCKET:status change");
           console.log(getSelectedChat.value);
           if (
@@ -467,7 +509,7 @@ const initSocket = () => {
       console.log(customer);
 
       const chatFound = chatsList.value.find(
-        (chat: IChat) => chat.contacts_id === data.contacts_id
+        (chat: IChat) => chat.contacts_id.toString() === data.contacts_id
       );
       let contact = null;
       if (customer?.contacts.length === 1) {
@@ -527,20 +569,22 @@ const initSocket = () => {
       //   type: "positive",
       // });
     });
-    socket.value.on("chat_created", async (data: any) => {
+    socket.value.on("chat_created", async (data: SocketChat) => {
       Notify.create({
         message: `You have been added to chat ${data.name}`,
         color: "blue-9",
         position: "top",
         type: "positive",
       });
-      console.log("chat_created", data);
-      const findChat = chatsList.value.find((chat) => chat.id === data.id);
-      console.log("findChat:", findChat);
+      console.log("SOCKET chat_created:", data);
+      const findChat = chatsList.value.find((chat) => chat.id === data.id); // ??? 0707
+      console.log(" CHAT_FOUND:", findChat);
       if (!findChat) {
         const chat = await getChatByID(data.id);
-        console.log("SOCKET chat_created:", chat);
+        // chat.id = chat.id.toString(); // ??? 0707
+        console.log(" CHAT_CREATE:", chat);
         chat.last_message = JSON.parse(chat.last_message);
+        console.log(chat.last_message);
         if (chat?.status === ChatTypes.PENDING) {
           chatsList.value.push(chat);
         } else {

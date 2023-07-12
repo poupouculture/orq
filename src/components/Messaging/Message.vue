@@ -20,7 +20,8 @@
           </q-avatar>
           <div class="flex flex-col w-full">
             <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
-              {{ nameEn }}
+              <!-- {{ nameEn }} -->
+              {{ chatName }}
             </p>
             <p class="text-gray-500">
               {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
@@ -59,7 +60,7 @@
             class="w-8 md:w-10"
           />
           <img v-else class="w-8 md:w-10" src="~assets/images/logo.svg" />
-          <p class="text-gray-500">{{ wabaChannelIdentity }}</p>
+          <p class="text-gray-500">{{ channelIdentity }}</p>
         </div>
       </header>
     </div>
@@ -170,7 +171,7 @@
             :class="{ invisible: showAudio }"
             input-class="h-10"
             @[inputEvent]="inputHandler"
-            :disable="isBot"
+            :disable="isBot || !canSend"
             @paste="onPaste"
           />
           <Transition name="fade-scale" appear>
@@ -195,7 +196,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isPending || isBot || chaqMode"
+              :disable="isPending || isBot || chaqMode || !canSend"
               @click="toggleInfo()"
             >
               <img src="~assets/images/bot.svg" />
@@ -237,13 +238,13 @@
             color="grey"
             icon="mic"
             size="md"
-            :disable="isPending || isBot || chaqMode"
+            :disable="isPending || isBot || chaqMode || !canSend"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
           />
           <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :disable="!isPending || isBot || chaqMode"
+            :disable="!isPending || isBot || chaqMode || !canSend"
             round
             color="primary"
             icon="insert_comment"
@@ -258,7 +259,7 @@
             icon="image"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot || chaqMode"
+            :disable="isPending || isBot || chaqMode || !canSend"
             @click="showMessageImage = true"
           />
 
@@ -268,7 +269,7 @@
             color="grey"
             size="md"
             class="q-mt-md"
-            :disable="isPending || isBot || chaqMode"
+            :disable="isPending || isBot || chaqMode || !canSend"
             @click="pickFiles()"
           >
             <img src="~assets/images/pin.svg" />
@@ -284,7 +285,7 @@
             color="primary"
             label="Send"
             class="dark-btn q-mt-md"
-            :disable="isBot"
+            :disable="isBot || !canSend"
             @click="sendMessage"
           />
         </div>
@@ -403,7 +404,7 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import { Screen, Dialog, Loading, Notify } from "quasar";
+import { Platform, Screen, Dialog, Loading, Notify } from "quasar";
 import Swal from "sweetalert2";
 import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
@@ -411,11 +412,11 @@ import "recorder-core/src/engine/mp3";
 import "recorder-core/src/engine/mp3-engine";
 import "recorder-core/src/extensions/wavesurfer.view.js";
 import useMessagingStore from "src/stores/modules/messaging";
-import { getChatNameEn, uuid, blobToBase64 } from "src/utils/trim-word";
+// import { getChatNameEn, uuid, blobToBase64 } from "src/utils/trim-word";
+import { uuid, blobToBase64 } from "src/utils/trim-word";
 import {
   updateChatStatus,
   uploadMedia,
-  chatbots,
   initiateBot,
   closeBot,
 } from "src/api/messaging";
@@ -432,6 +433,8 @@ import {
   Bot,
 } from "src/types/MessagingTypes";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 import MessageTemplateDialog from "src/components/Messaging/MessageTemplateDialog.vue";
 import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue";
 import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
@@ -470,6 +473,7 @@ const FileLimit = [
 const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
+const canSend: Ref<boolean> = ref(true);
 const isChatExpired: Ref<boolean> = ref(false);
 const conversationType: Ref<string | undefined> = ref("");
 const isPending: Ref<boolean> = ref(false);
@@ -493,6 +497,8 @@ const time = ref(0);
 const audioData = ref();
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
+const customerStore = useCustomerStore();
+const contactStore = useContactStore();
 const hasMoreMessage: HasMore = reactive({});
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
@@ -500,7 +506,6 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
-const botList: Ref<any[]> = ref([]);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -526,6 +531,7 @@ const {
   getSelectedChatId,
   cachedChatMessages,
   replayMessage,
+  botList,
 } = storeToRefs(messagingStore);
 
 const file = ref();
@@ -562,13 +568,28 @@ const toogleChatOption = () => {
   showChatOption.value = !showChatOption.value;
 };
 
-const nameEn = computed<string>(() => {
-  return getChatNameEn(getSelectedChat.value, true);
+// const nameEn = computed<string>(() => {
+//   return getChatNameEn(getSelectedChat.value, true);
+// });
+
+const chatName = computed<string>(() => {
+  if (getSelectedChat.value?.meta_phone_number_id === "ChaQ") {
+    return getSelectedChat.value?.name;
+  }
+  if (getSelectedChat.value?.customer_company_name_en) {
+    return getSelectedChat.value.customer_company_name_en;
+  } else {
+    return "Visitor";
+  }
 });
 
 const chatNumber = computed<string>(
   () => getSelectedChat.value?.name.replace(/[^\d]/g, "") // jimmy
 );
+
+const setCanSend = (val: boolean) => {
+  canSend.value = val;
+};
 
 // const metaPhoneNumberId = computed<string>(() => {
 //   if (getSelectedChat.value?.meta_phone_number_id) {
@@ -577,25 +598,33 @@ const chatNumber = computed<string>(
 //   return "";
 // });
 
-const wabaChannelIdentity = computed<string>(() => {
+/**
+ * each chat can have multiple contacts. we are ONLY supporting single contact right now
+ * when we support multiple contacts, then this function can be reused.
+ */
+const channelIdentity = computed<string>(() => {
   let envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
   console.log(envMetaPhoneNumberId);
-  if (envMetaPhoneNumberId) {
-    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
-  } else {
+  if (!envMetaPhoneNumberId) {
     envMetaPhoneNumberId = "";
+    // envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID;
   }
   let metaPhoneNumberId = "";
   if (getSelectedChat?.value?.meta_phone_number_id) {
     metaPhoneNumberId = getSelectedChat.value.meta_phone_number_id;
   } else {
+    setCanSend(false);
     return "";
   }
-  if (metaPhoneNumberId === envMetaPhoneNumberId) {
-    return "";
+  if (envMetaPhoneNumberId && metaPhoneNumberId !== envMetaPhoneNumberId) {
+    setCanSend(false);
+    if (envMetaPhoneNumberId === "ChaQ") {
+      setCanSend(true);
+    }
   } else {
-    return phoneMapping(metaPhoneNumberId);
+    setCanSend(true);
   }
+  return phoneMapping(metaPhoneNumberId);
 });
 
 const phoneMapping = (metaPhoneNumberId: string) => {
@@ -744,8 +773,42 @@ const initialName = (name: string) => {
   return initial;
 };
 
-const showCustomerInfo = () => {
+const showCustomerInfo = async () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
+  console.log("click chat header:", contactStore.getCurrentCustomerId);
+
+  // const checkNullChatCustomer =
+  //   !getSelectedChat.value.customers_id ||
+  //   getSelectedChat.value.customers_id === "" ||
+  //   getSelectedChat.value.customers_id === null;
+  // const checkNullContactCustomer =
+  //   !contactStore.getCurrentCustomerId ||
+  //   contactStore.getCurrentCustomerId === "" ||
+  //   contactStore.getCurrentCustomerId === null;
+  let contact = null;
+  if (getSelectedChat?.value.customers_id) {
+    // if (checkNullChatCustomer && checkNullContactCustomer) {
+    const customer = await customerStore.fetchCustomer(
+      getSelectedChat.value.customers_id
+    );
+    contactStore.setCurrentCustomerId(customer.id);
+    if (customer?.contacts.length === 1) {
+      // a customer can be related to MANY contacts
+      contact = customer?.contacts[0].contacts_id;
+      contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
+      useContactStore().setContact(contact);
+    }
+  } else {
+    // } else if (!getSelectedChat.value.customers_id) {
+    customerStore.setCustomer(null);
+  }
+
+  if (!contact) {
+    // the invariant is that there is always a contact
+    contact = await contactStore.getContactById(getSelectedChat.value);
+    console.log("  GET contact:....", contact);
+  }
+  // this.setContactNumber(contact.number);
 };
 
 const messageCallback = async (data: any, newMessage: any) => {
@@ -764,13 +827,41 @@ const messageCallback = async (data: any, newMessage: any) => {
   }
 };
 
+// const inputHandler = (e: any) => {
+//   console.log("bug");
+//   console.log(Platform.is);
+//   console.log(Screen.lt);
+//   if (Screen.lt.md) {
+//     if (e.keyCode === 13) {
+//       e.preventDefault();
+//     }
+//   } else {
+//     if (e.keyCode === 13 && !e.shiftKey) {
+//       console.log(e.shiftKey);
+//       e.preventDefault();
+//       sendMessage();
+//     }
+//   }
+// };
+
+/**
+ * https://quasar.dev/options/platform-detection
+ * @param e
+ */
 const inputHandler = (e: any) => {
-  if (Screen.lt.md) {
+  // console.log("PLATFORM:", Platform.is.mobile);
+  if (Platform.is.mobile) {
     if (e.keyCode === 13) {
       e.preventDefault();
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "Mobile...",
+      //   text: "Mobile",
+      // });
     }
   } else {
     if (e.keyCode === 13 && !e.shiftKey) {
+      console.log(e.shiftKey);
       e.preventDefault();
       sendMessage();
     }
@@ -926,6 +1017,7 @@ const sendMedia = async (blob: Blob) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
   cachedMessage.push(newMessage);
   scrollToBottom();
@@ -1034,6 +1126,7 @@ const upload = async (fileList: readonly File[], caption: string) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
 
   cachedMessage.push(newMessage);
@@ -1087,6 +1180,7 @@ const uploadFile = async (payload: {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
   cachedMessage.push(newMessage);
   scrollToBottom();
@@ -1163,13 +1257,6 @@ const selectBot = async (bot: Bot) => {
   }
 };
 
-const getChatbots = async () => {
-  // if (botList.value) {
-  const { data } = await chatbots();
-  botList.value = data;
-  // }
-};
-
 const confirmCloseBot = () => {
   Dialog.create({
     title: "End Bot",
@@ -1198,11 +1285,20 @@ const onPaste = (e: ClipboardEvent) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
+  console.log("PLATFORM:", Platform.is);
+  // Swal.fire({
+  //   icon: "error",
+  //   title: "Mobile...",
+  //   text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
+  // });
+
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
-  getChatbots();
+
+  await messagingStore.setBotList();
+  console.log("botlist:", botList.value);
 });
 
 onBeforeUnmount(() => {

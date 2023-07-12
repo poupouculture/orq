@@ -125,6 +125,9 @@
             v-close-popup
             @click="onhandleClick(item.text)"
           >
+            <q-item-section avatar>
+              <q-icon :name="item.icon" />
+            </q-item-section>
             <q-item-section>{{ item.text }}</q-item-section>
           </q-item>
         </q-list>
@@ -213,8 +216,13 @@ const timestamp = computed(() => {
 const isChaq = computed(() => props?.message?.channel === "chaq");
 
 const list = [
-  { text: "Reply" },
-  { text: "Download", visible: ["image", "document", "application"] },
+  { icon: "reply", text: "Reply" },
+  {
+    icon: "download",
+    text: "Download",
+    visible: ["image", "document", "application"],
+  },
+  { icon: "content_copy", text: "Copy", visible: ["text"] },
 ];
 
 const menuList = computed(() => {
@@ -227,7 +235,7 @@ const menuList = computed(() => {
     props.message?.content?.type === MessageType.TEXT &&
     props.message?.content?.mime_type !== undefined
   )
-    selectedList.push({ text: "Download" });
+    selectedList.push({ icon: "download", text: "Download" });
 
   return selectedList;
 });
@@ -239,6 +247,10 @@ const onhandleClick = (type: string) => {
       break;
     case "Download":
       image.value.component.download();
+      break;
+    case "Copy":
+      props.message.content.text &&
+        navigator.clipboard.writeText(props.message.content.text);
       break;
     default:
       break;

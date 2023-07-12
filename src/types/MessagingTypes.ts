@@ -14,6 +14,7 @@ export const enum MessageType {
   DOCUMENT = "document",
   APPLICATION = "application",
   REACTION = "reaction",
+  UNSUPPORTED = "unsupported",
 }
 
 export const enum MessageStatus {
@@ -38,6 +39,12 @@ export enum SendMessageStatus {
   PENDING = "pending",
   FAILURE = "failure",
   SUCCESS = "success",
+}
+
+export interface Bot {
+  name: string;
+  trigger_intent: string;
+  id: string;
 }
 
 export interface Message {
@@ -110,6 +117,7 @@ export interface IState {
   chatSnapshotMessage: ChatSnapshotMessage;
   contactNumber: string;
   replayMessage: Message | undefined;
+  botList: Bot[];
 }
 
 export interface SendTextMessage {
@@ -185,6 +193,22 @@ export interface SocketMessage {
   document: Message;
 }
 
+export interface SocketChat {
+  // document: Message;
+  contact_id?: string;
+  conversation_type?: string;
+  status: ChatTypes;
+  name: string;
+  mode: string;
+  meta_phone_number_id: string;
+  id: string;
+}
+
+export interface SocketChatUpdated {
+  document: SocketChat;
+  update_fields?: any;
+}
+
 export interface SocketEvent {
   document: any;
   update_fields: any;
@@ -205,9 +229,3 @@ export interface SendMessageErrorResult {
 }
 
 export type FinalSendMessageResult = SendMessageResult | SendMessageErrorResult;
-
-export interface Bot {
-  name: string;
-  trigger_intent: string;
-  id: string;
-}

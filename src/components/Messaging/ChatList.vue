@@ -28,18 +28,19 @@ import { ChatTypes } from "src/constants/ChatKeyword";
 import ContactCard from "./ContactCard.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import { cancelGetCustomerRequest } from "src/api/customers";
-// import useCustomerStore from "src/stores/modules/customer";
-// import useContactStore from "src/stores/modules/contact";
+import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 import { IChat } from "src/types/MessagingTypes";
 
 const props = defineProps({
   type: { type: String, default: ChatTypes.PENDING },
   filterText: { type: String, default: "" },
 });
-// const customerStore = useCustomerStore();
+const customerStore = useCustomerStore();
 // const { getContactById } = useContactStore();
-// const contactStore = useContactStore();
+const contactStore = useContactStore();
 // const { getCurrentCustomerId } = storeToRefs(contactStore);
+const rightDrawerOpen: any = inject("rightDrawerOpen");
 const leftDrawerOpen: any = inject("leftDrawerOpen");
 
 const messagingStore = useMessagingStore();
@@ -69,7 +70,15 @@ const selectChat = async (chat: IChat) => {
 
   messagingStore.onSelectChat(chat.id);
   console.log("SELECT CHAT");
-  messagingStore.setChatCustomerContact(chat);
+  customerStore.$reset();
+  contactStore.$reset();
+  useContactStore().setContact({
+    id: chat.contacts_id,
+    first_name: "",
+    last_name: "",
+  });
+  console.log("rightDrawerOpen.value", rightDrawerOpen.value);
+  if (rightDrawerOpen.value) messagingStore.setChatCustomerContact(chat);
   // console.log(chat);
   // if (!chat.contacts_id) {
   //   console.log(" fnc: selectChat- no contact_id");
@@ -77,8 +86,6 @@ const selectChat = async (chat: IChat) => {
   //   chat.contacts_id = contact.contacts_id;
   // }
   // // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
-  // customerStore.$reset();
-  // contactStore.$reset();
   // let contact = null;
   // if (chat.customers_id) {
   //   const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);

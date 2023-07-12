@@ -44,18 +44,21 @@
         </div>
         <div class="w-full flex" v-else>
           <div class="w-7/12 flex flex-col border-r pr-2" v-if="!isPreview">
-            <p class="font-semibold">Add Sample Content</p>
-            <p class="mt-4">
+            <p class="font-semibold">Add Content</p>
+            <!-- <p class="mt-4">
               To help us understand what kind of message you want to send, you
               have the option to provide specific content examples for your
               template. You can add a sample template for one or all languages
               you are submitting.
-            </p>
+            </p> -->
             <p class="mt-4">
+              The Previewed Message on the right will be sent to the contact.
+            </p>
+            <!-- <p class="mt-4">
               Make sure not to include any actual user or customer information,
               and provide only sample content in your examples.
               <a href="#" class="text-primary"> Learn More </a>
-            </p>
+            </p> -->
             <div
               class="w-4/12 flex flex-col"
               v-if="mediaHeader.includes(header.toUpperCase())"
