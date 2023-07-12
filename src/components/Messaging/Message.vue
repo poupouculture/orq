@@ -423,7 +423,7 @@ import {
 } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
-import { Screen, Dialog, Loading, Notify } from "quasar";
+import { Platform, Screen, Dialog, Loading, Notify } from "quasar";
 import Swal from "sweetalert2";
 import { format, isSameDay, isToday } from "date-fns";
 import Recorder from "recorder-core";
@@ -436,7 +436,6 @@ import { uuid, blobToBase64 } from "src/utils/trim-word";
 import {
   updateChatStatus,
   uploadMedia,
-  chatbots,
   initiateBot,
   closeBot,
 } from "src/api/messaging";
@@ -527,7 +526,6 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
-const botList: Ref<any[]> = ref([]);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -553,6 +551,7 @@ const {
   getSelectedChatId,
   cachedChatMessages,
   replayMessage,
+  botList,
 } = storeToRefs(messagingStore);
 
 const file = ref();
@@ -848,13 +847,41 @@ const messageCallback = async (data: any, newMessage: any) => {
   }
 };
 
+// const inputHandler = (e: any) => {
+//   console.log("bug");
+//   console.log(Platform.is);
+//   console.log(Screen.lt);
+//   if (Screen.lt.md) {
+//     if (e.keyCode === 13) {
+//       e.preventDefault();
+//     }
+//   } else {
+//     if (e.keyCode === 13 && !e.shiftKey) {
+//       console.log(e.shiftKey);
+//       e.preventDefault();
+//       sendMessage();
+//     }
+//   }
+// };
+
+/**
+ * https://quasar.dev/options/platform-detection
+ * @param e
+ */
 const inputHandler = (e: any) => {
-  if (Screen.lt.md) {
+  // console.log("PLATFORM:", Platform.is.mobile);
+  if (Platform.is.mobile) {
     if (e.keyCode === 13) {
       e.preventDefault();
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "Mobile...",
+      //   text: "Mobile",
+      // });
     }
   } else {
     if (e.keyCode === 13 && !e.shiftKey) {
+      console.log(e.shiftKey);
       e.preventDefault();
       sendMessage();
     }
@@ -1010,6 +1037,7 @@ const sendMedia = async (blob: Blob) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
   cachedMessage.push(newMessage);
   scrollToBottom();
@@ -1118,6 +1146,7 @@ const upload = async (fileList: readonly File[], caption: string) => {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
 
   cachedMessage.push(newMessage);
@@ -1171,6 +1200,7 @@ const uploadFile = async (payload: {
     direction: Direction.OUTGOING,
     date_created: new Date().toUTCString(),
     sendMessageStatus: SendMessageStatus.PENDING,
+    is_cache: true,
   });
   cachedMessage.push(newMessage);
   scrollToBottom();
@@ -1247,13 +1277,6 @@ const selectBot = async (bot: Bot) => {
   }
 };
 
-const getChatbots = async () => {
-  // if (botList.value) {
-  const { data } = await chatbots();
-  botList.value = data;
-  // }
-};
-
 const confirmCloseBot = () => {
   Dialog.create({
     title: "End Bot",
@@ -1282,11 +1305,20 @@ const onPaste = (e: ClipboardEvent) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
+  console.log("PLATFORM:", Platform.is);
+  // Swal.fire({
+  //   icon: "error",
+  //   title: "Mobile...",
+  //   text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
+  // });
+
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
-  getChatbots();
+
+  await messagingStore.setBotList();
+  console.log("botlist:", botList.value);
 });
 
 onBeforeUnmount(() => {

@@ -22,6 +22,7 @@
             class="w-full mt-4 p-2 border rounded-md focus:outline-none focus:ring focus:ring-primary/30 focus:border-primary"
             placeholder="Type your caption here..."
             v-model="caption"
+            @[inputEvent]="inputHandler"
           ></textarea>
         </div>
       </div>
@@ -40,7 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { Screen } from "quasar";
 
 const emits = defineEmits(["hide", "send"]);
 
@@ -55,6 +57,24 @@ const props = defineProps({
   },
 });
 const caption = ref("");
+
+const inputEvent = computed(() => {
+  return Screen.lt.md ? "keyup" : "keydown";
+});
+
+const inputHandler = (e: any) => {
+  if (Screen.lt.md) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+    }
+  } else {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+};
+
 const send = () => {
   emits("send", {
     files: props.file,
