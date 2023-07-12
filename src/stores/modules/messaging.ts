@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import useCustomerStore from "src/stores/modules/customer";
 import useContactStore from "src/stores/modules/contact";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 import {
   IState,
@@ -19,6 +20,7 @@ import {
   // getContact,
   getChatsByType,
   getMessagesById,
+  chatbots,
 } from "src/api/messaging";
 
 import { ref } from "vue";
@@ -29,6 +31,7 @@ const socketUrl = process.env.SOCKETS_URL as string;
 const customerStore = useCustomerStore();
 const { getContactById } = useContactStore();
 const contactStore = useContactStore();
+const userInfoStore = useUserInfoStore();
 
 const useMessagingStore = defineStore("messaging", {
   state: () =>
@@ -44,6 +47,7 @@ const useMessagingStore = defineStore("messaging", {
       contactNumber: null,
       replayMessage: {},
       socket,
+      botList: [],
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -386,7 +390,7 @@ const useMessagingStore = defineStore("messaging", {
     },
     async clearChatCustomer() {
       const targetChat = this.getSelectedChat;
-      // targetChat.customer_company_name_en = "Visitor";
+      targetChat.customer_company_name_en = "Visitor";
       targetChat.customers_id = null;
     },
     async assignChatCustomer(customerId: string, customer?: any) {
@@ -457,6 +461,19 @@ const useMessagingStore = defineStore("messaging", {
       console.log("  changeExpiry-----fnc");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].expiration_timestamp = expirationTimestamp;
+    },
+    async setBotList() {
+      console.log("setBotList");
+      const canAccessBot = userInfoStore.getPageActionsByPageId(
+        "F10",
+        "BotAction"
+      );
+
+      if (canAccessBot && this.botList.length < 1) {
+        const { data } = await chatbots();
+        console.log("data botlist:", data);
+        this.botList = data;
+      }
     },
   },
 });
