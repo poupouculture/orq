@@ -44,6 +44,7 @@
       />
       <MessageComponents
         ref="image"
+        :isReply="isReply"
         :content="message.content"
         :message="message"
         :isSend="isSend"
