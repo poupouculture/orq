@@ -178,6 +178,7 @@
             class="w-full"
             :class="{ invisible: showAudio }"
             input-class="h-1"
+            input-style="height: 1em;"
             @[inputEvent]="inputHandler"
             :disable="isBot || !canSend"
             @paste="onPaste"
@@ -197,12 +198,12 @@
           >
         </div>
 
-        <div class="row justify-end">
+        <div class="row justify-end items-center">
           <div class="flex gap-3">
             <q-btn
               flat
               round
-              size="md"
+              :size="bottomButtonSize"
               class="q-mt-md"
               :disable="isPending || isBot || chaqMode || !canSend"
               @click="toggleInfo()"
@@ -245,7 +246,7 @@
             round
             color="grey"
             icon="mic"
-            size="md"
+            :size="bottomButtonSize"
             :disable="isPending || isBot || chaqMode || !canSend"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
@@ -256,7 +257,7 @@
             round
             color="primary"
             icon="insert_comment"
-            size="md"
+            :size="bottomButtonSize"
             class="q-mt-md"
             @click="showMessageTemplate = true"
           />
@@ -265,7 +266,7 @@
             round
             color="grey"
             icon="image"
-            size="md"
+            :size="bottomButtonSize"
             class="q-mt-md"
             :disable="isPending || isBot || chaqMode || !canSend"
             @click="showMessageImage = true"
@@ -295,7 +296,7 @@
             class="dark-btn q-mt-md"
             :disable="isBot || !canSend"
             @click="sendMessage"
-            size="md"
+            :size="bottomButtonSize"
           />
         </div>
       </template>
@@ -770,6 +771,10 @@ const scrollToBottom = async () => {
 const closeChat = async () => {
   leftDrawerOpen.value = true;
 };
+
+const bottomButtonSize = computed(() => {
+  return isMobile.value ? "sm" : "md";
+});
 
 // const initialName = (name: string) => {
 //   const firstName = name.split(" ")[0];
