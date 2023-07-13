@@ -28,7 +28,7 @@
             <img :src="profileIcon" />
           </q-avatar>
           <div class="flex flex-col w-full">
-            <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
+            <p class="font-semibold text-md leading-snug pr-7 lg:pr-0">
               <!-- {{ nameEn }} -->
               {{ chatName }}
             </p>
@@ -122,21 +122,11 @@
 
     <ChatMembersBar
       v-else
-      :show-chat-option="showChatOption"
+      v-model:show-chat-option="showChatOption"
       :members="members"
       :is-mobile="isMobile"
       :selected-chat="getSelectedChat"
     />
-    <div v-if="isMobile && getSelectedChat.status !== ChatTypes.CLOSED">
-      <div class="text-primary pb-3 cursor-pointer" @click="toogleChatOption()">
-        {{ showChatOption ? "Hide Actions" : "Show Actions" }}
-      </div>
-      <div v-if="!isMobile || (isMobile && showChatOption)">
-        <ChatConversationButton
-          v-if="getSelectedChat?.status !== ChatTypes.CLOSED"
-        />
-      </div>
-    </div>
 
     <q-separator class="md:mx-4" size="1px" inset />
     <!-- message content -->
@@ -440,7 +430,6 @@ import {
   closeBot,
 } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import ChatConversationButton from "./ChatConversationButton.vue";
 import {
   Direction,
   Product,
@@ -584,9 +573,9 @@ const getSeparator = (index: number) => {
   return "";
 };
 
-const toogleChatOption = () => {
-  showChatOption.value = !showChatOption.value;
-};
+// const toogleChatOption = () => {
+//   showChatOption.value = !showChatOption.value;
+// };
 
 // const nameEn = computed<string>(() => {
 //   return getChatNameEn(getSelectedChat.value, true);
