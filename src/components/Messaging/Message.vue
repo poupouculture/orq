@@ -196,8 +196,7 @@
               round
               size="md"
               class="q-mt-md"
-              :disable="isPending || isBot || chaqMode || !canSend"
-              @click="toggleInfo()"
+              :disable="isPending || isBot"
             >
               <img src="~assets/images/bot.svg" />
               <q-menu v-if="!isMobile">
