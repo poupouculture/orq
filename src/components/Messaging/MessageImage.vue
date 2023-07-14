@@ -1,15 +1,54 @@
 <template>
-  <div class="rounded-md mt-1">
+  <div
+    class="rounded-md mt-1"
+    :class="{ 'flex items-center justify-between flex-row-reverse': isReply }"
+  >
     <img
-      class="cursor-zoom-in max-h-36 rounded max-w-xs w-full object-cover object-center"
+      class="cursor-zoom-in max-h-36 rounded max-w-xs object-cover object-center"
+      :class="{ 'w-12 h-12 rounded-md': isReply }"
       ref="imageRef"
       @click.stop="visible = true"
     />
-    <div
-      class="mt-1 text-white break-all max-w-xs"
-      :class="{ '!text-gray-800': !isSend }"
-    >
-      {{ caption }}
+    <div>
+      <template v-if="isReply">
+        <span v-if="!isSend" class="text-black text-semibold">
+          {{
+            replayMessage?.channel !== "chaq"
+              ? replayMessage?.contact_name
+              : replayMessage?.user_name
+          }}
+        </span>
+        <span v-if="isSend" class="text-white text-semibold">
+          {{ replayMessage?.user_name }}
+        </span>
+      </template>
+      <div
+        class="mt-1 text-white break-all max-w-xs flex items-center"
+        :class="{ '!text-gray-800': !isSend }"
+      >
+        <svg
+          v-if="isReply"
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-current mr-2"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M15 8h.01"></path>
+          <path
+            d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"
+          ></path>
+          <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
+          <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
+        </svg>
+        <p>{{ isReply ? caption || "Image" : caption }}</p>
+      </div>
     </div>
   </div>
   <q-dialog v-model="visible" no-shake>
@@ -51,6 +90,8 @@
 import { ref, onMounted, watch, reactive } from "vue";
 import { api } from "src/boot/axios";
 import { blobToBase64 } from "src/utils/trim-word";
+import useMessagingStore from "src/stores/modules/messaging";
+import { storeToRefs } from "pinia";
 
 interface Props {
   src?: string;
@@ -58,6 +99,7 @@ interface Props {
   name?: string;
   caption?: string;
   isSend: boolean;
+  isReply: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -66,8 +108,11 @@ const props = withDefaults(defineProps<Props>(), {
   name: "",
   caption: "",
   isSend: false,
+  isReply: false,
 });
 
+const messagingStore = useMessagingStore();
+const { replayMessage } = storeToRefs(messagingStore);
 const visible = ref(false);
 const imageRef = ref();
 const originSrc = ref();

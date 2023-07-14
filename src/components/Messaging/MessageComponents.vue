@@ -57,7 +57,11 @@
           <!-- can display content type here -->
           <!-- {{ message?.last_associated_message_content?.type }} -->
           <!-- {{ messageContentText(message) }} -->
-          {{ messageContentType(message).substring(0, 160) + " ..." }}
+          {{
+            messageContentType(message).length > 160
+              ? messageContentType(message).substring(0, 160) + " ..."
+              : messageContentType(message)
+          }}
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
@@ -76,7 +80,9 @@
       </div>
       {{
         isReply
-          ? messageContentText(message).substring(0, 160) + " ..."
+          ? messageContentText(message).length > 160
+            ? messageContentText(message).substring(0, 160) + " ..."
+            : messageContentText(message)
           : messageContentText(message)
       }}
     </div>
