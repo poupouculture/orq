@@ -28,7 +28,10 @@
             <img :src="profileIcon" />
           </q-avatar>
           <div class="flex flex-col w-full">
-            <p class="font-semibold text-md leading-snug pr-7 lg:pr-0">
+            <p
+              class="font-semibold leading-snug pr-7 lg:pr-0"
+              :class="{ 'text-md': isMobile, 'text-lg': !isMobile }"
+            >
               <!-- {{ nameEn }} -->
               {{ chatName }}
             </p>
