@@ -15,7 +15,7 @@
           class="flex justify-between py-2 items-center col-grow"
           :class="{ 'ml-3': showChatOption, 'full-width': !showChatOption }"
         >
-          <div class="flex">
+          <div class="flex" :class="{ 'mb-3': !isMobile }">
             <div
               class="w-10 h-10 flex justify-center mr-1 items-center rounded-full bg-gray-200"
               v-for="(member, index) of members.slice(0, 3)"
