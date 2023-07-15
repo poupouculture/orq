@@ -244,7 +244,6 @@
           />
           <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :disable="!isPending || isBot || chaqMode || !canSend"
             round
             color="primary"
             icon="insert_comment"
