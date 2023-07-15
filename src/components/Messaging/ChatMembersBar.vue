@@ -31,8 +31,15 @@
             </div>
           </div>
           <q-space />
+          <ChatConversationButton
+            v-if="!isMobile && selectedChat?.status !== ChatTypes.CLOSED"
+          />
           <q-btn
-            v-if="selectedChat?.status !== ChatTypes.CLOSED && !showChatOption"
+            v-if="
+              selectedChat?.status !== ChatTypes.CLOSED &&
+              !showChatOption &&
+              isMobile
+            "
             flat
             padding="0"
             color="primary"
@@ -50,6 +57,7 @@
     >
       <ChatConversationButton />
       <q-btn
+        v-if="isMobile"
         padding="none"
         flat
         color="primary"
