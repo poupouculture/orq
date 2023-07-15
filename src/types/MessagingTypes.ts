@@ -127,6 +127,7 @@ export interface SendTextMessage {
   type: MessageType;
   messageBody: string;
   isTemplate?: boolean;
+  isMeta?: boolean;
   templateName?: string;
   language?: string;
   isIncludedComponent?: boolean;

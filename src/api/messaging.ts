@@ -106,6 +106,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     type,
     messageBody,
     isTemplate,
+    isMeta,
     templateName,
     language,
     isIncludedComponent,
@@ -135,6 +136,9 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   if (isTemplate) {
     // ChatKeywords.SEND_TEMPLATE_MESSAGE;
     url = "/whatsapp/waba-send-template";
+  }
+  if (!isMeta) {
+    url = "/whatsapp/message/waba";
   }
 
   if (isTemplate) {

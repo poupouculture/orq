@@ -176,6 +176,7 @@ const usedTemplate = ref(null);
 const language = ref("");
 const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
 const templateName = ref("");
+const isMeta: Ref<boolean> = ref(false);
 const header = ref("");
 const headerMessage = ref("");
 const media = ref("");
@@ -255,6 +256,7 @@ const send = () => {
     bodyMessage.value,
     language.value,
     customVariables.value?.length > 0,
+    isMeta.value,
     customVariables.value,
     header.value.toUpperCase(),
     headerMessage.value
@@ -285,6 +287,7 @@ const useTemplate = (val: any) => {
   customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
+  isMeta.value = val.isMeta;
 
   usedTemplate.value = val;
   isPreview.value = false;

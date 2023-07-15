@@ -478,6 +478,7 @@ const conversationType: Ref<string | undefined> = ref("");
 const isPending: Ref<boolean> = ref(false);
 
 const isTemplate: Ref<boolean> = ref(false);
+const templateIsMeta: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
@@ -926,6 +927,7 @@ const sendMessage = async () => {
       type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
       messageBody: newMessage.content,
       isTemplate: isTemplate.value,
+      isMeta: templateIsMeta.value,
       templateName: templateName.value,
       language: language.value,
       isIncludedComponent: isIncludeComponent.value,
@@ -984,6 +986,7 @@ const sendMessageTemplate = (
   msg: string,
   lang: string,
   isIncComponent: boolean,
+  isMeta: boolean,
   componentCount: any[],
   headType: string,
   headMessage: string
@@ -993,6 +996,7 @@ const sendMessageTemplate = (
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
+  templateIsMeta.value = isMeta;
   isIncludeComponent.value = isIncComponent;
   paramsCount.value = componentCount;
   headerType.value = headType;
