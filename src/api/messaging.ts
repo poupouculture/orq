@@ -116,7 +116,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     messageId,
   } = payload;
 
-  console.log("sendChatTextMessage");
+  console.log("[messaging-api] message payload", payload);
   const currPayload: ChatPayload = {
     channel: payload.channel,
     chat_id: chatId,
@@ -136,9 +136,11 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   if (isTemplate) {
     // ChatKeywords.SEND_TEMPLATE_MESSAGE;
     url = "/whatsapp/waba-send-template";
+    console.log("[messaging-api] Message is a template");
   }
   if (!isMeta) {
     url = "/whatsapp/message/waba";
+    console.log("[messaging-api] Message is not meta");
   }
 
   if (isTemplate) {
@@ -146,8 +148,8 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       const components = [];
       const parameters: ComponentParameter[] = [];
       const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
-      console.log("header type: ", headerType);
-      console.log("header message: ", headerMessage);
+      console.log("[messaging-api] header type: ", headerType);
+      console.log("[messaging-api] header message: ", headerMessage);
 
       if (mediaHeader.includes(headerType)) {
         const headerParam = {
