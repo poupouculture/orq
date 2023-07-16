@@ -234,6 +234,15 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     };
   }
 
+  if (isTemplate && !isMeta) {
+    console.log("[messaging-api] Message is a template but not meta");
+    delete currPayload.waba_content.name;
+    currPayload.waba_content.text = {
+      preview_url: false,
+      body: messageBody,
+    };
+  }
+
   currPayload.waba_content.context = { message_id: messageId };
   const data = await api.post(url, currPayload);
 
