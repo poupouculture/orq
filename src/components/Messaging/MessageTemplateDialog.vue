@@ -283,11 +283,12 @@ const previewTemplate = (val: any) => {
 };
 
 const useTemplate = (val: any) => {
+  console.log("[message-template dialog] Using template:", val);
   filePreview.value = null;
   customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
-  isMeta.value = val.isMeta;
+  isMeta.value = val.is_meta;
 
   usedTemplate.value = val;
   isPreview.value = false;
