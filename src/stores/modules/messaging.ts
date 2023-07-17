@@ -38,6 +38,7 @@ const useMessagingStore = defineStore("messaging", {
     ({
       chatsList: [],
       selectedChatId: "",
+      selectedChatPending: false,
       leftDrawerOpen: true,
       rightDrawerOpen: false,
       showCustomerInfoMobile: false,
@@ -59,8 +60,12 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id === state.selectedChatId
       ) as IChat;
     },
+    getSelectedChatPending: (state) => state.selectedChatPending,
   },
   actions: {
+    setSelectedChatPending(value: boolean) {
+      this.selectedChatPending = value;
+    },
     setSelectedChatId(chatId: string) {
       this.selectedChatId = chatId;
     },
