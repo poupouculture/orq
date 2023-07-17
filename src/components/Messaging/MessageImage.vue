@@ -4,7 +4,7 @@
     :class="{ 'flex items-center justify-between flex-row-reverse': isReply }"
   >
     <img
-      class="cursor-zoom-in max-h-36 rounded max-w-xs object-cover object-center"
+      class="cursor-zoom-in max-h-36 rounded max-w-full object-cover object-center"
       :class="{ 'w-12 h-12 rounded-md': isReply }"
       ref="imageRef"
       @click.stop="visible = true"
