@@ -92,6 +92,11 @@ const useMessagingStore = defineStore("messaging", {
       // console.log("fnc-setConversationType");
       chat.conversation_type = conversationType;
     },
+    /**
+     * parse last message and determines the conversation_type
+     * @param msg
+     * @returns
+     */
     parseLastMessageError(msg: Message) {
       // console.log("parseError");
       // console.log(msg);
