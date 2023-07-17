@@ -475,7 +475,7 @@ const message: Ref<string> = ref("");
 const canSend: Ref<boolean> = ref(true);
 const isChatExpired: Ref<boolean> = ref(false);
 const conversationType: Ref<string | undefined> = ref("");
-const isPending: Ref<boolean> = ref(false);
+// const isPending: Ref<boolean> = ref(false);
 
 const isTemplate: Ref<boolean> = ref(false);
 const templateIsMeta: Ref<boolean> = ref(false);
@@ -532,7 +532,15 @@ const {
   cachedChatMessages,
   replayMessage,
   botList,
+  getSelectedChatPending,
 } = storeToRefs(messagingStore);
+
+const isPending = computed({
+  get: () => getSelectedChatPending.value,
+  set: (value) => {
+    messagingStore.setSelectedChatPending(value);
+  },
+});
 
 const file = ref();
 const openFilePreview = (files: any) => {
@@ -714,10 +722,7 @@ watch(getSelectedChatId, () => {
 watch(
   () => getSelectedChat.value?.conversation_type,
   async (val) => {
-    console.log(
-      "SELECTED_CHAT:conversation_type changed to: - ",
-      conversationType.value
-    );
+    console.log("[messages] Changed selected chat conversation type:", val);
     conversationType.value = val;
     isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
   }
