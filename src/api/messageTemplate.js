@@ -21,6 +21,15 @@ export const getMessageTemplates = async ({
     meta: "*",
   };
 
+  console.log("[message-template-api] getMessageTemplates params", {
+    limit,
+    page,
+    status,
+    search,
+    isApproved,
+    isMeta,
+  });
+
   if (search !== "") params.search = search;
 
   if (status !== "*") params["filter[status][_eq]"] = status;
