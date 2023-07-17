@@ -433,6 +433,7 @@ const initSocket = () => {
         }
         if (data?.update_fields?.status) {
           messagingStore.updateChatsList(chat, data.document.status);
+          messagingStore.sortChatsList();
           console.log("  SOCKET:status change");
           console.log(getSelectedChat.value);
           if (
@@ -592,6 +593,7 @@ const initSocket = () => {
         }
         socket.value.emit("join_chat", data.id);
       }
+      messagingStore.sortChatsList();
     });
     // the event is removed
     // Should be refactoring

@@ -4,6 +4,7 @@
     class="flex w-full contact-card q-pa-sm relative"
   >
     <q-avatar class="rounded-avatar q-mr-sm">
+      <img :src="profileIcon" />
       <q-icon
         v-if="errorLastMessageType.status"
         class="absolute right-full top-1/2 -translate-y-2/4 pr-1"
@@ -11,7 +12,6 @@
         color="negative"
         size="1.2rem"
       />
-      <img :src="profileIcon" />
     </q-avatar>
     <q-item-section>
       <q-item-label :class="{ 'text-white': active }" class="text-h6 truncate">
@@ -28,15 +28,39 @@
       <q-item-label caption :class="{ 'text-white': active }">
         {{ time }}
       </q-item-label>
-      <q-badge
+      <div
+        class="flex items-center gap-x-1"
         :class="[
           nameContact.length && nameContact !== 'Visitor' ? 'mb-3.5' : 'mb-1.5',
         ]"
-        v-show="props.data.totalUnread"
-        rounded
-        color="red"
-        :label="props.data.totalUnread"
-      />
+      >
+        <svg
+          v-if="data.chat_handler?.user_id === getUserProfile?.id"
+          xmlns="http://www.w3.org/2000/svg"
+          :class="[active ? 'text-gray-100' : 'text-gray-600']"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path
+            d="M15.113 3.21l.094 .083l5.5 5.5a1 1 0 0 1 -1.175 1.59l-3.172 3.171l-1.424 3.797a1 1 0 0 1 -.158 .277l-.07 .08l-1.5 1.5a1 1 0 0 1 -1.32 .082l-.095 -.083l-2.793 -2.792l-3.793 3.792a1 1 0 0 1 -1.497 -1.32l.083 -.094l3.792 -3.793l-2.792 -2.793a1 1 0 0 1 -.083 -1.32l.083 -.094l1.5 -1.5a1 1 0 0 1 .258 -.187l.098 -.042l3.796 -1.425l3.171 -3.17a1 1 0 0 1 1.497 -1.26z"
+            stroke-width="0"
+            fill="currentColor"
+          ></path>
+        </svg>
+        <q-badge
+          v-show="props.data.totalUnread"
+          rounded
+          color="red"
+          :label="props.data.totalUnread"
+        />
+      </div>
       <div
         class="absolute flex items-center text-xs gap-x-1"
         :class="[
@@ -87,6 +111,7 @@ import useMessagingStore from "src/stores/modules/messaging";
 import profileIcon from "src/assets/images/profileicon.svg";
 import { getChatNameEn, getContactNameEn } from "src/utils/trim-word";
 import { ChatTypes } from "src/constants/ChatKeyword";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 export interface Props {
   data?: IChat;
@@ -104,7 +129,9 @@ const props = withDefaults(defineProps<Props>(), {
   data: () => ({} as IChat),
 });
 const messagingStore = useMessagingStore();
+const userInfoStore = useUserInfoStore();
 const { selectedChatId, selectedTab } = storeToRefs(messagingStore);
+const { getUserProfile } = storeToRefs(userInfoStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);
 const errorLastMessageType = computed(() => {
