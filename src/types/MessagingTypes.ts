@@ -80,6 +80,9 @@ export interface IChat {
   id: string;
   chat_id?: string;
   contacts_id: string;
+  chat_handler: {
+    user_id: string;
+  };
   customers_id: string | null;
   contact_first_name: string;
   contact_last_name: string;

@@ -165,6 +165,7 @@ const useMessagingStore = defineStore("messaging", {
           } else {
             this.chatsList.unshift(chat);
           }
+          this.sortChatsList();
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
@@ -199,6 +200,13 @@ const useMessagingStore = defineStore("messaging", {
       } catch (error) {
         console.log(error);
       }
+    },
+    sortChatsList() {
+      this.chatsList = this.chatsList.sort((a: any, b: any) => {
+        if (a.chat_handler?.user_id && !b.chat_handler?.user_id) return -1;
+        if (b.chat_handler?.user_id && !a.chat_handler?.user_id) return 1;
+        return 1;
+      });
     },
     setCustomerInfoMobile(value: boolean) {
       this.showCustomerInfoMobile = value;
@@ -245,9 +253,16 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
+        const ids = [78, 79, 80];
+        if (ids.includes(item.id)) {
+          item.chat_handler = {
+            user_id: "92be36a0-9dbd-4496-823e-d47f3fe9fd38",
+          };
+        }
         // item.id = item.id.toString(); // ??? 0707
         return item;
       });
+      this.sortChatsList();
     },
     async socketConnect(userInfo: any) {
       console.log(socketUrl);
