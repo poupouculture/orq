@@ -6,6 +6,7 @@ export const getMessageTemplates = async ({
   status = "*",
   search = "",
   isApproved = true,
+  isMeta,
 }) => {
   // const fields = `*, directus_users.*`;
   const fields = `*`;
@@ -25,6 +26,7 @@ export const getMessageTemplates = async ({
   if (status !== "*") params["filter[status][_eq]"] = status;
   if (status === "*") params["filter[status][_neq]"] = "archived";
   if (isApproved) params["filter[is_approved][_eq]"] = true;
+  if (isMeta != null) params["filter[is_meta][_eq]"] = isMeta;
 
   const templates = await api.get(`/items/message_templates`, {
     params,
