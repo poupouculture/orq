@@ -18,19 +18,20 @@
           <div class="flex" :class="{ 'mb-3': !isMobile }">
             <div
               class="w-10 h-10 flex justify-center mr-1 items-center rounded-full bg-gray-200"
-              v-for="(member, index) of members.slice(0, 3)"
+              v-for="(member, index) of members.slice(0, 1)"
               :key="index"
             >
               {{ initialName(member?.name) }}
             </div>
             <div
               class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
-              v-if="members.length > 3"
+              v-if="members.length > 2"
             >
-              {{ members.length - 3 }} +
+              {{ members.length - 2 }} +
             </div>
           </div>
-          <q-space />
+          <q-space v-if="!isMobile" />
+          <SearchBox />
           <ChatConversationButton
             v-if="!isMobile && selectedChat?.status !== ChatTypes.CLOSED"
           />
@@ -73,6 +74,7 @@
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { toRefs } from "vue";
 import ChatConversationButton from "./ChatConversationButton.vue";
+import SearchBox from "./SearchBox.vue";
 
 const props = defineProps({
   members: {
