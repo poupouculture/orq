@@ -477,7 +477,7 @@ const canSend: Ref<boolean> = ref(true);
 const isChatExpired: Ref<boolean> = ref(false);
 const conversationType: Ref<string | undefined> = ref("");
 const isPending: Ref<boolean> = ref(false);
-
+// isActive: if it is pending, then it means that the chat is pending the customer to message in
 const isTemplate: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
@@ -720,6 +720,7 @@ watch(
     );
     conversationType.value = val;
     isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
+    // if isPending, show meta templates, otherwise HIDE meta templates
   }
 );
 
