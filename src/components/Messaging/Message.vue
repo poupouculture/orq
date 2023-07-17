@@ -725,6 +725,7 @@ watch(
     console.log("[messages] Changed selected chat conversation type:", val);
     conversationType.value = val;
     isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
+    // if isPending, show meta templates, otherwise HIDE meta templates
   }
 );
 
