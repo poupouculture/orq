@@ -200,7 +200,7 @@ const list = [
   {
     icon: "download",
     text: "Download",
-    visible: ["image", "document", "application"],
+    visible: ["image", "document", "application", "video", "audio"],
   },
   { icon: "content_copy", text: "Copy", visible: ["text"] },
 ];
@@ -226,6 +226,7 @@ const onhandleClick = (type: string) => {
       messagingStore.setReplayMessage(props.message);
       break;
     case "Download":
+      console.log(image.value);
       image.value.component.download();
       break;
     case "Copy":
