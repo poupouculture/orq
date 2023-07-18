@@ -25,23 +25,25 @@ const weDo = ref([
 </script>
 
 <template>
-  <div class="mt-36">
-    <div class="pl-5 flex flex-col">
+  <div class="mt-36 p-5 sm:p-0">
+    <div class="md:pl-5 flex flex-col">
       <span class="text-[#E12179] tracking-wide text-[23px] font-normal">
         WHAT WE DO
       </span>
 
-      <p class="text-black text-[40px] font-black w-[602px] leading-[57px]">
+      <p
+        class="text-black text-4xl md:text-[40px] font-black md:w-[602px] leading-[57px]"
+      >
         What Makes Us UniQue
       </p>
     </div>
 
     <div class="w-full mt-20 flex justify-center">
-      <div class="grid gap-10 lg:grid-cols-3">
+      <div class="grid gap-10 w-full sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(data, index) in weDo"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-[380px] py-10 gap-10 items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[320px] lg:w-[320px] xl:w-[380px] py-10 gap-10 items-center flex-col"
         >
           <span
             class="font-semibold mt-10 bg-[#4B44F6] text-white text-[40px] rounded-full w-20 h-20 ring-[20px] ring-[#4B44F680] flex justify-center items-center"

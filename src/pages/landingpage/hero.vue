@@ -1,10 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="min-h-[90vh] w-full flex flex-col mt-7 px-20 items-start">
-    <div class="w-100 pl-36">
+  <div class="min-h-[90vh] w-full flex flex-col mt-7 lg:px-20 items-start">
+    <div class="w-100 sm:pl-36 lg:pl-36">
       <div
-        class="flex flex-col font-['Inter'] capitalize text-[70px] font-black text-white"
+        class="flex flex-col font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
       >
         <p class="">Let Technology</p>
         <p>Handle the</p>
