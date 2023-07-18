@@ -66,7 +66,7 @@ const checkNew = () => {
 
         <div class="w-full flex bg-[#4B44F6] justify-center">
           <div
-            class="container flex flex-col gap-4 sm:flex-row items-center sm:justify-between py-6"
+            class="container flex flex-col gap-4 sm:flex-row items-center sm:justify-between p-6 mx-6"
           >
             <div class="flex justify-center items-center gap-3">
               <img class="w-[40px]" :src="logo" alt="logo" />
