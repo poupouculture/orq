@@ -425,7 +425,6 @@ const initSocket = () => {
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
-          console.log("  SOCKET: conversation_type");
           messagingStore.changeConversationType(
             chat?.id,
             data?.update_fields?.conversation_type
@@ -470,7 +469,12 @@ const initSocket = () => {
             data?.update_fields?.expiration_timestamp
           );
         }
-
+        if (data.update_fields.admin) {
+          messagingStore.changeAdminChatListById(
+            chat?.id,
+            data.update_fields.admin
+          );
+        }
         if (data?.update_fields?.mode) {
           messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
           if (
