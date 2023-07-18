@@ -473,7 +473,7 @@ const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
 const canSend: Ref<boolean> = ref(true);
-const isChatExpired: Ref<boolean> = ref(false);
+// const isChatExpired: Ref<boolean> = ref(false);
 const conversationType: Ref<string | undefined> = ref("");
 // const isPending: Ref<boolean> = ref(false);
 
@@ -533,12 +533,20 @@ const {
   replayMessage,
   botList,
   getSelectedChatPending,
+  getSelectedChatExpired,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
   get: () => getSelectedChatPending.value,
   set: (value) => {
     messagingStore.setSelectedChatPending(value);
+  },
+});
+
+const isChatExpired = computed({
+  get: () => getSelectedChatExpired.value,
+  set: (value) => {
+    messagingStore.setSelectedChatExpired(value);
   },
 });
 

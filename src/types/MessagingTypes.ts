@@ -119,6 +119,7 @@ export interface IState {
   replayMessage: Message | undefined;
   botList: Bot[];
   selectedChatPending: boolean;
+  selectedChatExpired: boolean;
 }
 
 export interface SendTextMessage {

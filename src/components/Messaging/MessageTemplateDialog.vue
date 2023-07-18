@@ -201,10 +201,19 @@ const data = reactive({
 
 const messagingStore = useMessagingStore();
 
-const { getSelectedChatPending: isPending } = storeToRefs(messagingStore);
+const { getSelectedChatPending: isPending, getSelectedChatExpired: isExpired } =
+  storeToRefs(messagingStore);
 
 const fetchTemplates = async () => {
   loading.value = true;
+
+  let isMeta = null;
+
+  if (isExpired.value) {
+    isMeta = true;
+  } else if (!isPending.value) {
+    isMeta = false;
+  }
 
   const {
     data: { data: applicationPrograms, meta },
@@ -214,7 +223,7 @@ const fetchTemplates = async () => {
     status: "published",
     isApproved: true,
     search: search.value,
-    isMeta: isPending.value ? null : false,
+    isMeta,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
