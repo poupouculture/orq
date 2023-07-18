@@ -188,8 +188,16 @@ const useMessagingStore = defineStore("messaging", {
     },
     sortChatsList() {
       this.chatsList = this.chatsList.sort((a: any, b: any) => {
-        if (a.chat_handler?.user_id && !b.chat_handler?.user_id) return -1;
-        if (b.chat_handler?.user_id && !a.chat_handler?.user_id) return 1;
+        if (
+          a.admin === userInfoStore.getUserProfile?.id &&
+          b.admin !== userInfoStore.getUserProfile?.id
+        )
+          return -1;
+        if (
+          b.admin === userInfoStore.getUserProfile?.id &&
+          a.admin !== userInfoStore.getUserProfile?.id
+        )
+          return 1;
         return 1;
       });
     },
@@ -238,12 +246,6 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
-        const ids = [78, 79, 80];
-        if (ids.includes(item.id)) {
-          item.chat_handler = {
-            user_id: "92be36a0-9dbd-4496-823e-d47f3fe9fd38",
-          };
-        }
         // item.id = item.id.toString(); // ??? 0707
         return item;
       });

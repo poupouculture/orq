@@ -35,7 +35,7 @@
         ]"
       >
         <svg
-          v-if="data.chat_handler?.user_id === getUserProfile?.id"
+          v-if="data.admin === getUserProfile?.id"
           xmlns="http://www.w3.org/2000/svg"
           :class="[active ? 'text-gray-100' : 'text-gray-600']"
           width="18"
