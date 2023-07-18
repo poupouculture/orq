@@ -12,19 +12,19 @@ const chatFeatures = ref([
 <template>
   <div class="mt-36">
     <div class="flex mt-20 flex-col">
-      <div class="grid pl-5 grid-cols-1 lg:grid-cols-2">
-        <div class="flex justify-center px-3 items-center">
+      <div class="grid md:pl-5 w-full grid-cols-1 lg:grid-cols-2">
+        <div class="flex justify-center md:px-3 items-center">
           <img class="" :src="paymentOrder" alt="" />
         </div>
 
         <div
-          class="flex flex-col gap-5 pr-20 pl-3 py-7 border-r-8 border-[#4B44F6]"
+          class="flex flex-col gap-5 md:pr-20 pl-3 py-7 md:border-r-8 md:border-[#4B44F6]"
         >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
             ORDER / INVOICE
           </span>
 
-          <p class="font-bold text-[40px]">
+          <p class="font-bold md:text-[40px]">
             Invoice creation and fulfillment, ensuring timely delivery to
             customers
           </p>
@@ -35,7 +35,7 @@ const chatFeatures = ref([
           </div>
         </div>
       </div>
-      <div class="pl-5 mt-4 flex justify-end">
+      <div class="pl-5 mt-4 w-full flex md:justify-end">
         <div class="w-1/2 flex justify-center">
           <div class="h-5 w-96 bg-[#E12179]" />
         </div>

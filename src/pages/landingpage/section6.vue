@@ -15,7 +15,9 @@ const clients = ref([angliss, fitmax, tasteofasia]);
         THEY TRUST US
       </span>
 
-      <p class="text-black text-[40px] font-black w-[602px] leading-[57px]">
+      <p
+        class="text-black text-[40px] font-black w-full md:w-[602px] leading-[57px]"
+      >
         Selected Clients
       </p>
     </div>
