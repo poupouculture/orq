@@ -22,6 +22,16 @@ const routes = [
     ],
   },
   {
+    path: "/landing/products",
+    name: "landingproducts",
+    component: () => import("pages/landingpage/products.vue"),
+  },
+  {
+    path: "/landing/products/detail",
+    name: "landingproductsdetails",
+    component: () => import("pages/landingpage/productsDetail.vue"),
+  },
+  {
     path: "/me",
     name: "me",
     component: () => import("pages/Me.vue"),
