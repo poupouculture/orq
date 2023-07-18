@@ -158,7 +158,7 @@
           <ChatMessage
             v-if="replayMessage?.id"
             :message="replayMessage"
-            isReply
+            :isReply="true"
           />
           <q-input
             @click="hideBotOption"
