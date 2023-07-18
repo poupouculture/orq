@@ -187,7 +187,7 @@ const rows = [
         <q-table
           flat
           bordered
-          title="Products"
+          title="Categories"
           :rows="rows"
           :columns="columns"
           row-key="name"

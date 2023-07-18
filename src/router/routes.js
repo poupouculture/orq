@@ -22,14 +22,14 @@ const routes = [
     ],
   },
   {
-    path: "/landing/products",
-    name: "landingproducts",
-    component: () => import("pages/landingpage/products.vue"),
+    path: "/landing/categories",
+    name: "landingcategories",
+    component: () => import("pages/landingpage/categories.vue"),
   },
   {
-    path: "/landing/products/detail",
-    name: "landingproductsdetails",
-    component: () => import("pages/landingpage/productsDetail.vue"),
+    path: "/landing/categories/detail",
+    name: "landingcategoriesdetails",
+    component: () => import("pages/landingpage/categoriesDetail.vue"),
   },
   {
     path: "/me",

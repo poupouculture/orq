@@ -99,7 +99,7 @@ const products = ref([
   <div class="w-full flex justify-center min-h-screen items-center">
     <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <router-link
-        :to="{ name: 'landingproductsdetails' }"
+        :to="{ name: 'landingcategoriesdetails' }"
         v-for="(data, index) in products"
         :key="index"
         class="justify-center items-center flex flex-col gap-3"
