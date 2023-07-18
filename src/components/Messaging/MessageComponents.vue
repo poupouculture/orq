@@ -6,6 +6,7 @@
       :src="content.url"
       :name="isDocument(content) ? content.file_name : content.media_id"
       :caption="content.caption"
+      :is-reply="isReply"
       :is-send="isSend"
     />
     <div
@@ -68,6 +69,7 @@
             "
             :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
+            :is-reply="isReply"
           />
         </div>
         Replied:
@@ -89,6 +91,7 @@ interface Props {
   content: any;
   message: any;
   isSend: boolean;
+  isReply: boolean;
   showAssociated?: boolean;
 }
 
@@ -96,6 +99,7 @@ const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
   message: () => ({}),
   isSend: () => false,
+  isReply: () => false,
 });
 
 const component = ref("");

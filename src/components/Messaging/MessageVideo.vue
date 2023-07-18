@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 rounded-md p-2.5">
-    <video loop autoplay muted ref="videoRef" controls>
+    <video loop muted ref="videoRef" controls :width="setWidth">
       <source type="video/mp4" ref="sourceRef" width="320" height="240" />
     </video>
     <div class="mt-1 font-semibold text-gray-600">{{ caption }}</div>
@@ -9,13 +9,14 @@
 
 <script setup lang="ts">
 import { api } from "src/boot/axios";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 interface Props {
   src?: string;
   height?: number;
   name?: string;
   caption?: string;
+  isReply?: boolean;
 }
 const originSrc = ref();
 const videoRef = ref();
@@ -28,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   caption: "",
 });
 // const source = `${process.env.BACKEND_URL}${props.src}`;
-
+const setWidth = computed(() => (props.isReply ? 80 : 320));
 onMounted(() => {
   renderVideo();
 });
@@ -52,18 +53,18 @@ function loadVideo(data: any) {
   sourceRef.value.src = url;
   videoRef.value.load();
 }
-// const download = async () => {
-//   const link = document.createElement("a");
-//   if (!originSrc.value) {
-//     await renderImage(true);
-//   }
-//   link.href = originSrc.value;
-//   link.download = props.name;
-//   link.click();
-// };
+const download = async () => {
+  const link = document.createElement("a");
+  if (!sourceRef.value) {
+    await renderVideo();
+  }
+  link.href = sourceRef.value.src;
+  link.download = props.name;
+  link.click();
+};
 
 defineExpose({
-  // download,
+  download,
 });
 </script>
 
