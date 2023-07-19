@@ -209,7 +209,7 @@ const fetchTemplates = async () => {
 
   let isMeta = null;
 
-  if (isExpired.value) {
+  if (isExpired.value || isPending.value) {
     isMeta = true;
   } else if (!isPending.value) {
     isMeta = false;
