@@ -472,6 +472,7 @@ const useMessagingStore = defineStore("messaging", {
     changeAdminChatListById(id: string, admin: string) {
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].admin = admin;
+      this.sortChatsList();
     },
     changeConversationType(id: string, conversationType: string) {
       console.log("  changeConversationType----fnc");

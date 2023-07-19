@@ -430,9 +430,14 @@ const initSocket = () => {
             data?.update_fields?.conversation_type
           );
         }
+        if (data?.update_fields?.admin) {
+          messagingStore.changeAdminChatListById(
+            chat?.id,
+            data?.update_fields?.admin
+          );
+        }
         if (data?.update_fields?.status) {
           messagingStore.updateChatsList(chat, data.document.status);
-          messagingStore.sortChatsList();
           console.log("  SOCKET:status change");
           console.log(getSelectedChat.value);
           if (
@@ -462,6 +467,7 @@ const initSocket = () => {
               position: "top",
             });
           }
+          messagingStore.sortChatsList();
         }
         if (data.update_fields.expiration_timestamp) {
           messagingStore.changeExpiry(
@@ -469,12 +475,7 @@ const initSocket = () => {
             data?.update_fields?.expiration_timestamp
           );
         }
-        if (data.update_fields.admin) {
-          messagingStore.changeAdminChatListById(
-            chat?.id,
-            data.update_fields.admin
-          );
-        }
+
         if (data?.update_fields?.mode) {
           messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
           if (
@@ -597,7 +598,7 @@ const initSocket = () => {
         }
         socket.value.emit("join_chat", data.id);
       }
-      messagingStore.sortChatsList();
+      // messagingStore.sortChatsList();
     });
     // the event is removed
     // Should be refactoring
