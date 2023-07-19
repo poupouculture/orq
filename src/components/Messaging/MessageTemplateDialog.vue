@@ -158,6 +158,8 @@ import type { Ref } from "vue";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import Preview from "src/components/ApplicationProgram/Preview.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
+import useMessagingStore from "src/stores/modules/messaging";
+import { storeToRefs } from "pinia";
 
 defineProps({
   modelValue: {
@@ -176,6 +178,7 @@ const usedTemplate = ref(null);
 const language = ref("");
 const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
 const templateName = ref("");
+const isMeta: Ref<boolean> = ref(false);
 const header = ref("");
 const headerMessage = ref("");
 const media = ref("");
@@ -196,8 +199,21 @@ const data = reactive({
   rowsPerPage: 10,
 });
 
+const messagingStore = useMessagingStore();
+
+const { getSelectedChatPending: isPending, getSelectedChatExpired: isExpired } =
+  storeToRefs(messagingStore);
+
 const fetchTemplates = async () => {
   loading.value = true;
+
+  let isMeta = null;
+
+  if (isExpired.value || isPending.value) {
+    isMeta = true;
+  } else if (!isPending.value) {
+    isMeta = false;
+  }
 
   const {
     data: { data: applicationPrograms, meta },
@@ -207,13 +223,14 @@ const fetchTemplates = async () => {
     status: "published",
     isApproved: true,
     search: search.value,
+    isMeta,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
 
-watch([rowsPerPage, page], () => {
+watch([rowsPerPage, page, isPending], () => {
   fetchTemplates();
 });
 
@@ -255,6 +272,7 @@ const send = () => {
     bodyMessage.value,
     language.value,
     customVariables.value?.length > 0,
+    isMeta.value,
     customVariables.value,
     header.value.toUpperCase(),
     headerMessage.value
@@ -281,10 +299,12 @@ const previewTemplate = (val: any) => {
 };
 
 const useTemplate = (val: any) => {
+  console.log("[message-template dialog] Using template:", val);
   filePreview.value = null;
   customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
+  isMeta.value = val.is_meta;
 
   usedTemplate.value = val;
   isPreview.value = false;
