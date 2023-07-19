@@ -118,6 +118,8 @@ export interface IState {
   contactNumber: string;
   replayMessage: Message | undefined;
   botList: Bot[];
+  selectedChatPending: boolean;
+  selectedChatExpired: boolean;
 }
 
 export interface SendTextMessage {
@@ -127,6 +129,7 @@ export interface SendTextMessage {
   type: MessageType;
   messageBody: string;
   isTemplate?: boolean;
+  isMeta?: boolean;
   templateName?: string;
   language?: string;
   isIncludedComponent?: boolean;
