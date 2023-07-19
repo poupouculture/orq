@@ -592,7 +592,7 @@ const initSocket = () => {
         } else {
           chatsList.value.unshift(chat);
         }
-        socket.value.emit("join_chat", data.id);
+        socket.value.emit("join_chat", data.id.toString());
       }
     });
     // the event is removed
