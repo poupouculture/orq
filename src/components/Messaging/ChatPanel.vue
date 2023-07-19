@@ -467,7 +467,6 @@ const initSocket = () => {
               position: "top",
             });
           }
-          messagingStore.sortChatsList();
         }
         if (data.update_fields.expiration_timestamp) {
           messagingStore.changeExpiry(
@@ -495,6 +494,7 @@ const initSocket = () => {
             });
           }
         }
+        messagingStore.sortChatsList();
       }
     });
     socket.value.on("message_created", async (data: SocketMessage) => {
@@ -506,6 +506,7 @@ const initSocket = () => {
           document
         );
       }
+      messagingStore.sortChatsList();
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("SOCKET: contact_created", data);
@@ -598,7 +599,7 @@ const initSocket = () => {
         }
         socket.value.emit("join_chat", data.id);
       }
-      // messagingStore.sortChatsList();
+      messagingStore.sortChatsList();
     });
     // the event is removed
     // Should be refactoring
