@@ -293,6 +293,7 @@ const useTemplate = (val: any) => {
 };
 
 const applyTemplateComponent = (val: any) => {
+  actions.value = Array(2).fill(null);
   console.log("[message-template-dialog] Previewing template", val);
   if (usedTemplate.value?.json?.components) {
     usedTemplate.value.components = usedTemplate.value?.json?.components;
@@ -321,23 +322,37 @@ const applyTemplateComponent = (val: any) => {
     const buttonsComponents = val.components.find(
       (c: any) => c?.type === "BUTTONS"
     );
-    buttonsComponents.value = buttonsComponents;
 
-    if (buttonsComponents.value.buttons.length > 0) {
-      const firstButtonAction = buttonsComponents.value.buttons[0].type;
+    if (buttonsComponents?.buttons.length > 0) {
+      console.log(
+        "[message-template-dialog] Message template has buttions",
+        buttonsComponents
+      );
+      const firstButtonAction = buttonsComponents.buttons[0].type;
       actionCategory.value =
         firstButtonAction === formattedActionType.CALL_PHONE ||
         firstButtonAction === formattedActionType.VIEW_WEB
           ? (actionCategory.value = "Call To Action")
           : (actionCategory.value = "Quick Reply");
 
-      actions.value = buttonsComponents.value.buttons.map((button) => ({
-        text: button.text,
-        type:
-          button.type === "PHONE_NUMBER" ? "Call Phone Number" : "View website",
-        country: button.phone_number.split(" ")[0],
-        value: button.phone_number.split(" ")[1],
-      }));
+      actions.value = buttonsComponents.buttons.map((button, index) => {
+        return {
+          index,
+          label: button.text,
+          type:
+            button.type === "PHONE_NUMBER"
+              ? "Call Phone Number"
+              : "View website",
+          country:
+            button.type === "PHONE_NUMBER"
+              ? button.phone_number?.split(" ")[0]
+              : "Static",
+          value:
+            button.type === "PHONE_NUMBER"
+              ? button.phone_number?.split(" ")[1]
+              : button.url,
+        };
+      });
     }
 
     const customerVariableCounted = listNumbers(bodyMessage.value).length;
