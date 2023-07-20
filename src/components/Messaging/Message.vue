@@ -262,6 +262,7 @@
             :size="bottomButtonSize"
             class="q-mt-md"
             @click="showMessageTemplate = true"
+            :disable="isBot"
           />
           <q-btn
             flat
