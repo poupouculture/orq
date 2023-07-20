@@ -27,7 +27,7 @@
               class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
               v-if="members.length > 2"
             >
-              {{ members.length - 2 }} +
+              {{ members.length - 1 }} +
             </div>
           </div>
           <q-space v-if="!isMobile" />
