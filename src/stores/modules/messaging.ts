@@ -38,6 +38,8 @@ const useMessagingStore = defineStore("messaging", {
     ({
       chatsList: [],
       selectedChatId: "",
+      selectedChatPending: false,
+      selectedChatExpired: false,
       leftDrawerOpen: true,
       rightDrawerOpen: false,
       showCustomerInfoMobile: false,
@@ -59,8 +61,16 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id === state.selectedChatId
       ) as IChat;
     },
+    getSelectedChatPending: (state) => state.selectedChatPending,
+    getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
+    setSelectedChatPending(value: boolean) {
+      this.selectedChatPending = value;
+    },
+    setSelectedChatExpired(value: boolean) {
+      this.selectedChatExpired = value;
+    },
     setSelectedChatId(chatId: string) {
       this.selectedChatId = chatId;
     },
@@ -92,6 +102,11 @@ const useMessagingStore = defineStore("messaging", {
       // console.log("fnc-setConversationType");
       chat.conversation_type = conversationType;
     },
+    /**
+     * parse last message and determines the conversation_type
+     * @param msg
+     * @returns
+     */
     parseLastMessageError(msg: Message) {
       // console.log("parseError");
       // console.log(msg);

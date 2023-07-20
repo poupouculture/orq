@@ -169,7 +169,7 @@
           <ChatMessage
             v-if="replayMessage?.id"
             :message="replayMessage"
-            isReply
+            :isReply="true"
           />
           <q-input
             @click="hideBotOption"
@@ -256,7 +256,6 @@
           />
           <!-- :flat="!isChatExpired || isBot" -->
           <q-btn
-            :disable="!isPending || isBot || chaqMode || !canSend"
             round
             color="primary"
             icon="insert_comment"
@@ -487,11 +486,12 @@ const scrollAreaRef = ref<HTMLDivElement>();
 const infiniteScrollRef = ref<any>();
 const message: Ref<string> = ref("");
 const canSend: Ref<boolean> = ref(true);
-const isChatExpired: Ref<boolean> = ref(false);
+// const isChatExpired: Ref<boolean> = ref(false);
 const conversationType: Ref<string | undefined> = ref("");
-const isPending: Ref<boolean> = ref(false);
+// const isPending: Ref<boolean> = ref(false);
 
 const isTemplate: Ref<boolean> = ref(false);
+const templateIsMeta: Ref<boolean> = ref(false);
 const templateName: Ref<string> = ref("");
 const language: Ref<string> = ref("");
 const isIncludeComponent: Ref<boolean> = ref(false);
@@ -545,7 +545,23 @@ const {
   cachedChatMessages,
   replayMessage,
   botList,
+  getSelectedChatPending,
+  getSelectedChatExpired,
 } = storeToRefs(messagingStore);
+
+const isPending = computed({
+  get: () => getSelectedChatPending.value,
+  set: (value) => {
+    messagingStore.setSelectedChatPending(value);
+  },
+});
+
+const isChatExpired = computed({
+  get: () => getSelectedChatExpired.value,
+  set: (value) => {
+    messagingStore.setSelectedChatExpired(value);
+  },
+});
 
 const file = ref();
 const openFilePreview = (files: any) => {
@@ -727,12 +743,10 @@ watch(getSelectedChatId, () => {
 watch(
   () => getSelectedChat.value?.conversation_type,
   async (val) => {
-    console.log(
-      "SELECTED_CHAT:conversation_type changed to: - ",
-      conversationType.value
-    );
+    console.log("[messages] Changed selected chat conversation type:", val);
     conversationType.value = val;
     isPending.value = conversationType.value === ChatTypes.PENDING_INBOUND;
+    // if isPending, show meta templates, otherwise HIDE meta templates
   }
 );
 
@@ -944,6 +958,7 @@ const sendMessage = async () => {
       type: isTemplate.value ? MessageType.TEMPLATE : MessageType.TEXT,
       messageBody: newMessage.content,
       isTemplate: isTemplate.value,
+      isMeta: templateIsMeta.value,
       templateName: templateName.value,
       language: language.value,
       isIncludedComponent: isIncludeComponent.value,
@@ -1002,6 +1017,7 @@ const sendMessageTemplate = (
   msg: string,
   lang: string,
   isIncComponent: boolean,
+  isMeta: boolean,
   componentCount: any[],
   headType: string,
   headMessage: string
@@ -1011,6 +1027,7 @@ const sendMessageTemplate = (
   message.value = msg.replace("\n", "");
   language.value = lang;
   isTemplate.value = true;
+  templateIsMeta.value = isMeta;
   isIncludeComponent.value = isIncComponent;
   paramsCount.value = componentCount;
   headerType.value = headType;

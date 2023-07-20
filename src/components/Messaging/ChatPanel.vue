@@ -284,24 +284,24 @@ watch(tabsTip, (newVal, oldVal) => {
       : (oldVal[ChatTypes.CLOSED]?.num ?? 0) >
         (newVal[ChatTypes.CLOSED]?.num ?? 0);
 
-    console.log(
-      "pending decreased?",
-      oldVal[ChatTypes.PENDING]?.num,
-      newVal[ChatTypes.PENDING]?.num,
-      oldVal[ChatTypes.PENDING]?.num > newVal[ChatTypes.PENDING]?.num
-    );
-    console.log(
-      "ongoing decreased?",
-      oldVal[ChatTypes.ONGOING]?.num,
-      newVal[ChatTypes.ONGOING]?.num,
-      oldVal[ChatTypes.ONGOING]?.num > newVal[ChatTypes.ONGOING]?.num
-    );
-    console.log(
-      "closed decreased?",
-      oldVal[ChatTypes.CLOSED]?.num,
-      newVal[ChatTypes.CLOSED]?.num,
-      oldVal[ChatTypes.CLOSED]?.num > newVal[ChatTypes.CLOSED]?.num
-    );
+    // console.log(
+    //   "pending decreased?",
+    //   oldVal[ChatTypes.PENDING]?.num,
+    //   newVal[ChatTypes.PENDING]?.num,
+    //   oldVal[ChatTypes.PENDING]?.num > newVal[ChatTypes.PENDING]?.num
+    // );
+    // console.log(
+    //   "ongoing decreased?",
+    //   oldVal[ChatTypes.ONGOING]?.num,
+    //   newVal[ChatTypes.ONGOING]?.num,
+    //   oldVal[ChatTypes.ONGOING]?.num > newVal[ChatTypes.ONGOING]?.num
+    // );
+    // console.log(
+    //   "closed decreased?",
+    //   oldVal[ChatTypes.CLOSED]?.num,
+    //   newVal[ChatTypes.CLOSED]?.num,
+    //   oldVal[ChatTypes.CLOSED]?.num > newVal[ChatTypes.CLOSED]?.num
+    // );
   } else {
     isChatsDecreased.value[ChatTypes.PENDING] = false;
     isChatsDecreased.value[ChatTypes.ONGOING] = false;
@@ -377,6 +377,7 @@ const showMoreChats = async () => {
     console.log("SOCKET: LOAD MORE join_chat by chat_id.........");
     // console.log(`join_chat.........${chat.id}`);
     socket.value.emit("join_chat", chat.id);
+    socket.value.emit("join_chat", chat.id.toString()); // 0719 backward
   });
   chatListScroller.value[0]?.$el?.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -403,6 +404,7 @@ const initSocket = () => {
         // console.log(typeof chat.id.toString());
         console.log(`join_chat.........${chat.id}`);
         socket.value.emit("join_chat", chat.id); // original
+        socket.value.emit("join_chat", chat.id.toString()); // 0719 backward
         // socket.value.emit("join_chat", chat.id.toString()); //??? 0707
         // socket.value.emit("join_chat", parseInt(chat.id));
       });
@@ -509,7 +511,7 @@ const initSocket = () => {
       console.log(customer);
 
       const chatFound = chatsList.value.find(
-        (chat: IChat) => chat.contacts_id.toString() === data.contacts_id
+        (chat: IChat) => chat.contacts_id === data.contacts_id
       );
       let contact = null;
       if (customer?.contacts.length === 1) {
@@ -590,7 +592,7 @@ const initSocket = () => {
         } else {
           chatsList.value.unshift(chat);
         }
-        socket.value.emit("join_chat", data.id);
+        socket.value.emit("join_chat", data.id.toString());
       }
     });
     // the event is removed

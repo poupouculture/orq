@@ -106,6 +106,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     type,
     messageBody,
     isTemplate,
+    isMeta,
     templateName,
     language,
     isIncludedComponent,
@@ -115,7 +116,7 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
     messageId,
   } = payload;
 
-  console.log("sendChatTextMessage");
+  console.log("[messaging-api] message payload", payload);
   const currPayload: ChatPayload = {
     channel: payload.channel,
     chat_id: chatId,
@@ -135,6 +136,11 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   if (isTemplate) {
     // ChatKeywords.SEND_TEMPLATE_MESSAGE;
     url = "/whatsapp/waba-send-template";
+    console.log("[messaging-api] Message is a template");
+  }
+  if (!isMeta) {
+    url = "/whatsapp/message/waba";
+    console.log("[messaging-api] Message is not meta");
   }
 
   if (isTemplate) {
@@ -142,8 +148,8 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
       const components = [];
       const parameters: ComponentParameter[] = [];
       const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
-      console.log("header type: ", headerType);
-      console.log("header message: ", headerMessage);
+      console.log("[messaging-api] header type: ", headerType);
+      console.log("[messaging-api] header message: ", headerMessage);
 
       if (mediaHeader.includes(headerType)) {
         const headerParam = {
@@ -222,6 +228,15 @@ export const sendChatTextMessage = async (payload: SendTextMessage) => {
   } else {
     currPayload.waba_content.messaging_product = messageProduct;
     currPayload.waba_content.recipient_type = "individual";
+    currPayload.waba_content.text = {
+      preview_url: false,
+      body: messageBody,
+    };
+  }
+
+  if (isTemplate && !isMeta) {
+    console.log("[messaging-api] Message is a template but not meta");
+    delete currPayload.waba_content.name;
     currPayload.waba_content.text = {
       preview_url: false,
       body: messageBody,
