@@ -15,11 +15,23 @@
         @click.stop="showCustomerInfo"
       >
         <div class="flex items-center space-x-3 flex-nowrap">
+          <q-btn
+            class="cursor-pointer lg:hidden"
+            @click.stop="closeChat"
+            style="color: #64748b"
+            flat
+            round
+            padding="none"
+            icon="arrow_back"
+          />
           <q-avatar class="rounded-avatar">
             <img :src="profileIcon" />
           </q-avatar>
           <div class="flex flex-col w-full">
-            <p class="font-semibold text-lg leading-snug pr-7 lg:pr-0">
+            <p
+              class="font-semibold leading-snug pr-7 lg:pr-0"
+              :class="{ 'text-md': isMobile, 'text-lg': !isMobile }"
+            >
               <!-- {{ nameEn }} -->
               {{ chatName }}
             </p>
@@ -43,15 +55,6 @@
             <q-icon name="reorder" class="cursor-pointer" />
           </template>
         </q-input> -->
-        <!-- Close button -->
-        <q-btn
-          class="cursor-pointer lg:hidden absolute right-4 top-2"
-          @click.stop="closeChat"
-          style="color: #64748b"
-          flat
-          round
-          icon="close"
-        />
         <div>
           <img
             v-if="getSelectedChat.meta_phone_number_id !== 'ChaQ'"
@@ -85,7 +88,7 @@
         <q-btn color="primary" label="End Bot" @click="confirmCloseBot()" />
       </div>
     </template>
-    <div v-else class="px-2 md:py-2 md:px-4">
+    <!-- <div v-else class="px-2 md:py-2 md:px-4">
       <div class="p-2 text-gray-400">Members</div>
       <div class="flex justify-between p-2 items-center">
         <div class="flex pb-3">
@@ -118,7 +121,15 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
+
+    <ChatMembersBar
+      v-else
+      v-model:show-chat-option="showChatOption"
+      :members="members"
+      :is-mobile="isMobile"
+      :selected-chat="getSelectedChat"
+    />
 
     <q-separator class="md:mx-4" size="1px" inset />
     <!-- message content -->
@@ -169,7 +180,8 @@
             type="textarea"
             class="w-full"
             :class="{ invisible: showAudio }"
-            input-class="h-10"
+            input-class="h-1"
+            input-style="height: 1em;"
             @[inputEvent]="inputHandler"
             :disable="isBot || !canSend"
             @paste="onPaste"
@@ -189,12 +201,12 @@
           >
         </div>
 
-        <div class="row justify-end">
+        <div class="row justify-end items-center">
           <div class="flex gap-3">
             <q-btn
               flat
               round
-              size="md"
+              :size="bottomButtonSize"
               class="q-mt-md"
               :disable="isPending || isBot || chaqMode || !canSend"
               @click="toggleInfo()"
@@ -237,7 +249,7 @@
             round
             color="grey"
             icon="mic"
-            size="md"
+            :size="bottomButtonSize"
             :disable="isPending || isBot || chaqMode || !canSend"
             class="q-mt-md active:bg-primary mic-recorder"
             @click="record()"
@@ -247,16 +259,17 @@
             round
             color="primary"
             icon="insert_comment"
-            size="md"
+            :size="bottomButtonSize"
             class="q-mt-md"
             @click="showMessageTemplate = true"
+            :disable="isBot"
           />
           <q-btn
             flat
             round
             color="grey"
             icon="image"
-            size="md"
+            :size="bottomButtonSize"
             class="q-mt-md"
             :disable="isPending || isBot || chaqMode || !canSend"
             @click="showMessageImage = true"
@@ -286,6 +299,7 @@
             class="dark-btn q-mt-md"
             :disable="isBot || !canSend"
             @click="sendMessage"
+            :size="bottomButtonSize"
           />
         </div>
       </template>
@@ -420,7 +434,6 @@ import {
   closeBot,
 } from "src/api/messaging";
 import { ChatTypes } from "src/constants/ChatKeyword";
-import ChatConversationButton from "./ChatConversationButton.vue";
 import {
   Direction,
   Product,
@@ -439,6 +452,7 @@ import MessageImageDialog from "src/components/Messaging/MessageImageDialog.vue"
 import FilePreviewDialog from "src/components/Messaging/FilePreviewDialog.vue";
 import ChatMessage from "./ChatMessage.vue";
 import profileIcon from "src/assets/images/profileicon.svg";
+import ChatMembersBar from "./ChatMembersBar.vue";
 
 interface HasMore {
   [key: string]: boolean;
@@ -580,9 +594,9 @@ const getSeparator = (index: number) => {
   return "";
 };
 
-const toogleChatOption = () => {
-  showChatOption.value = !showChatOption.value;
-};
+// const toogleChatOption = () => {
+//   showChatOption.value = !showChatOption.value;
+// };
 
 // const nameEn = computed<string>(() => {
 //   return getChatNameEn(getSelectedChat.value, true);
@@ -776,16 +790,20 @@ const closeChat = async () => {
   leftDrawerOpen.value = true;
 };
 
-const initialName = (name: string) => {
-  const firstName = name.split(" ")[0];
-  let initial = firstName.charAt(0).toUpperCase();
+const bottomButtonSize = computed(() => {
+  return isMobile.value ? "sm" : "md";
+});
 
-  if (name.split(" ").length !== 1) {
-    const lastName = name.split(" ")[1];
-    initial += lastName.charAt(0).toUpperCase();
-  }
-  return initial;
-};
+// const initialName = (name: string) => {
+//   const firstName = name.split(" ")[0];
+//   let initial = firstName.charAt(0).toUpperCase();
+
+//   if (name.split(" ").length !== 1) {
+//     const lastName = name.split(" ")[1];
+//     initial += lastName.charAt(0).toUpperCase();
+//   }
+//   return initial;
+// };
 
 const showCustomerInfo = async () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
