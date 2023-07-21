@@ -339,6 +339,7 @@ const chooseCustomer = async (customer: any) => {
   const chat = await getChatByID(data.id);
   if (chat) {
     chat.last_message = JSON.parse(chat.last_message);
+    chat.admin = userInfoStore.getUserProfile?.id;
     messagingStore.updateChatsList(chat); // if chat is NOT on screen
     messagingStore.setChatsLastMessage(data.id, chat.last_message);
     messagingStore.setSelectedTab(chat.status);
