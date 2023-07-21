@@ -9,6 +9,11 @@ import useUserInfoStore from "stores/modules/userInfo";
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
+const orqApi = axios.create({
+  baseURL: process.env.ORQ_API,
+  withCredentials: false,
+});
+
 const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
 
 if (userinfo) {
@@ -22,8 +27,6 @@ const api = axios.create({
 // different axios instance to handle the refresh token. Because
 // refresh token need new instance of axios
 const axiosInstance = axios.create({ baseURL: process.env.BACKEND_URL });
-
-const publicApi = axios.create({ baseURL: process.env.PUBLIC_API });
 
 export default boot(({ app, store, router }) => {
   console.log("boot: axios.js");
@@ -61,7 +64,7 @@ export default boot(({ app, store, router }) => {
   app.config.globalProperties.$axios = axios;
 
   app.config.globalProperties.$api = api;
-  app.config.globalProperties.$publicApi = publicApi;
+  app.config.globalProperties.$orqApi = orqApi;
 });
 
-export { api, axiosInstance, publicApi };
+export { api, axiosInstance, orqApi };

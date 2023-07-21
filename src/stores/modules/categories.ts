@@ -40,7 +40,7 @@ const useCategoriesStore = defineStore("categoriesStore", {
         if (item !== null) {
           obj = {
             ...item,
-            image: `${process.env.PUBLIC_API}/assets/${item.icon}`,
+            image: `${process.env.ORQ_API}/assets/${item.icon}`,
             openCollapse: false,
           };
         }
