@@ -8,10 +8,20 @@
         <img class="w-10" src="~assets/images/logo.svg" />
         <p class="font-[800] text-[#231815] text-2xl">ChaQ</p>
       </router-link>
-      <div v-if="errSocket" class="logo-holder mb-3 flex items-center gap-3">
-        <p class="font-[800] text-[#231815] text-2xl">
+      <div
+        v-if="errSocket"
+        class="logo-holder mb-3 flex row items-center gap-3"
+      >
+        <div class="font-[600] text-[#231815] text-h5 col-9">
           Refresh Your Page to Connect to Chats
-        </p>
+        </div>
+        <q-btn
+          @click="refreshPage"
+          color="primary"
+          round
+          icon="refresh"
+          size="md"
+        />
       </div>
       <q-input
         v-model="searchText"
@@ -251,6 +261,10 @@ const tabsTip = computed(() => {
   return result;
 });
 
+const refreshPage = () => {
+  window.location.reload();
+};
+
 // watch(chatsList, (list) => {
 //   list.forEach((chat) => {
 //     console.log("SOCKET: join_chat by chat_id.........");
@@ -326,9 +340,7 @@ const fetchContacts = async () => {
 
 const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
-  // const [data] = await startNewChat(customer.id, customer.contact_number);
   const [data] = await startNewChat(customer.id, customer.contact_number);
-
   // const response = await getCustomer(customer.id);
   // const customerObj = response.data.data;
   customerStore.setCustomer(customer);
@@ -338,6 +350,10 @@ const chooseCustomer = async (customer: any) => {
 
   const chat = await getChatByID(data.id);
   if (chat) {
+    const chatlist = chatsList.value.find((list) => list.id === chat.id);
+    if (chatlist) {
+      chat.admin = chatlist.admin;
+    }
     chat.last_message = JSON.parse(chat.last_message);
     messagingStore.updateChatsList(chat); // if chat is NOT on screen
     messagingStore.setChatsLastMessage(data.id, chat.last_message);
@@ -427,10 +443,15 @@ const initSocket = () => {
       );
       if (chat) {
         if (data?.update_fields?.conversation_type) {
-          console.log("  SOCKET: conversation_type");
           messagingStore.changeConversationType(
             chat?.id,
             data?.update_fields?.conversation_type
+          );
+        }
+        if (data?.update_fields?.admin) {
+          messagingStore.changeAdminChatListById(
+            chat?.id,
+            data?.update_fields?.admin
           );
         }
         if (data?.update_fields?.status) {
@@ -491,6 +512,7 @@ const initSocket = () => {
             });
           }
         }
+        messagingStore.sortChatsList();
       }
     });
     socket.value.on("message_created", async (data: SocketMessage) => {
@@ -502,6 +524,7 @@ const initSocket = () => {
           document
         );
       }
+      messagingStore.sortChatsList();
     });
     socket.value.on("contact_created", async (data: any) => {
       console.log("SOCKET: contact_created", data);
@@ -594,6 +617,7 @@ const initSocket = () => {
         }
         socket.value.emit("join_chat", data.id.toString());
       }
+      messagingStore.sortChatsList();
     });
     // the event is removed
     // Should be refactoring
