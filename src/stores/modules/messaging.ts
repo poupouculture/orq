@@ -165,6 +165,7 @@ const useMessagingStore = defineStore("messaging", {
           } else {
             this.chatsList.unshift(chat);
           }
+          this.sortChatsList();
           const cachedMessageIndex = this.cachedChatMessages[chatId]?.findIndex(
             (item) => item.id === lastmessage.id || item.is_cache
           );
@@ -199,6 +200,21 @@ const useMessagingStore = defineStore("messaging", {
       } catch (error) {
         console.log(error);
       }
+    },
+    sortChatsList() {
+      this.chatsList = this.chatsList.sort((a: any, b: any) => {
+        if (
+          a.admin === userInfoStore.getUserProfile?.id &&
+          b.admin !== userInfoStore.getUserProfile?.id
+        )
+          return -1;
+        if (
+          b.admin === userInfoStore.getUserProfile?.id &&
+          a.admin !== userInfoStore.getUserProfile?.id
+        )
+          return 1;
+        return 1;
+      });
     },
     setCustomerInfoMobile(value: boolean) {
       this.showCustomerInfoMobile = value;
@@ -248,6 +264,7 @@ const useMessagingStore = defineStore("messaging", {
         // item.id = item.id.toString(); // ??? 0707
         return item;
       });
+      this.sortChatsList();
     },
     async socketConnect(userInfo: any) {
       console.log(socketUrl);
@@ -463,9 +480,13 @@ const useMessagingStore = defineStore("messaging", {
       return contact;
     },
     changeModeChatListById(id: string, mode: string) {
-      console.log("changeModeChatListById-----");
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].mode = mode;
+    },
+    changeAdminChatListById(id: string, admin: string) {
+      const index = this.chatsList.findIndex((chat) => chat.id === id);
+      this.chatsList[index].admin = admin;
+      this.sortChatsList();
     },
     changeConversationType(id: string, conversationType: string) {
       console.log("  changeConversationType----fnc");
