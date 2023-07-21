@@ -162,6 +162,7 @@ import SearchTableInput from "src/components/SearchTableInput.vue";
 import { formattedActionType } from "src/constants/messageTemplate";
 import useMessagingStore from "src/stores/modules/messaging";
 import { storeToRefs } from "pinia";
+import { Notify } from "quasar";
 
 defineProps({
   modelValue: {
@@ -262,6 +263,13 @@ const send = () => {
   const numbers = listNumbers(bodyMessage.value);
 
   numbers.forEach((num, index) => {
+    if (customVariables.value[index] === "") {
+      Notify.create({
+        message: "Please fill in all the custom variables",
+        color: "negative",
+      });
+      return;
+    }
     bodyMessage.value = bodyMessage.value.replace(
       num,
       customVariables.value[index]
