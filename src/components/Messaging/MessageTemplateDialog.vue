@@ -97,6 +97,7 @@
             </p>
 
             <input
+              required
               type="text"
               class="w-full h-8 px-4 py-1 mt-2 rounded-md border-2 border-primary"
               v-for="(cusVar, index) of customVariables"
