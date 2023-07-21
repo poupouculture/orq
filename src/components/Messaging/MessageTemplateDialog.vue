@@ -95,15 +95,17 @@
             <p class="text-gray-500 mt-2">
               {{ bodyMessage }}
             </p>
-
-            <input
-              required
+            <q-input
               type="text"
-              class="w-full h-8 px-4 py-1 mt-2 rounded-md border-2 border-primary"
+              class="px-4 py-1 mt-2"
+              rounded
+              outlined
               v-for="(cusVar, index) of customVariables"
               v-model="customVariables[index]"
               :key="index"
               :placeholder="'Enter content for {{' + (index + 1) + '}}'"
+              :rules="[(val) => val.length > 0 || 'This is required field.']"
+              ref="textBoxRefs"
             />
           </div>
           <div
@@ -162,7 +164,6 @@ import SearchTableInput from "src/components/SearchTableInput.vue";
 import { formattedActionType } from "src/constants/messageTemplate";
 import useMessagingStore from "src/stores/modules/messaging";
 import { storeToRefs } from "pinia";
-import { Notify } from "quasar";
 
 defineProps({
   modelValue: {
@@ -206,6 +207,8 @@ const messagingStore = useMessagingStore();
 
 const { getSelectedChatPending: isPending, getSelectedChatExpired: isExpired } =
   storeToRefs(messagingStore);
+
+const textBoxRefs = ref([]);
 
 const fetchTemplates = async () => {
   loading.value = true;
@@ -261,15 +264,15 @@ const hideModal = () => {
  */
 const send = () => {
   const numbers = listNumbers(bodyMessage.value);
+  const fail = textBoxRefs.value.some((ref) => {
+    return ref.validate() === false;
+  });
+
+  if (fail) {
+    return;
+  }
 
   numbers.forEach((num, index) => {
-    if (customVariables.value[index] === "") {
-      Notify.create({
-        message: "Please fill in all the custom variables",
-        color: "negative",
-      });
-      return;
-    }
     bodyMessage.value = bodyMessage.value.replace(
       num,
       customVariables.value[index]
