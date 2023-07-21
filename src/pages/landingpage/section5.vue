@@ -12,8 +12,10 @@ const chatFeatures = ref([
 <template>
   <div class="mt-36">
     <div class="flex mt-20 flex-col">
-      <div class="grid pl-5 grid-cols-1 lg:grid-cols-2">
-        <div class="flex flex-col gap-5 pl-20 py-7 border-l-8 border-[#4B44F6]">
+      <div class="grid w-full md:pl-5 grid-cols-1 lg:grid-cols-2">
+        <div
+          class="flex flex-col gap-5 md:pl-20 py-7 md:border-l-8 md:border-[#4B44F6]"
+        >
           <span class="text-[#E12179] tracking-wide text-lg font-normal">
             PAYMENT-LINK
           </span>
@@ -27,11 +29,11 @@ const chatFeatures = ref([
             </span>
           </div>
         </div>
-        <div class="flex justify-center px-3 items-center">
+        <div class="flex justify-center md:px-3 items-center">
           <img class="" :src="payment" alt="" />
         </div>
       </div>
-      <div class="pl-5 mt-4 flex justify-start">
+      <div class="pl-5 mt-4 w-full flex justify-start">
         <div class="w-1/2 flex justify-center">
           <div class="h-5 w-96 bg-[#E12179]" />
         </div>

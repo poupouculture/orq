@@ -27,6 +27,7 @@ import { api } from "boot/axios";
 
 interface Props {
   src?: string;
+  name?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -48,6 +49,15 @@ const getAudioData = async () => {
   const blob = new Blob([data], { type: "audio/wav" });
   source.value.src = (window.URL || window.webkitURL).createObjectURL(blob);
   audio.value.src = (window.URL || window.webkitURL).createObjectURL(blob);
+};
+const download = async () => {
+  const link = document.createElement("a");
+  if (!source.value) {
+    await getAudioData();
+  }
+  link.href = source.value.src;
+  link.download = props.name;
+  link.click();
 };
 
 watch(
@@ -77,5 +87,8 @@ const audioPlay = async () => {
 // });
 onMounted(() => {
   getAudioData();
+});
+defineExpose({
+  download,
 });
 </script>

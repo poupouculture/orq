@@ -53,18 +53,18 @@ function loadVideo(data: any) {
   sourceRef.value.src = url;
   videoRef.value.load();
 }
-// const download = async () => {
-//   const link = document.createElement("a");
-//   if (!originSrc.value) {
-//     await renderImage(true);
-//   }
-//   link.href = originSrc.value;
-//   link.download = props.name;
-//   link.click();
-// };
+const download = async () => {
+  const link = document.createElement("a");
+  if (!sourceRef.value) {
+    await renderVideo();
+  }
+  link.href = sourceRef.value.src;
+  link.download = props.name;
+  link.click();
+};
 
 defineExpose({
-  // download,
+  download,
 });
 </script>
 

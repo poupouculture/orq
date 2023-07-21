@@ -46,6 +46,11 @@
         {{ props.row.is_approved ? "Yes" : "No" }}
       </q-td>
     </template>
+    <template #body-cell-is_meta="props">
+      <q-td :props="props" :class="{ 'cursor-pointer': propsTable.isSimple }">
+        {{ props.row.is_meta ? "Yes" : "No" }}
+      </q-td>
+    </template>
     <template #body-cell-is_email_template="props">
       <q-td
         :props="props"
@@ -195,6 +200,13 @@ const headerColumns = ref([
     align: "center",
     label: "Approved",
     field: "is_approved",
+    sortable: true,
+    classes: "text-black",
+  },
+  {
+    name: "is_meta",
+    align: "center",
+    label: "Meta",
     sortable: true,
     classes: "text-black",
   },

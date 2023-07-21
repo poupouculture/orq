@@ -42,7 +42,21 @@
         color="primary"
         @click="closeReply"
       />
+      <Preview
+        v-if="message.content.type === MessageType.TEMPLATE"
+        :username="message.user_name"
+        :header="header"
+        :headerMessage="messageTemplateComponent(message.content, 'header')"
+        :media="media"
+        :bodyMessage="messageTemplateBody(message.content)"
+        :footerMessage="messageTemplateComponent(message.content, 'footer')"
+        :actionCategory="actionCategory"
+        :actions="actions"
+        :replies="replies"
+        :isRealMessage="isRealMessage"
+      />
       <MessageComponents
+        v-else
         ref="image"
         :isReply="isReply"
         :content="message.content"
@@ -171,6 +185,7 @@ import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import Preview from "../ApplicationProgram/Preview.vue";
 
 const props = defineProps<{
   message: Message;
@@ -180,6 +195,12 @@ const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
 const userStore = useUserInfoStore();
+const header = ref("TEXT");
+const media = ref("None");
+const actionCategory = ref("");
+const actions = ref([]);
+const replies = ref([]);
+const isRealMessage = ref(true);
 
 const isSend = computed(() => {
   if (isChaq.value) {
@@ -200,7 +221,7 @@ const list = [
   {
     icon: "download",
     text: "Download",
-    visible: ["image", "document", "application"],
+    visible: ["image", "document", "application", "video", "audio"],
   },
   { icon: "content_copy", text: "Copy", visible: ["text"] },
 ];
@@ -226,6 +247,7 @@ const onhandleClick = (type: string) => {
       messagingStore.setReplayMessage(props.message);
       break;
     case "Download":
+      console.log(image.value);
       image.value.component.download();
       break;
     case "Copy":
@@ -238,5 +260,52 @@ const onhandleClick = (type: string) => {
 };
 const closeReply = () => {
   messagingStore.setReplayMessage();
+};
+
+const errorRender = (content: any) => {
+  if (content?.error_body) {
+    console.log(content.error_body);
+    const error = content?.error_body;
+    if (error.errors) {
+      if (error.errors.details) {
+        // from derp, to be refactored???
+        return error.errors.details;
+      }
+      // from waba
+      return error.errors[0]?.title;
+    }
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  return "";
+};
+
+const messageTemplateComponent = (content: any, type: string) => {
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
+      (component: any) => component?.type === type
+    );
+    if (component) return component?.parameters[0];
+    return null;
+  }
+
+  return null;
+};
+
+const messageTemplateBody = (content: any) => {
+  // console.log("messageTemplate");
+  if (content.error_body) {
+    return errorRender(content);
+  }
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const bodyComponent = components?.find(
+      (component: any) => component?.type === "body"
+    );
+    if (bodyComponent) return bodyComponent?.parameters[0].text;
+  }
+
+  return content?.template_content || content?.template?.text;
 };
 </script>

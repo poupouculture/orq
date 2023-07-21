@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import logo from "assets/images/logo.svg";
-// import menuIcon from "assets/images/menu.png";
+import menuIcon from "assets/images/menu.png";
 </script>
 
 <template>
@@ -37,9 +37,17 @@ import logo from "assets/images/logo.svg";
       <button class="px-4 py-2 rounded-full bg-white/60 text-white">
         Get started
       </button>
-      <!-- <q-btn class="text-black" size="md" round color="white">
+
+      <q-btn
+        v-if="$q.screen.lt.lg"
+        @click="$emit('open')"
+        class="text-black"
+        size="md"
+        round
+        color="white"
+      >
         <img class="w-[20px]" :src="menuIcon" />
-      </q-btn> -->
+      </q-btn>
     </div>
   </div>
 </template>

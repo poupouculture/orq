@@ -158,6 +158,9 @@ import type { Ref } from "vue";
 import TableComponent from "src/components/ApplicationProgram/TableComponent.vue";
 import Preview from "src/components/ApplicationProgram/Preview.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
+import { formattedActionType } from "src/constants/messageTemplate";
+import useMessagingStore from "src/stores/modules/messaging";
+import { storeToRefs } from "pinia";
 
 defineProps({
   modelValue: {
@@ -176,6 +179,7 @@ const usedTemplate = ref(null);
 const language = ref("");
 const mediaHeader = ["MEDIA", "VIDEO", "IMAGE", "DOCUMENT"];
 const templateName = ref("");
+const isMeta: Ref<boolean> = ref(false);
 const header = ref("");
 const headerMessage = ref("");
 const media = ref("");
@@ -196,8 +200,21 @@ const data = reactive({
   rowsPerPage: 10,
 });
 
+const messagingStore = useMessagingStore();
+
+const { getSelectedChatPending: isPending, getSelectedChatExpired: isExpired } =
+  storeToRefs(messagingStore);
+
 const fetchTemplates = async () => {
   loading.value = true;
+
+  let isMeta = null;
+
+  if (isExpired.value || isPending.value) {
+    isMeta = true;
+  } else if (!isPending.value) {
+    isMeta = false;
+  }
 
   const {
     data: { data: applicationPrograms, meta },
@@ -207,13 +224,14 @@ const fetchTemplates = async () => {
     status: "published",
     isApproved: true,
     search: search.value,
+    isMeta,
   });
   data.applicationPrograms = applicationPrograms;
   data.totalCount = meta?.filter_count;
   loading.value = false;
 };
 
-watch([rowsPerPage, page], () => {
+watch([rowsPerPage, page, isPending], () => {
   fetchTemplates();
 });
 
@@ -255,6 +273,7 @@ const send = () => {
     bodyMessage.value,
     language.value,
     customVariables.value?.length > 0,
+    isMeta.value,
     customVariables.value,
     header.value.toUpperCase(),
     headerMessage.value
@@ -281,10 +300,12 @@ const previewTemplate = (val: any) => {
 };
 
 const useTemplate = (val: any) => {
+  console.log("[message-template dialog] Using template:", val);
   filePreview.value = null;
   customVariables.value = [];
   templateName.value = val.name;
   language.value = val.language;
+  isMeta.value = val.is_meta;
 
   usedTemplate.value = val;
   isPreview.value = false;
@@ -292,6 +313,8 @@ const useTemplate = (val: any) => {
 };
 
 const applyTemplateComponent = (val: any) => {
+  actions.value = Array(2).fill(null);
+  console.log("[message-template-dialog] Previewing template", val);
   if (usedTemplate.value?.json?.components) {
     usedTemplate.value.components = usedTemplate.value?.json?.components;
     val.components = usedTemplate.value?.json?.components;
@@ -310,6 +333,48 @@ const applyTemplateComponent = (val: any) => {
 
     const bodyComponent = val.components.find((c: any) => c?.type === "BODY");
     bodyMessage.value = bodyComponent.text;
+
+    const footerComponents = val.components.find(
+      (c: any) => c?.type === "FOOTER"
+    );
+    footerMessage.value = footerComponents?.text;
+
+    const buttonsComponents = val.components.find(
+      (c: any) => c?.type === "BUTTONS"
+    );
+
+    if (buttonsComponents?.buttons.length > 0) {
+      console.log(
+        "[message-template-dialog] Message template has buttions",
+        buttonsComponents
+      );
+      const firstButtonAction = buttonsComponents.buttons[0].type;
+      actionCategory.value =
+        firstButtonAction === formattedActionType.CALL_PHONE ||
+        firstButtonAction === formattedActionType.VIEW_WEB
+          ? (actionCategory.value = "Call To Action")
+          : (actionCategory.value = "Quick Reply");
+
+      actions.value = buttonsComponents.buttons.map((button, index) => {
+        return {
+          index,
+          label: button.text,
+          type:
+            button.type === "PHONE_NUMBER"
+              ? "Call Phone Number"
+              : "View website",
+          country:
+            button.type === "PHONE_NUMBER"
+              ? button.phone_number?.split(" ")[0]
+              : "Static",
+          value:
+            button.type === "PHONE_NUMBER"
+              ? button.phone_number?.split(" ")[1]
+              : button.url,
+        };
+      });
+    }
+
     const customerVariableCounted = listNumbers(bodyMessage.value).length;
     if (customerVariableCounted > 0) {
       customVariables.value = Array(customerVariableCounted).fill("");
