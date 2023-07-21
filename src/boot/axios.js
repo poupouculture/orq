@@ -23,6 +23,8 @@ const api = axios.create({
 // refresh token need new instance of axios
 const axiosInstance = axios.create({ baseURL: process.env.BACKEND_URL });
 
+const publicApi = axios.create({ baseURL: process.env.PUBLIC_API });
+
 export default boot(({ app, store, router }) => {
   console.log("boot: axios.js");
   const userStore = useUserInfoStore(store);
@@ -59,6 +61,7 @@ export default boot(({ app, store, router }) => {
   app.config.globalProperties.$axios = axios;
 
   app.config.globalProperties.$api = api;
+  app.config.globalProperties.$publicApi = publicApi;
 });
 
-export { api, axiosInstance };
+export { api, axiosInstance, publicApi };

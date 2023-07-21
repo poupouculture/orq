@@ -12,25 +12,26 @@ const routes = [
   },
   {
     path: "/landing",
-    component: () => import("pages/landingpage/index.vue"),
+    component: () => import("layouts/LandingLayout.vue"),
     children: [
       {
         path: "",
         name: "landingpage",
         component: () => import("pages/landingpage/index.vue"),
       },
+      {
+        path: "/landing/categories/",
+        name: "landingcategories",
+        component: () => import("pages/landingpage/categories.vue"),
+      },
+      {
+        path: "/landing/categories/detail/",
+        name: "landingcategoriesdetails",
+        component: () => import("pages/landingpage/categoriesDetail.vue"),
+      },
     ],
   },
-  {
-    path: "/landing/categories",
-    name: "landingcategories",
-    component: () => import("pages/landingpage/categories.vue"),
-  },
-  {
-    path: "/landing/categories/detail",
-    name: "landingcategoriesdetails",
-    component: () => import("pages/landingpage/categoriesDetail.vue"),
-  },
+
   {
     path: "/me",
     name: "me",

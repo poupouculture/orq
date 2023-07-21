@@ -5,11 +5,19 @@ import menuIcon from "assets/images/menu.png";
 
 <template>
   <div class="navbar flex justify-between">
-    <div class="flex justify-center items-center gap-3">
+    <router-link to="/landing" class="flex justify-center items-center gap-3">
       <img class="w-[50px]" :src="logo" alt="logo" />
       <p class="font-[800] text-white text-2xl">ChaQ</p>
-    </div>
+    </router-link>
     <div class="flex items-center gap-5">
+      <router-link
+        :to="{ name: 'landingcategories' }"
+        class="text-white text-lg font-bold"
+        :class="{ hidden: $q.screen.lt.lg }"
+      >
+        Categories
+      </router-link>
+
       <a
         href="#service"
         class="text-white text-lg font-bold"

@@ -1,116 +1,44 @@
 <script setup>
-import { ref } from "vue";
-import beef from "assets/images/productCategories/Beef.png";
-import chicken from "assets/images/productCategories/chicken.png";
-import veal from "assets/images/productCategories/Veal.png";
-import lamb from "assets/images/productCategories/Lamb.png";
-import pork from "assets/images/productCategories/Pork.png";
-import venison from "assets/images/productCategories/Venison.png";
-import duck from "assets/images/productCategories/Duck.png";
-import Turkey from "assets/images/productCategories/Turkey.png";
-import seafood from "assets/images/productCategories/seafood.png";
-import dairy from "assets/images/productCategories/Dairy.png";
-import pastry from "assets/images/productCategories/Pastry.png";
-import grocery from "assets/images/productCategories/Grocery.png";
-import vegetablesFruits from "assets/images/productCategories/VegetablesFruits.png";
-import gourmet from "assets/images/productCategories/Gourmet.png";
-import readytocook from "assets/images/productCategories/ReadyToCook.png";
-import readytoeat from "assets/images/productCategories/ReadyToEat.png";
-import wine from "assets/images/productCategories/Wine.png";
-import other from "assets/images/productCategories/Other.png";
+import { ref, computed } from "vue";
+import Hero from "src/components/LandingPage/hero.vue";
+import BaseTable from "src/components/BaseTable.vue";
+import CategoryList from "src/components/LandingPage/categoryList.vue";
+import SearchTableInput from "src/components/SearchTableInput.vue";
+import useCategories from "src/stores/modules/categories";
 
-const selectedProducts = ref([]);
+const categories = useCategories();
+
+const dialog = ref(false);
 const selectedTables = ref([]);
-const products = ref([
-  {
-    label: "Beef",
-    img: beef,
-  },
-  {
-    label: "veal",
-    img: veal,
-  },
-  {
-    label: "lamb",
-    img: lamb,
-  },
-  {
-    label: "pork",
-    img: pork,
-  },
-  {
-    label: "venison",
-    img: venison,
-  },
-  {
-    label: "chiken",
-    img: chicken,
-  },
-  {
-    label: "duck",
-    img: duck,
-  },
-  {
-    label: "turkey",
-    img: Turkey,
-  },
-  {
-    label: "seefood",
-    img: seafood,
-  },
-  {
-    label: "dairy",
-    img: dairy,
-  },
-  {
-    label: "pastry & confectionery",
-    img: pastry,
-  },
-  {
-    label: "Grocery",
-    img: grocery,
-  },
-  {
-    label: "Vegetables & Fruits",
-    img: vegetablesFruits,
-  },
-  {
-    label: "Gourmet fine food",
-    img: gourmet,
-  },
-  {
-    label: "ready to cook solution",
-    img: readytocook,
-  },
-  {
-    label: "ready to eat solution",
-    img: readytoeat,
-  },
-  {
-    label: "wine and beverage",
-    img: wine,
-  },
-  {
-    label: "other",
-    img: other,
-  },
-]);
+const query = ref("");
+const searchLoading = ref(false);
+
+const products = computed(() => {
+  return categories.getProducts;
+});
 
 const columns = [
   {
-    name: "desc",
+    name: "name",
     required: true,
-    label: "Description",
+    label: "Name",
     align: "left",
     field: (row) => row.name,
     format: (val) => `${val}`,
     sortable: true,
   },
   {
-    name: "specification",
+    name: "description",
     align: "center",
     label: "Specification",
-    field: "specification",
+    field: "description",
+    sortable: true,
+  },
+  {
+    name: "brand",
+    align: "center",
+    label: "Brand",
+    field: "brand",
     sortable: true,
   },
   {
@@ -120,82 +48,110 @@ const columns = [
     field: "country",
     sortable: true,
   },
-  { name: "category", align: "center", label: "Category", field: "category" },
+  { name: "cat2", align: "center", label: "Category", field: "cat2" },
 ];
 
-const rows = [
-  {
-    name: "VEG X3000/X7940/X7941 TATER PUFF USA.(6X5LB)",
-    specification: "6X5LB/CTN",
-    country: "USA",
-    category: "VEGETABLES & FRUITS",
-  },
-];
+// Methods
+
+const searchHandler = async (searchValue = "") => {
+  query.value = searchValue;
+
+  if (searchValue.length === 0) return;
+
+  searchLoading.value = true;
+  try {
+    await categories.searchProduct();
+
+    searchLoading.value = false;
+  } catch (error) {
+    searchLoading.value = false;
+  }
+};
+
+const resetSearch = () => {
+  query.value = "";
+};
 </script>
 
 <template>
+  <Hero class="justify-center">
+    <div class="w-full">
+      <div
+        class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
+      >
+        <p class="">Products categories details</p>
+      </div>
+    </div>
+  </Hero>
+
   <div class="w-full flex justify-center min-h-screen mt-20">
     <div class="container grid grid-cols-12 gap-4">
-      <div class="col-span-3 flex flex-col p-5">
+      <div class="col-span-12 lg:col-span-4 flex flex-col p-5">
         <div>
-          <q-input placeholder="Search" outlined dense class="bg-white">
-            <template v-slot:prepend>
-              <q-icon name="search" color="teal-1" />
-            </template>
-          </q-input>
+          <SearchTableInput
+            :loading="searchLoading"
+            @search="searchHandler"
+            @reset="resetSearch"
+          />
         </div>
 
         <div class="mt-3 flex flex-col">
           <q-expansion-item
-            v-for="(product, index) in products"
-            :key="index"
-            class="w-full"
-            :expand-icon-toggle="false"
+            expand-separator
+            label="Categories"
+            class="block lg:!hidden"
           >
-            <template #header>
-              <q-item-section avatar>
-                <q-checkbox
-                  size="xs"
-                  :val="product.label"
-                  v-model="selectedProducts"
-                />
-              </q-item-section>
-
-              <q-item-section class="text-capitalize">
-                {{ product.label }}
-              </q-item-section>
-            </template>
-
-            <q-card>
-              <q-card-section class="py-0">
-                <q-list dense padding class="rounded-borders">
-                  <q-item v-for="item in 5" :key="item" clickable v-ripple>
-                    <q-item-section avatar>
-                      <q-checkbox size="xs" val="beef1" />
-                    </q-item-section>
-                    <q-item-section>
-                      {{ product.label }} {{ item }}
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-card-section>
-            </q-card>
+            <CategoryList />
           </q-expansion-item>
+
+          <div class="hidden lg:!block">
+            <CategoryList />
+          </div>
         </div>
       </div>
-      <div class="col-span-9 p-5">
-        <q-table
-          flat
-          bordered
-          title="Categories"
-          :rows="rows"
+      <div class="col-span-12 lg:col-span-8 p-5">
+        <div class="w-full flex justify-end py-4">
+          <q-btn @click="dialog = !dialog" push color="primary" label="Preview">
+            <q-badge v-if="selectedTables.length > 0" color="orange" floating>
+              {{ selectedTables.length }}
+            </q-badge>
+          </q-btn>
+        </div>
+
+        <BaseTable
+          :rows="products"
+          :loading="false"
           :columns="columns"
-          row-key="name"
-          selection="multiple"
           v-model:selected="selectedTables"
         />
       </div>
     </div>
+
+    <q-dialog v-model="dialog">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Pdf Product</div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-section style="max-height: 50vh" class="scroll">
+          <p v-for="n in 15" :key="n">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+            repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
+            perferendis totam, ea at omnis vel numquam exercitationem aut, natus
+            minima, porro labore.
+          </p>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right">
+          <q-btn flat label="Decline" color="primary" v-close-popup />
+          <q-btn flat label="Accept" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
