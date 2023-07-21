@@ -12,34 +12,38 @@
     :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
     <div
-      class="relative rounded max-w-[60%] px-3 py-2"
+      class="relative rounded px-3 py-2"
       :class="[
         isSend
           ? 'text-white rounded-br-none bg-primary'
           : 'text-[#2E2E3A] rounded-tl-none bg-[#E8E7FB]',
+        isReply ? 'w-full !rounded-lg' : 'max-w-[60%]',
       ]"
     >
-      <span
-        v-if="!isSend"
-        class="bottom-full left-0 scale-90 origin-left text-black text-semibold"
-      >
-        {{ !isChaq ? message.contact_name : message.user_name }}
-      </span>
-      <span
-        v-if="isSend"
-        class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
-      >
-        {{ message.user_name }}
-        <!-- ??? todo, jimmy comment out user_name {{ message.user_name }} -->
-      </span>
+      <template v-if="!isReply">
+        <span
+          v-if="!isSend"
+          class="bottom-full left-0 scale-90 origin-left text-black text-semibold"
+        >
+          {{ !isChaq ? message.contact_name : message.user_name }}
+        </span>
+        <span
+          v-if="isSend"
+          class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
+        >
+          {{ message.user_name }}
+          <!-- ??? todo, jimmy comment out user_name {{ message.user_name }} -->
+        </span>
+      </template>
       <q-btn
         v-if="isReply"
-        class="absolute -top-4 -right-6"
+        class="absolute -top-2 -right-2"
+        :class="[isSend ? 'text-black' : '']"
         round
         dense
         size="xs"
         icon="close"
-        color="primary"
+        :color="isSend ? 'white' : 'primary'"
         @click="closeReply"
       />
       <Preview
