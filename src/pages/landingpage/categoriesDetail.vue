@@ -111,8 +111,14 @@ const resetSearch = () => {
       </div>
       <div class="col-span-12 lg:col-span-8 p-5">
         <div class="w-full flex justify-end py-4">
-          <q-btn @click="dialog = !dialog" push color="primary" label="Preview">
-            <q-badge v-if="selectedTables.length > 0" color="orange" floating>
+          <q-btn
+            v-if="selectedTables.length > 0"
+            @click="dialog = !dialog"
+            push
+            color="primary"
+            label="Preview"
+          >
+            <q-badge color="orange" floating>
               {{ selectedTables.length }}
             </q-badge>
           </q-btn>
@@ -136,12 +142,11 @@ const resetSearch = () => {
         <q-separator />
 
         <q-card-section style="max-height: 50vh" class="scroll">
-          <p v-for="n in 15" :key="n">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
-            repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
-            perferendis totam, ea at omnis vel numquam exercitationem aut, natus
-            minima, porro labore.
-          </p>
+          <BaseTable
+            :rows="selectedTables"
+            :loading="false"
+            :columns="columns"
+          />
         </q-card-section>
 
         <q-separator />

@@ -44,6 +44,10 @@ const checkList = (categories) => {
   }
 };
 
+const prodctsChoose = (value) => {
+  categoriesStore.storeProduct([value]);
+};
+
 onMounted(() => {
   categoriesStore.getAll();
 });
@@ -85,6 +89,7 @@ onMounted(() => {
               <q-checkbox
                 v-model="selectedProducts"
                 size="xs"
+                @click="prodctsChoose(item)"
                 :val="item.product_id.id"
               />
             </q-item-section>

@@ -35,7 +35,7 @@ const useCategoriesStore = defineStore("categoriesStore", {
     async getAll() {
       const { data } = await getCategories();
 
-      this.items = data.data.map((item: any) => {
+      this.items = data?.data.map((item: any) => {
         let obj = {};
         if (item !== null) {
           obj = {
