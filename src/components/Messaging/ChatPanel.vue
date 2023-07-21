@@ -326,9 +326,7 @@ const fetchContacts = async () => {
 
 const chooseCustomer = async (customer: any) => {
   customerStore.$reset();
-  // const [data] = await startNewChat(customer.id, customer.contact_number);
   const [data] = await startNewChat(customer.id, customer.contact_number);
-
   // const response = await getCustomer(customer.id);
   // const customerObj = response.data.data;
   customerStore.setCustomer(customer);
@@ -338,8 +336,11 @@ const chooseCustomer = async (customer: any) => {
 
   const chat = await getChatByID(data.id);
   if (chat) {
+    const chatlist = chatsList.value.find((list) => list.id === chat.id);
+    if (chatlist) {
+      chat.admin = chatlist.admin;
+    }
     chat.last_message = JSON.parse(chat.last_message);
-    chat.admin = userInfoStore.getUserProfile?.id;
     messagingStore.updateChatsList(chat); // if chat is NOT on screen
     messagingStore.setChatsLastMessage(data.id, chat.last_message);
     messagingStore.setSelectedTab(chat.status);
