@@ -1,4 +1,4 @@
-import { api } from "boot/axios";
+import { api, socketApi } from "boot/axios";
 import { ChatKeywords, ChatTypes } from "../constants/ChatKeyword";
 import {
   SendTextMessage,
@@ -319,5 +319,16 @@ export const initiateBot = async (
 
 export const closeBot = async (chatId: string) => {
   const { data } = await api.get(`/dialogflow/close-bot/${chatId}`);
+  return data;
+};
+
+export const searchMessages = async ({ chatId, userId, keyword }) => {
+  const encodedKeyword = encodeURIComponent(keyword);
+  const result = await socketApi.get(
+    `/search/messages/${encodedKeyword}/${chatId}/${userId}`
+  );
+
+  console.log("[search-messages] result", result);
+  const { data } = result;
   return data;
 };
