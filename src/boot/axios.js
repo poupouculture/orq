@@ -18,6 +18,10 @@ const api = axios.create({
   baseURL: process.env.BACKEND_URL,
   withCredentials: true,
 });
+const socketApi = axios.create({
+  baseURL: process.env.SOCKETS_URL,
+  withCredentials: true,
+});
 
 // different axios instance to handle the refresh token. Because
 // refresh token need new instance of axios
@@ -61,4 +65,4 @@ export default boot(({ app, store, router }) => {
   app.config.globalProperties.$api = api;
 });
 
-export { api, axiosInstance };
+export { api, socketApi, axiosInstance };
