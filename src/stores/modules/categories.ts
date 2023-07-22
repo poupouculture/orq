@@ -37,12 +37,23 @@ const useCategoriesStore = defineStore("categoriesStore", {
 
       this.items = data?.data.map((item: any) => {
         let obj = {};
+
         if (item !== null) {
           obj = {
             ...item,
             image: `${process.env.ORQ_API}/assets/${item.icon}`,
             openCollapse: false,
+            product: [],
           };
+
+          if (item.product.length > 0) {
+            obj.product = item.product.map((product) => {
+              return {
+                ...product,
+                active: false,
+              };
+            });
+          }
         }
 
         return obj;
@@ -74,6 +85,11 @@ const useCategoriesStore = defineStore("categoriesStore", {
 
         this.products.push(obj);
       });
+    },
+    deleteProduct(id: number) {
+      const productIndex = this.products.findIndex((item) => item.id === id);
+
+      this.products.splice(productIndex, 1);
     },
     async storeProduct(item: []) {
       item.forEach((value) => {

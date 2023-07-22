@@ -51,6 +51,9 @@ const openDrawer = () => {
 
     <q-drawer v-model="leftDrawerOpen" side="left" bordered>
       <q-list padding class="rounded-borders">
+        <q-item :to="{ name: 'landingcategoriesdetails' }" clickable v-ripple>
+          <q-item-section> Categories </q-item-section>
+        </q-item>
         <q-item clickable v-ripple>
           <q-item-section> Services </q-item-section>
         </q-item>
