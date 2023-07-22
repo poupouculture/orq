@@ -343,7 +343,6 @@ export const searchMessages = async ({ chatId, userId, keyword }) => {
     `/search/messages/${encodedKeyword}/${chatId}/${userId}`
   );
 
-  console.log("[search-messages] result", result);
   const { data } = result;
   return data;
 };
