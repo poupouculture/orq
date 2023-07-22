@@ -20,7 +20,9 @@ const api = axios.create({
 });
 const socketApi = axios.create({
   baseURL: process.env.SOCKETS_URL,
-  withCredentials: true,
+  headers: {
+    Authorization: userinfo.access_token,
+  },
 });
 
 // different axios instance to handle the refresh token. Because
