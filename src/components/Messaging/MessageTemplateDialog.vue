@@ -95,14 +95,14 @@
             <p class="text-gray-500 mt-2">
               {{ bodyMessage }}
             </p>
-
-            <input
+            <SlimInput
               type="text"
-              class="w-full h-8 px-4 py-1 mt-2 rounded-md border-2 border-primary"
               v-for="(cusVar, index) of customVariables"
               v-model="customVariables[index]"
               :key="index"
               :placeholder="'Enter content for {{' + (index + 1) + '}}'"
+              :rules="[(val) => val.length > 0 || 'This is required field.']"
+              ref="textBoxRefs"
             />
           </div>
           <div
@@ -161,6 +161,7 @@ import SearchTableInput from "src/components/SearchTableInput.vue";
 import { formattedActionType } from "src/constants/messageTemplate";
 import useMessagingStore from "src/stores/modules/messaging";
 import { storeToRefs } from "pinia";
+import SlimInput from "../SlimInput.vue";
 
 defineProps({
   modelValue: {
@@ -192,7 +193,6 @@ const customVariables = ref([]);
 const isPreview = ref(false);
 const uplader: any = ref(null);
 const filePreview: any = ref(null);
-
 const data = reactive({
   applicationPrograms: [],
   totalCount: 0,
@@ -204,6 +204,8 @@ const messagingStore = useMessagingStore();
 
 const { getSelectedChatPending: isPending, getSelectedChatExpired: isExpired } =
   storeToRefs(messagingStore);
+
+const textBoxRefs = ref([]);
 
 const fetchTemplates = async () => {
   loading.value = true;
@@ -257,8 +259,17 @@ const hideModal = () => {
 /**
  * emits "send" event to trigger send message template
  */
-const send = () => {
+const send = async () => {
   const numbers = listNumbers(bodyMessage.value);
+  const validations = await Promise.allSettled(
+    textBoxRefs.value.map(async (ref) => await ref.validate())
+  );
+
+  const fail = validations.some((validation) => validation.value === false);
+
+  if (fail) {
+    return;
+  }
 
   numbers.forEach((num, index) => {
     bodyMessage.value = bodyMessage.value.replace(
