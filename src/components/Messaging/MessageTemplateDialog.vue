@@ -95,11 +95,8 @@
             <p class="text-gray-500 mt-2">
               {{ bodyMessage }}
             </p>
-            <q-input
+            <SlimInput
               type="text"
-              class="px-4 py-1 mt-2"
-              rounded
-              outlined
               v-for="(cusVar, index) of customVariables"
               v-model="customVariables[index]"
               :key="index"
@@ -164,6 +161,7 @@ import SearchTableInput from "src/components/SearchTableInput.vue";
 import { formattedActionType } from "src/constants/messageTemplate";
 import useMessagingStore from "src/stores/modules/messaging";
 import { storeToRefs } from "pinia";
+import SlimInput from "../SlimInput.vue";
 
 defineProps({
   modelValue: {
@@ -195,7 +193,6 @@ const customVariables = ref([]);
 const isPreview = ref(false);
 const uplader: any = ref(null);
 const filePreview: any = ref(null);
-
 const data = reactive({
   applicationPrograms: [],
   totalCount: 0,
@@ -262,11 +259,13 @@ const hideModal = () => {
 /**
  * emits "send" event to trigger send message template
  */
-const send = () => {
+const send = async () => {
   const numbers = listNumbers(bodyMessage.value);
-  const fail = textBoxRefs.value.some((ref) => {
-    return ref.validate() === false;
-  });
+  const validations = await Promise.allSettled(
+    textBoxRefs.value.map(async (ref) => await ref.validate())
+  );
+
+  const fail = validations.some((validation) => validation.value === false);
 
   if (fail) {
     return;
