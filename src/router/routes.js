@@ -11,7 +11,7 @@ const routes = [
     ],
   },
   {
-    path: "/landing",
+    path: "/us",
     component: () => import("layouts/LandingLayout.vue"),
     children: [
       {
@@ -20,12 +20,12 @@ const routes = [
         component: () => import("pages/landingpage/index.vue"),
       },
       {
-        path: "/landing/categories/",
+        path: "/us/products/",
         name: "landingcategories",
         component: () => import("pages/landingpage/categories.vue"),
       },
       {
-        path: "/landing/categories/detail/",
+        path: "/us/products/detail/",
         name: "landingcategoriesdetails",
         component: () => import("pages/landingpage/categoriesDetail.vue"),
       },
