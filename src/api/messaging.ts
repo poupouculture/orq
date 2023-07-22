@@ -337,10 +337,10 @@ export const closeBot = async (chatId: string) => {
   return data;
 };
 
-export const searchMessages = async ({ chatId, userId, keyword }) => {
+export const searchMessages = async ({ chatId, keyword }) => {
   const encodedKeyword = encodeURIComponent(keyword);
   const result = await socketApi.get(
-    `/search/messages/${encodedKeyword}/${chatId}/${userId}`
+    `/search/messages/${chatId}/${encodedKeyword}`
   );
 
   const { data } = result;
