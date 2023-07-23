@@ -638,7 +638,6 @@ const setCanSend = (val: boolean) => {
  */
 const channelIdentity = computed<string>(() => {
   let envMetaPhoneNumberId = process.env.META_PHONE_NUMBER_ID as string;
-  debugger;
   console.log(envMetaPhoneNumberId);
   if (!envMetaPhoneNumberId) {
     envMetaPhoneNumberId = "";
