@@ -24,7 +24,6 @@
         />
       </div>
       <q-input
-        v-if="canGlobalSearch"
         v-model="searchText"
         placeholder="Search Chats on screen..."
         outlined
@@ -65,16 +64,6 @@
           </q-btn>
         </template>
       </q-input>
-      <div class="flex row items-center">
-        <div class="text-h6">Select contact to chat</div>
-        <q-space />
-        <q-btn
-          unelevated
-          color="primary"
-          :icon="chatToggleLabel.state.icon"
-          @click="fetchContacts"
-        />
-      </div>
     </q-item-label>
     <!-- list part -->
     <q-tabs
@@ -215,10 +204,6 @@ type ChatToggleType = {
   // eslint-disable-next-line prettier/prettier
   state: (typeof ChatToggleLabel)[keyof typeof ChatToggleLabel];
 };
-
-const canGlobalSearch = computed(() =>
-  userInfoStore.getPageActionsByPageId("F10", "MessageSearch")
-);
 
 const chatListScroller = ref(null);
 const errSocket = ref(false);
