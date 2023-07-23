@@ -8,6 +8,15 @@
     </div>
   </div>
   <div
+    v-if="message.type === MessageType.LOG"
+    class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
+  >
+    <div class="text-center inline-block text-xs px-1.5 text-[#9A9AAF]">
+      {{ message.content.text }}
+    </div>
+  </div>
+  <div
+    v-else
     class="flex"
     :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
