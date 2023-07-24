@@ -1,13 +1,21 @@
 <script setup>
 import { onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 import Hero from "src/components/LandingPage/hero.vue";
 import useCategories from "src/stores/modules/categories";
 
 const categories = useCategories();
+const router = useRouter();
 
 const allCategories = computed(() => {
   return categories.allCategories;
 });
+
+const moveToDetails = async (id) => {
+  localStorage.setItem("categoryId", id);
+
+  router.push({ name: "landingcategoriesdetails" });
+};
 
 onMounted(() => {
   categories.getAll();
@@ -27,8 +35,8 @@ onMounted(() => {
 
   <div class="w-full flex justify-center flex-col min-h-screen items-center">
     <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-      <router-link
-        :to="{ name: 'landingcategoriesdetails' }"
+      <button
+        @click="moveToDetails(data.id)"
         v-for="(data, index) in allCategories"
         :key="index"
         class="justify-center items-center flex flex-col gap-3"
@@ -38,7 +46,7 @@ onMounted(() => {
         <span class="text-uppercase">
           {{ data.name }}
         </span>
-      </router-link>
+      </button>
     </div>
   </div>
 </template>

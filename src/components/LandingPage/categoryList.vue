@@ -1,16 +1,21 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { LocalStorage } from "quasar";
+import { storeToRefs } from "pinia";
 import useCategories from "src/stores/modules/categories";
 
 const categoriesStore = useCategories();
+const { allCategories } = storeToRefs(categoriesStore);
 
 // Ref
 const selectedCategories = ref([]);
 const selectedProducts = ref([]);
+const selectedV2 = ref([]);
+const selectedV3 = ref([]);
 
 // Computed
-const allCategories = computed(() => {
-  return categoriesStore.allCategories;
+const allCategoriesValue = computed(() => {
+  return allCategories.value;
 });
 
 // Methods
@@ -44,26 +49,28 @@ const checkList = (categories) => {
   }
 };
 
-const productsChoose = (value) => {
-  if (value.active) {
-    categoriesStore.deleteProduct(value.product_id.id);
+// const productsChoose = (value) => {
+//   if (value.active) {
+//     categoriesStore.deleteProduct(value.product_id.id);
 
-    value.active = false;
-  } else {
-    value.active = true;
-    categoriesStore.storeProduct([value]);
-  }
-};
+//     value.active = false;
+//   } else {
+//     value.active = true;
+//     categoriesStore.storeProduct([value]);
+//   }
+// };
 
 onMounted(() => {
-  categoriesStore.getAll();
+  const categoryId = JSON.parse(LocalStorage.getItem("categoryId"));
+
+  if (categoryId) selectedCategories.value.push(categoryId);
 });
 </script>
 
 <template>
   <q-expansion-item
-    v-for="(categories, index) in allCategories"
-    :key="index"
+    v-for="(categories, parentIndex) in allCategoriesValue"
+    :key="parentIndex"
     class="w-full"
     v-model="categories.openCollapse"
     :expand-icon-toggle="false"
@@ -85,25 +92,74 @@ onMounted(() => {
 
     <q-card>
       <q-card-section class="py-0">
-        <q-list dense padding class="rounded-borders">
+        <q-list
+          v-for="(lvl2, lvl2Index) in categories.children"
+          :key="lvl2Index"
+          dense
+          padding
+          class="rounded-borders"
+        >
           <q-item
-            v-for="(item, index) in categories.product"
-            :key="index"
             clickable
             v-ripple
+            v-if="!lvl2.hasOwnProperty('openCollapse')"
           >
             <q-item-section avatar>
               <q-checkbox
-                v-model="selectedProducts"
+                v-model="selectedV2"
                 size="xs"
-                @click="productsChoose(item)"
-                :val="item.product_id.id"
+                :val="{ parentIndex, lvl2Index }"
               />
             </q-item-section>
             <q-item-section>
-              {{ item.product_id.cat2 }}
+              {{ lvl2.name }}
             </q-item-section>
           </q-item>
+
+          <template v-else>
+            <q-expansion-item
+              v-model="lvl2.openCollapse"
+              :expand-icon-toggle="false"
+              class="w-full"
+            >
+              <template #header>
+                <q-item-section avatar>
+                  <q-checkbox
+                    size="xs"
+                    :val="{ parentIndex, lvl2Index }"
+                    v-model="selectedV2"
+                  />
+                </q-item-section>
+
+                <q-item-section class="text-capitalize">
+                  {{ lvl2.name }}
+                </q-item-section>
+              </template>
+
+              <q-card>
+                <q-card-section class="py-0">
+                  <q-list
+                    v-for="(lvl3, lvl3Index) in lvl2.children"
+                    :key="lvl3Index"
+                  >
+                    <q-item clickable v-ripple>
+                      <q-item-section avatar>
+                        <q-checkbox
+                          v-model="selectedV3"
+                          :val="{ parentIndex, lvl2Index, lvl3Index }"
+                          size="xs"
+                        />
+                      </q-item-section>
+
+                      <q-item-section>
+                        {{ lvl3.name }}
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </template>
         </q-list>
       </q-card-section>
     </q-card>

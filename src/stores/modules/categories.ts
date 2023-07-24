@@ -3,6 +3,7 @@ import {
   getCategories,
   getCategoriesById,
   searchProduct,
+  getAllCategoriesMulti,
 } from "src/api/categories";
 
 interface State {
@@ -43,17 +44,7 @@ const useCategoriesStore = defineStore("categoriesStore", {
             ...item,
             image: `${process.env.ORQ_API}/assets/${item.icon}`,
             openCollapse: false,
-            product: [],
           };
-
-          // if (item.product.length > 0) {
-          //   obj.product = item.product.map((product) => {
-          //     return {
-          //       ...product,
-          //       active: false,
-          //     };
-          //   });
-          // }
         }
 
         return obj;
@@ -64,6 +55,34 @@ const useCategoriesStore = defineStore("categoriesStore", {
         total_count: data.total_count,
         filter_count: data.filter_count,
       };
+    },
+    async getCategoriesDetails(id: number) {
+      const { data } = await getAllCategoriesMulti(id);
+      const { children } = data.data;
+
+      let obj = {
+        children: [],
+      };
+      const categoryProductIndex = this.items.findIndex(
+        (dataProduct: any) => dataProduct.id === id
+      );
+
+      obj = {
+        ...this.items[categoryProductIndex],
+        openCollapse: true,
+        children: children.map((lvl2: any) => {
+          const lvl3 = {
+            ...lvl2,
+            openCollapse: false,
+          };
+
+          if (lvl3.children.length === 0) delete lvl3.openCollapse;
+
+          return lvl3;
+        }),
+      };
+
+      this.items[categoryProductIndex] = obj;
     },
     async get(id: number) {
       const { data } = await getCategoriesById(id);

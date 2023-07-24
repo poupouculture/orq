@@ -5,6 +5,25 @@ export const getCategories = async () => {
   return categories;
 };
 
+export const getAllCategoriesMulti = async (id?: number, search?: string) => {
+  const params = {
+    fields: "*.*.*",
+    "filter[name][_eq]": search,
+  };
+
+  if (search === "") delete params["filter[name][_eq]"];
+
+  if (id) {
+    return await orqApi.get(`items/category/${id}`, {
+      params,
+    });
+  } else {
+    return await orqApi.get("items/category/", {
+      params,
+    });
+  }
+};
+
 export const getCategoriesById = async (id: number) => {
   const categories = await orqApi.get(`items/category/${id}`);
   return categories;

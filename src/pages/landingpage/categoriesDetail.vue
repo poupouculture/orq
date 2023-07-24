@@ -1,12 +1,13 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { LocalStorage } from "quasar";
 import Hero from "src/components/LandingPage/hero.vue";
 import BaseTable from "src/components/BaseTable.vue";
 import CategoryList from "src/components/LandingPage/categoryList.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import useCategories from "src/stores/modules/categories";
 
-const categories = useCategories();
+const categoriesStore = useCategories();
 
 const dialog = ref(false);
 const selectedTables = ref([]);
@@ -14,7 +15,7 @@ const query = ref("");
 const searchLoading = ref(false);
 
 const products = computed(() => {
-  return categories.getProducts;
+  return categoriesStore.getProducts;
 });
 
 const columns = [
@@ -60,7 +61,7 @@ const searchHandler = async (searchValue = "") => {
 
   searchLoading.value = true;
   try {
-    await categories.searchProduct();
+    await categoriesStore.searchProduct();
 
     searchLoading.value = false;
   } catch (error) {
@@ -71,6 +72,14 @@ const searchHandler = async (searchValue = "") => {
 const resetSearch = () => {
   query.value = "";
 };
+
+onMounted(async () => {
+  await categoriesStore.getAll();
+
+  categoriesStore.getCategoriesDetails(
+    JSON.parse(LocalStorage.getItem("categoryId"))
+  );
+});
 </script>
 
 <template>
