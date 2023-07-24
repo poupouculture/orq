@@ -225,7 +225,7 @@
                   <q-item>
                     <q-item-section>Office hours</q-item-section>
                     <q-item-section avatar>
-                      <q-toggle :value="false" />
+                      <q-toggle v-model="isOfficeHours" />
                     </q-item-section>
                   </q-item>
                   <q-item
@@ -393,7 +393,7 @@
         <q-item>
           <q-item-section>Office hours</q-item-section>
           <q-item-section avatar>
-            <q-toggle :value="false" />
+            <q-toggle v-model="isOfficeHours" />
           </q-item-section>
         </q-item>
         <q-item
@@ -997,6 +997,8 @@ const sendMessage = async () => {
     console.log(error);
   }
 };
+
+const isOfficeHours = ref(false);
 
 const activateChat = async () => {
   try {
