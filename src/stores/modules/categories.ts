@@ -46,14 +46,14 @@ const useCategoriesStore = defineStore("categoriesStore", {
             product: [],
           };
 
-          if (item.product.length > 0) {
-            obj.product = item.product.map((product) => {
-              return {
-                ...product,
-                active: false,
-              };
-            });
-          }
+          // if (item.product.length > 0) {
+          //   obj.product = item.product.map((product) => {
+          //     return {
+          //       ...product,
+          //       active: false,
+          //     };
+          //   });
+          // }
         }
 
         return obj;
