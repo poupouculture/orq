@@ -222,6 +222,12 @@
                   style="min-width: 100px"
                   class="py-2 px-3 space-y-2"
                 >
+                  <q-item>
+                    <q-item-section>Office hours</q-item-section>
+                    <q-item-section avatar>
+                      <q-toggle :value="false" />
+                    </q-item-section>
+                  </q-item>
                   <q-item
                     v-for="item in botList"
                     :key="item.text"
@@ -384,6 +390,12 @@
         <span>Back</span>
       </div>
       <q-list dense style="min-width: 100px">
+        <q-item>
+          <q-item-section>Office hours</q-item-section>
+          <q-item-section avatar>
+            <q-toggle :value="false" />
+          </q-item-section>
+        </q-item>
         <q-item
           v-for="(item, index) in botList"
           class="hover:bg-gray-200"
