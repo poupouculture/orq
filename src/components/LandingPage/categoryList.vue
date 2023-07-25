@@ -68,6 +68,8 @@ onMounted(() => {
 </script>
 
 <template>
+  (Categories -> {{ selectedCategories }}) (level2-> {{ selectedV2 }}) (level3->
+  {{ selectedV3 }})
   <q-expansion-item
     v-for="(categories, parentIndex) in allCategoriesValue"
     :key="parentIndex"
@@ -105,18 +107,14 @@ onMounted(() => {
             v-if="!lvl2.hasOwnProperty('openCollapse')"
           >
             <q-item-section avatar>
-              <q-checkbox
-                v-model="selectedV2"
-                size="xs"
-                :val="{ parentIndex, lvl2Index }"
-              />
+              <q-checkbox v-model="selectedV2" size="xs" :val="lvl2Index" />
             </q-item-section>
             <q-item-section>
               {{ lvl2.name }}
             </q-item-section>
           </q-item>
 
-          <template v-else>
+          <template v-if="lvl2.children.length > 0">
             <q-expansion-item
               v-model="lvl2.openCollapse"
               :expand-icon-toggle="false"
@@ -124,11 +122,7 @@ onMounted(() => {
             >
               <template #header>
                 <q-item-section avatar>
-                  <q-checkbox
-                    size="xs"
-                    :val="{ parentIndex, lvl2Index }"
-                    v-model="selectedV2"
-                  />
+                  <q-checkbox size="xs" :val="lvl2Index" v-model="selectedV2" />
                 </q-item-section>
 
                 <q-item-section class="text-capitalize">
@@ -146,7 +140,7 @@ onMounted(() => {
                       <q-item-section avatar>
                         <q-checkbox
                           v-model="selectedV3"
-                          :val="{ parentIndex, lvl2Index, lvl3Index }"
+                          :val="lvl3Index"
                           size="xs"
                         />
                       </q-item-section>
