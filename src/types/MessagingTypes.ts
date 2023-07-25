@@ -5,6 +5,7 @@ export const enum Direction {
   INCOMING = "incoming",
 }
 export const enum MessageType {
+  LOG = "log",
   TEXT = "text",
   TEMPLATE = "template",
   IMAGE = "image",

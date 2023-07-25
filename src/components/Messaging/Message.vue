@@ -186,6 +186,10 @@
             :disable="isBot || !canSend"
             @paste="onPaste"
           />
+          <!-- {{ isBot }}
+          {{ isPending }}
+          {{ chaqMode }}
+          {{ canSend }} -->
           <Transition name="fade-scale" appear>
             <div
               ref="waveRef"
@@ -648,7 +652,7 @@ const channelIdentity = computed<string>(() => {
   }
   if (envMetaPhoneNumberId && metaPhoneNumberId !== envMetaPhoneNumberId) {
     setCanSend(false);
-    if (envMetaPhoneNumberId === "ChaQ") {
+    if (metaPhoneNumberId === "ChaQ") {
       setCanSend(true);
     }
   } else {

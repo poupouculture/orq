@@ -31,7 +31,7 @@
             </div>
           </div>
           <q-space v-if="!isMobile" />
-          <SearchBox />
+          <SearchBox v-if="canSearch" />
           <ChatConversationButton
             v-if="!isMobile && selectedChat?.status !== ChatTypes.CLOSED"
           />
@@ -72,9 +72,10 @@
 
 <script setup lang="ts">
 import { ChatTypes } from "src/constants/ChatKeyword";
-import { toRefs } from "vue";
+import { computed, toRefs } from "vue";
 import ChatConversationButton from "./ChatConversationButton.vue";
 import SearchBox from "./SearchBox.vue";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const props = defineProps({
   members: {
@@ -97,6 +98,12 @@ const props = defineProps({
 defineEmits(["update:showChatOption"]);
 
 const { members, showChatOption, selectedChat } = toRefs(props);
+
+const userInfoStore = useUserInfoStore();
+
+const canSearch = computed(() =>
+  userInfoStore.getPageActionsByPageId("F10", "MessageSearch")
+);
 
 const initialName = (name: string) => {
   const firstName = name.split(" ")[0];
