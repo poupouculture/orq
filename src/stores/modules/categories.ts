@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import {
   getCategories,
   getCategoriesById,
-  searchProduct,
+  getProducts,
   getAllCategoriesMulti,
 } from "src/api/categories";
 
@@ -70,16 +70,17 @@ const useCategoriesStore = defineStore("categoriesStore", {
       obj = {
         ...this.items[categoryProductIndex],
         openCollapse: true,
-        children: children.map((lvl2: any) => {
-          const lvl3 = {
-            ...lvl2,
-            openCollapse: false,
-          };
+        children,
+        // children: children.map((lvl2: any) => {
+        //   const lvl3 = {
+        //     ...lvl2,
+        //     openCollapse: false,
+        //   };
 
-          if (lvl3.children.length === 0) delete lvl3.openCollapse;
+        //   if (lvl3.children.length === 0) delete lvl3.openCollapse;
 
-          return lvl3;
-        }),
+        //   return lvl3;
+        // }),
       };
 
       this.items[categoryProductIndex] = obj;
@@ -89,21 +90,10 @@ const useCategoriesStore = defineStore("categoriesStore", {
 
       this.item = data.data;
     },
-    async searchProduct(keyword: string) {
-      const { data } = await searchProduct(keyword);
 
-      data.data.forEach((element: any) => {
-        const obj = {
-          ...element,
-          cat2: "",
-        };
-
-        if (element.category.length > 0) {
-          obj.cat2 = element.category[0].category_id.name;
-        }
-
-        this.products.push(obj);
-      });
+    async getProduct(keyword: string, categories: []) {
+      const { data } = await getProducts(keyword, categories);
+      this.products = data.data;
     },
     deleteProduct(id: number) {
       const productIndex = this.products.findIndex((item) => item.id === id);

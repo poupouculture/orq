@@ -29,10 +29,11 @@ export const getCategoriesById = async (id: number) => {
   return categories;
 };
 
-export const searchProduct = async (search: string) => {
+export const getProducts = async (search?: string, categoryIds?: []) => {
   const product = await orqApi.get("/orders/product", {
     params: {
       search,
+      category_ids: categoryIds?.toString(),
     },
   });
 

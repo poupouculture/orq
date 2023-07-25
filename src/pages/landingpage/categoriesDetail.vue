@@ -1,16 +1,19 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { LocalStorage } from "quasar";
 import Hero from "src/components/LandingPage/hero.vue";
+import ProductCategoryNavigation from "src/components/LandingPage/productCategoryNavigation/index.vue";
 import BaseTable from "src/components/BaseTable.vue";
-import CategoryList from "src/components/LandingPage/categoryList.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
+import { storeToRefs } from "pinia";
 import useCategories from "src/stores/modules/categories";
 
 const categoriesStore = useCategories();
+const { allCategories } = storeToRefs(categoriesStore);
 
 const dialog = ref(false);
 const selectedTables = ref([]);
+const categoriesChoose = ref([]);
 const query = ref("");
 const searchLoading = ref(false);
 
@@ -52,8 +55,18 @@ const columns = [
   { name: "cat2", align: "center", label: "Category", field: "cat2" },
 ];
 
-// Methods
+// Computed
+const allCategoriesValue = computed(() => {
+  return allCategories.value;
+});
 
+// Watch
+
+watch(categoriesChoose, () => {
+  getProduct();
+});
+
+// Methods
 const searchHandler = async (searchValue = "") => {
   query.value = searchValue;
 
@@ -61,12 +74,28 @@ const searchHandler = async (searchValue = "") => {
 
   searchLoading.value = true;
   try {
-    await categoriesStore.searchProduct();
+    await getProduct();
 
     searchLoading.value = false;
   } catch (error) {
     searchLoading.value = false;
   }
+};
+
+const checklistparent = async (id) => {
+  const getParentExist = categoriesChoose.value.find((item) => item === id);
+
+  if (!getParentExist) return;
+
+  await categoriesStore.getCategoriesDetails(getParentExist);
+};
+
+const getProduct = async () => {
+  categoriesStore.getProduct(query.value, categoriesChoose.value);
+};
+
+const updateCategories = (value) => {
+  categoriesChoose.value = value;
 };
 
 const resetSearch = () => {
@@ -76,9 +105,13 @@ const resetSearch = () => {
 onMounted(async () => {
   await categoriesStore.getAll();
 
-  categoriesStore.getCategoriesDetails(
+  await categoriesStore.getCategoriesDetails(
     JSON.parse(LocalStorage.getItem("categoryId"))
   );
+
+  categoriesChoose.value.push(JSON.parse(LocalStorage.getItem("categoryId")));
+
+  getProduct();
 });
 </script>
 
@@ -110,11 +143,27 @@ onMounted(async () => {
             label="Categories"
             class="block lg:!hidden"
           >
-            <CategoryList />
+            <ProductCategoryNavigation
+              @parentActive="checklistparent"
+              @updateCollapse="data.openCollapse = $event"
+              @update:modelValue="updateCategories"
+              v-for="(data, index) in allCategoriesValue"
+              :navigation="data"
+              :key="index"
+              :category="categoriesChoose"
+            />
           </q-expansion-item>
 
           <div class="hidden lg:!block">
-            <CategoryList />
+            <ProductCategoryNavigation
+              @parentActive="checklistparent"
+              @updateCollapse="data.openCollapse = $event"
+              @update:modelValue="updateCategories"
+              v-for="(data, index) in allCategoriesValue"
+              :navigation="data"
+              :key="index"
+              :category="categoriesChoose"
+            />
           </div>
         </div>
       </div>
