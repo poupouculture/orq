@@ -142,7 +142,7 @@
           :key="getSelectedChatId"
           ref="infiniteScrollRef"
           @load="loadMore"
-          :initial-index="0"
+          :initial-index="initialIndex"
           reverse
           :offset="300"
           :scroll-target="scrollAreaRef"
@@ -598,6 +598,23 @@ const getSeparator = (index: number) => {
   return "";
 };
 
+const selectedSearchResult = computed(
+  () => messagingStore.selectedSearchResult
+);
+
+watch(selectedSearchResult, (value) => {
+  console.log("[messages] Search result selected", value);
+  hasMoreMessage[getSelectedChatId.value] = true;
+  if (value == null) {
+    infiniteScrollRef.value?.setIndex(0);
+  } else {
+    const targetPage = value.total_pages - value.page_no;
+    infiniteScrollRef.value?.setIndex(targetPage);
+  }
+  cachedChatMessages.value[getSelectedChatId.value] = [];
+  infiniteScrollRef.value?.resume();
+});
+
 // const toogleChatOption = () => {
 //   showChatOption.value = !showChatOption.value;
 // };
@@ -726,7 +743,7 @@ const messages = computed<Message[]>(() => {
 const isBot = computed<boolean>(() => getSelectedChat?.value?.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
-  console.log("loadMore:----------------");
+  console.log("[messages] Loading messages from index:", index);
   isLoadMore.value = true;
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
@@ -1178,6 +1195,8 @@ const upload = async (fileList: readonly File[], caption: string) => {
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
+
+const initialIndex = ref<number>(0);
 
 const uploadFile = async (payload: {
   files: readonly File[];

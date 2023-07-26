@@ -15,6 +15,7 @@
     option-label="label"
     use-input
     @filter="filterFn"
+    @clear="clear"
     :input-debounce="250"
     behavior="dialog"
   >
@@ -33,7 +34,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { Platform } from "quasar";
 import { searchMessages } from "src/api/messaging";
 import useMessagingStore from "src/stores/modules/messaging";
@@ -45,6 +46,18 @@ const userInfoStore = useUserInfoStore();
 const isMobile = computed(() => Platform.is.mobile);
 
 const internalValue = ref(null);
+
+watch(internalValue, (v) => {
+  if (v) {
+    messagingStore.fetchChatSearchResult(v.id);
+  }
+});
+
+const clear = () => {
+  internalValue.value = null;
+  messagingStore.resetSearchResult();
+  messagingStore.resetSelectedSearchResult();
+};
 
 const options = ref([]);
 const filterFn = async (value, update, abort) => {
