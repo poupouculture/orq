@@ -1,12 +1,20 @@
-<script setup lang="ts"></script>
+<script setup>
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+</script>
 
 <template>
   <div
-    class="min-h-screen homeHero flex flex-col items-center w-full p-5 lg:p-10"
+    :class="
+      route.name == 'landingpage' ? 'min-h-screen' : 'min-h-screen lg:h-[70vh]'
+    "
+    class="homeHero flex flex-col items-center w-full p-5 lg:p-10"
   >
     <div class="container mt-6">
       <div
-        class="min-h-[90vh] w-full flex flex-col mt-7 lg:px-20 justify-center items-start"
+        :class="route.name == 'landingpage' ? 'min-h-[90vh] ' : 'h-[70vh]'"
+        class="w-full flex flex-col mt-7 lg:px-20 justify-center items-start"
       >
         <div class="container mt-6">
           <slot />

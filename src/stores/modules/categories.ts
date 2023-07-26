@@ -5,6 +5,7 @@ import {
   getProducts,
   getAllCategoriesMulti,
 } from "src/api/categories";
+import { Notify } from "quasar";
 
 interface State {
   items: [] | any;
@@ -35,55 +36,81 @@ const useCategoriesStore = defineStore("categoriesStore", {
   actions: {
     async getAll() {
       try {
-        const { data } = await getCategories();
+        const { data, status } = await getCategories();
 
-        this.items = data?.data.map((item: any) => {
-          let obj = {};
+        if (status !== 200) {
+          Notify.create({
+            message: "Something Wrong",
+            type: "negative",
+            position: "top",
+          });
+        } else {
+          this.items = data?.data.map((item: any) => {
+            let obj = {};
 
-          if (item !== null) {
-            obj = {
-              ...item,
-              image: `${process.env.ORQ_API}/assets/${item.icon}`,
-              openCollapse: false,
-            };
-          }
+            if (item !== null) {
+              obj = {
+                ...item,
+                image: `${process.env.ORQ_API}/assets/${item.icon}`,
+                openCollapse: false,
+              };
+            }
 
-          return obj;
-        });
+            return obj;
+          });
 
-        this.meta = {
-          ...this.meta,
-          total_count: data.total_count,
-          filter_count: data.filter_count,
-        };
+          this.meta = {
+            ...this.meta,
+            total_count: data.total_count,
+            filter_count: data.filter_count,
+          };
+        }
       } catch (error) {}
     },
     async getCategoriesDetails(id: number) {
       try {
-        const { data } = await getAllCategoriesMulti(id);
-        const { children } = data.data;
+        const { data, status } = await getAllCategoriesMulti(id);
 
-        let obj = {
-          children: [],
-        };
-        const categoryProductIndex = this.items.findIndex(
-          (dataProduct: any) => dataProduct.id === id
-        );
+        if (status !== 200) {
+          Notify.create({
+            message: "Something Wrong",
+            type: "negative",
+            position: "top",
+          });
+        } else {
+          const { children } = data.data;
+          let obj = {
+            children: [],
+          };
+          const categoryProductIndex = this.items.findIndex(
+            (dataProduct: any) => dataProduct.id === id
+          );
 
-        obj = {
-          ...this.items[categoryProductIndex],
-          openCollapse: true,
-          children,
-        };
+          obj = {
+            ...this.items[categoryProductIndex],
+            openCollapse: true,
+            children,
+          };
 
-        this.items[categoryProductIndex] = obj;
-      } catch (error) {}
+          this.items[categoryProductIndex] = obj;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     async get(id: number) {
       try {
-        const { data } = await getCategoriesById(id);
+        const { data, status } = await getCategoriesById(id);
 
-        this.item = data.data;
+        if (status !== 200) {
+          Notify.create({
+            message: "Something Wrong",
+            type: "negative",
+            position: "top",
+          });
+        } else {
+          this.item = data.data;
+        }
       } catch (error) {}
     },
 

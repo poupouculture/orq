@@ -1,20 +1,34 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 import Navbar from "src/components/LandingPage/navbar.vue";
+import { Screen } from "quasar";
 import logo from "assets/images/logo.svg";
 
 const leftDrawerOpen = ref(false);
 
-const openDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-};
+const drawer = computed({
+  get() {
+    if (Screen.name === "lg") {
+      return false;
+    } else {
+      return leftDrawerOpen.value;
+    }
+  },
+  set() {
+    leftDrawerOpen.value = false;
+  },
+});
+
+watch(drawer, (value) => {
+  if (!value) leftDrawerOpen.value = false;
+});
 </script>
 
 <template>
   <q-layout view="hHh lpR fFf">
     <div class="w-full p-5 absolute flex justify-center">
       <div class="container">
-        <Navbar @open="openDrawer" />
+        <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
       </div>
     </div>
 
@@ -33,7 +47,8 @@ const openDrawer = () => {
           </div>
 
           <span class="text-white order-3 sm:order-2">
-            Copyright {{ new Date().getFullYear() }} Synque.io
+            Copyright {{ Screen.gt.lg }}
+            {{ new Date().getFullYear() }} Synque.io
           </span>
 
           <div class="flex text-[#4B44F6] sm:order-3 justify-center gap-5">
@@ -49,7 +64,13 @@ const openDrawer = () => {
       </div>
     </q-page-container>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" bordered>
+    <q-drawer
+      mini-to-overlay
+      :show-if-above="false"
+      v-model="drawer"
+      side="left"
+      bordered
+    >
       <q-list padding class="rounded-borders">
         <q-item :to="{ name: 'landingcategoriesdetails' }" clickable v-ripple>
           <q-item-section> Categories </q-item-section>

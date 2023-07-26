@@ -5,7 +5,10 @@ import menuIcon from "assets/images/menu.png";
 
 <template>
   <div class="navbar flex justify-between">
-    <router-link to="/landing" class="flex justify-center items-center gap-3">
+    <router-link
+      :to="{ name: 'landingpage' }"
+      class="flex justify-center items-center gap-3"
+    >
       <img class="w-[50px]" :src="logo" alt="logo" />
       <p class="font-[800] text-white text-2xl">ChaQ</p>
     </router-link>
