@@ -25,6 +25,7 @@ import {
 
 import { ref } from "vue";
 import { io } from "socket.io-client";
+import { getChatUsers } from "src/api/user";
 const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
@@ -37,6 +38,7 @@ const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
       chatsList: [],
+      users: [],
       selectedChatId: "",
       selectedChatPending: false,
       selectedChatExpired: false,
@@ -61,10 +63,22 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id === state.selectedChatId
       ) as IChat;
     },
+    getUserBySelectedChat(state) {
+      const chat = state.chatsList.find(
+        (chat: IChat) => chat.id === state.selectedChatId
+      ) as IChat;
+      return state.users.find((user) => chat.admin === user.user_id);
+    },
     getSelectedChatPending: (state) => state.selectedChatPending,
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
+    async getWabaUsers() {
+      try {
+        const response = await getChatUsers();
+        this.users = response.data;
+      } catch (error) {}
+    },
     setSelectedChatPending(value: boolean) {
       this.selectedChatPending = value;
     },

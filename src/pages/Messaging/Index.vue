@@ -8,7 +8,6 @@
       round
       icon="close"
     />
-
     <!-- Search Customer -->
     <SearchCustomer />
     <div v-if="newCustomer">
@@ -62,8 +61,8 @@
 <script setup lang="ts">
 import { ref, onMounted, inject } from "vue";
 import type { Ref } from "vue";
-import { getChatUsers } from "src/api/user";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
+import useMessagingStore from "src/stores/modules/messaging";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
 
 const enum Tabs {
@@ -71,23 +70,15 @@ const enum Tabs {
   SERVICE_DETAIL = "serviceDetail",
   SERVICE_RECORD = "serviceRecord",
 }
-
-interface Manager {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  role_name: string;
-}
+const messagingStore = useMessagingStore();
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
-const managers: Ref<Array<Manager>> = ref([]);
 const rightDrawerOpen: any = inject("rightDrawerOpen");
 
 onMounted(async () => {
-  const { data } = await getChatUsers();
-  managers.value = data;
+  messagingStore.getWabaUsers();
 });
 
 const closeCustomerInfoMobile = () => {

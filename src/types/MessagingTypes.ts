@@ -110,6 +110,12 @@ export interface ChatSnapshotMessage {
 
 export interface IState {
   chatsList: IChat[];
+  users: Array<{
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    role_name: string;
+  }>;
   selectedChatId: string;
   leftDrawerOpen: boolean;
   rightDrawerOpen: boolean;
