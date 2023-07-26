@@ -21,6 +21,7 @@ import {
   getChatsByType,
   getMessagesById,
   chatbots,
+  setBotConfig,
 } from "src/api/messaging";
 
 import { ref } from "vue";
@@ -50,6 +51,7 @@ const useMessagingStore = defineStore("messaging", {
       replayMessage: {},
       socket,
       botList: [],
+      officeHours: false,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -65,6 +67,16 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
+    async setOfficeHours(value: boolean) {
+      try {
+        const results = await setBotConfig(value);
+        console.log("[messaging] Set office hours", Boolean(results.data[0]));
+        this.officeHours = Boolean(results.data[0]);
+      } catch (error) {
+        console.log("[messaging] Error setting office hour", error);
+        this.officeHours = !value;
+      }
+    },
     setSelectedChatPending(value: boolean) {
       this.selectedChatPending = value;
     },

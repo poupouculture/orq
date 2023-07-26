@@ -122,6 +122,7 @@ export interface IState {
   botList: Bot[];
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
+  officeHours: boolean;
 }
 
 export interface SendTextMessage {
