@@ -66,7 +66,10 @@ const useUserInfoStore = defineStore("userInfo", {
           position: "top",
           type: "positive",
         });
-        this.router.push("/");
+        // this.router.push("/");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1500);
       } catch (err) {
         console.log(err.response, err);
       }
