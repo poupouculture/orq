@@ -34,76 +34,64 @@ const useCategoriesStore = defineStore("categoriesStore", {
   },
   actions: {
     async getAll() {
-      const { data } = await getCategories();
+      try {
+        const { data } = await getCategories();
 
-      this.items = data?.data.map((item: any) => {
-        let obj = {};
+        this.items = data?.data.map((item: any) => {
+          let obj = {};
 
-        if (item !== null) {
-          obj = {
-            ...item,
-            image: `${process.env.ORQ_API}/assets/${item.icon}`,
-            openCollapse: false,
-          };
-        }
+          if (item !== null) {
+            obj = {
+              ...item,
+              image: `${process.env.ORQ_API}/assets/${item.icon}`,
+              openCollapse: false,
+            };
+          }
 
-        return obj;
-      });
+          return obj;
+        });
 
-      this.meta = {
-        ...this.meta,
-        total_count: data.total_count,
-        filter_count: data.filter_count,
-      };
+        this.meta = {
+          ...this.meta,
+          total_count: data.total_count,
+          filter_count: data.filter_count,
+        };
+      } catch (error) {}
     },
     async getCategoriesDetails(id: number) {
-      const { data } = await getAllCategoriesMulti(id);
-      const { children } = data.data;
+      try {
+        const { data } = await getAllCategoriesMulti(id);
+        const { children } = data.data;
 
-      let obj = {
-        children: [],
-      };
-      const categoryProductIndex = this.items.findIndex(
-        (dataProduct: any) => dataProduct.id === id
-      );
+        let obj = {
+          children: [],
+        };
+        const categoryProductIndex = this.items.findIndex(
+          (dataProduct: any) => dataProduct.id === id
+        );
 
-      obj = {
-        ...this.items[categoryProductIndex],
-        openCollapse: true,
-        children,
-        // children: children.map((lvl2: any) => {
-        //   const lvl3 = {
-        //     ...lvl2,
-        //     openCollapse: false,
-        //   };
+        obj = {
+          ...this.items[categoryProductIndex],
+          openCollapse: true,
+          children,
+        };
 
-        //   if (lvl3.children.length === 0) delete lvl3.openCollapse;
-
-        //   return lvl3;
-        // }),
-      };
-
-      this.items[categoryProductIndex] = obj;
+        this.items[categoryProductIndex] = obj;
+      } catch (error) {}
     },
     async get(id: number) {
-      const { data } = await getCategoriesById(id);
+      try {
+        const { data } = await getCategoriesById(id);
 
-      this.item = data.data;
+        this.item = data.data;
+      } catch (error) {}
     },
 
     async getProduct(keyword: string, categories: []) {
-      const { data } = await getProducts(keyword, categories);
-      this.products = data.data;
-    },
-    deleteProduct(id: number) {
-      const productIndex = this.products.findIndex((item) => item.id === id);
-
-      this.products.splice(productIndex, 1);
-    },
-    async storeProduct(item: []) {
-      item.forEach((value) => {
-        this.products.push(value.product_id);
-      });
+      try {
+        const { data } = await getProducts(keyword, categories);
+        this.products = data.data;
+      } catch (error) {}
     },
   },
 });

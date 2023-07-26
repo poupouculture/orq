@@ -145,7 +145,6 @@ onMounted(async () => {
           >
             <ProductCategoryNavigation
               @parentActive="checklistparent"
-              @updateCollapse="data.openCollapse = $event"
               @update:modelValue="updateCategories"
               v-for="(data, index) in allCategoriesValue"
               :navigation="data"
@@ -157,8 +156,8 @@ onMounted(async () => {
           <div class="hidden lg:!block">
             <ProductCategoryNavigation
               @parentActive="checklistparent"
-              @updateCollapse="data.openCollapse = $event"
               @update:modelValue="updateCategories"
+              @update:Collapse="data.openCollapse = false"
               v-for="(data, index) in allCategoriesValue"
               :navigation="data"
               :key="index"

@@ -13,7 +13,7 @@ const props = defineProps({
 const emits = defineEmits([
   "update:modelValue",
   "parentActive",
-  "updateCollpase",
+  "update:Collapse",
 ]);
 
 const value = computed({
@@ -22,13 +22,13 @@ const value = computed({
 });
 
 const collapse = computed({
-  set: (val) => emits("updateCollpase", val),
+  set: (val) => emits("update:Collapse", val),
   get: () => props.navigation.openCollapse,
 });
 </script>
 
 <template>
-  <q-expansion-item v-model="collapse">
+  <q-expansion-item :model-value="collapse">
     <template #header>
       <q-item-section avatar>
         <q-checkbox
