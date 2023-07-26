@@ -999,6 +999,18 @@ const sendMessage = async () => {
 };
 
 const isOfficeHours = ref(false);
+watch(isOfficeHours, (value) => {
+  console.log("Toggling office hours", value);
+  messagingStore.setOfficeHours(value);
+});
+
+// const isOfficeHours = computed({
+//   get: () => messagingStore.officeHours,
+//   set: async (value) => {
+//     console.log("Toggling office hours", value);
+//     messagingStore.setOfficeHours(value);
+//   },
+// });
 
 const activateChat = async () => {
   try {
