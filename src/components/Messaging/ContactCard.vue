@@ -22,8 +22,8 @@
       </q-item-label>
       <q-item-label caption lines="1" :class="{ 'text-white': active }">
         <!-- {{ message ? decodeURIComponent(message) : message }} -->
-        {{ getUserBySelectedChat?.first_name }}
-        {{ getUserBySelectedChat?.last_name }}
+        {{ users.find((user) => user.user_id === data.admin)?.first_name }}
+        {{ users.find((user) => user.user_id === data.admin)?.last_name }}
       </q-item-label>
     </q-item-section>
     <q-item-section side top class="justify-between q-pb-sm">
@@ -133,8 +133,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
-const { selectedChatId, selectedTab, getUserBySelectedChat } =
-  storeToRefs(messagingStore);
+const { selectedChatId, selectedTab, users } = storeToRefs(messagingStore);
 const { getUserProfile } = storeToRefs(userInfoStore);
 
 const active = computed<boolean>(() => props.data.id === selectedChatId.value);

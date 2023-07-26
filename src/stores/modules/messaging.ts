@@ -69,6 +69,11 @@ const useMessagingStore = defineStore("messaging", {
       ) as IChat;
       return state.users.find((user) => chat.admin === user.user_id);
     },
+    getUserByUserId(state) {
+      return state.users.find(
+        (user) => user.user_id === userInfoStore.getUserProfile?.id
+      );
+    },
     getSelectedChatPending: (state) => state.selectedChatPending,
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
