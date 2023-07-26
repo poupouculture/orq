@@ -23,10 +23,11 @@ const api = axios.create({
   baseURL: process.env.BACKEND_URL,
   withCredentials: true,
 });
+
 const socketApi = axios.create({
   baseURL: process.env.SOCKETS_URL,
   headers: {
-    Authorization: userinfo.access_token,
+    Authorization: userinfo?.access_token,
   },
   withCredentials: false,
 });
