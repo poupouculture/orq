@@ -132,6 +132,7 @@ export interface IState {
   selectedChatExpired: boolean;
   searchResults: IChat[];
   selectedSearchResult: ISelectedSearchResult;
+  officeHours: boolean;
 }
 
 export interface SendTextMessage {
