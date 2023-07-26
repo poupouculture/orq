@@ -108,6 +108,14 @@ export interface ChatSnapshotMessage {
   [key: string]: () => void;
 }
 
+export interface ISelectedSearchResult {
+  total_records: number;
+  page_size: number;
+  total_pages: number;
+  record_no: 17;
+  page_no: 2;
+}
+
 export interface IState {
   chatsList: IChat[];
   selectedChatId: string;
@@ -122,6 +130,8 @@ export interface IState {
   botList: Bot[];
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
+  searchResults: IChat[];
+  selectedSearchResult: ISelectedSearchResult;
 }
 
 export interface SendTextMessage {

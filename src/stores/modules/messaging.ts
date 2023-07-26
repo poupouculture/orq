@@ -21,6 +21,7 @@ import {
   getChatsByType,
   getMessagesById,
   chatbots,
+  getChatSearchResultById,
 } from "src/api/messaging";
 
 import { ref } from "vue";
@@ -50,6 +51,8 @@ const useMessagingStore = defineStore("messaging", {
       replayMessage: {},
       socket,
       botList: [],
+      searchResults: [],
+      selectedSearchResult: {},
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -65,6 +68,9 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
+    resetSearchResult() {
+      this.searchResults = [];
+    },
     setSelectedChatPending(value: boolean) {
       this.selectedChatPending = value;
     },
@@ -101,6 +107,9 @@ const useMessagingStore = defineStore("messaging", {
     setConversationType(chat: IChat, conversationType: string) {
       // console.log("fnc-setConversationType");
       chat.conversation_type = conversationType;
+    },
+    resetCachedChatMessages() {
+      this.cachedChatMessages = {};
     },
     /**
      * parse last message and determines the conversation_type
@@ -266,6 +275,17 @@ const useMessagingStore = defineStore("messaging", {
       });
       this.sortChatsList();
     },
+
+    async fetchChatSearchResult(messageId: string) {
+      const { data } = await getChatSearchResultById(messageId);
+      console.log("[fetch-chat-search-result]", data);
+      this.selectedSearchResult = data;
+    },
+
+    async resetSelectedSearchResult() {
+      this.selectedSearchResult = undefined;
+    },
+
     async socketConnect(userInfo: any) {
       console.log(socketUrl);
       socket.value = io(socketUrl, {
