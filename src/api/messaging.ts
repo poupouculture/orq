@@ -67,6 +67,11 @@ export const getContactByChatId = async (id: string) => {
   return data.contacts[0];
 };
 
+export const getChatSearchResultById = async (id: string) => {
+  const { data } = await api.get(`/chat/searched_messages_pages/${id}`);
+  return data;
+};
+
 export const getChatMessagesByChatId = async (
   id: string,
   page = 1,
