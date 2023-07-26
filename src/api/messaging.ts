@@ -6,6 +6,11 @@ import {
   ComponentParameter,
 } from "src/types/MessagingTypes";
 
+export const setBotConfig = async (status: boolean) => {
+  const { data } = await api.get(`/chat/config/bot/${Number(status)}`);
+  return data;
+};
+
 export const getChats = async (limit = 15, pageNumber = 1) => {
   const { data } = await api.get(`/chat/list`, {
     params: {
