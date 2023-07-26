@@ -23,6 +23,7 @@ const socketApi = axios.create({
   headers: {
     Authorization: userinfo.access_token,
   },
+  withCredentials: false,
 });
 
 // different axios instance to handle the refresh token. Because
