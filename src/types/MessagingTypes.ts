@@ -5,6 +5,7 @@ export const enum Direction {
   INCOMING = "incoming",
 }
 export const enum MessageType {
+  LOG = "log",
   TEXT = "text",
   TEMPLATE = "template",
   IMAGE = "image",
@@ -80,6 +81,7 @@ export interface IChat {
   id: string;
   chat_id?: string;
   contacts_id: string;
+  admin: string;
   customers_id: string | null;
   contact_first_name: string;
   contact_last_name: string;
@@ -118,6 +120,8 @@ export interface IState {
   contactNumber: string;
   replayMessage: Message | undefined;
   botList: Bot[];
+  selectedChatPending: boolean;
+  selectedChatExpired: boolean;
 }
 
 export interface SendTextMessage {
@@ -127,6 +131,7 @@ export interface SendTextMessage {
   type: MessageType;
   messageBody: string;
   isTemplate?: boolean;
+  isMeta?: boolean;
   templateName?: string;
   language?: string;
   isIncludedComponent?: boolean;

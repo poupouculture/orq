@@ -203,6 +203,15 @@
         </div>
 
         <div class="label flex flex-col">
+          <p class="text-xl">isMeta</p>
+          <p class="text-gray-400">This template is meta</p>
+        </div>
+
+        <div class="mt-2 mb-4">
+          <q-checkbox v-model="isMeta" />
+        </div>
+
+        <div class="label flex flex-col">
           <p class="text-xl">Button</p>
           <p class="text-gray-400">
             Create buttons that let customers respond to your message or take
@@ -368,6 +377,7 @@ const isApproved = ref("No");
 const actionCategory = ref("None");
 const selectedCategory = ref("None");
 const replies = ref(["", ""]);
+const isMeta = ref(false);
 const status = ref("Draft");
 const delivered = ref(0);
 const read = ref(0);
@@ -696,6 +706,7 @@ const submitGeneralInformation = () => {
     is_approved: false,
     category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
+    is_meta: isMeta.value,
     language: formattedValueForEmit("language"),
     status: status.value,
     components: formattedValueForEmit("components"),
@@ -716,6 +727,7 @@ const submitGeneralInformation = () => {
     is_approved: false,
     category: selectedCategory.value.toUpperCase(),
     is_email_template: isEmail.value === "Yes",
+    is_meta: isMeta.value,
     language: formattedValueForEmit("language"),
     status: status.value,
     components: formattedValueForEmit("components"),

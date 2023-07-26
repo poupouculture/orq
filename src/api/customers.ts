@@ -25,6 +25,7 @@ export const getCustomers = async (payload: CustomerPayload) => {
     fields: `${fields},${companies},${tags}`,
     sort: "-date_created",
     ...filterField,
+    "filter[status][_neq]": "draft",
     limit,
     offset,
     search,
@@ -40,6 +41,7 @@ export const getCustomers = async (payload: CustomerPayload) => {
 // get all customers who has contacts
 export const getCustomersWithContacts = async (payload: CustomerPayload) => {
   const { limit, page, search } = payload;
+  console.log("fnc-getCustomersWithContacts");
   // console.log(limit);
   // const fields = "*";
 
@@ -55,7 +57,7 @@ export const getCustomersWithContacts = async (payload: CustomerPayload) => {
       limit,
       page,
       search,
-      fields: "*.*",
+      // fields: "*.*",
       // meta: "*",
     },
   });

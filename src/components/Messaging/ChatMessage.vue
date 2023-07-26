@@ -8,42 +8,70 @@
     </div>
   </div>
   <div
+    v-if="message.type === MessageType.LOG"
+    class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
+  >
+    <div class="text-center inline-block text-xs px-1.5 text-[#9A9AAF]">
+      {{ message.content.text }}
+    </div>
+  </div>
+  <div
+    v-else
     class="flex"
     :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
   >
     <div
-      class="relative rounded max-w-[60%] px-3 py-2"
+      class="relative rounded px-3 py-2"
       :class="[
         isSend
           ? 'text-white rounded-br-none bg-primary'
           : 'text-[#2E2E3A] rounded-tl-none bg-[#E8E7FB]',
+        isReply ? 'w-full !rounded-lg' : 'max-w-[60%]',
       ]"
     >
-      <span
-        v-if="!isSend"
-        class="bottom-full left-0 scale-90 origin-left text-black text-semibold"
-      >
-        {{ !isChaq ? message.contact_name : message.user_name }}
-      </span>
-      <span
-        v-if="isSend"
-        class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
-      >
-        {{ message.user_name }}
-        <!-- ??? todo, jimmy comment out user_name {{ message.user_name }} -->
-      </span>
+      <template v-if="!isReply">
+        <span
+          v-if="!isSend"
+          class="bottom-full left-0 scale-90 origin-left text-black text-semibold"
+        >
+          {{ !isChaq ? message.contact_name : message.user_name }}
+        </span>
+        <span
+          v-if="isSend"
+          class="bottom-full left-0 scale-90 origin-right text-white text-semibold"
+        >
+          {{ message.user_name }}
+          <!-- ??? todo, jimmy comment out user_name {{ message.user_name }} -->
+        </span>
+      </template>
       <q-btn
         v-if="isReply"
-        class="absolute -top-4 -right-6"
+        class="absolute -top-2 -right-2"
+        :class="[isSend ? 'text-black' : '']"
         round
         dense
         size="xs"
         icon="close"
-        color="primary"
+        :color="isSend ? 'white' : 'primary'"
         @click="closeReply"
       />
+      <Preview
+        v-if="message.content.type === MessageType.TEMPLATE"
+        :username="message.user_name"
+        :header="header"
+        :headerMessage="messageTemplateComponent(message.content, 'header')"
+        :media="media"
+        :bodyMessage="messageTemplateBody(message.content)"
+        :footerMessage="messageTemplateComponent(message.content, 'footer')"
+        :actionCategory="actionCategory"
+        :actions="actions"
+        :replies="replies"
+        :isRealMessage="isRealMessage"
+      />
       <MessageComponents
+        v-else
         ref="image"
+        :isReply="isReply"
         :content="message.content"
         :message="message"
         :isSend="isSend"
@@ -170,6 +198,7 @@ import { format } from "date-fns";
 import MessageComponents from "./MessageComponents.vue";
 import useMessagingStore from "src/stores/modules/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
+import Preview from "../ApplicationProgram/Preview.vue";
 
 const props = defineProps<{
   message: Message;
@@ -179,6 +208,12 @@ const operationType = ref("");
 const image = ref();
 const messagingStore = useMessagingStore();
 const userStore = useUserInfoStore();
+const header = ref("TEXT");
+const media = ref("None");
+const actionCategory = ref("");
+const actions = ref([]);
+const replies = ref([]);
+const isRealMessage = ref(true);
 
 const isSend = computed(() => {
   if (isChaq.value) {
@@ -199,7 +234,7 @@ const list = [
   {
     icon: "download",
     text: "Download",
-    visible: ["image", "document", "application"],
+    visible: ["image", "document", "application", "video", "audio"],
   },
   { icon: "content_copy", text: "Copy", visible: ["text"] },
 ];
@@ -225,6 +260,7 @@ const onhandleClick = (type: string) => {
       messagingStore.setReplayMessage(props.message);
       break;
     case "Download":
+      console.log(image.value);
       image.value.component.download();
       break;
     case "Copy":
@@ -237,5 +273,52 @@ const onhandleClick = (type: string) => {
 };
 const closeReply = () => {
   messagingStore.setReplayMessage();
+};
+
+const errorRender = (content: any) => {
+  if (content?.error_body) {
+    console.log(content.error_body);
+    const error = content?.error_body;
+    if (error.errors) {
+      if (error.errors.details) {
+        // from derp, to be refactored???
+        return error.errors.details;
+      }
+      // from waba
+      return error.errors[0]?.title;
+    }
+    if (error.error_data) return error.error_data.details;
+    if (error.message) return error.message;
+  }
+  return "";
+};
+
+const messageTemplateComponent = (content: any, type: string) => {
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const component = components?.find(
+      (component: any) => component?.type === type
+    );
+    if (component) return component?.parameters[0];
+    return null;
+  }
+
+  return null;
+};
+
+const messageTemplateBody = (content: any) => {
+  // console.log("messageTemplate");
+  if (content.error_body) {
+    return errorRender(content);
+  }
+  const components = content?.template?.components ?? content?.components;
+  if (components) {
+    const bodyComponent = components?.find(
+      (component: any) => component?.type === "body"
+    );
+    if (bodyComponent) return bodyComponent?.parameters[0].text;
+  }
+
+  return content?.template_content || content?.template?.text;
 };
 </script>

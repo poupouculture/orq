@@ -6,6 +6,7 @@
       :src="content.url"
       :name="isDocument(content) ? content.file_name : content.media_id"
       :caption="content.caption"
+      :is-reply="isReply"
       :is-send="isSend"
     />
     <div
@@ -56,7 +57,11 @@
           <!-- can display content type here -->
           <!-- {{ message?.last_associated_message_content?.type }} -->
           <!-- {{ messageContentText(message) }} -->
-          {{ messageContentType(message) }}
+          {{
+            messageContentType(message).length > 160
+              ? messageContentType(message).substring(0, 160) + " ..."
+              : messageContentType(message)
+          }}
           <component
             ref="component"
             :is="componentNameGet(messageContentGet(message))"
@@ -68,11 +73,18 @@
             "
             :caption="messageContentGet(message)?.caption"
             :is-send="isSend"
+            :is-reply="isReply"
           />
         </div>
         Replied:
       </div>
-      {{ messageContentText(message) }}
+      {{
+        isReply
+          ? messageContentText(message).length > 160
+            ? messageContentText(message).substring(0, 160) + " ..."
+            : messageContentText(message)
+          : messageContentText(message)
+      }}
     </div>
   </div>
 </template>
@@ -89,6 +101,7 @@ interface Props {
   content: any;
   message: any;
   isSend: boolean;
+  isReply: boolean;
   showAssociated?: boolean;
 }
 
@@ -96,6 +109,7 @@ const props = withDefaults(defineProps<Props>(), {
   content: () => ({}),
   message: () => ({}),
   isSend: () => false,
+  isReply: () => false,
 });
 
 const component = ref("");
