@@ -9,6 +9,7 @@ import {
   Message,
   SendTextMessage,
   MessageStatus,
+  ISelectedSearchResultPagination,
 } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { getContact } from "src/api/contact";
@@ -53,7 +54,8 @@ const useMessagingStore = defineStore("messaging", {
       socket,
       botList: [],
       searchResults: [],
-      selectedSearchResult: {},
+      selectedSearchResult: null,
+      selectedSearchResultPagination: {},
       officeHours: false,
     } as unknown as IState),
   getters: {
@@ -70,7 +72,19 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
-    resetSearchResult() {
+    setSelectedChatResult(value: IChat) {
+      this.selectedSearchResult = value;
+    },
+    resetSelectedChatResult() {
+      this.selectedSearchResult = null;
+    },
+    setSelectedSearchResultPagination(value: ISelectedSearchResultPagination) {
+      this.selectedSEarchResultPagination = value;
+    },
+    resetSelectedSearchResultPagination() {
+      this.selectedSearchResultPagination = {};
+    },
+    resetSearchResults() {
       this.searchResults = [];
     },
     async setOfficeHours(value: boolean) {

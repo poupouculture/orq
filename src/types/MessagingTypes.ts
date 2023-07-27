@@ -108,7 +108,7 @@ export interface ChatSnapshotMessage {
   [key: string]: () => void;
 }
 
-export interface ISelectedSearchResult {
+export interface ISelectedSearchResultPagination {
   total_records: number;
   page_size: number;
   total_pages: number;
@@ -131,7 +131,8 @@ export interface IState {
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
   searchResults: IChat[];
-  selectedSearchResult: ISelectedSearchResult;
+  selectedSearchResult: IChat | null;
+  selectedSEarchResultPagination: ISelectedSearchResultPagination;
   officeHours: boolean;
 }
 
