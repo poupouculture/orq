@@ -21,6 +21,7 @@ import {
   getChatsByType,
   getMessagesById,
   chatbots,
+  setBotConfig,
 } from "src/api/messaging";
 
 import { ref } from "vue";
@@ -52,6 +53,7 @@ const useMessagingStore = defineStore("messaging", {
       replayMessage: {},
       socket,
       botList: [],
+      officeHours: false,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -67,13 +69,15 @@ const useMessagingStore = defineStore("messaging", {
       const chat = state.chatsList.find(
         (chat: IChat) => chat.id === state.selectedChatId
       ) as IChat;
-      return state.users.find((user) => chat.admin === user.user_id);
+      return chat
+        ? state.users.find((user) => chat.admin === user.user_id)
+        : {};
     },
-    getUserByUserId(state) {
-      return state.users.find(
-        (user) => user.user_id === userInfoStore.getUserProfile?.id
-      );
-    },
+    // getUserByUserId(state) {
+    //   return state.users.find(
+    //     (user) => user.user_id === userInfoStore.getUserProfile?.id
+    //   );
+    // },
     getSelectedChatPending: (state) => state.selectedChatPending,
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
@@ -83,6 +87,16 @@ const useMessagingStore = defineStore("messaging", {
         const response = await getChatUsers();
         this.users = response.data;
       } catch (error) {}
+    },
+    async setOfficeHours(value: boolean) {
+      try {
+        const results = await setBotConfig(value);
+        console.log("[messaging] Set office hours", Boolean(results.data[0]));
+        this.officeHours = Boolean(results.data[0]);
+      } catch (error) {
+        console.log("[messaging] Error setting office hour", error);
+        this.officeHours = !value;
+      }
     },
     setSelectedChatPending(value: boolean) {
       this.selectedChatPending = value;
@@ -280,6 +294,9 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
+        item.admin_data = this.users.find(
+          (user) => user.user_id === item.admin
+        );
         // item.id = item.id.toString(); // ??? 0707
         return item;
       });

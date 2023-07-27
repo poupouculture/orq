@@ -82,6 +82,10 @@ export interface IChat {
   chat_id?: string;
   contacts_id: string;
   admin: string;
+  admin_data: {
+    first_name: string;
+    last_name: string;
+  };
   customers_id: string | null;
   contact_first_name: string;
   contact_last_name: string;
@@ -128,6 +132,7 @@ export interface IState {
   botList: Bot[];
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
+  officeHours: boolean;
 }
 
 export interface SendTextMessage {

@@ -59,10 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, inject } from "vue";
+import { ref, inject } from "vue";
 import type { Ref } from "vue";
 import SearchCustomer from "src/components/Messaging/SearchCustomer.vue";
-import useMessagingStore from "src/stores/modules/messaging";
 import CustomerInformationTabs from "src/components/Messaging/CustomerInformationTabs.vue";
 
 const enum Tabs {
@@ -70,16 +69,11 @@ const enum Tabs {
   SERVICE_DETAIL = "serviceDetail",
   SERVICE_RECORD = "serviceRecord",
 }
-const messagingStore = useMessagingStore();
 const tab: Ref<Tabs> = ref(Tabs.CUSTOMER);
 const inputGroup: Ref<string> = ref("");
 const toggle: Ref<boolean> = ref(false);
 const newCustomer: Ref<boolean> = ref(false);
 const rightDrawerOpen: any = inject("rightDrawerOpen");
-
-onMounted(async () => {
-  messagingStore.getWabaUsers();
-});
 
 const closeCustomerInfoMobile = () => {
   rightDrawerOpen.value = !rightDrawerOpen.value;
