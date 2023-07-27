@@ -6,14 +6,16 @@ const route = useRoute();
 
 <template>
   <div
-    :class="
-      route.name == 'landingpage' ? 'min-h-screen' : 'min-h-screen lg:h-[70vh]'
-    "
+    :class="route.name == 'landingpage' ? 'min-h-screen' : 'lg:h-[70vh]'"
     class="homeHero flex flex-col items-center w-full p-5 lg:p-10"
   >
     <div class="container mt-6">
       <div
-        :class="route.name == 'landingpage' ? 'min-h-[90vh] ' : 'h-[70vh]'"
+        :class="
+          route.name == 'landingpage' && $q.screen.gt.md
+            ? 'min-h-[90vh] '
+            : 'h-[70vh]'
+        "
         class="w-full flex flex-col mt-7 lg:px-20 justify-center items-start"
       >
         <div class="container mt-6">

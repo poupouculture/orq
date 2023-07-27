@@ -36,7 +36,7 @@ onMounted(() => {
       <div
         class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
       >
-        <p class="">Products categories</p>
+        <p class="text-center">Products categories</p>
       </div>
     </div>
   </Hero>

@@ -5,6 +5,7 @@ import Hero from "src/components/LandingPage/hero.vue";
 import ProductCategoryNavigation from "src/components/LandingPage/productCategoryNavigation/index.vue";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
+import Modal from "src/components/LandingPage/modal.vue";
 import { storeToRefs } from "pinia";
 import useCategories from "src/stores/modules/categories";
 
@@ -12,10 +13,32 @@ const categoriesStore = useCategories();
 const { allCategories } = storeToRefs(categoriesStore);
 
 const dialog = ref(false);
+const downloadPdf = ref(false);
 const selectedTables = ref([]);
 const categoriesChoose = ref([]);
 const query = ref("");
 const searchLoading = ref(false);
+
+const natureBussinses = ref([
+  "hotel",
+  "restaurant",
+  "club",
+  "bakery",
+  "wholesaler",
+  "retailer",
+  "private",
+  "other",
+]);
+const formInfo = ref({
+  name: "",
+  company: "",
+  business: "",
+  natureBusiness: "",
+  titleBussiness: "",
+  titleDepartement: "",
+  email: "",
+  phone: "",
+});
 
 const products = computed(() => {
   return categoriesStore.getProducts;
@@ -98,6 +121,10 @@ const updateCategories = (value) => {
   categoriesChoose.value = value;
 };
 
+const submit = () => {
+  console.log("Submit");
+};
+
 const resetSearch = () => {
   query.value = "";
 };
@@ -121,7 +148,7 @@ onMounted(async () => {
       <div
         class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
       >
-        <p class="">Products categories details</p>
+        <p class="text-center">Products categories details</p>
       </div>
     </div>
   </Hero>
@@ -181,6 +208,8 @@ onMounted(async () => {
           </q-btn>
         </div>
 
+        <button @click="downloadPdf = !downloadPdf">Check</button>
+
         <BaseTable
           :rows="products"
           :loading="false"
@@ -190,30 +219,157 @@ onMounted(async () => {
       </div>
     </div>
 
-    <q-dialog v-model="dialog">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pdf Product</div>
-        </q-card-section>
+    <Modal
+      :dialog="dialog"
+      @accept="downloadPdf = true"
+      @update:modelValue="dialog = false"
+      decline-text="Cancel"
+      accept-text="Download"
+    >
+      <template #head>
+        <div class="text-h6">Pdf Product</div>
+      </template>
 
-        <q-separator />
+      <BaseTable :rows="selectedTables" :loading="false" :columns="columns" />
+    </Modal>
 
-        <q-card-section style="max-height: 50vh" class="scroll">
-          <BaseTable
-            :rows="selectedTables"
-            :loading="false"
-            :columns="columns"
-          />
-        </q-card-section>
+    <Modal
+      :dialog="downloadPdf"
+      @update:modelValue="downloadPdf = false"
+      @accept="submit"
+      decline-text="Cancel"
+      accept-text="Accept"
+    >
+      <template #head>
+        <div class="text-h6">Contact Information</div>
+      </template>
 
-        <q-separator />
+      <div class="flex flex-col">
+        <q-form @submit="submit">
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Name <span class="text-red-500">*</span>
+            </label>
+            <q-input
+              class="mb-3"
+              dense
+              label="Name"
+              type="text"
+              debounce="500"
+              v-model.trim="formInfo.email"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
 
-        <q-card-actions align="right">
-          <q-btn flat label="Decline" color="primary" v-close-popup />
-          <q-btn flat label="Accept" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Company <span class="text-red-500">*</span>
+            </label>
+            <q-input
+              class="mb-3"
+              dense
+              label="Company"
+              type="text"
+              debounce="500"
+              v-model.trim="formInfo.company"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Nature & Bussines <span class="text-red-500">*</span>
+            </label>
+            <q-select
+              class="mb-3"
+              dense
+              label="Company"
+              type="text"
+              debounce="500"
+              :options="natureBussinses"
+              v-model.trim="formInfo.natureBusiness"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Title of Business <span class="text-red-500">*</span>
+            </label>
+            <q-input
+              class="mb-3"
+              dense
+              label="Title of Business"
+              type="text"
+              debounce="500"
+              v-model.trim="formInfo.titleBussiness"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Title or Department <span class="text-red-500">*</span>
+            </label>
+            <q-input
+              class="mb-3"
+              dense
+              label="Title or Department"
+              type="text"
+              debounce="500"
+              v-model.trim="formInfo.titleDepartement"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Email <span class="text-red-500">*</span>
+            </label>
+            <q-input
+              class="mb-3"
+              dense
+              label="Email"
+              type="email"
+              debounce="500"
+              v-model.trim="formInfo.email"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="account" class="text-lg">
+              Phone <span class="text-red-500">*</span>
+            </label>
+            <q-input
+              class="mb-3"
+              dense
+              label="Phone"
+              debounce="500"
+              v-model.trim="formInfo.phone"
+              :rules="[(val) => !!val || 'Field is required']"
+              outlined
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="account" class="text-lg"> Message(optional) </label>
+            <q-input
+              filled
+              clearable
+              type="textarea"
+              hint="Please leave your message if you would like to have our sales representative to contact you for details"
+            />
+          </div>
+        </q-form>
+      </div>
+    </Modal>
   </div>
 </template>
 
