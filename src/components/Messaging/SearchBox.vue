@@ -74,12 +74,13 @@ const filterFn = async (value, update, abort) => {
       userId: userInfoStore.getUserId,
     });
     update(() => {
-      // eslint-disable-next-line camelcase
-      options.value = data.map(({ id, content, date_created }) => ({
-        id,
-        label: content.text,
-        dateCreated: format(new Date(date_created), "p, d MMM"),
-      }));
+      options.value = data
+        .map(({ content, ...args }) => ({
+          id: args.id,
+          label: content.text,
+          dateCreated: format(new Date(args.date_created), "p, d MMM"),
+        }))
+        .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
     });
   } catch (e) {
     abort();
