@@ -151,6 +151,7 @@
             v-for="item in messages"
             :key="item.id"
             :message="item"
+            ref="messagesComponentRefs"
           />
           <template #loading>
             <div class="row justify-center q-my-md">
@@ -750,6 +751,12 @@ const messages = computed<Message[]>(() => {
           : format(new Date(message.date_created), "eee, d MMM"),
     };
   });
+});
+
+const messagesComponentRefs = ref([]);
+
+watch(messagesComponentRefs, (value) => {
+  console.log("[messages] messagesComponentRefs changed", value);
 });
 
 const isBot = computed<boolean>(() => getSelectedChat?.value?.mode === "Bot");
