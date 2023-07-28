@@ -610,13 +610,13 @@ const selectedSearchResultPagination = computed(
 watch(selectedSearchResultPagination, (value) => {
   console.log("[messages] Search result selected", value);
   hasMoreMessage[getSelectedChatId.value] = true;
+  cachedChatMessages.value[getSelectedChatId.value] = [];
   if (value == null) {
     infiniteScrollRef.value?.setIndex(0);
   } else {
-    const targetPage = value.total_pages - value.page_no;
+    const targetPage = value.page_no;
     infiniteScrollRef.value?.setIndex(targetPage - 1);
   }
-  cachedChatMessages.value[getSelectedChatId.value] = [];
   infiniteScrollRef.value?.resume();
 });
 
@@ -743,7 +743,9 @@ const messages = computed<Message[]>(() => {
 
 const messagesComponentRefs = ref([]);
 
-watch(messagesComponentRefs, (value) => {
+const displayedMessages = computed(() => messagesComponentRefs.value);
+
+watch(displayedMessages, (value) => {
   console.log("[messages] messagesComponentRefs changed", value);
 });
 
