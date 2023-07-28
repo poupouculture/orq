@@ -55,7 +55,7 @@ const useMessagingStore = defineStore("messaging", {
       botList: [],
       searchResults: [],
       selectedSearchResult: null,
-      selectedSearchResultPagination: {},
+      selectedSearchResultPagination: null,
       officeHours: false,
     } as unknown as IState),
   getters: {
@@ -72,17 +72,14 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
-    setSelectedChatResult(value: IChat) {
+    setSelectedSearchResult(value: IChat) {
       this.selectedSearchResult = value;
     },
-    resetSelectedChatResult() {
-      this.selectedSearchResult = null;
-    },
     setSelectedSearchResultPagination(value: ISelectedSearchResultPagination) {
-      this.selectedSEarchResultPagination = value;
+      this.selectedSearchResultPagination = value;
     },
     resetSelectedSearchResultPagination() {
-      this.selectedSearchResultPagination = {};
+      this.selectedSearchResultPagination = null;
     },
     resetSearchResults() {
       this.searchResults = [];
@@ -302,14 +299,16 @@ const useMessagingStore = defineStore("messaging", {
       this.sortChatsList();
     },
 
-    async fetchChatSearchResult(messageId: string) {
+    async fetchChatSearchResultPagination(messageId: string) {
       const { data } = await getChatSearchResultById(messageId);
       console.log("[fetch-chat-search-result]", data);
-      this.selectedSearchResult = data;
+      this.selectedSearchResultPagination = data;
     },
 
-    async resetSelectedSearchResult() {
-      this.selectedSearchResult = undefined;
+    resetSelectedSearchResult() {
+      this.selectedSearchResult = null;
+      this.selectedSearchResultPagination =
+        {} as ISelectedSearchResultPagination;
     },
 
     async socketConnect(userInfo: any) {

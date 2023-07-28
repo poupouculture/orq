@@ -132,7 +132,7 @@ export interface IState {
   selectedChatExpired: boolean;
   searchResults: IChat[];
   selectedSearchResult: IChat | null;
-  selectedSearchResultPagination: ISelectedSearchResultPagination;
+  selectedSearchResultPagination: ISelectedSearchResultPagination | null;
   officeHours: boolean;
 }
 

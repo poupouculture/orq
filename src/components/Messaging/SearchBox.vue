@@ -49,6 +49,7 @@ const internalValue = ref(null);
 
 watch(internalValue, (v) => {
   if (v) {
+    messagingStore.selectedSearchResult = v;
     messagingStore.fetchChatSearchResultPagination(v.id);
   }
 });
