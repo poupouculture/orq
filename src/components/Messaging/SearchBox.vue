@@ -18,6 +18,7 @@
     @clear="clear"
     :input-debounce="250"
     behavior="dialog"
+    @input-value="handleTextInput"
   >
     <template v-slot:prepend>
       <q-icon name="search" />
@@ -54,6 +55,14 @@ watch(internalValue, (v) => {
   }
 });
 
+const handleTextInput = (value) => {
+  console.log(value.length);
+  if (!value.length) {
+    console.log("[search-box] handleTextInput: clear");
+    clear();
+  }
+};
+
 const clear = () => {
   internalValue.value = null;
   messagingStore.resetSearchResults();
@@ -66,6 +75,9 @@ const filterFn = async (value, update, abort) => {
   if (value === "") {
     update(() => {
       options.value = [];
+      messagingStore.resetSearchResults();
+      messagingStore.resetSelectedSearchResult();
+      messagingStore.resetSelectedSearchResultPagination();
     });
     return;
   }
