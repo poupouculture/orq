@@ -92,9 +92,10 @@
               </button>
             </div>
             <p class="mt-4 font-semibold">Body</p>
-            <p class="text-gray-500 mt-2">
-              {{ bodyMessage }}
-            </p>
+            <p
+              class="text-gray-500 mt-2"
+              v-html="bodyMessage.replace(/\n/g, '<br />')"
+            ></p>
             <SlimInput
               type="text"
               v-for="(cusVar, index) of customVariables"
