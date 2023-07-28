@@ -614,7 +614,7 @@ watch(selectedSearchResultPagination, (value) => {
     infiniteScrollRef.value?.setIndex(0);
   } else {
     const targetPage = value.total_pages - value.page_no;
-    infiniteScrollRef.value?.setIndex(targetPage);
+    infiniteScrollRef.value?.setIndex(targetPage - 1);
   }
   cachedChatMessages.value[getSelectedChatId.value] = [];
   infiniteScrollRef.value?.resume();
