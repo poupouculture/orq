@@ -546,6 +546,8 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
+// const isOfficeHours: Ref<boolean> = ref(messagingStore.isOfficeHours);
+// const isOfficeHours = ref(true);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -575,8 +577,10 @@ const {
   getSelectedChatPending,
   getSelectedChatExpired,
   getUserBySelectedChat,
+  isOfficeHours,
 } = storeToRefs(messagingStore);
 
+console.log("isOfficeHours:", isOfficeHours);
 const isPending = computed({
   get: () => getSelectedChatPending.value,
   set: (value) => {
@@ -1009,10 +1013,8 @@ const sendMessage = async () => {
   }
 };
 
-const isOfficeHours = ref(messagingStore.officeHours);
-
 const switchOfficeHours = async (value) => {
-  await messagingStore.setOfficeHours(value);
+  await messagingStore.officeHours_set(value);
 };
 
 // const isOfficeHours = computed({
@@ -1362,6 +1364,8 @@ const onPaste = (e: ClipboardEvent) => {
 };
 
 onMounted(async () => {
+  messagingStore.officeHours_get_set();
+
   console.log("PLATFORM:", Platform.is);
   // Swal.fire({
   //   icon: "error",

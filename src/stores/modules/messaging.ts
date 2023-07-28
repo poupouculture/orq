@@ -21,8 +21,8 @@ import {
   getChatsByType,
   getMessagesById,
   chatbots,
-  setBotConfig,
-  fetchBotConfig,
+  setOfficeHours,
+  configGet,
 } from "src/api/messaging";
 
 import { ref } from "vue";
@@ -54,7 +54,7 @@ const useMessagingStore = defineStore("messaging", {
       replayMessage: {},
       socket,
       botList: [],
-      officeHours: false,
+      isOfficeHours: false,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -89,21 +89,21 @@ const useMessagingStore = defineStore("messaging", {
         this.users = response.data;
       } catch (error) {}
     },
-    async setOfficeHours(value: boolean) {
+    async officeHours_set(value: boolean) {
       try {
-        const results = await setBotConfig(value);
+        const results = await setOfficeHours(value);
         console.log("[messaging] Set office hours", results);
-        this.fetchOfficeHours();
+        this.officeHours_get_set();
       } catch (error) {
         console.error("[messaging] Error setting office hour", error);
-        this.officeHours = !value;
+        this.isOfficeHours = !value;
       }
     },
-    async fetchOfficeHours() {
+    async officeHours_get_set() {
       try {
-        const results = await fetchBotConfig();
+        const results = await configGet();
         console.log("[messaging] Office hours", results);
-        this.officeHours = !parseInt(results.ENABLE_PROFILE_BOT);
+        this.isOfficeHours = results.ENABLE_PROFILE_BOT === "1";
       } catch (error) {
         console.log("[messaging] Error fetching office hour", error);
       }

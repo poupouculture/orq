@@ -6,13 +6,17 @@ import {
   ComponentParameter,
 } from "src/types/MessagingTypes";
 
-export const setBotConfig = async (status: boolean) => {
+export const setOfficeHours = async (status: boolean) => {
   console.log("[office-hour] Setting status to", status);
-  const { data } = await api.get(`/chat/config/office/${!!status}`);
+  let toggle = 0;
+  if (status) {
+    toggle = 1;
+  }
+  const { data } = await api.get(`/chat/config/office/${toggle}`);
   return data;
 };
 
-export const fetchBotConfig = async () => {
+export const configGet = async () => {
   const { data } = await api.get("/chat/config");
   return data;
 };

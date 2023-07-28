@@ -36,7 +36,7 @@ module.exports = configure(function () {
       "axios",
       "getProfile",
       "sentry",
-      "getOfficeHours",
+      // "getOfficeHours",
       "global-component",
       // "firebase",
     ],
