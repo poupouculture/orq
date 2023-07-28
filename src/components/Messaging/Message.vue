@@ -735,7 +735,7 @@ const chaqMode = computed<boolean>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  // scrollToBottom();
+  scrollToBottom();
   return cachedMessage?.map((message, index) => {
     return {
       ...message,
@@ -772,8 +772,6 @@ watch(messagesComponentRefs.value, async (value) => {
         scrollAreaRef.value.scrollTop = target.root.offsetTop;
       }, 500);
     }
-  } else {
-    scrollToBottom();
   }
 });
 
