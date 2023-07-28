@@ -7,7 +7,8 @@ import {
 } from "src/types/MessagingTypes";
 
 export const setBotConfig = async (status: boolean) => {
-  const { data } = await api.get(`/chat/config/office/${parseInt(!status)}`);
+  console.log("[office-hour] Setting status to", status);
+  const { data } = await api.get(`/chat/config/office/${!!status}`);
   return data;
 };
 

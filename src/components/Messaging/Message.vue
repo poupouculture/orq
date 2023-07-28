@@ -230,7 +230,7 @@
                     <q-item-section>Office hours</q-item-section>
                     <q-item-section avatar>
                       <q-toggle
-                        :model-value="isOfficeHours"
+                        v-model="isOfficeHours"
                         @update:model-value="switchOfficeHours"
                       />
                     </q-item-section>
@@ -401,7 +401,7 @@
           <q-item-section>Office hours</q-item-section>
           <q-item-section avatar>
             <q-toggle
-              :model-value="isOfficeHours"
+              v-model="isOfficeHours"
               @update:model-value="switchOfficeHours"
             />
           </q-item-section>
@@ -1009,7 +1009,7 @@ const sendMessage = async () => {
   }
 };
 
-const isOfficeHours = computed(() => messagingStore.officeHours);
+const isOfficeHours = ref(messagingStore.officeHours);
 
 const switchOfficeHours = async (value) => {
   await messagingStore.setOfficeHours(value);
