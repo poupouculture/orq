@@ -209,7 +209,10 @@ const messageContentText = (msg: any) => {
     // console.log("msg?.content?.emoji", msg?.content?.emoji);
     return msg?.content?.emoji;
   }
-  return msg?.content?.text ?? msg?.content;
+  return (
+    msg?.content?.text.replace(/\n/g, "<br />") ??
+    msg?.content.replace(/\n/g, "<br />")
+  );
 };
 
 /**
