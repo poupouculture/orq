@@ -31,6 +31,15 @@
         </q-item-section>
       </q-item>
     </template>
+    <template v-slot:selected>
+      <div class="ellipsis">
+        {{
+          internalValue?.label.length > 20
+            ? `${internalValue?.label.substring(0, 20)}...`
+            : internalValue?.label
+        }}
+      </div>
+    </template>
   </q-select>
 </template>
 
