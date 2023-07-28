@@ -203,8 +203,6 @@ import useUserInfoStore from "src/stores/modules/userInfo";
 import Preview from "../ApplicationProgram/Preview.vue";
 
 const root = ref(null);
-defineExpose({ root });
-
 const props = defineProps<{
   message: Message;
   isReply?: boolean;
@@ -326,4 +324,6 @@ const messageTemplateBody = (content: any) => {
 
   return content?.template_content || content?.template?.text;
 };
+
+defineExpose({ root, props });
 </script>
