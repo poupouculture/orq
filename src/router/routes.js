@@ -20,9 +20,14 @@ const routes = [
         component: () => import("pages/landingpage/index.vue"),
       },
       {
-        path: "/us/products/",
-        name: "landingcategories",
+        path: "/us/products",
+        name: "Products",
         component: () => import("pages/landingpage/categories.vue"),
+      },
+      {
+        path: "/about-us",
+        name: "About Us",
+        component: () => import("pages/landingpage/aboutus.vue"),
       },
       {
         path: "/us/products/detail/",

@@ -1,13 +1,28 @@
 <script setup>
 import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+
+import useLandingPage from "src/stores/modules/landingpage";
+
+const landingPageStore = useLandingPage();
+const { getComponent } = storeToRefs(landingPageStore);
 
 const route = useRoute();
 </script>
 
 <template>
   <div
-    :class="route.name == 'landingpage' ? 'min-h-screen' : 'lg:h-[70vh]'"
-    class="homeHero flex flex-col items-center w-full p-5 lg:p-10"
+    :class="
+      Object.keys(getComponent).length === 0
+        ? 'min-h-screen homeHero'
+        : 'lg:h-[70vh]'
+    "
+    :style="
+      Object.keys(getComponent).length === 0
+        ? ''
+        : { backgroundImage: `url(${getComponent.icon})` }
+    "
+    class="bg-center bg-cover flex flex-col items-center w-full p-5 lg:p-10"
   >
     <div class="container mt-6">
       <div

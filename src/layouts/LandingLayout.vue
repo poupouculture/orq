@@ -1,9 +1,14 @@
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/LandingPage/navbar.vue";
 import { Screen } from "quasar";
 import logo from "assets/images/logo.svg";
+import useLandingPage from "src/stores/modules/landingpage";
 
+const useLandingPageStore = useLandingPage();
+const router = useRouter();
+const route = useRoute();
 const leftDrawerOpen = ref(false);
 
 const drawer = computed({
@@ -19,8 +24,29 @@ const drawer = computed({
   },
 });
 
+const navigation = computed(() => {
+  return useLandingPageStore.allNavigation;
+});
+
 watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
+});
+
+// Methods
+
+const getComponentById = async (id, url) => {
+  await useLandingPageStore.getComponentByid(id);
+  router.push(url);
+};
+
+onMounted(async () => {
+  await useLandingPageStore.getAll();
+
+  const component = navigation.value.find((item) => item.name === route.name);
+
+  if (component) {
+    await useLandingPageStore.getComponentByid(component.id);
+  }
 });
 </script>
 
@@ -47,7 +73,7 @@ watch(drawer, (value) => {
           </div>
 
           <span class="text-white order-3 sm:order-2">
-            Copyright {{ Screen.gt.lg }}
+            Copyright
             {{ new Date().getFullYear() }} Synque.io
           </span>
 
@@ -72,19 +98,14 @@ watch(drawer, (value) => {
       bordered
     >
       <q-list padding class="rounded-borders">
-        <q-item :to="{ name: 'landingcategoriesdetails' }" clickable v-ripple>
-          <q-item-section> Categories </q-item-section>
-        </q-item>
-        <q-item clickable v-ripple>
-          <q-item-section> Services </q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple>
-          <q-item-section> Contact </q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple>
-          <q-item-section> About Us </q-item-section>
+        <q-item
+          clickable
+          v-ripple
+          @click="getComponentById(navigate.id, navigate.url)"
+          v-for="(navigate, index) in navigation"
+          :key="index"
+        >
+          <q-item-section> {{ navigate.name }} </q-item-section>
         </q-item>
       </q-list>
     </q-drawer>
