@@ -78,15 +78,16 @@
         </div>
         Replied:
       </div>
-      <p class="whitespace-pre-wrap">
-        {{
+      <p
+        class="whitespace-pre-wrap"
+        v-html="
           isReply
             ? messageContentText(message).length > 160
-              ? messageContentText(message).substring(0, 160) + " ..."
+              ? messageContentText(message).substring(0, 160) + ' ...'
               : messageContentText(message)
             : messageContentText(message)
-        }}
-      </p>
+        "
+      ></p>
     </div>
   </div>
 </template>
@@ -209,10 +210,7 @@ const messageContentText = (msg: any) => {
     // console.log("msg?.content?.emoji", msg?.content?.emoji);
     return msg?.content?.emoji;
   }
-  return (
-    msg?.content?.text.replace(/\n/g, "<br />") ??
-    msg?.content.replace(/\n/g, "<br />")
-  );
+  return msg?.content?.text ?? msg?.content;
 };
 
 /**
