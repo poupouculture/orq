@@ -7,9 +7,12 @@ import {
 } from "src/types/MessagingTypes";
 
 export const setBotConfig = async (status: boolean) => {
-  const { data } = !status
-    ? await api.get("/chat/config/bot/1")
-    : await api.get("/chat/config/office/1");
+  const { data } = await api.get(`/chat/config/office/${parseInt(!status)}`);
+  return data;
+};
+
+export const fetchBotConfig = async () => {
+  const { data } = await api.get("/chat/config");
   return data;
 };
 

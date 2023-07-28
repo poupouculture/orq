@@ -22,6 +22,7 @@ import {
   getMessagesById,
   chatbots,
   setBotConfig,
+  fetchBotConfig,
 } from "src/api/messaging";
 
 import { ref } from "vue";
@@ -91,11 +92,20 @@ const useMessagingStore = defineStore("messaging", {
     async setOfficeHours(value: boolean) {
       try {
         const results = await setBotConfig(value);
-        console.log("[messaging] Set office hours", Boolean(results.data[0]));
-        this.officeHours = Boolean(results.data[0]);
+        console.log("[messaging] Set office hours", results);
+        this.fetchOfficeHours();
       } catch (error) {
-        console.log("[messaging] Error setting office hour", error);
+        console.error("[messaging] Error setting office hour", error);
         this.officeHours = !value;
+      }
+    },
+    async fetchOfficeHours() {
+      try {
+        const results = await fetchBotConfig();
+        console.log("[messaging] Office hours", results);
+        this.officeHours = !parseInt(results.ENABLE_PROFILE_BOT);
+      } catch (error) {
+        console.log("[messaging] Error fetching office hour", error);
       }
     },
     setSelectedChatPending(value: boolean) {
