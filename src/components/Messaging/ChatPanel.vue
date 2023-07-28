@@ -265,12 +265,10 @@ const refreshPage = () => {
   window.location.reload();
 };
 
-watch(chatsList, (list) => {
-  list.map((chat) => ({
-    ...chat,
-    admin_data: users.value.find((user) => user.user_id === chat.admin),
-  }));
-});
+// watch(chatsList, (list) => {
+//   list.map((chat) => ({
+//   }));
+// });
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
