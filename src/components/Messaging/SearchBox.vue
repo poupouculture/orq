@@ -49,14 +49,15 @@ const internalValue = ref(null);
 
 watch(internalValue, (v) => {
   if (v) {
-    messagingStore.fetchChatSearchResult(v.id);
+    messagingStore.fetchChatSearchResultPagination(v.id);
   }
 });
 
 const clear = () => {
   internalValue.value = null;
-  messagingStore.resetSearchResult();
+  messagingStore.resetSearchResults();
   messagingStore.resetSelectedSearchResult();
+  messagingStore.resetSelectedSearchResultPagination();
 };
 
 const options = ref([]);
