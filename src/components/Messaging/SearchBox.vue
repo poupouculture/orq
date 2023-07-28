@@ -17,9 +17,15 @@
     @filter="filterFn"
     @clear="clear"
     :input-debounce="250"
-    behavior="dialog"
     @input-value="handleTextInput"
   >
+    <template v-slot:no-option>
+      <q-item>
+        <q-item-section>
+          <q-item-label>No results found</q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
     <template v-slot:prepend>
       <q-icon name="search" />
     </template>
