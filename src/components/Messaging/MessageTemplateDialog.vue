@@ -93,8 +93,8 @@
             </div>
             <p class="mt-4 font-semibold">Body</p>
             <p
-              class="text-gray-500 mt-2"
-              v-html="bodyMessage.replace(/\n/g, '<br />')"
+              class="whitespace-pre-wrap text-gray-500 mt-2"
+              v-html="bodyMessage"
             ></p>
             <SlimInput
               type="text"
