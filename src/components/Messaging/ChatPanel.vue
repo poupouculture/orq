@@ -265,13 +265,12 @@ const refreshPage = () => {
   window.location.reload();
 };
 
-// watch(chatsList, (list) => {
-//   list.forEach((chat) => {
-//     console.log("SOCKET: join_chat by chat_id.........");
-//     // console.log(`join_chat.........${chat.id}`);
-//     socket.value.emit("join_chat", chat.id);
-//   });
-// });
+watch(chatsList, (list) => {
+  list.map((chat) => ({
+    ...chat,
+    admin_data: users.value.find((user) => user.user_id === chat.admin),
+  }));
+});
 
 watch(getSelectedChatId, () => {
   messagingStore.cleanTotalUnread();
