@@ -58,7 +58,7 @@
           />
         </div>
         <h5 class="font-semibold">{{ props.headerMessage }}</h5>
-        <p v-html="props.bodyMessage.replace(/\n/g, '<br />')"></p>
+        <p class="whitespace-pre-wrap" v-html="props.bodyMessage"></p>
         <p class="text-gray-400">{{ props.footerMessage }}</p>
         <div v-if="props.actionCategory === 'Call To Action'">
           <button class="w-full bg-white py-2 mt-2 text-center text-gray-600">
