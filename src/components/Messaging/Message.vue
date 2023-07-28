@@ -723,7 +723,7 @@ const chaqMode = computed<boolean>(
 
 const messages = computed<Message[]>(() => {
   const cachedMessage = cachedChatMessages.value[getSelectedChatId.value];
-  scrollToBottom();
+  // scrollToBottom();
   return cachedMessage?.map((message, index) => {
     return {
       ...message,
@@ -743,10 +743,26 @@ const messages = computed<Message[]>(() => {
 
 const messagesComponentRefs = ref([]);
 
-const displayedMessages = computed(() => messagesComponentRefs.value);
-
-watch(displayedMessages, (value) => {
+watch(messagesComponentRefs.value, async (value) => {
   console.log("[messages] messagesComponentRefs changed", value);
+  if (
+    value.length > 0 &&
+    messagingStore.selectedSearchResult &&
+    scrollAreaRef.value
+  ) {
+    await nextTick();
+    const targetId = messagingStore.selectedSearchResult.id;
+    const target = value.find((r) => r.props.message.id === targetId);
+    if (target) {
+      console.log("[messages] Target", target.root);
+      console.log("[messages] Target offsetTop", target.root.offsetTop);
+      window.setTimeout(() => {
+        scrollAreaRef.value.scrollTop = target.root.offsetTop;
+      }, 500);
+    }
+  } else {
+    scrollToBottom();
+  }
 });
 
 const isBot = computed<boolean>(() => getSelectedChat?.value?.mode === "Bot");
@@ -769,6 +785,9 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 watch(getSelectedChatId, () => {
   messagingStore.setReplayMessage();
   message.value = "";
+  messagingStore.resetSearchResults();
+  messagingStore.resetSelectedSearchResult();
+  messagingStore.resetSelectedSearchResultPagination();
 });
 
 watch(
