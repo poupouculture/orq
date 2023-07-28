@@ -1055,7 +1055,7 @@ const sendMessageTemplate = (
 ) => {
   console.log("head type:", headType);
   templateName.value = name;
-  message.value = msg.replace("\n", "");
+  message.value = msg;
   language.value = lang;
   isTemplate.value = true;
   templateIsMeta.value = isMeta;
