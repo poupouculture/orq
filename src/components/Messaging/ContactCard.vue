@@ -21,7 +21,9 @@
         {{ nameContact !== "Visitor" ? nameContact : "" }}
       </q-item-label>
       <q-item-label caption lines="1" :class="{ 'text-white': active }">
-        {{ message ? decodeURIComponent(message) : message }}
+        <!-- {{ message ? decodeURIComponent(message) : message }} -->
+        {{ data.admin_data?.first_name }}
+        {{ data.admin_data?.last_name }}
       </q-item-label>
     </q-item-section>
     <q-item-section side top class="justify-between q-pb-sm">
@@ -106,7 +108,8 @@ import {
   isToday,
 } from "date-fns";
 import { storeToRefs } from "pinia";
-import { IChat, MessageType } from "src/types/MessagingTypes";
+// import { IChat, MessageType } from "src/types/MessagingTypes";
+import { IChat } from "src/types/MessagingTypes";
 import useMessagingStore from "src/stores/modules/messaging";
 import profileIcon from "src/assets/images/profileicon.svg";
 import { getChatNameEn, getContactNameEn } from "src/utils/trim-word";
@@ -160,37 +163,37 @@ onMounted(() => {
 
 onUnmounted(() => clearInterval(dateTimer));
 
-const messageTemplate = (content: any) => {
-  const components = content?.template?.components ?? content?.components;
-  if (components) {
-    const component = components?.find(
-      (component: any) => component?.type === "body"
-    );
-    if (component) return component?.parameters[0].text;
-  }
+// const messageTemplate = (content: any) => {
+//   const components = content?.template?.components ?? content?.components;
+//   if (components) {
+//     const component = components?.find(
+//       (component: any) => component?.type === "body"
+//     );
+//     if (component) return component?.parameters[0].text;
+//   }
 
-  return content?.template_content || content?.template?.text;
-};
-const message = computed<string>(() => {
-  const { last_message: lastMessage } = props.data;
-  if (!lastMessage) return;
-  switch (lastMessage?.content?.type) {
-    case MessageType.IMAGE:
-      return "[pic]";
-    case MessageType.AUDIO:
-      return "[audio]";
-    case MessageType.TEXT:
-      return lastMessage?.content?.text;
-    case MessageType.TEMPLATE:
-      return messageTemplate(lastMessage.content);
-    case MessageType.DOCUMENT:
-      return "[file]";
-    case MessageType.UNSUPPORTED:
-      return "[unsupported]";
-    default:
-      return lastMessage?.content?.file_name;
-  }
-});
+//   return content?.template_content || content?.template?.text;
+// };
+// const message = computed<string>(() => {
+//   const { last_message: lastMessage } = props.data;
+//   if (!lastMessage) return;
+//   switch (lastMessage?.content?.type) {
+//     case MessageType.IMAGE:
+//       return "[pic]";
+//     case MessageType.AUDIO:
+//       return "[audio]";
+//     case MessageType.TEXT:
+//       return lastMessage?.content?.text;
+//     case MessageType.TEMPLATE:
+//       return messageTemplate(lastMessage.content);
+//     case MessageType.DOCUMENT:
+//       return "[file]";
+//     case MessageType.UNSUPPORTED:
+//       return "[unsupported]";
+//     default:
+//       return lastMessage?.content?.file_name;
+//   }
+// });
 
 const time = computed<string>(() => {
   const { last_message: lastMessage } = props.data;

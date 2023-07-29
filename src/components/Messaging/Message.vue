@@ -38,6 +38,10 @@
             <p class="text-gray-500">
               {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
             </p>
+            <p class="text-gray-500 text-[0.8rem]">
+              Admin: {{ getUserBySelectedChat?.first_name }}
+              {{ getUserBySelectedChat?.last_name }}
+            </p>
             <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
             <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
           </div>
@@ -227,7 +231,10 @@
                   <q-item>
                     <q-item-section>Office hours</q-item-section>
                     <q-item-section avatar>
-                      <q-toggle v-model="isOfficeHours" />
+                      <q-toggle
+                        v-model="isOfficeHours"
+                        @update:model-value="switchOfficeHours"
+                      />
                     </q-item-section>
                   </q-item>
                   <q-item
@@ -395,7 +402,10 @@
         <q-item>
           <q-item-section>Office hours</q-item-section>
           <q-item-section avatar>
-            <q-toggle v-model="isOfficeHours" />
+            <q-toggle
+              v-model="isOfficeHours"
+              @update:model-value="switchOfficeHours"
+            />
           </q-item-section>
         </q-item>
         <q-item
@@ -567,8 +577,11 @@ const {
   botList,
   getSelectedChatPending,
   getSelectedChatExpired,
+  getUserBySelectedChat,
+  isOfficeHours,
 } = storeToRefs(messagingStore);
 
+console.log("isOfficeHours:", isOfficeHours);
 const isPending = computed({
   get: () => getSelectedChatPending.value,
   set: (value) => {
@@ -1047,11 +1060,9 @@ const sendMessage = async () => {
   }
 };
 
-const isOfficeHours = ref(false);
-watch(isOfficeHours, (value) => {
-  console.log("Toggling office hours", value);
-  messagingStore.setOfficeHours(value);
-});
+const switchOfficeHours = async (value) => {
+  await messagingStore.officeHours_set(value);
+};
 
 // const isOfficeHours = computed({
 //   get: () => messagingStore.officeHours,
@@ -1104,7 +1115,7 @@ const sendMessageTemplate = (
 ) => {
   console.log("head type:", headType);
   templateName.value = name;
-  message.value = msg.replace("\n", "");
+  message.value = msg;
   language.value = lang;
   isTemplate.value = true;
   templateIsMeta.value = isMeta;
@@ -1402,6 +1413,8 @@ const onPaste = (e: ClipboardEvent) => {
 };
 
 onMounted(async () => {
+  messagingStore.officeHours_get_set();
+
   console.log("PLATFORM:", Platform.is);
   // Swal.fire({
   //   icon: "error",

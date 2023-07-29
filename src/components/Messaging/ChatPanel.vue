@@ -223,7 +223,7 @@ const chatToggleLabel: ChatToggleType = reactive({
 const messagingStore = useMessagingStore();
 const contactStore = useContactStore();
 
-const { chatsList, selectedTab, getSelectedChatId, getSelectedChat } =
+const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, users } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -266,11 +266,8 @@ const refreshPage = () => {
 };
 
 // watch(chatsList, (list) => {
-//   list.forEach((chat) => {
-//     console.log("SOCKET: join_chat by chat_id.........");
-//     // console.log(`join_chat.........${chat.id}`);
-//     socket.value.emit("join_chat", chat.id);
-//   });
+//   list.map((chat) => ({
+//   }));
 // });
 
 watch(getSelectedChatId, () => {
@@ -609,7 +606,9 @@ const initSocket = () => {
         // chat.id = chat.id.toString(); // ??? 0707
         console.log(" CHAT_CREATE:", chat);
         chat.last_message = JSON.parse(chat.last_message);
-        console.log(chat.last_message);
+        chat.admin_data = users.value.find(
+          (user) => user.user_id === chat.admin
+        );
         if (chat?.status === ChatTypes.PENDING) {
           chatsList.value.push(chat);
         } else {
@@ -685,8 +684,9 @@ const initSocket = () => {
   }
 };
 
-onMounted(() => {
-  messagingStore.fetchChats();
+onMounted(async () => {
+  await messagingStore.getWabaUsers();
+  await messagingStore.fetchChats();
   initSocket();
   // messagingStore.initSocket();
 });

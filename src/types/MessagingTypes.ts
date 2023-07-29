@@ -82,6 +82,10 @@ export interface IChat {
   chat_id?: string;
   contacts_id: string;
   admin: string;
+  admin_data: {
+    first_name: string;
+    last_name: string;
+  };
   customers_id: string | null;
   contact_first_name: string;
   contact_last_name: string;
@@ -118,6 +122,12 @@ export interface ISelectedSearchResultPagination {
 
 export interface IState {
   chatsList: IChat[];
+  users: Array<{
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    role_name: string;
+  }>;
   selectedChatId: string;
   leftDrawerOpen: boolean;
   rightDrawerOpen: boolean;
@@ -134,6 +144,7 @@ export interface IState {
   selectedSearchResult: IChat | null;
   selectedSearchResultPagination: ISelectedSearchResultPagination | null;
   officeHours: boolean;
+  isOfficeHours: boolean;
 }
 
 export interface SendTextMessage {

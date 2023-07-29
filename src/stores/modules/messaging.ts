@@ -23,11 +23,13 @@ import {
   getMessagesById,
   chatbots,
   getChatSearchResultById,
-  setBotConfig,
+  setOfficeHours,
+  configGet,
 } from "src/api/messaging";
 
 import { ref } from "vue";
 import { io } from "socket.io-client";
+import { getChatUsers } from "src/api/user";
 const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
@@ -40,6 +42,7 @@ const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
       chatsList: [],
+      users: [],
       selectedChatId: "",
       selectedChatPending: false,
       selectedChatExpired: false,
@@ -57,6 +60,7 @@ const useMessagingStore = defineStore("messaging", {
       selectedSearchResult: null,
       selectedSearchResultPagination: null,
       officeHours: false,
+      isOfficeHours: false,
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -68,6 +72,19 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id === state.selectedChatId
       ) as IChat;
     },
+    getUserBySelectedChat(state) {
+      const chat = state.chatsList.find(
+        (chat: IChat) => chat.id === state.selectedChatId
+      ) as IChat;
+      return chat
+        ? state.users.find((user) => chat.admin === user.user_id)
+        : {};
+    },
+    // getUserByUserId(state) {
+    //   return state.users.find(
+    //     (user) => user.user_id === userInfoStore.getUserProfile?.id
+    //   );
+    // },
     getSelectedChatPending: (state) => state.selectedChatPending,
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
@@ -84,14 +101,29 @@ const useMessagingStore = defineStore("messaging", {
     resetSearchResults() {
       this.searchResults = [];
     },
-    async setOfficeHours(value: boolean) {
+    async getWabaUsers() {
       try {
-        const results = await setBotConfig(value);
-        console.log("[messaging] Set office hours", Boolean(results.data[0]));
-        this.officeHours = Boolean(results.data[0]);
+        const response = await getChatUsers();
+        this.users = response.data;
+      } catch (error) {}
+    },
+    async officeHours_set(value: boolean) {
+      try {
+        const results = await setOfficeHours(value);
+        console.log("[messaging] Set office hours", results);
+        this.officeHours_get_set();
       } catch (error) {
-        console.log("[messaging] Error setting office hour", error);
-        this.officeHours = !value;
+        console.error("[messaging] Error setting office hour", error);
+        this.isOfficeHours = !value;
+      }
+    },
+    async officeHours_get_set() {
+      try {
+        const results = await configGet();
+        console.log("[messaging] Office hours", results);
+        this.isOfficeHours = results.ENABLE_PROFILE_BOT === "1";
+      } catch (error) {
+        console.log("[messaging] Error fetching office hour", error);
       }
     },
     setSelectedChatPending(value: boolean) {
@@ -293,6 +325,9 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
+        item.admin_data = this.users.find(
+          (user) => user.user_id === item.admin
+        );
         // item.id = item.id.toString(); // ??? 0707
         return item;
       });
@@ -531,6 +566,9 @@ const useMessagingStore = defineStore("messaging", {
     changeAdminChatListById(id: string, admin: string) {
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].admin = admin;
+      this.chatsList[index].admin_data = this.users.find(
+        (user) => user.user_id === admin
+      ) as any;
       this.sortChatsList();
     },
     changeConversationType(id: string, conversationType: string) {
