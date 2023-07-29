@@ -26,6 +26,7 @@ import {
 
 import { ref } from "vue";
 import { io } from "socket.io-client";
+import { getChatUsers } from "src/api/user";
 const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
@@ -38,6 +39,7 @@ const useMessagingStore = defineStore("messaging", {
   state: () =>
     ({
       chatsList: [],
+      users: [],
       selectedChatId: "",
       selectedChatPending: false,
       selectedChatExpired: false,
@@ -63,10 +65,29 @@ const useMessagingStore = defineStore("messaging", {
         (chat: IChat) => chat.id === state.selectedChatId
       ) as IChat;
     },
+    getUserBySelectedChat(state) {
+      const chat = state.chatsList.find(
+        (chat: IChat) => chat.id === state.selectedChatId
+      ) as IChat;
+      return chat
+        ? state.users.find((user) => chat.admin === user.user_id)
+        : {};
+    },
+    // getUserByUserId(state) {
+    //   return state.users.find(
+    //     (user) => user.user_id === userInfoStore.getUserProfile?.id
+    //   );
+    // },
     getSelectedChatPending: (state) => state.selectedChatPending,
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
+    async getWabaUsers() {
+      try {
+        const response = await getChatUsers();
+        this.users = response.data;
+      } catch (error) {}
+    },
     async setOfficeHours(value: boolean) {
       try {
         const results = await setBotConfig(value);
@@ -273,6 +294,9 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
+        item.admin_data = this.users.find(
+          (user) => user.user_id === item.admin
+        );
         // item.id = item.id.toString(); // ??? 0707
         return item;
       });
@@ -498,6 +522,9 @@ const useMessagingStore = defineStore("messaging", {
     changeAdminChatListById(id: string, admin: string) {
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].admin = admin;
+      this.chatsList[index].admin_data = this.users.find(
+        (user) => user.user_id === admin
+      ) as any;
       this.sortChatsList();
     },
     changeConversationType(id: string, conversationType: string) {

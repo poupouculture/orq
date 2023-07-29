@@ -55,6 +55,12 @@ const list = computed(() =>
       chat.status === props.type &&
       (customerName?.includes(props.filterText) ||
         chat.name?.includes(props.filterText) ||
+        chat.admin_data?.first_name
+          ?.toLocaleLowerCase()
+          .includes(props.filterText.toLocaleLowerCase()) ||
+        chat.admin_data?.last_name
+          ?.toLocaleLowerCase()
+          .includes(props.filterText.toLocaleLowerCase()) ||
         contactFirstName?.includes(props.filterText))
       // || chat.members?.includes(props.filterText))
     );
