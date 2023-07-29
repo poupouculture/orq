@@ -1,5 +1,5 @@
 <template>
-  <div ref="root">
+  <div ref="root" :class="{ highlight: highlighted }">
     <div
       v-if="message.label && !isReply"
       class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
@@ -205,6 +205,7 @@ import Preview from "../ApplicationProgram/Preview.vue";
 const root = ref(null);
 const props = defineProps<{
   message: Message;
+  highlighted?: boolean;
   isReply?: boolean;
 }>();
 const operationType = ref("");
@@ -327,3 +328,9 @@ const messageTemplateBody = (content: any) => {
 
 defineExpose({ root, props });
 </script>
+
+<style lang="scss" scoped>
+div.highlight {
+  background-color: rgba(110, 100, 255, 0.1);
+}
+</style>
