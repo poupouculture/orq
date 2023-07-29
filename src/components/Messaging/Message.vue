@@ -610,7 +610,7 @@ const selectedSearchResultPagination = computed(
 watch(selectedSearchResultPagination, (value) => {
   console.log("[messages] Search result selected", value);
   hasMoreMessage[getSelectedChatId.value] = true;
-  // cachedChatMessages.value[getSelectedChatId.value] = [];
+  cachedChatMessages.value[getSelectedChatId.value] = [];
   if (value == null) {
     infiniteScrollRef.value?.setIndex(0);
   } else {
