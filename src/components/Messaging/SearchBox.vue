@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ isDesktop }">
+  <div :class="{ isDesktop: !isMobile }">
     <q-select
       autocomplete
       class="self-center mr-3"
@@ -34,7 +34,7 @@
           <q-item-section>
             <q-item-label caption>{{ scope.opt.dateCreated }}</q-item-label>
             <q-item-label>
-              <div v-if="isDesktop" style="max-width: 400px">
+              <div v-if="!isMobile" style="max-width: 400px">
                 {{ scope.opt.label }}
               </div>
               <span v-else>{{ scope.opt.label }}</span>
@@ -66,7 +66,7 @@ import { format } from "date-fns";
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 const isMobile = computed(() => Platform.is.mobile);
-const isDesktop = computed(() => Platform.is.desktop);
+// const isDesktop = computed(() => Platform.is.desktop);
 
 const internalValue = ref(null);
 
