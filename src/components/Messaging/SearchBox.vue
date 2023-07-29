@@ -10,7 +10,7 @@
     v-bind="$props"
     v-model="internalValue"
     :options="options"
-    input-style="max-width: 125px"
+    input-style="width: 125px"
     option-value="id"
     option-label="label"
     use-input
@@ -33,7 +33,12 @@
       <q-item v-bind="scope.itemProps">
         <q-item-section>
           <q-item-label caption>{{ scope.opt.dateCreated }}</q-item-label>
-          <q-item-label>{{ scope.opt.label }}</q-item-label>
+          <q-item-label>
+            <div v-if="isDesktop" style="max-width: 400px">
+              {{ scope.opt.label }}
+            </div>
+            <span v-else>{{ scope.opt.label }}</span>
+          </q-item-label>
         </q-item-section>
       </q-item>
     </template>
@@ -60,6 +65,7 @@ import { format } from "date-fns";
 const messagingStore = useMessagingStore();
 const userInfoStore = useUserInfoStore();
 const isMobile = computed(() => Platform.is.mobile);
+const isDesktop = computed(() => Platform.is.desktop);
 
 const internalValue = ref(null);
 
