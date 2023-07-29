@@ -9,15 +9,18 @@
 import { onMounted, ref } from "vue";
 import BaseLayout from "src/components/Customer/BaseLayout.vue";
 import { useRouter } from "vue-router";
+import useContactStore from "src/stores/modules/contact";
 import useCustomerStore from "src/stores/modules/customer";
 import { useQuasar } from "quasar";
 
 const router = useRouter();
 const $q = useQuasar();
 const customerStore = useCustomerStore();
+const contactStore = useContactStore();
 const loading = ref(true);
 
 onMounted(() => {
+  contactStore.$reset();
   customerStore.$reset();
   loading.value = false;
 });

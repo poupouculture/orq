@@ -12,13 +12,16 @@ import { onMounted, ref } from "vue";
 import BaseLayout from "src/components/Customer/BaseLayout.vue";
 import { useRouter, useRoute } from "vue-router";
 import useCustomerStore from "src/stores/modules/customer";
+import useContactStore from "src/stores/modules/contact";
 
 const router = useRouter();
 const route = useRoute();
 const customerStore = useCustomerStore();
+const contactStore = useContactStore();
 const loading = ref(true);
 
 onMounted(async () => {
+  contactStore.$reset();
   const id = route.params.id;
   await customerStore.fetchCustomer(id);
   loading.value = false;
