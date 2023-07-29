@@ -155,6 +155,7 @@
             v-for="item in messages"
             :key="item.id"
             :message="item"
+            :highlighted="item.id === highlightedMessageId"
             ref="messagesComponentRefs"
           />
           <template #loading>
@@ -528,6 +529,7 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
+const highlightedMessageId = ref<number | null>(null);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -613,6 +615,7 @@ watch(selectedSearchResultPagination, (value) => {
   cachedChatMessages.value[getSelectedChatId.value] = [];
   if (value == null) {
     infiniteScrollRef.value?.setIndex(0);
+    highlightedMessageId.value = null;
   } else {
     const targetPage = value.page_no;
     infiniteScrollRef.value?.setIndex(targetPage - 1);
@@ -757,8 +760,11 @@ watch(messagesComponentRefs.value, async (value) => {
       console.log("[messages] Target", target.root);
       console.log("[messages] Target offsetTop", target.root.offsetTop);
       window.setTimeout(() => {
+        highlightedMessageId.value = target.props.message.id;
         scrollAreaRef.value.scrollTop = target.root.offsetTop;
       }, 500);
+    } else {
+      highlightedMessageId.value = null;
     }
   }
 });
