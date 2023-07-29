@@ -1,57 +1,58 @@
 <template>
-  <q-select
-    autocomplete
-    class="self-center mr-3"
-    :class="{ 'mb-3': !isMobile, 'mb-1': isMobile }"
-    dense
-    clearable
-    outlined
-    label="Search"
-    v-bind="$props"
-    v-model="internalValue"
-    :options="options"
-    input-style="width: 125px"
-    option-value="id"
-    option-label="label"
-    use-input
-    @filter="filterFn"
-    @clear="clear"
-    :input-debounce="250"
-    @input-value="handleTextInput"
-  >
-    <template v-slot:no-option>
-      <q-item>
-        <q-item-section>
-          <q-item-label>No results found</q-item-label>
-        </q-item-section>
-      </q-item>
-    </template>
-    <template v-slot:prepend>
-      <q-icon name="search" />
-    </template>
-    <template v-slot:option="scope">
-      <q-item v-bind="scope.itemProps">
-        <q-item-section>
-          <q-item-label caption>{{ scope.opt.dateCreated }}</q-item-label>
-          <q-item-label>
-            <div v-if="isDesktop" style="max-width: 400px">
-              {{ scope.opt.label }}
-            </div>
-            <span v-else>{{ scope.opt.label }}</span>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </template>
-    <template v-slot:selected>
-      <div class="ellipsis">
-        {{
-          internalValue?.label.length > 20
-            ? `${internalValue?.label.substring(0, 20)}...`
-            : internalValue?.label
-        }}
-      </div>
-    </template>
-  </q-select>
+  <div :class="{ isDesktop }">
+    <q-select
+      autocomplete
+      class="self-center mr-3"
+      :class="{ 'mb-3': !isMobile, 'mb-1': isMobile }"
+      dense
+      clearable
+      outlined
+      label="Search"
+      v-bind="$props"
+      v-model="internalValue"
+      :options="options"
+      option-value="id"
+      option-label="label"
+      use-input
+      @filter="filterFn"
+      @clear="clear"
+      :input-debounce="250"
+      @input-value="handleTextInput"
+    >
+      <template v-slot:no-option>
+        <q-item>
+          <q-item-section>
+            <q-item-label>No results found</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+      <template v-slot:option="scope">
+        <q-item v-bind="scope.itemProps">
+          <q-item-section>
+            <q-item-label caption>{{ scope.opt.dateCreated }}</q-item-label>
+            <q-item-label>
+              <div v-if="isDesktop" style="max-width: 400px">
+                {{ scope.opt.label }}
+              </div>
+              <span v-else>{{ scope.opt.label }}</span>
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+      <template v-slot:selected>
+        <div class="ellipsis">
+          {{
+            internalValue?.label.length > 20
+              ? `${internalValue?.label.substring(0, 20)}...`
+              : internalValue?.label
+          }}
+        </div>
+      </template>
+    </q-select>
+  </div>
 </template>
 
 <script setup>
@@ -123,3 +124,9 @@ const filterFn = async (value, update, abort) => {
   }
 };
 </script>
+
+<style scoped>
+div.isDesktop {
+  width: 350px;
+}
+</style>
