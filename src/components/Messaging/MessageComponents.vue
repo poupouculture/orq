@@ -78,13 +78,16 @@
         </div>
         Replied:
       </div>
-      {{
-        isReply
-          ? messageContentText(message).length > 160
-            ? messageContentText(message).substring(0, 160) + " ..."
+      <p
+        class="whitespace-pre-wrap"
+        v-html="
+          isReply
+            ? messageContentText(message).length > 160
+              ? messageContentText(message).substring(0, 160) + ' ...'
+              : messageContentText(message)
             : messageContentText(message)
-          : messageContentText(message)
-      }}
+        "
+      ></p>
     </div>
   </div>
 </template>
