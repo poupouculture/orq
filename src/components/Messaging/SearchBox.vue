@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ isDesktop: !isMobile }">
+  <div :class="{ isMobile: isMobile, isDesktop: !isMobile }">
     <q-select
       autocomplete
       class="self-center mr-3"
@@ -128,5 +128,9 @@ const filterFn = async (value, update, abort) => {
 <style scoped>
 div.isDesktop {
   width: 350px;
+}
+
+div.isMobile {
+  max-width: 200px;
 }
 </style>
