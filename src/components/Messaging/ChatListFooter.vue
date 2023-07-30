@@ -106,13 +106,7 @@
       <div class="mt-6">
         <div class="text-sm text-gray-500">Status</div>
         <div class="text-lg text-gray-700">
-          <q-select
-            borderless
-            dense
-            v-model="status"
-            :options="statusOptions"
-            class="text-base"
-          />
+          {{ status }}
         </div>
       </div>
     </div>
@@ -121,18 +115,22 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import profileImg from "src/assets/images/profileImg.jpeg";
+import useMessagingStore from "src/stores/modules/messaging";
 
 const router = useRouter();
 const userStore = useUserInfoStore();
+const messagingStore = useMessagingStore();
 const showInfo = ref(false);
 const { getUserProfile } = storeToRefs(userStore);
 
-const statusOptions = ["Busy", "Unavailable", "Offline"];
-const status = ref("Busy");
 const toggleInfo = () => {
   showInfo.value = !showInfo.value;
 };
+
+const status = computed(() =>
+  messagingStore.isOfficeHours ? "Offline" : "Online"
+);
 </script>
