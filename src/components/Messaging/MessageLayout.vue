@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
   // window.document.documentElement.classList.remove("overflow-hidden");
 });
 
-onMounted(() => {
+onMounted(async () => {
   // window.document.documentElement.classList.add("overflow-hidden");
 });
 </script>

@@ -6,6 +6,21 @@ import {
   ComponentParameter,
 } from "src/types/MessagingTypes";
 
+export const setOfficeHours = async (status: boolean) => {
+  console.log("[office-hour] Setting status to", status);
+  let toggle = 0;
+  if (status) {
+    toggle = 1;
+  }
+  const { data } = await api.get(`/chat/config/office/${toggle}`);
+  return data;
+};
+
+export const configGet = async () => {
+  const { data } = await api.get("/chat/config");
+  return data;
+};
+
 export const getChats = async (limit = 15, pageNumber = 1) => {
   const { data } = await api.get(`/chat/list`, {
     params: {
