@@ -38,7 +38,7 @@
 
           <q-tab-panel name="contact">
             <div class="contact-info">
-              <ContactInfo />
+              <ContactInfo :show-associate-button="showAssociateButton" />
             </div>
           </q-tab-panel>
           <!-- ??? 0614 -->
@@ -73,6 +73,10 @@ defineProps({
     default: "edit",
   },
   showDeleteButton: {
+    type: Boolean,
+    default: true,
+  },
+  showAssociateButton: {
     type: Boolean,
     default: true,
   },
