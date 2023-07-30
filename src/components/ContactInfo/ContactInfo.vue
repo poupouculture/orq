@@ -6,6 +6,13 @@ import useCustomerStore from "src/stores/modules/customer";
 import { storeToRefs } from "pinia";
 import { preferedLanguageOptions } from "src/utils/typeOptions";
 
+// Props
+defineProps({
+  showAssociateButton: {
+    type: Boolean,
+    default: () => true,
+  },
+});
 // State
 const editMode = ref(false);
 const categoryOptions = ref(["phone"]);
@@ -33,9 +40,10 @@ watch(getContacts, () => {
 const updateContacts = async () => {
   await contacts.updateContact(getContacts.value);
 
-  getSelectedChat.value.contact_first_name = getContacts.value.first_name;
-  getSelectedChat.value.contact_last_name = getContacts.value.last_name;
-
+  if (getSelectedChat.value) {
+    getSelectedChat.value.contact_first_name = getContacts.value.first_name;
+    getSelectedChat.value.contact_last_name = getContacts.value.last_name;
+  }
   editMode.value = false;
 };
 </script>
