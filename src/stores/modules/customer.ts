@@ -11,6 +11,9 @@ import {
 import { IState, FormPayload, ICustomer } from "src/types/CustomerTypes";
 import { getUser } from "src/api/user";
 import { Loading, Notify } from "quasar";
+import useContactStore from "./contact";
+
+const contactStore = useContactStore();
 
 const useCustomerStore = defineStore("customer", {
   state: () =>
@@ -113,6 +116,12 @@ const useCustomerStore = defineStore("customer", {
         if (data) {
           const customer = data?.data?.data;
           this.setCustomer(customer);
+          // store to contact store because the customer related the contacts
+          if (customer?.contacts.length === 1) {
+            const contact = customer?.contacts[0].contacts_id;
+            // contactStore.setCurrentCustomerId(customer.id);
+            contactStore.setContact(contact);
+          }
           return customer;
         }
       } catch (error) {

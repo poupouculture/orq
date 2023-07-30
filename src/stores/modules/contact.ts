@@ -18,7 +18,7 @@ const useContactStore = defineStore("useContact", {
       number: "",
       category: "",
       preferred_language: "",
-    },
+    } as Contact,
     currentCustomerId: "",
   }),
   getters: {
