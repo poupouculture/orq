@@ -106,14 +106,14 @@
       <div class="mt-6">
         <div class="text-sm text-gray-500">Status</div>
         <div class="text-lg text-gray-700">
-          {{ isOnline ? "Online" : "Offline" }}
+          {{ isOnline ? "Offline" : "Online" }}
         </div>
       </div>
       <div class="mt-6">
         <div class="text-sm text-gray-500">Current Bot Status</div>
         <div
           class="text-lg text-gray-700"
-          v-text="!isOnline ? 'Profile_bot' : 'None'"
+          v-text="!isOnline ? 'Profile bot' : 'Office hours bot'"
         />
       </div>
     </div>
