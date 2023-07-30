@@ -50,18 +50,18 @@ const list = computed(() =>
     const customerName = chat?.customers_id
       ? chat?.customer_company_name_en?.toLowerCase()
       : "visitor".toLowerCase();
-    const contactFirstName = chat?.contact_first_name?.toLocaleLowerCase();
+    const contactFirstName = chat?.contact_first_name?.toLowerCase();
     return (
       chat.status === props.type &&
-      (customerName?.includes(props.filterText) ||
-        chat.name?.includes(props.filterText) ||
+      (customerName?.includes(props.filterText.toLowerCase()) ||
+        chat.name?.toLowerCase().includes(props.filterText.toLowerCase()) ||
         chat.admin_data?.first_name
-          ?.toLocaleLowerCase()
-          .includes(props.filterText.toLocaleLowerCase()) ||
+          ?.toLowerCase()
+          .includes(props.filterText.toLowerCase()) ||
         chat.admin_data?.last_name
-          ?.toLocaleLowerCase()
-          .includes(props.filterText.toLocaleLowerCase()) ||
-        contactFirstName?.includes(props.filterText))
+          ?.toLowerCase()
+          .includes(props.filterText.toLowerCase()) ||
+        contactFirstName?.includes(props.filterText.toLowerCase()))
       // || chat.members?.includes(props.filterText))
     );
   })
