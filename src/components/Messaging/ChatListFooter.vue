@@ -106,14 +106,15 @@
       <div class="mt-6">
         <div class="text-sm text-gray-500">Status</div>
         <div class="text-lg text-gray-700">
-          <q-select
-            borderless
-            dense
-            v-model="status"
-            :options="statusOptions"
-            class="text-base"
-          />
+          {{ isOnline ? "Offline" : "Online" }}
         </div>
+      </div>
+      <div class="mt-6">
+        <div class="text-sm text-gray-500">Current Bot Status</div>
+        <div
+          class="text-lg text-gray-700"
+          v-text="!isOnline ? 'Profile bot' : 'Office hours bot'"
+        />
       </div>
     </div>
   </Transition>
@@ -121,18 +122,20 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import profileImg from "src/assets/images/profileImg.jpeg";
+import useMessagingStore from "src/stores/modules/messaging";
 
 const router = useRouter();
 const userStore = useUserInfoStore();
+const messagingStore = useMessagingStore();
 const showInfo = ref(false);
 const { getUserProfile } = storeToRefs(userStore);
 
-const statusOptions = ["Busy", "Unavailable", "Offline"];
-const status = ref("Busy");
 const toggleInfo = () => {
   showInfo.value = !showInfo.value;
 };
+
+const isOnline = computed(() => !messagingStore.isOfficeHours);
 </script>
