@@ -1,5 +1,3 @@
-import AboutUs from "pages/LandingPage/AboutUs.vue";
-
 const routes = [
   {
     path: "/login",
@@ -29,7 +27,7 @@ const routes = [
       {
         path: "/about-us",
         name: "About Us",
-        component: AboutUs,
+        component: () => import("pages/LandingPage/AboutUs.vue"),
       },
       {
         path: "/us/products/detail/",
