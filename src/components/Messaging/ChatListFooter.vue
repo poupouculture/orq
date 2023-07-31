@@ -102,6 +102,7 @@
         <div class="text-base text-gray-700">
           {{ getUserProfile.first_name }} {{ getUserProfile.last_name }}
         </div>
+        <div class="text-sm text-gray-500">{{ getUserProfile.email }}</div>
       </div>
       <div class="mt-6">
         <div class="text-sm text-gray-500">Status</div>
@@ -115,6 +116,16 @@
           class="text-lg text-gray-700"
           v-text="!isOnline ? 'Profile bot' : 'Office hours bot'"
         />
+      </div>
+      <div class="mt-6">
+        <div class="text-sm text-gray-500">Office</div>
+        <div class="text-lg text-gray-700">
+          <span>Office Hours</span
+          ><q-toggle
+            v-model="isOfficeHours"
+            @update:model-value="switchOfficeHours"
+          />
+        </div>
       </div>
     </div>
   </Transition>
@@ -132,10 +143,15 @@ const userStore = useUserInfoStore();
 const messagingStore = useMessagingStore();
 const showInfo = ref(false);
 const { getUserProfile } = storeToRefs(userStore);
+const { isOfficeHours } = storeToRefs(messagingStore);
 
 const toggleInfo = () => {
   showInfo.value = !showInfo.value;
 };
 
 const isOnline = computed(() => !messagingStore.isOfficeHours);
+
+const switchOfficeHours = async (value) => {
+  await messagingStore.officeHours_set(value);
+};
 </script>
