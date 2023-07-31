@@ -226,15 +226,6 @@
                   style="min-width: 100px"
                   class="py-2 px-3 space-y-2"
                 >
-                  <q-item>
-                    <q-item-section>Office hours</q-item-section>
-                    <q-item-section avatar>
-                      <q-toggle
-                        v-model="isOfficeHours"
-                        @update:model-value="switchOfficeHours"
-                      />
-                    </q-item-section>
-                  </q-item>
                   <q-item
                     v-for="item in botList"
                     :key="item.text"
@@ -397,15 +388,6 @@
         <span>Back</span>
       </div>
       <q-list dense style="min-width: 100px">
-        <q-item>
-          <q-item-section>Office hours</q-item-section>
-          <q-item-section avatar>
-            <q-toggle
-              v-model="isOfficeHours"
-              @update:model-value="switchOfficeHours"
-            />
-          </q-item-section>
-        </q-item>
         <q-item
           v-for="(item, index) in botList"
           class="hover:bg-gray-200"
@@ -546,8 +528,6 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
-// const isOfficeHours: Ref<boolean> = ref(messagingStore.isOfficeHours);
-// const isOfficeHours = ref(true);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -577,10 +557,8 @@ const {
   getSelectedChatPending,
   getSelectedChatExpired,
   getUserBySelectedChat,
-  isOfficeHours,
 } = storeToRefs(messagingStore);
 
-console.log("isOfficeHours:", isOfficeHours);
 const isPending = computed({
   get: () => getSelectedChatPending.value,
   set: (value) => {
@@ -1012,18 +990,6 @@ const sendMessage = async () => {
     console.log(error);
   }
 };
-
-const switchOfficeHours = async (value) => {
-  await messagingStore.officeHours_set(value);
-};
-
-// const isOfficeHours = computed({
-//   get: () => messagingStore.officeHours,
-//   set: async (value) => {
-//     console.log("Toggling office hours", value);
-//     messagingStore.setOfficeHours(value);
-//   },
-// });
 
 const activateChat = async () => {
   try {
