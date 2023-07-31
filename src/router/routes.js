@@ -17,22 +17,22 @@ const routes = [
       {
         path: "",
         name: "landingpage",
-        component: () => import("pages/landingpage/index.vue"),
+        component: () => import("pages/LandingPage/Index.vue"),
       },
       {
         path: "/us/products",
         name: "Products",
-        component: () => import("pages/landingpage/categories.vue"),
+        component: () => import("pages/LandingPage/Products.vue"),
       },
       {
         path: "/about-us",
         name: "About Us",
-        component: () => import("pages/landingpage/aboutus.vue"),
+        component: () => import("pages/LandingPage/AboutUs.vue"),
       },
       {
         path: "/us/products/detail/",
         name: "landingcategoriesdetails",
-        component: () => import("pages/landingpage/categoriesDetail.vue"),
+        component: () => import("pages/LandingPage/CategoriesDetail.vue"),
       },
     ],
   },

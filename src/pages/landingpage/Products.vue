@@ -1,22 +1,20 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import Hero from "src/components/LandingPage/hero.vue";
-import Banner from "src/components/LandingPage/banner.vue";
+import Hero from "src/components/LandingPage/Hero.vue";
+import Banner from "src/components/LandingPage/Banner.vue";
 import useCategories from "src/stores/modules/categories";
+import { storeToRefs } from "pinia";
 
+import useLandingPage from "src/stores/modules/landingpage";
+
+const landingPageStore = useLandingPage();
+const { getComponent } = storeToRefs(landingPageStore);
 const categories = useCategories();
 const router = useRouter();
 
 const allCategories = computed(() => {
   return categories.allCategories;
-});
-
-const content = computed(() => {
-  return {
-    img: "https://cdn.quasar.dev/img/parallax2.jpg",
-    text: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptate voluptatibus quibusdam accusantium laudantium ea, adipisci veritatis laboriosam amet delectus quod enim quisquam ex, rem inventore accusamus atque, reprehenderit molestias? Fugiat! Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur illo doloribus quasi dolorem cumque delectus, praesentium magni possimus aliquam porro consectetur sunt rerum ex architecto, facere alias voluptate voluptates consequatur!",
-  };
 });
 
 const moveToDetails = async (id) => {
@@ -36,14 +34,16 @@ onMounted(() => {
       <div
         class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
       >
-        <p class="text-center">Products categories</p>
+        <p class="text-center">
+          {{ getComponent.heroText }}
+        </p>
       </div>
     </div>
   </Hero>
 
   <div class="w-full flex justify-center flex-col min-h-screen items-center">
     <div class="w-full container my-5">
-      <Banner :content="content" />
+      <Banner :content="getComponent" />
     </div>
     <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <button

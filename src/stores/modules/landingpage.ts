@@ -51,9 +51,25 @@ const useNavigationStore = defineStore("navigationStore", {
             (item: any) => item.page_component_id.type === "cover_photo"
           );
 
+          const content = data.data.component.filter(
+            (item: any) => item.page_component_id.type !== "cover_photo"
+          );
+
           const obj = {
-            ...cover.page_component_id,
-            icon: `${process.env.ORQ_API}/assets/${cover.page_component_id.icon}`,
+            content: content.map((item: any) => {
+              const obj = {
+                ...item.page_component_id,
+                icon: null,
+              };
+
+              if (item.page_component_id.icon !== null) {
+                obj.icon = `${process.env.ORQ_API}/assets/${item.page_component_id.icon}`;
+              }
+
+              return obj;
+            }),
+            iconCover: `${process.env.ORQ_API}/assets/${cover.page_component_id.icon}`,
+            heroText: cover.page_component_id.name,
           };
 
           this.component = obj;

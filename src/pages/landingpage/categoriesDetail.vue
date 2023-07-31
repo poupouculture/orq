@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { LocalStorage } from "quasar";
-import Hero from "src/components/LandingPage/hero.vue";
-import ProductCategoryNavigation from "src/components/LandingPage/productCategoryNavigation/index.vue";
+import Hero from "src/components/LandingPage/Hero.vue";
+import ProductCategoryNavigation from "src/components/LandingPage/ProductCategoryNavigation/index.vue";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import Modal from "src/components/LandingPage/modal.vue";
@@ -207,8 +207,6 @@ onMounted(async () => {
             </q-badge>
           </q-btn>
         </div>
-
-        <button @click="downloadPdf = !downloadPdf">Check</button>
 
         <BaseTable
           :rows="products"

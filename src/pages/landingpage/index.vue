@@ -1,5 +1,5 @@
 <script setup>
-import Hero from "src/components/LandingPage/hero.vue";
+import Hero from "src/components/LandingPage/Hero.vue";
 import Section1 from "src/components/LandingPage/section1.vue";
 import Section2 from "src/components/LandingPage/section2.vue";
 import Section3 from "src/components/LandingPage/section3.vue";

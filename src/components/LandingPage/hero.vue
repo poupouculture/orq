@@ -13,14 +13,16 @@ const route = useRoute();
 <template>
   <div
     :class="
-      Object.keys(getComponent).length === 0
+      Object.keys(getComponent).length === 0 && route.name == 'landingpage'
         ? 'min-h-screen homeHero'
+        : route.name !== 'landingpage'
+        ? 'lg:h-[70vh] homeHero'
         : 'lg:h-[70vh]'
     "
     :style="
       Object.keys(getComponent).length === 0
         ? ''
-        : { backgroundImage: `url(${getComponent.icon})` }
+        : { backgroundImage: `url(${getComponent.iconCover})` }
     "
     class="bg-center bg-cover flex flex-col items-center w-full p-5 lg:p-10"
   >

@@ -32,6 +32,10 @@ watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
 });
 
+watch(route, async () => {
+  await getPagesContent();
+});
+
 // Methods
 
 const getComponentById = async (id, url) => {
@@ -39,14 +43,20 @@ const getComponentById = async (id, url) => {
   router.push(url);
 };
 
-onMounted(async () => {
-  await useLandingPageStore.getAll();
-
+const getPagesContent = async () => {
   const component = navigation.value.find((item) => item.name === route.name);
 
   if (component) {
     await useLandingPageStore.getComponentByid(component.id);
+  } else {
+    useLandingPageStore.component = {};
   }
+};
+
+onMounted(async () => {
+  await useLandingPageStore.getAll();
+
+  await getPagesContent();
 });
 </script>
 
