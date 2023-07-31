@@ -14,6 +14,8 @@ const { allCategories } = storeToRefs(categoriesStore);
 
 const dialog = ref(false);
 const downloadPdf = ref(false);
+const productDetailModal = ref(false);
+const productDetail = ref({});
 const selectedTables = ref([]);
 const categoriesChoose = ref([]);
 const query = ref("");
@@ -117,6 +119,11 @@ const getProduct = async () => {
   categoriesStore.getProduct(query.value, categoriesChoose.value);
 };
 
+const getProductDetails = (data) => {
+  productDetail.value = data;
+  productDetailModal.value = true;
+};
+
 const updateCategories = (value) => {
   categoriesChoose.value = value;
 };
@@ -212,6 +219,7 @@ onMounted(async () => {
           :rows="products"
           :loading="false"
           :columns="columns"
+          @selectRow="getProductDetails"
           v-model:selected="selectedTables"
         />
       </div>
@@ -220,6 +228,7 @@ onMounted(async () => {
     <Modal
       :dialog="dialog"
       @accept="downloadPdf = true"
+      @decline="dialog = false"
       @update:modelValue="dialog = false"
       decline-text="Cancel"
       accept-text="Download"
@@ -234,6 +243,7 @@ onMounted(async () => {
     <Modal
       :dialog="downloadPdf"
       @update:modelValue="downloadPdf = false"
+      @decline="downloadPdf = false"
       @accept="submit"
       decline-text="Cancel"
       accept-text="Accept"
@@ -366,6 +376,50 @@ onMounted(async () => {
             />
           </div>
         </q-form>
+      </div>
+    </Modal>
+
+    <Modal :dialog="productDetailModal" @accept="productDetailModal = false">
+      <template #head>
+        <div class="text-h6">Pdf Product</div>
+      </template>
+
+      <div class="flex flex-col gap-10">
+        <p class="mb-0">
+          {{ productDetail.name }}
+        </p>
+
+        <div class="flex gap-3">
+          <p class="">Specification</p>
+
+          <span class="">
+            {{ productDetail.description }}
+          </span>
+        </div>
+
+        <div class="flex gap-3">
+          <p class="">Brand</p>
+
+          <span class="">
+            {{ productDetail.brand }}
+          </span>
+        </div>
+
+        <div class="flex gap-3">
+          <p class="">Country Of Origin</p>
+
+          <span class="">
+            {{ productDetail.country }}
+          </span>
+        </div>
+
+        <div class="flex gap-3">
+          <p class="">Category</p>
+
+          <span class="">
+            {{ productDetail.cat2 }}
+          </span>
+        </div>
       </div>
     </Modal>
   </div>
