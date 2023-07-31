@@ -116,8 +116,12 @@ const useCategoriesStore = defineStore("categoriesStore", {
 
     async getProduct(keyword: string, categories: []) {
       try {
-        const { data } = await getProducts(keyword, categories);
-        this.products = data.data;
+        if (categories.length > 0) {
+          const { data } = await getProducts(keyword, categories);
+          this.products = data.data;
+        } else {
+          this.products = [];
+        }
       } catch (error) {}
     },
   },
