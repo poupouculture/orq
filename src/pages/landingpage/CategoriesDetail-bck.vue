@@ -5,7 +5,7 @@ import Hero from "src/components/LandingPage/Hero.vue";
 import ProductCategoryNavigation from "src/components/Landing/ProductCategoryNavigation/index.vue";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
-import Modal from "src/components/LandingPage/modal.vue";
+import Modal from "src/components/Landing/modal.vue";
 import { storeToRefs } from "pinia";
 import useCategories from "src/stores/modules/categories";
 
