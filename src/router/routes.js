@@ -17,7 +17,7 @@ const routes = [
       {
         path: "",
         name: "landingpage",
-        component: () => import("pages/LandingPage/Index.vue"),
+        component: () => import("pages/LandingPage/index.vue"),
       },
       {
         path: "/us/products",
