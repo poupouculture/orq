@@ -31,7 +31,7 @@ const route = useRoute();
         :class="
           route.name == 'landingpage' && $q.screen.gt.md
             ? 'min-h-[90vh] '
-            : 'h-[70vh]'
+            : ' min-h-screen'
         "
         class="w-full flex flex-col mt-7 lg:px-20 justify-center items-start"
       >
