@@ -47,8 +47,7 @@
                   </q-avatar>
                   <div class="q-ml-md">
                     <div class="text-weight-bold break-all">
-                      {{ user.first_name }}
-                      {{ user.last_name }}
+                      {{ user.name }}
                     </div>
                     <div class="text-weight-light">
                       {{ user.role_name }}
@@ -109,7 +108,7 @@
                   </q-avatar>
                   <div class="q-ml-md">
                     <div class="text-weight-bold break-all ellipsis-2-lines">
-                      {{ user.first_name }} {{ user.last_name }}
+                      {{ user.name }}
                     </div>
                     <div class="text-weight-light">
                       {{ user.role_name }}
@@ -134,12 +133,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { getChatUsers, assignUser as assignUserAPI } from "src/api/user";
+import { assignUser as assignUserAPI } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
@@ -152,8 +151,8 @@ const enum Role {
 }
 
 interface User {
-  user_id: string;
-  first_name: string;
+  id: string;
+  name: string;
   last_name: string;
   role_name: string;
 }
@@ -167,17 +166,17 @@ const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const usersAdd: Ref<Array<User>> = ref([]);
-const { getSelectedChat } = storeToRefs(messagingStore);
+const { getSelectedChat, getUsers } = storeToRefs(messagingStore);
 
 const searchUser = (type?: string) => {
   if (type !== "add-user") {
     users.value = usersData.value.filter((obj) => {
-      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+      const name = obj.name.split(" ");
       return name.some((val) => val.includes(query.value));
     });
   } else {
     usersAdd.value = usersData.value.filter((obj) => {
-      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+      const name = obj.name.split(" ");
       return name.some((val) => val.includes(queryAddUser.value));
     });
   }
@@ -190,33 +189,32 @@ const searchUser = (type?: string) => {
 //   return "";
 // };
 const sortData = (data: any) => {
-  data.forEach((data: any) => {
-    data.full_name = data.first_name + data.last_name;
-  });
   return data.sort((a: any, b: any) => {
-    return a.full_name.localeCompare(b.full_name);
+    return a.name.localeCompare(b.name);
   });
 };
-
-onMounted(async () => {
-  Loading.show();
-  let { data } = await getChatUsers();
-  data = sortData(data);
+watch(getUsers, (val) => {
+  const data = sortData(val);
   users.value = data;
   usersData.value = data;
   usersAdd.value = data;
+  console.log("val", val);
+});
 
+onMounted(async () => {
+  const data = sortData(getUsers.value);
+  users.value = data;
+  usersData.value = data;
+  usersAdd.value = data;
   userRole.value = userInfo.getUserRoleName;
-  Loading.hide();
 });
 
 const assignUser = async (user: User, addMember: boolean = false) => {
   const chatId = getSelectedChat.value.id;
-  const userId = user.user_id;
+  const userId = user.id;
 
   try {
     const currentMembers = JSON.parse(getSelectedChat.value.members);
-    console.log("current members:", currentMembers);
     const checkCurrentMember = currentMembers.find(
       (member: any) => member.id === userId
     );
@@ -242,10 +240,10 @@ const assignUser = async (user: User, addMember: boolean = false) => {
     // update message members
     messagingStore.setMessageMembers(JSON.stringify(members));
     Notify.create({
-      message: `Successful assigned to ${user.first_name} ${user.last_name}`,
+      message: `Successful assigned to ${user.name}`,
       position: "top",
       type: "positive",
-      color: "blue-9",
+      color: "primary",
     });
     Loading.hide();
   } catch (err: any) {

@@ -76,6 +76,7 @@ const selectChat = async (chat: IChat) => {
 
   messagingStore.onSelectChat(chat.id);
   console.log("SELECT CHAT");
+  await messagingStore.getWabaUsers(chat.id);
   customerStore.$reset();
   contactStore.$reset();
   useContactStore().setContact({

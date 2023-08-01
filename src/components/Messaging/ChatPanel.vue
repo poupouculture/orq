@@ -685,7 +685,6 @@ const initSocket = () => {
 };
 
 onMounted(async () => {
-  await messagingStore.getWabaUsers();
   await messagingStore.fetchChats();
   initSocket();
   // messagingStore.initSocket();

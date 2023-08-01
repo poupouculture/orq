@@ -28,6 +28,7 @@ import {
 import { ref } from "vue";
 import { io } from "socket.io-client";
 import { getChatUsers } from "src/api/user";
+import { Notify } from "quasar";
 const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
@@ -58,6 +59,7 @@ const useMessagingStore = defineStore("messaging", {
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
+    getUsers: (state) => state.users,
     getSelectedChatId: (state) => state.selectedChatId,
     getChatSnapshotMessage: (state) => state.chatSnapshotMessage,
     getContactNumber: (state) => state.contactNumber,
@@ -83,11 +85,20 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
-    async getWabaUsers() {
+    async getWabaUsers(chatId: number | string) {
       try {
-        const response = await getChatUsers();
-        this.users = response.data;
-      } catch (error) {}
+        const response = await getChatUsers(chatId);
+        if (!response || response.status !== 200) {
+          return Notify.create({
+            type: "negative",
+            message: "Something error!",
+            position: "top",
+          });
+        }
+        this.users = response.data.data;
+      } catch (error) {
+        console.log("err", error);
+      }
     },
     async officeHours_set(value: boolean) {
       try {

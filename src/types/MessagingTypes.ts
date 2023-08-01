@@ -120,7 +120,7 @@ export interface IState {
     last_name: string;
     role_name: string;
   }>;
-  selectedChatId: string;
+  selectedChatId: string | number;
   leftDrawerOpen: boolean;
   rightDrawerOpen: boolean;
   showCustomerInfoMobile: boolean;

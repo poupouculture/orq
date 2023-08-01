@@ -1331,18 +1331,16 @@ const onPaste = (e: ClipboardEvent) => {
 
 onMounted(async () => {
   messagingStore.officeHours_get_set();
-
   console.log("PLATFORM:", Platform.is);
   // Swal.fire({
   //   icon: "error",
   //   title: "Mobile...",
   //   text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
   // });
-
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
-
+  await messagingStore.setBotList();
   await messagingStore.setBotList();
   console.log("botlist:", botList.value);
 });
