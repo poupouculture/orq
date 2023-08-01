@@ -29,11 +29,11 @@ const routes = [
         name: "About Us",
         component: () => import("pages/LandingPage/AboutUs.vue"),
       },
-      {
-        path: "/us/products/detail/",
-        name: "landingcategoriesdetails",
-        component: () => import("pages/LandingPage/CategoriesDetail.vue"),
-      },
+      // {
+      //   path: "/us/products/detail/",
+      //   name: "landingcategoriesdetails",
+      //   component: () => import("pages/LandingPage/CategoriesDetail.vue"),
+      // },
     ],
   },
 
