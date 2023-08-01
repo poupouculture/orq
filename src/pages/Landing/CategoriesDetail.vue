@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { LocalStorage } from "quasar";
 import Hero from "src/components/Landing/Hero.vue";
-import ProductCategoryNavigation from "src/components/ProductCategoryNavigation";
+import ProductCategoryNavigation from "src/components/ProductCategoryNavigation/ProductCategoryNavigation.vue";
 import BaseTable from "src/components/BaseTable.vue";
 import SearchTableInput from "src/components/SearchTableInput.vue";
 import Modal from "src/components/Landing/modal.vue";
