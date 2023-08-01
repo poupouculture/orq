@@ -24,15 +24,19 @@ const routes = [
         name: "Products",
         component: () => import("pages/Landing/Products.vue"),
       },
-      {
-        path: "/about-us",
-        name: "About Us",
-        component: () => import("pages/Landing/AboutUs.vue"),
-      },
+      // {
+      //   path: "/about-us",
+      //   name: "About Us",
+      //   component: () => import("pages/Landing/AboutUs.vue"),
+      // },
       {
         path: "/us/products/detail/",
         name: "landingcategoriesdetails",
         component: () => import("pages/Landing/CategoriesDetail.vue"),
+      },
+      {
+        path: "/:article",
+        component: () => import("pages/Landing/Content.vue"),
       },
     ],
   },

@@ -44,7 +44,17 @@ const getComponentById = async (id, url) => {
 };
 
 const getPagesContent = async () => {
-  const component = navigation.value.find((item) => item.name === route.name);
+  let currentRoutename = "";
+
+  if (route.path.substr(route.path.length - 1) === "/") {
+    currentRoutename = route.path.substring(0, route.path.length - 1);
+  } else {
+    currentRoutename = route.path;
+  }
+
+  const component = navigation.value.find(
+    (item) => item.url === currentRoutename
+  );
 
   if (component) {
     await useLandingPageStore.getComponentByid(component.id);

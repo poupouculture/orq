@@ -72,6 +72,8 @@ const useNavigationStore = defineStore("navigationStore", {
             heroText: cover.page_component_id.name,
           };
 
+          console.log(cover);
+
           this.component = obj;
         }
       } catch (error) {}
