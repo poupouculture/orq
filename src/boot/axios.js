@@ -9,6 +9,11 @@ import useUserInfoStore from "stores/modules/userInfo";
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
+const orqApi = axios.create({
+  baseURL: process.env.ORQ_API,
+  withCredentials: false,
+});
+
 const userinfo = JSON.parse(LocalStorage.getItem("userinfo"));
 
 if (userinfo) {
@@ -59,6 +64,7 @@ export default boot(({ app, store, router }) => {
   app.config.globalProperties.$axios = axios;
 
   app.config.globalProperties.$api = api;
+  app.config.globalProperties.$orqApi = orqApi;
 });
 
-export { api, axiosInstance };
+export { api, axiosInstance, orqApi };
