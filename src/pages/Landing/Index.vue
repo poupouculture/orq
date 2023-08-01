@@ -1,6 +1,6 @@
 <script setup>
 import Hero from "src/components/Landing/Hero.vue";
-import Section1 from "src/components/LandingPage/section1.vue";
+import Section1 from "src/components/Landing/section1.vue";
 import Section2 from "src/components/Landing/section2.vue";
 import Section3 from "src/components/Landing/section3.vue";
 import Section4 from "src/components/Landing/section4.vue";

@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import Hero from "src/components/LandingPage/Hero.vue";
-import Banner from "src/components/LandingPage/Banner.vue";
+import Hero from "src/components/Landing/Hero.vue";
+import Banner from "src/components/Landing/Banner.vue";
 import useCategories from "src/stores/modules/categories";
 import { storeToRefs } from "pinia";
 

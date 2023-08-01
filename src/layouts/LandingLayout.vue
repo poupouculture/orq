@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import Navbar from "src/components/LandingPage/navbar.vue";
+import Navbar from "src/components/Landing/navbar.vue";
 import { Screen } from "quasar";
 import logo from "assets/images/logo.svg";
 import useLandingPage from "src/stores/modules/landingpage";

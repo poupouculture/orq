@@ -1,6 +1,6 @@
 <script setup>
-import Hero from "src/components/LandingPage/Hero.vue";
-import Banner from "src/components/LandingPage/Banner.vue";
+import Hero from "src/components/Landing/Hero.vue";
+import Banner from "src/components/Landing/Banner.vue";
 import { storeToRefs } from "pinia";
 
 import useLandingPage from "src/stores/modules/landingpage";
