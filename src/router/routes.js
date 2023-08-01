@@ -14,16 +14,16 @@ const routes = [
     path: "/us",
     component: () => import("layouts/LandingLayout.vue"),
     children: [
-      // {
-      //   path: "",
-      //   name: "landingpage",
-      //   component: () => import("pages/LandingPage/index.vue"),
-      // },
-      // {
-      //   path: "/us/products",
-      //   name: "Products",
-      //   component: () => import("pages/LandingPage/Products.vue"),
-      // },
+      {
+        path: "",
+        name: "landingpage",
+        component: () => import("pages/Landing/Index.vue"),
+      },
+      {
+        path: "/us/products",
+        name: "Products",
+        component: () => import("pages/Landing/Products.vue"),
+      },
       // {
       //   path: "/about-us",
       //   name: "About Us",

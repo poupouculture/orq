@@ -1,11 +1,11 @@
 <script setup>
-import Hero from "src/components/LandingPage/Hero.vue";
-import Section1 from "src/components/LandingPage/section1.vue";
-import Section2 from "src/components/LandingPage/section2.vue";
-import Section3 from "src/components/LandingPage/section3.vue";
-import Section4 from "src/components/LandingPage/section4.vue";
-import Section5 from "src/components/LandingPage/section5.vue";
-import Section6 from "src/components/LandingPage/section6.vue";
+import Hero from "src/components/Landing/Hero.vue";
+import Section1 from "src/components/Landing/section1.vue";
+import Section2 from "src/components/Landing/section2.vue";
+import Section3 from "src/components/Landing/section3.vue";
+import Section4 from "src/components/Landing/section4.vue";
+import Section5 from "src/components/Landing/section5.vue";
+import Section6 from "src/components/Landing/section6.vue";
 </script>
 
 <template>
