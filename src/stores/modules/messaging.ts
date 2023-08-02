@@ -155,8 +155,8 @@ const useMessagingStore = defineStore("messaging", {
     setContactNumber(contactNumber: string) {
       this.contactNumber = contactNumber;
     },
-    setMessageMembers(members: string) {
-      this.getSelectedChat.members = members;
+    setMessageMembers(user: any) {
+      this.users.push(user);
     },
     setConversationType(chat: IChat, conversationType: string) {
       // console.log("fnc-setConversationType");

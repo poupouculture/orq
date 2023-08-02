@@ -130,7 +130,7 @@
     <ChatMembersBar
       v-else
       v-model:show-chat-option="showChatOption"
-      :members="members"
+      :members="users"
       :is-mobile="isMobile"
       :selected-chat="getSelectedChat"
     />
@@ -446,7 +446,6 @@ import {
   Direction,
   Product,
   MessageType,
-  Member,
   Message,
   MessageStatus,
   SendMessageStatus,
@@ -556,6 +555,7 @@ const {
   botList,
   getSelectedChatPending,
   getSelectedChatExpired,
+  users,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
@@ -698,10 +698,6 @@ const contactNameGet = computed<string>(() => {
 const inputEvent = computed(() => {
   return Screen.lt.md ? "keyup" : "keydown";
 });
-
-const members = computed<Member[]>(
-  () => JSON.parse(getSelectedChat.value.members) || []
-);
 
 const chaqMode = computed<boolean>(
   () => getSelectedChat.value?.meta_phone_number_id === "ChaQ"

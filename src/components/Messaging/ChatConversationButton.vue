@@ -151,7 +151,7 @@ const enum Role {
 }
 
 interface User {
-  id: string;
+  user_id: string;
   first_name: string;
   last_name: string;
   role_name: string;
@@ -166,7 +166,7 @@ const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const usersAdd: Ref<Array<User>> = ref([]);
-const { getSelectedChat, getUsers } = storeToRefs(messagingStore);
+const { getSelectedChat, allUsers, getUsers } = storeToRefs(messagingStore);
 
 const searchUser = (type?: string) => {
   if (type !== "add-user") {
@@ -196,7 +196,7 @@ const sortData = (data: any) => {
     return a.full_name.localeCompare(b.full_name);
   });
 };
-watch(getUsers, (val) => {
+watch(allUsers, (val) => {
   const data = sortData(val);
   users.value = data;
   usersData.value = data;
@@ -205,7 +205,7 @@ watch(getUsers, (val) => {
 });
 
 onMounted(async () => {
-  const data = sortData(getUsers.value);
+  const data = sortData(allUsers.value);
   users.value = data;
   usersData.value = data;
   usersAdd.value = data;
@@ -214,13 +214,13 @@ onMounted(async () => {
 
 const assignUser = async (user: User, addMember: boolean = false) => {
   const chatId = getSelectedChat.value.id;
-  const userId = user.id;
+  const userId = user.user_id;
 
   try {
-    const currentMembers = JSON.parse(getSelectedChat.value.members);
-    console.log(currentMembers);
-    const checkCurrentMember = currentMembers.find(
-      (member: any) => member.id === userId
+    // const currentMembers = JSON.parse(getSelectedChat.value.members);
+    // console.log(currentMembers);
+    const checkCurrentMember = getUsers.value.find(
+      (member: any) => member.user_id === userId
     );
     if (checkCurrentMember) {
       Notify.create({
@@ -236,13 +236,9 @@ const assignUser = async (user: User, addMember: boolean = false) => {
 
   try {
     Loading.show();
-    const { data } = await assignUserAPI(chatId, userId, addMember);
-    const members = data.map((item: any) => ({
-      id: item.id,
-      name: `${item.first_name} ${item.last_name}`,
-    }));
+    await assignUserAPI(chatId, userId, addMember);
     // update message members
-    messagingStore.setMessageMembers(JSON.stringify(members));
+    messagingStore.setMessageMembers(user);
     Notify.create({
       message: `Successful assigned to ${user.first_name} ${user.last_name}`,
       position: "top",
