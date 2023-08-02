@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, reactive, computed } from "vue";
+import { onMounted, ref, watch, reactive } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import DeleteDialog from "src/components/Dialogs/DeleteDialog.vue";
@@ -57,7 +57,7 @@ const mode = ref(props.mode ? props.mode : "edit");
 const customerStore = useCustomerStore();
 const messagingStore = useMessagingStore();
 const contactStore = useContactStore();
-const getContactNumber = computed(() => messagingStore.getContactNumber);
+// const getContactNumber = computed(() => messagingStore.getContactNumber);
 const { getSelectedChatId } = storeToRefs(messagingStore);
 const { getCurrentCustomerId, getContacts } = storeToRefs(contactStore);
 const positionOptions: Position[] = [
@@ -207,10 +207,10 @@ watch(getCustomer, () => {
 
 // Watch Contact number
 
-watch(getContactNumber, (val: string) => {
-  customerForm.value?.resetValidation();
-  idNumber.value = val;
-});
+// watch(getContactNumber, (val: string) => {
+//   customerForm.value?.resetValidation();
+//   idNumber.value = val;
+// });
 
 watch(resetForm, (value) => {
   if (value) {

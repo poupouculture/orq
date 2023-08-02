@@ -534,13 +534,16 @@ const initSocket = () => {
         (chat: IChat) => chat.contacts_id === data.contacts_id
       );
       let contact = null;
-      if (customer?.contacts.length === 1) {
-        contact = customer?.contacts[0].contacts_id;
-      } else {
+      // if (customer?.contacts.length === 1) {
+      //   contact = customer?.contacts[0].contacts_id;
+      // } else {
+      //   const resContact = await getContact(data.contacts_id);
+      //   contact = resContact?.data?.data[0];
+      // }
+
+      if (chatFound !== undefined) {
         const resContact = await getContact(data.contacts_id);
         contact = resContact?.data?.data[0];
-      }
-      if (chatFound !== undefined) {
         if (
           getSelectedChat?.value &&
           getSelectedChat.value.id === chatFound.id
