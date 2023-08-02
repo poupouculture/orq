@@ -39,8 +39,8 @@
               {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
             </p>
             <p class="text-gray-500 text-[0.8rem]">
-              Admin: {{ getUserBySelectedChat?.first_name }}
-              {{ getUserBySelectedChat?.last_name }}
+              Admin: {{ getSelectedChat.admin_data?.first_name }}
+              {{ getSelectedChat.admin_data?.last_name }}
             </p>
             <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
             <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
@@ -556,7 +556,6 @@ const {
   botList,
   getSelectedChatPending,
   getSelectedChatExpired,
-  getUserBySelectedChat,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
