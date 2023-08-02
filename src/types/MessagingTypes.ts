@@ -83,8 +83,10 @@ export interface IChat {
   contacts_id: string;
   admin: string;
   admin_data: {
+    user_id: string;
     first_name: string;
     last_name: string;
+    role_name: string;
   };
   customers_id: string | null;
   contact_first_name: string;
@@ -112,14 +114,16 @@ export interface ChatSnapshotMessage {
   [key: string]: () => void;
 }
 
+interface User {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  role_name: string;
+}
 export interface IState {
   chatsList: IChat[];
-  users: Array<{
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    role_name: string;
-  }>;
+  users: Array<User>;
+  allUsers: Array<User>;
   selectedChatId: string | number;
   leftDrawerOpen: boolean;
   rightDrawerOpen: boolean;

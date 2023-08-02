@@ -15,7 +15,6 @@ import { getContact } from "src/api/contact";
 import {
   getChats,
   getChatMessagesByChatId,
-  getContactByChatId,
   sendChatTextMessage,
   // getContact,
   getChatsByType,
@@ -33,7 +32,7 @@ const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
 const customerStore = useCustomerStore();
-const { getContactById } = useContactStore();
+const { getContactByChat } = useContactStore();
 const contactStore = useContactStore();
 const userInfoStore = useUserInfoStore();
 
@@ -42,6 +41,7 @@ const useMessagingStore = defineStore("messaging", {
     ({
       chatsList: [],
       users: [],
+      allUsers: [],
       selectedChatId: "",
       selectedChatPending: false,
       selectedChatExpired: false,
@@ -85,9 +85,16 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
-    async getWabaUsers(chatId: number | string) {
+    async getWabaUsers(chatId?: number | string) {
       try {
-        const response = await getChatUsers(chatId);
+        let response;
+        if (chatId) {
+          response = await getChatUsers(chatId);
+          this.users = response.data.data;
+        } else {
+          response = await getChatUsers();
+          this.allUsers = response.data;
+        }
         if (!response || response.status !== 200) {
           return Notify.create({
             type: "negative",
@@ -95,7 +102,6 @@ const useMessagingStore = defineStore("messaging", {
             position: "top",
           });
         }
-        this.users = response.data.data;
       } catch (error) {
         console.log("err", error);
       }
@@ -315,7 +321,7 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
-        item.admin_data = this.users.find(
+        item.admin_data = this.allUsers.find(
           (user) => user.user_id === item.admin
         );
         // item.id = item.id.toString(); // ??? 0707
@@ -495,11 +501,11 @@ const useMessagingStore = defineStore("messaging", {
     },
     async setChatCustomerContact(chat: IChat) {
       // console.log("SELECT CHAT");
-      console.log(chat);
+      console.log("fnc-setChatCustomerContact", chat);
       if (!chat.contacts_id) {
         console.log(" fnc: selectChat- no contact_id");
-        const contact = await getContactByChatId(chat.id);
-        chat.contacts_id = contact.contacts_id;
+        const contact = await getContactByChat(chat);
+        chat.contacts_id = contact.id;
       }
       // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
       customerStore.$reset();
@@ -508,12 +514,12 @@ const useMessagingStore = defineStore("messaging", {
       if (chat.customers_id) {
         const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
         contactStore.setCurrentCustomerId(customer.id);
-        if (customer?.contacts.length === 1) {
-          // a customer can be related to MANY contacts
-          contact = customer?.contacts[0].contacts_id;
-          contactStore.setCurrentCustomerId(chat.customers_id);
-          useContactStore().setContact(contact);
-        }
+        // if (customer?.contacts.length === 1) {
+        //   // a customer can be related to MANY contacts
+        //   contact = customer?.contacts[0].contacts_id;
+        //   contactStore.setCurrentCustomerId(chat.customers_id);
+        //   useContactStore().setContact(contact);
+        // }
         // else {
         //   contact = await getContactById(chat);
         //   useContactStore().setContact(contact);
@@ -523,10 +529,13 @@ const useMessagingStore = defineStore("messaging", {
       }
       if (!contact) {
         // the invariant is that there is always a contact
-        contact = await getContactById(chat);
-        console.log("  GET contact:....", contact);
+        contact = await getContactByChat(chat);
+        if (contact) {
+          contactStore.setContact(contact);
+          console.log("  GET contact:....", contact);
+          // this.setContactNumber(contact?.number);
+        }
       }
-      this.setContactNumber(contact.number);
     },
 
     async fetchContactNumber(contactId: string) {
@@ -543,7 +552,7 @@ const useMessagingStore = defineStore("messaging", {
     changeAdminChatListById(id: string, admin: string) {
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].admin = admin;
-      this.chatsList[index].admin_data = this.users.find(
+      this.chatsList[index].admin_data = this.allUsers.find(
         (user) => user.user_id === admin
       ) as any;
       this.sortChatsList();

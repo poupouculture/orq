@@ -12,7 +12,7 @@
   transition: all 0.3s ease-out;
 }
 
-.slide-fade-leave-active { 
+.slide-fade-leave-active {
   transition: all 0.3s ease-out;
 }
 
@@ -20,4 +20,9 @@
 .slide-fade-leave-to {
   transform: translateY(-20px);
   opacity: 0;
+}
+
+.homeHero {
+  background: linear-gradient(200.56deg, #40a4ff -3.58%, #e12179 94.64%),
+    #4b44f6;
 }

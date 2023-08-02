@@ -104,6 +104,7 @@ const emit = defineEmits([
   "changePage",
   "update:selected",
   "update:pagination",
+  "selectRow",
 ]);
 const selected = computed({
   set: (value) => emit("update:selected", value),
@@ -113,6 +114,8 @@ const selected = computed({
 const onRowClick = (e: any, row: any) => {
   const index = selected.value.findIndex((item: any) => item.id === row.id);
   console.log(index, row);
+
+  emit("selectRow", row);
   if (index > -1) {
     selected.value.splice(index, 1);
   } else {

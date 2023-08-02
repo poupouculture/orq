@@ -47,7 +47,7 @@
                   </q-avatar>
                   <div class="q-ml-md">
                     <div class="text-weight-bold break-all">
-                      {{ user.name }}
+                      {{ user.first_name }} {{ user.last_name }}
                     </div>
                     <div class="text-weight-light">
                       {{ user.role_name }}
@@ -108,7 +108,7 @@
                   </q-avatar>
                   <div class="q-ml-md">
                     <div class="text-weight-bold break-all ellipsis-2-lines">
-                      {{ user.name }}
+                      {{ user.first_name }} {{ user.last_name }}
                     </div>
                     <div class="text-weight-light">
                       {{ user.role_name }}
@@ -152,7 +152,7 @@ const enum Role {
 
 interface User {
   id: string;
-  name: string;
+  first_name: string;
   last_name: string;
   role_name: string;
 }
@@ -171,12 +171,12 @@ const { getSelectedChat, getUsers } = storeToRefs(messagingStore);
 const searchUser = (type?: string) => {
   if (type !== "add-user") {
     users.value = usersData.value.filter((obj) => {
-      const name = obj.name.split(" ");
+      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
       return name.some((val) => val.includes(query.value));
     });
   } else {
     usersAdd.value = usersData.value.filter((obj) => {
-      const name = obj.name.split(" ");
+      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
       return name.some((val) => val.includes(queryAddUser.value));
     });
   }
@@ -189,8 +189,11 @@ const searchUser = (type?: string) => {
 //   return "";
 // };
 const sortData = (data: any) => {
+  data.forEach((data: any) => {
+    data.full_name = data.first_name + data.last_name;
+  });
   return data.sort((a: any, b: any) => {
-    return a.name.localeCompare(b.name);
+    return a.full_name.localeCompare(b.full_name);
   });
 };
 watch(getUsers, (val) => {
@@ -215,6 +218,7 @@ const assignUser = async (user: User, addMember: boolean = false) => {
 
   try {
     const currentMembers = JSON.parse(getSelectedChat.value.members);
+    console.log(currentMembers);
     const checkCurrentMember = currentMembers.find(
       (member: any) => member.id === userId
     );
@@ -240,7 +244,7 @@ const assignUser = async (user: User, addMember: boolean = false) => {
     // update message members
     messagingStore.setMessageMembers(JSON.stringify(members));
     Notify.create({
-      message: `Successful assigned to ${user.name}`,
+      message: `Successful assigned to ${user.first_name} ${user.last_name}`,
       position: "top",
       type: "positive",
       color: "primary",

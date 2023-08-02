@@ -833,12 +833,12 @@ const showCustomerInfo = async () => {
       getSelectedChat.value.customers_id
     );
     contactStore.setCurrentCustomerId(customer.id);
-    if (customer?.contacts.length === 1) {
-      // a customer can be related to MANY contacts
-      contact = customer?.contacts[0].contacts_id;
-      contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
-      useContactStore().setContact(contact);
-    }
+    // if (customer?.contacts.length === 1) {
+    //   // a customer can be related to MANY contacts
+    //   contact = customer?.contacts[0].contacts_id;
+    //   contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
+    //   useContactStore().setContact(contact);
+    // }
   } else {
     // } else if (!getSelectedChat.value.customers_id) {
     customerStore.setCustomer(null);
@@ -846,8 +846,12 @@ const showCustomerInfo = async () => {
 
   if (!contact) {
     // the invariant is that there is always a contact
-    contact = await contactStore.getContactById(getSelectedChat.value);
+    contact = await contactStore.getContactByChat(getSelectedChat.value);
     console.log("  GET contact:....", contact);
+    if (getSelectedChat.value.customers_id) {
+      contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
+    }
+    contactStore.setContact(contact);
   }
   // this.setContactNumber(contact.number);
 };

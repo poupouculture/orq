@@ -75,6 +75,8 @@ module.exports = configure(function () {
       // analyze: true,
       env: {
         BACKEND_URL: process.env.BACKEND_URL,
+        PUBLIC_API: process.env.PUBLIC_API,
+        ORQ_API: process.env.ORQ_API,
         SENTRY_DSN: process.env.SENTRY_DSN,
         MODE: process.env.MODE,
         RUNNING: process.env.RUNNING,
