@@ -11,7 +11,12 @@ const useNavigationStore = defineStore("navigationStore", {
   state: () =>
     ({
       items: [],
-      component: {},
+      component: {
+        content: [],
+        iconCover: "",
+        children: [],
+        heroText: "",
+      },
     } as State),
 
   getters: {
