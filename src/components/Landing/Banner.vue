@@ -53,6 +53,48 @@ const onHover = ref(false);
         v-html="data.content"
       />
     </div>
+
+    <div class="grid md:grid-cols-2 gap-4 mx-4 my-5">
+      <div class="col-span-1">
+        <q-img
+          class="rounded-borders"
+          src="https://images.unsplash.com/photo-1688315031371-e216dad33add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+          style="height: 280px"
+        />
+      </div>
+
+      <div class="col-span-1 flex flex-col">
+        <h1 class="font-bold text-lg">Food Service</h1>
+
+        <p class="">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+          Reprehenderit quod tempore atque obcaecati asperiores, quis, odio
+          delectus itaque ipsum enim, minus a. Dolorum mollitia necessitatibus
+          quidem molestiae voluptate et quisquam!
+        </p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 mx-4 my-5">
+      <div class="col-span-1 flex flex-col">
+        <h1 class="font-bold text-lg">Food Service</h1>
+
+        <p class="">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+          Reprehenderit quod tempore atque obcaecati asperiores, quis, odio
+          delectus itaque ipsum enim, minus a. Dolorum mollitia necessitatibus
+          quidem molestiae voluptate et quisquam!
+        </p>
+      </div>
+
+      <div class="col-span-1">
+        <q-img
+          class="rounded-borders"
+          src="https://images.unsplash.com/photo-1688315031371-e216dad33add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+          style="height: 280px"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
