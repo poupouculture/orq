@@ -12,8 +12,16 @@ const slide = ref(1);
 
 <template>
   <div class="mb-3" v-if="props.content?.children.length > 0">
-    <q-carousel animated v-model="slide" arrows navigation infinite>
+    <q-carousel
+      animated
+      v-model="slide"
+      navigation
+      arrows
+      :autoplay="2500"
+      infinite
+    >
       <q-carousel-slide
+        draggable
         v-for="(carousel, index) in props.content?.children"
         :key="index"
         :name="index + 1"
