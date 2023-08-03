@@ -13,7 +13,7 @@ const onHover = ref(false);
 
 <template>
   <div class="" v-if="props.content">
-    <div class="mb-3" v-if="props.content?.children.length > 0">
+    <div class="mb-3 mx-5" v-if="props.content?.children.length > 0">
       <q-carousel
         animated
         v-model="slide"

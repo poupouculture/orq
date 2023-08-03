@@ -13,7 +13,7 @@ const { getComponent } = storeToRefs(landingPageStore);
   <Hero class="justify-center">
     <div class="w-full">
       <div
-        class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
+        class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[35px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
       >
         <p class="text-center">
           {{ getComponent.heroText }}

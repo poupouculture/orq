@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
 import { getAllNavigation, getNavigationById } from "src/api/landingpage";
 import { Notify } from "quasar";
-
-interface State {
-  items: [] | any;
-  component: any | unknown;
-}
+import { Navigation } from "src/types/LandingPageTypes";
 
 const useNavigationStore = defineStore("navigationStore", {
   state: () =>
@@ -17,7 +13,7 @@ const useNavigationStore = defineStore("navigationStore", {
         children: [],
         heroText: "",
       },
-    } as State),
+    } as Navigation),
 
   getters: {
     allNavigation: (state) => state.items,
