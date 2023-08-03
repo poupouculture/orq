@@ -47,32 +47,63 @@ const useNavigationStore = defineStore("navigationStore", {
             position: "top",
           });
         } else {
+          const obj = {
+            content: [],
+            iconCover: "",
+            children: [],
+            heroText: "",
+          };
+
           const cover = data.data.component.find(
             (item: any) => item.page_component_id.type === "cover_photo"
           );
-
-          const content = data.data.component.filter(
-            (item: any) => item.page_component_id.type !== "cover_photo"
+          const carousel = data.data.component.find(
+            (item: any) => item.page_component_id.type === "carousel"
           );
 
-          const obj = {
-            content: content.map((item: any) => {
-              const obj = {
-                ...item.page_component_id,
-                icon: null,
-              };
+          const content = data.data.component.filter(
+            (item: any) =>
+              item.page_component_id.type !== "cover_photo" &&
+              item.page_component_id.type !== "carousel"
+          );
 
-              if (item.page_component_id.icon !== null) {
-                obj.icon = `${process.env.ORQ_API}/assets/${item.page_component_id.icon}`;
+          if (cover) {
+            obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.icon}`;
+            obj.heroText = cover.page_component_id.name;
+          }
+
+          if (carousel) {
+            obj.children = carousel.page_component_id.children.map(
+              (children: any) => {
+                const childrenObject = {
+                  ...children,
+                  image: null,
+                };
+
+                if (children.image !== null) {
+                  childrenObject.image = `${process.env.ORQ_API}/assets/${children.image}`;
+                }
+
+                return childrenObject;
               }
+            );
 
-              return obj;
-            }),
-            iconCover: `${process.env.ORQ_API}/assets/${cover.page_component_id.icon}`,
-            heroText: cover.page_component_id.name,
-          };
+            obj.heroText = carousel.page_component_id.name;
+          }
 
-          console.log(cover);
+          // Proccess content here
+          obj.content = content.map((itemContent: any) => {
+            const itemObj = {
+              ...itemContent.page_component_id,
+              icon: null,
+            };
+
+            if (itemContent.page_component_id.icon !== null) {
+              itemObj.icon = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.icon}`;
+            }
+
+            return itemObj;
+          });
 
           this.component = obj;
         }
