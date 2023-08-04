@@ -137,6 +137,7 @@ export interface IState {
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
   isOfficeHours: boolean;
+  autoBotName: boolean;
 }
 
 export interface SendTextMessage {

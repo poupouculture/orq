@@ -1329,7 +1329,8 @@ const onPaste = (e: ClipboardEvent) => {
 };
 
 onMounted(async () => {
-  messagingStore.officeHours_get_set();
+  messagingStore.config_get_set();
+
   console.log("PLATFORM:", Platform.is);
   // Swal.fire({
   //   icon: "error",

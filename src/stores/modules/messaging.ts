@@ -56,6 +56,7 @@ const useMessagingStore = defineStore("messaging", {
       socket,
       botList: [],
       isOfficeHours: false,
+      autoBotName: "",
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -110,17 +111,21 @@ const useMessagingStore = defineStore("messaging", {
       try {
         const results = await setOfficeHours(value);
         console.log("[messaging] Set office hours", results);
-        this.officeHours_get_set();
+        this.config_get_set();
       } catch (error) {
         console.error("[messaging] Error setting office hour", error);
         this.isOfficeHours = !value;
       }
     },
-    async officeHours_get_set() {
+    async config_get_set() {
       try {
         const results = await configGet();
         console.log("[messaging] Office hours", results);
         this.isOfficeHours = results.ENABLE_PROFILE_BOT === "1";
+        if (!results.ENABLE_PROFILE_BOT) {
+          this.isOfficeHours = results.AUTO_BOT_NAME === "PROFILE_BOT";
+          this.autoBotName = results.AUTO_BOT_NAME;
+        }
       } catch (error) {
         console.log("[messaging] Error fetching office hour", error);
       }
