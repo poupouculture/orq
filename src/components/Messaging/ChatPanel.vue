@@ -223,7 +223,7 @@ const chatToggleLabel: ChatToggleType = reactive({
 const messagingStore = useMessagingStore();
 const contactStore = useContactStore();
 
-const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, users } =
+const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, allUsers } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -610,7 +610,7 @@ const initSocket = () => {
         // chat.id = chat.id.toString(); // ??? 0707
         console.log(" CHAT_CREATE:", chat);
         chat.last_message = JSON.parse(chat.last_message);
-        chat.admin_data = users.value.find(
+        chat.admin_data = allUsers.value.find(
           (user) => user.user_id === chat.admin
         );
         if (chat?.status === ChatTypes.PENDING) {
