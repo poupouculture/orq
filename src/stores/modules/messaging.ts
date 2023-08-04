@@ -15,7 +15,6 @@ import { getContact } from "src/api/contact";
 import {
   getChats,
   getChatMessagesByChatId,
-  getContactByChatId,
   sendChatTextMessage,
   // getContact,
   getChatsByType,
@@ -32,7 +31,7 @@ const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
 const customerStore = useCustomerStore();
-const { getContactById } = useContactStore();
+const { getContactByChat } = useContactStore();
 const contactStore = useContactStore();
 const userInfoStore = useUserInfoStore();
 
@@ -55,6 +54,7 @@ const useMessagingStore = defineStore("messaging", {
       socket,
       botList: [],
       isOfficeHours: false,
+      autoBotName: "",
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
@@ -93,17 +93,21 @@ const useMessagingStore = defineStore("messaging", {
       try {
         const results = await setOfficeHours(value);
         console.log("[messaging] Set office hours", results);
-        this.officeHours_get_set();
+        this.config_get_set();
       } catch (error) {
         console.error("[messaging] Error setting office hour", error);
         this.isOfficeHours = !value;
       }
     },
-    async officeHours_get_set() {
+    async config_get_set() {
       try {
         const results = await configGet();
         console.log("[messaging] Office hours", results);
         this.isOfficeHours = results.ENABLE_PROFILE_BOT === "1";
+        if (!results.ENABLE_PROFILE_BOT) {
+          this.isOfficeHours = results.AUTO_BOT_NAME === "PROFILE_BOT";
+          this.autoBotName = results.AUTO_BOT_NAME;
+        }
       } catch (error) {
         console.log("[messaging] Error fetching office hour", error);
       }
@@ -484,11 +488,11 @@ const useMessagingStore = defineStore("messaging", {
     },
     async setChatCustomerContact(chat: IChat) {
       // console.log("SELECT CHAT");
-      console.log(chat);
+      console.log("fnc-setChatCustomerContact", chat);
       if (!chat.contacts_id) {
         console.log(" fnc: selectChat- no contact_id");
-        const contact = await getContactByChatId(chat.id);
-        chat.contacts_id = contact.contacts_id;
+        const contact = await getContactByChat(chat);
+        chat.contacts_id = contact.id;
       }
       // const contact = await messagingStore.fetchContactNumber(chat.contacts_id); // redundant call.
       customerStore.$reset();
@@ -497,12 +501,12 @@ const useMessagingStore = defineStore("messaging", {
       if (chat.customers_id) {
         const customer = await customerStore.fetchCustomer(chat.customers_id); // console.log("fnc-getCurrentCustomerId:...", getCurrentCustomerId.value);
         contactStore.setCurrentCustomerId(customer.id);
-        if (customer?.contacts.length === 1) {
-          // a customer can be related to MANY contacts
-          contact = customer?.contacts[0].contacts_id;
-          contactStore.setCurrentCustomerId(chat.customers_id);
-          useContactStore().setContact(contact);
-        }
+        // if (customer?.contacts.length === 1) {
+        //   // a customer can be related to MANY contacts
+        //   contact = customer?.contacts[0].contacts_id;
+        //   contactStore.setCurrentCustomerId(chat.customers_id);
+        //   useContactStore().setContact(contact);
+        // }
         // else {
         //   contact = await getContactById(chat);
         //   useContactStore().setContact(contact);
@@ -512,10 +516,13 @@ const useMessagingStore = defineStore("messaging", {
       }
       if (!contact) {
         // the invariant is that there is always a contact
-        contact = await getContactById(chat);
-        console.log("  GET contact:....", contact);
+        contact = await getContactByChat(chat);
+        if (contact) {
+          contactStore.setContact(contact);
+          console.log("  GET contact:....", contact);
+          // this.setContactNumber(contact?.number);
+        }
       }
-      this.setContactNumber(contact.number);
     },
 
     async fetchContactNumber(contactId: string) {

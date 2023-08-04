@@ -18,7 +18,7 @@ const useContactStore = defineStore("useContact", {
       number: "",
       category: "",
       preferred_language: "",
-    },
+    } as Contact,
     currentCustomerId: "",
   }),
   getters: {
@@ -35,8 +35,16 @@ const useContactStore = defineStore("useContact", {
     setFirstname(firstName: string) {
       this.contact.first_name = firstName;
     },
-    async getContactById(chat: IChat) {
-      console.log("fnc:getContactById");
+    // async getContactById(chat: IChat) {
+    //   console.log("fnc:getContactById");
+    //   this.currentCustomerId = chat?.customers_id ?? "";
+    //   const result = await getContact(chat.contacts_id);
+    //   const { data } = result.data;
+    //   this.contact = data[0];
+    //   return this.contact;
+    // },
+    async getContactByChat(chat: IChat) {
+      console.log("fnc:getContactByChat");
       this.currentCustomerId = chat?.customers_id ?? "";
       const result = await getContact(chat.contacts_id);
       const { data } = result.data;
