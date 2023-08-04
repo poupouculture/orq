@@ -69,7 +69,7 @@ const useNavigationStore = defineStore("navigationStore", {
           );
 
           if (cover) {
-            obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.icon}`;
+            obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.image}`;
             obj.heroText = cover.page_component_id.name;
           }
 
@@ -96,11 +96,11 @@ const useNavigationStore = defineStore("navigationStore", {
           obj.content = content.map((itemContent: any) => {
             const itemObj = {
               ...itemContent.page_component_id,
-              icon: null,
+              image: null,
             };
 
-            if (itemContent.page_component_id.icon !== null) {
-              itemObj.icon = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.icon}`;
+            if (itemContent.page_component_id.image !== null) {
+              itemObj.image = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.image}`;
             }
 
             return itemObj;
