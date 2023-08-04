@@ -13,53 +13,88 @@ const onHover = ref(false);
 
 <template>
   <div class="" v-if="props.content">
-    <div class="mb-3 mx-5" v-if="props.content?.children.length > 0">
-      <q-carousel
-        animated
-        v-model="slide"
-        navigation
-        arrows
-        :autoplay="onHover ? 0 : 3000"
-        infinite
-      >
-        <q-carousel-slide
-          draggable
-          v-for="(carousel, index) in props.content?.children"
-          :key="index"
-          :name="index + 1"
-          class="cursor-pointer"
-          @mouseover="onHover = !onHover"
-          :img-src="carousel.image"
-        />
-      </q-carousel>
-    </div>
-
     <div class="flex flex-col gap-4">
       <div
+        class="row"
         v-for="(data, index) in props.content.content"
         :key="index"
-        class="grid md:grid-cols-2 gap-4 mx-4 my-5"
       >
-        <div
-          :class="data.alignment === 'left' ? 'order-1 lg:order-2' : 'order-1'"
-          class="col-span-1"
-        >
-          <q-img
-            class="rounded-borders"
-            :src="data.image"
-            style="height: 280px"
-          />
+        <div v-if="data.type === 'carousel'" class="w-full mb-3 mx-5">
+          <q-carousel
+            animated
+            v-model="slide"
+            navigation
+            arrows
+            :autoplay="onHover ? 0 : 3000"
+            infinite
+          >
+            <q-carousel-slide
+              draggable
+              v-for="(carousel, childrenIndex) in data.children"
+              :key="childrenIndex"
+              :name="childrenIndex + 1"
+              class="cursor-pointer"
+              @mouseover="onHover = !onHover"
+              :img-src="carousel.image"
+            />
+          </q-carousel>
         </div>
 
         <div
-          :class="data.alignment === 'left' ? 'order-1' : 'order-2'"
-          class="col-span-1 flex flex-col"
+          v-else-if="data.type === 'text_with_side_images'"
+          class="grid md:grid-cols-2 gap-4 mx-4 my-5"
         >
-          <p class="" v-html="data.content"></p>
+          <div
+            :class="
+              data.alignment === 'left' ? 'order-1 lg:order-2' : 'order-1'
+            "
+            class="col-span-1"
+          >
+            <q-img
+              class="rounded-borders"
+              :src="data.image"
+              style="height: 280px"
+            />
+          </div>
+
+          <div
+            :class="data.alignment === 'left' ? 'order-1' : 'order-2'"
+            class="col-span-1 flex flex-col"
+          >
+            <div class="content" v-html="data.content"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.content {
+  :deep(h1, h2, h3) {
+    font-weight: 700 !important;
+  }
+
+  :deep(h1) {
+    font-size: 36px !important;
+    line-height: 46px !important;
+  }
+
+  :deep(h2) {
+    font-size: 24px !important;
+    line-height: 34px !important;
+  }
+
+  :deep(h3) {
+    font-size: 19px !important;
+    line-height: 29px !important;
+  }
+
+  :deep(p) {
+    font-size: 15px;
+    line-height: 24px;
+    font-weight: 500;
+    margin: 1.5em 0;
+  }
+}
+</style>
