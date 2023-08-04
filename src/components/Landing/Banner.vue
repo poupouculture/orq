@@ -96,5 +96,23 @@ const onHover = ref(false);
     font-weight: 500;
     margin: 1.5em 0;
   }
+
+  :deep(ul) {
+    font-size: 15px;
+    line-height: 24px;
+    font-weight: 500;
+    margin: 1.5em 0;
+    padding-left: 20px;
+    list-style-type: disc;
+  }
+
+  :deep(ol) {
+    font-size: 15px;
+    line-height: 24px;
+    font-weight: 500;
+    margin: 1.5em 0;
+    padding-left: 20px;
+    list-style-type: decimal;
+  }
 }
 </style>
