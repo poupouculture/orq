@@ -104,7 +104,10 @@ const useMessagingStore = defineStore("messaging", {
         const results = await configGet();
         console.log("[messaging] Office hours", results);
         this.isOfficeHours = results.ENABLE_PROFILE_BOT === "1";
-        this.autoBotName = results.AUTO_BOT_NAME;
+        if (!results.ENABLE_PROFILE_BOT) {
+          this.isOfficeHours = results.AUTO_BOT_NAME === "PROFILE_BOT";
+          this.autoBotName = results.AUTO_BOT_NAME;
+        }
       } catch (error) {
         console.log("[messaging] Error fetching office hour", error);
       }
