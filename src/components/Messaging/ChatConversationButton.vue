@@ -220,7 +220,7 @@ const assignUser = async (user: User, addMember: boolean = false) => {
     // const currentMembers = JSON.parse(getSelectedChat.value.members);
     // console.log(currentMembers);
     const checkCurrentMember = getUsers.value.find(
-      (member: any) => member.user_id === userId
+      (member: any) => member.id === userId
     );
     if (checkCurrentMember) {
       Notify.create({

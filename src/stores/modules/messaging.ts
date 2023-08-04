@@ -156,6 +156,7 @@ const useMessagingStore = defineStore("messaging", {
       this.contactNumber = contactNumber;
     },
     setMessageMembers(user: any) {
+      user.id = user.user_id;
       this.users.push(user);
     },
     setConversationType(chat: IChat, conversationType: string) {
