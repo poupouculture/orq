@@ -350,6 +350,7 @@ const chooseCustomer = async (customer: any) => {
     const chatlist = chatsList.value.find((list) => list.id === chat.id);
     if (chatlist) {
       chat.admin = chatlist.admin;
+      chat.admin_data = chatlist.admin_data;
     }
     chat.last_message = JSON.parse(chat.last_message);
     messagingStore.updateChatsList(chat); // if chat is NOT on screen
