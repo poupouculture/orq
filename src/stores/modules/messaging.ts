@@ -27,6 +27,7 @@ import {
 import { ref } from "vue";
 import { io } from "socket.io-client";
 import { getChatUsers } from "src/api/user";
+import { Notify } from "quasar";
 const socket = ref();
 const socketUrl = process.env.SOCKETS_URL as string;
 
@@ -40,6 +41,7 @@ const useMessagingStore = defineStore("messaging", {
     ({
       chatsList: [],
       users: [],
+      allUsers: [],
       selectedChatId: "",
       selectedChatPending: false,
       selectedChatExpired: false,
@@ -58,6 +60,7 @@ const useMessagingStore = defineStore("messaging", {
     } as unknown as IState),
   getters: {
     getChatsList: (state) => state.chatsList,
+    getUsers: (state) => state.users,
     getSelectedChatId: (state) => state.selectedChatId,
     getChatSnapshotMessage: (state) => state.chatSnapshotMessage,
     getContactNumber: (state) => state.contactNumber,
@@ -83,11 +86,26 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
-    async getWabaUsers() {
+    async getWabaUsers(chatId?: number | string) {
       try {
-        const response = await getChatUsers();
-        this.users = response.data;
-      } catch (error) {}
+        let response;
+        if (chatId) {
+          response = await getChatUsers(chatId);
+          this.users = response.data.data;
+        } else {
+          response = await getChatUsers();
+          this.allUsers = response.data;
+        }
+        if (!response || response.status !== 200) {
+          return Notify.create({
+            type: "negative",
+            message: "Something error!",
+            position: "top",
+          });
+        }
+      } catch (error) {
+        console.log("err", error);
+      }
     },
     async officeHours_set(value: boolean) {
       try {
@@ -142,8 +160,9 @@ const useMessagingStore = defineStore("messaging", {
     setContactNumber(contactNumber: string) {
       this.contactNumber = contactNumber;
     },
-    setMessageMembers(members: string) {
-      this.getSelectedChat.members = members;
+    setMessageMembers(user: any) {
+      user.id = user.user_id;
+      this.users.push(user);
     },
     setConversationType(chat: IChat, conversationType: string) {
       // console.log("fnc-setConversationType");
@@ -308,7 +327,7 @@ const useMessagingStore = defineStore("messaging", {
       // ???todo no error handling
       this.chatsList = chatsList.map((item: any) => {
         item.last_message = JSON.parse(item.last_message);
-        item.admin_data = this.users.find(
+        item.admin_data = this.allUsers.find(
           (user) => user.user_id === item.admin
         );
         // item.id = item.id.toString(); // ??? 0707
@@ -539,7 +558,7 @@ const useMessagingStore = defineStore("messaging", {
     changeAdminChatListById(id: string, admin: string) {
       const index = this.chatsList.findIndex((chat) => chat.id === id);
       this.chatsList[index].admin = admin;
-      this.chatsList[index].admin_data = this.users.find(
+      this.chatsList[index].admin_data = this.allUsers.find(
         (user) => user.user_id === admin
       ) as any;
       this.sortChatsList();

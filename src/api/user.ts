@@ -46,9 +46,14 @@ export const getUser = async (id: string) => {
  * if user is a cs, then load all users with roles: cs
  * @returns
  */
-export const getChatUsers = async () => {
-  const users = await api.post(`/waba/load-waba-users`, {});
-  return users;
+export const getChatUsers = async (id?: number | string) => {
+  let response;
+  if (id) {
+    response = await api.get(`/chat/details/${id}`);
+  } else {
+    response = await api.post(`/waba/load-waba-users`, {});
+  }
+  return response;
 };
 
 /**

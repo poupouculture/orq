@@ -21,7 +21,7 @@
               v-for="(member, index) of members.slice(0, 1)"
               :key="index"
             >
-              {{ initialName(member?.name) }}
+              {{ initialName(member?.first_name) }}
             </div>
             <div
               class="w-10 h-10 flex justify-center mr-2 items-center rounded-full bg-gray-300"
@@ -105,12 +105,10 @@ const canSearch = computed(() =>
   userInfoStore.getPageActionsByPageId("F10", "MessageSearch")
 );
 
-const initialName = (name: string) => {
-  const firstName = name.split(" ")[0];
+const initialName = (firstName: string, lastName: string) => {
   let initial = firstName.charAt(0).toUpperCase();
 
-  if (name.split(" ").length !== 1) {
-    const lastName = name.split(" ")[1];
+  if (lastName) {
     initial += lastName.charAt(0).toUpperCase();
   }
   return initial;
