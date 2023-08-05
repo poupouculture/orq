@@ -64,6 +64,17 @@ const onHover = ref(false);
             <div class="content" v-html="data.content"></div>
           </div>
         </div>
+
+        <div v-else-if="data.type === 'text_with_background'" class="w-full">
+          <div
+            class="min-h-[500px] p-6 bg-center flex justify-end bg-cover"
+            :style="{ backgroundImage: `url(${data.image})` }"
+          >
+            <div class="md:w-1/2 w-full">
+              <div class="content" v-html="data.content"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
