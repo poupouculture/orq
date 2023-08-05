@@ -25,7 +25,7 @@ const onHover = ref(false);
             v-model="slide"
             navigation
             arrows
-            :autoplay="onHover ? 0 : 3000"
+            :autoplay="onHover ? 0 : data.raw.time"
             infinite
           >
             <q-carousel-slide
