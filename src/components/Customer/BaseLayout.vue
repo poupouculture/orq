@@ -38,7 +38,10 @@
 
           <q-tab-panel name="contact">
             <div class="contact-info">
-              <ContactInfo :show-associate-button="showAssociateButton" />
+              <ContactInfo
+                :show-associate-button="showAssociateButton"
+                :show-contacts-input="showContactsInput"
+              />
             </div>
           </q-tab-panel>
           <!-- ??? 0614 -->
@@ -79,6 +82,10 @@ defineProps({
   showAssociateButton: {
     type: Boolean,
     default: true,
+  },
+  showContactsInput: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits([
