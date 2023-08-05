@@ -223,7 +223,7 @@ const chatToggleLabel: ChatToggleType = reactive({
 const messagingStore = useMessagingStore();
 const contactStore = useContactStore();
 
-const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, users } =
+const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, allUsers } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -350,6 +350,7 @@ const chooseCustomer = async (customer: any) => {
     const chatlist = chatsList.value.find((list) => list.id === chat.id);
     if (chatlist) {
       chat.admin = chatlist.admin;
+      chat.admin_data = chatlist.admin_data;
     }
     chat.last_message = JSON.parse(chat.last_message);
     messagingStore.updateChatsList(chat); // if chat is NOT on screen
@@ -609,7 +610,7 @@ const initSocket = () => {
         // chat.id = chat.id.toString(); // ??? 0707
         console.log(" CHAT_CREATE:", chat);
         chat.last_message = JSON.parse(chat.last_message);
-        chat.admin_data = users.value.find(
+        chat.admin_data = allUsers.value.find(
           (user) => user.user_id === chat.admin
         );
         if (chat?.status === ChatTypes.PENDING) {

@@ -39,8 +39,8 @@
               {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
             </p>
             <p class="text-gray-500 text-[0.8rem]">
-              Admin: {{ getUserBySelectedChat?.first_name }}
-              {{ getUserBySelectedChat?.last_name }}
+              Admin: {{ getSelectedChat.admin_data?.first_name }}
+              {{ getSelectedChat.admin_data?.last_name }}
             </p>
             <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
             <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
@@ -130,7 +130,7 @@
     <ChatMembersBar
       v-else
       v-model:show-chat-option="showChatOption"
-      :members="members"
+      :members="users"
       :is-mobile="isMobile"
       :selected-chat="getSelectedChat"
     />
@@ -446,7 +446,6 @@ import {
   Direction,
   Product,
   MessageType,
-  Member,
   Message,
   MessageStatus,
   SendMessageStatus,
@@ -556,7 +555,7 @@ const {
   botList,
   getSelectedChatPending,
   getSelectedChatExpired,
-  getUserBySelectedChat,
+  users,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
@@ -699,10 +698,6 @@ const contactNameGet = computed<string>(() => {
 const inputEvent = computed(() => {
   return Screen.lt.md ? "keyup" : "keydown";
 });
-
-const members = computed<Member[]>(
-  () => JSON.parse(getSelectedChat.value.members) || []
-);
 
 const chaqMode = computed<boolean>(
   () => getSelectedChat.value?.meta_phone_number_id === "ChaQ"
@@ -1342,11 +1337,10 @@ onMounted(async () => {
   //   title: "Mobile...",
   //   text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
   // });
-
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
-
+  await messagingStore.setBotList();
   await messagingStore.setBotList();
   console.log("botlist:", botList.value);
 });
