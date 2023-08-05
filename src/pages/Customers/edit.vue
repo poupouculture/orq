@@ -4,6 +4,7 @@
     @discard="$router.go(-1)"
     @submitGeneralInformation="submit"
     @deleteGeneralInformation="deleteUser"
+    :showContactsInput="true"
   />
 </template>
 

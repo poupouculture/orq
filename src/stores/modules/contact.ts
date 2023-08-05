@@ -19,6 +19,7 @@ const useContactStore = defineStore("useContact", {
       category: "",
       preferred_language: "",
     } as Contact,
+    contacts: [],
     currentCustomerId: "",
   }),
   getters: {
@@ -26,6 +27,11 @@ const useContactStore = defineStore("useContact", {
     getCurrentCustomerId: (state) => state.currentCustomerId,
   },
   actions: {
+    getContactById(id: string) {
+      try {
+        console.log(id);
+      } catch (error) {}
+    },
     setCurrentCustomerId(customerID: string) {
       this.currentCustomerId = customerID;
     },

@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import useContactStore from "src/stores/modules/contact";
 import useMessagingStore from "src/stores/modules/messaging";
 import useCustomerStore from "src/stores/modules/customer";
 import { storeToRefs } from "pinia";
 import { preferedLanguageOptions } from "src/utils/typeOptions";
+import { api } from "src/boot/axios";
+import BaseMultiOptions from "../BaseMultiOptions.vue";
 
 // Props
-defineProps({
+const props = defineProps({
   showAssociateButton: {
     type: Boolean,
     default: () => true,
+  },
+  // this for select contacts options
+  showContactsInput: {
+    type: Boolean,
+    default: () => false,
   },
 });
 // State
@@ -20,6 +27,7 @@ const categoryOptions = ref(["phone"]);
 const messagingStore = useMessagingStore();
 const customerStore = useCustomerStore();
 const { getSelectedChat } = storeToRefs(messagingStore);
+const { getCustomer } = storeToRefs(customerStore);
 
 const contacts = useContactStore();
 const { getContacts, getCurrentCustomerId } = storeToRefs(contacts);
@@ -42,13 +50,57 @@ const form = ref({
 });
 const editAction = () => {
   editMode.value = !editMode.value;
-  if (!editMode.value && getContacts.value) {
-    form.value.first_name = getContacts.value.first_name;
-    form.value.last_name = getContacts.value.last_name;
-    form.value.number = getContacts.value.number;
-    form.value.category = getContacts.value.category;
-    form.value.preferred_language = getContacts.value.preferred_language;
+  if (!editMode.value && getContacts.value && !props.showContactsInput) {
+    setForm(getContacts.value);
   }
+};
+const setForm = (val: any) => {
+  form.value.first_name = val.first_name;
+  form.value.last_name = val.last_name;
+  form.value.number = val.number;
+  form.value.category = val.category;
+  form.value.preferred_language = val.preferred_language;
+};
+const selectedContact = ref(null) as any;
+const options = reactive({
+  contacts: [],
+}) as any;
+watch(getContacts, (val: any) => {
+  if (val) {
+    form.value = val;
+  } else {
+    resetForm();
+  }
+});
+watch(selectedContact, (val: any) => {
+  if (val) {
+    form.value = val.value;
+  } else {
+    resetForm();
+  }
+});
+const updateMultiOptions = async (val: any) => {
+  const { data: payload, filterUrl, variableName } = val;
+  const response = await api.get(filterUrl, {
+    params: {
+      fields: "*",
+      search: payload,
+      "filter[_and][0][customers][customers_id][id][_eq]": getCustomer.value.id,
+    },
+  });
+  options[variableName] = response.data.data.map((item: any) => {
+    return {
+      value: item,
+      label: `${item.first_name} ${item.last_name} (${item.number})`,
+    };
+  });
+};
+const resetForm = () => {
+  form.value.first_name = "";
+  form.value.last_name = "";
+  form.value.number = "";
+  form.value.category = "";
+  form.value.preferred_language = "";
 };
 const updateContacts = async () => {
   await contacts.updateContact(form.value);
@@ -56,6 +108,11 @@ const updateContacts = async () => {
   if (getSelectedChat.value) {
     getSelectedChat.value.contact_first_name = form.value.first_name;
     getSelectedChat.value.contact_last_name = form.value.last_name;
+  }
+  // set selected contact
+  if (props.showContactsInput) {
+    selectedContact.value.value = form.value;
+    selectedContact.value.label = `${form.value.first_name} ${form.value.last_name} (${form.value.number})`;
   }
   editMode.value = false;
 };
@@ -82,6 +139,17 @@ const updateContacts = async () => {
       />
     </div>
 
+    <div class="flex flex-col lg:w-1/3" v-if="showContactsInput">
+      <BaseMultiOptions
+        v-model="selectedContact"
+        label="Select Contact"
+        filter-url="/items/contacts"
+        :options="options.contacts"
+        option-variable-name="contacts"
+        :multiple="false"
+        @update:multi-options="updateMultiOptions"
+      />
+    </div>
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
       <div class="flex flex-col">
         <p class="label-style">First Name</p>

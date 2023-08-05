@@ -4,7 +4,7 @@
     <q-select
       v-model="value"
       :options="options"
-      use-input
+      :use-input="useInput"
       :rules="[(val) => required(val)]"
       :input-debounce="700"
       outlined
@@ -28,7 +28,7 @@ const props = defineProps({
   multiple: { default: true },
   label: { type: String, default: "" },
   options: { type: Array, default: () => [] },
-  modelValue: { type: Array, default: () => [] },
+  modelValue: { type: [Array, Object], default: () => [] },
   filterUrl: { type: String, default: "" },
   optionVariableName: { type: String, default: "" },
   nameLabel: { type: String, default: "name" },
@@ -44,6 +44,7 @@ const value = computed({
   get: () => props.modelValue,
 });
 
+const useInput = computed(() => (props.multiple ? true : !value.value));
 const filter = async (val: string, update: any) => {
   if (val === "") {
     update(() => {
