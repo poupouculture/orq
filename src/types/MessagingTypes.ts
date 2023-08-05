@@ -114,8 +114,9 @@ export interface ChatSnapshotMessage {
   [key: string]: () => void;
 }
 
-interface User {
+export interface User {
   user_id: string;
+  full_name: string;
   first_name: string;
   last_name: string;
   role_name: string;

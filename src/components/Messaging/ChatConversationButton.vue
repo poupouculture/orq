@@ -20,9 +20,10 @@
           <q-item-section class="px-4 pt-3">
             <q-input
               v-model="queryAddUser"
-              :rules="[(val) => required(val)]"
               outlined
+              autofocus
               :debounce="400"
+              :loading="searchLoading"
               @update:model-value="searchUser('add-user')"
               lazy-rules
               dense
@@ -81,9 +82,10 @@
           <q-item-section class="px-4 pt-3">
             <q-input
               v-model="query"
-              :rules="[(val) => required(val)]"
               outlined
+              autofocus
               :debounce="400"
+              :loading="searchLoading"
               @update:model-value="searchUser"
               lazy-rules
               dense
@@ -143,19 +145,9 @@ import { closeChat } from "src/api/messaging";
 import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
 // import { ChatTypes } from "src/constants/ChatKeyword";
-import { required } from "src/utils/validation-rules";
-
-const enum Role {
-  CS = "CS",
-  CS_MANAGER = "CS-Manager",
-}
-
-interface User {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  role_name: string;
-}
+// import { required } from "src/utils/validation-rules";
+import { Role } from "src/constants/Role";
+import { User } from "src/types/MessagingTypes";
 
 const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
@@ -166,20 +158,29 @@ const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const usersAdd: Ref<Array<User>> = ref([]);
+const searchLoading: Ref<boolean> = ref(false);
 const { getSelectedChat, allUsers, getUsers } = storeToRefs(messagingStore);
 
-const searchUser = (type?: string) => {
-  if (type !== "add-user") {
-    users.value = usersData.value.filter((obj) => {
-      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
-      return name.some((val) => val.includes(query.value));
-    });
-  } else {
-    usersAdd.value = usersData.value.filter((obj) => {
-      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
-      return name.some((val) => val.includes(queryAddUser.value));
-    });
-  }
+const searchUser = (type?: string | number | null) => {
+  searchLoading.value = true;
+  setTimeout(() => {
+    if (type !== "add-user") {
+      users.value = usersData.value.filter((obj) => {
+        const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+        return name.some((val) =>
+          val.toLowerCase().includes(query.value.toLowerCase())
+        );
+      });
+    } else {
+      usersAdd.value = usersData.value.filter((obj) => {
+        const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+        return name.some((val) =>
+          val.toLowerCase().includes(queryAddUser.value.toLowerCase())
+        );
+      });
+    }
+    searchLoading.value = false;
+  }, 300);
 };
 
 // const getDirectionComponent = () => {
@@ -188,13 +189,15 @@ const searchUser = (type?: string) => {
 //   }
 //   return "";
 // };
-const sortData = (data: any) => {
-  data.forEach((data: any) => {
+const sortData = (data: User[]) => {
+  data.forEach((data: User) => {
     data.full_name = data.first_name + data.last_name;
   });
-  return data.sort((a: any, b: any) => {
-    return a.full_name.localeCompare(b.full_name);
-  });
+  return data
+    .filter((item: User) => item.role_name !== Role.CS_MANAGER)
+    .sort((a: User, b: User) => {
+      return a.full_name.localeCompare(b.full_name);
+    });
 };
 watch(allUsers, (val) => {
   const data = sortData(val);
