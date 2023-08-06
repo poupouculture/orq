@@ -9,6 +9,16 @@ const props = defineProps({
 
 const slide = ref(1);
 const onHover = ref(false);
+
+const carouselTimer = (dataRaw) => {
+  if (onHover.value) {
+    return 0;
+  } else if (dataRaw !== null) {
+    return dataRaw.time;
+  } else {
+    return 0;
+  }
+};
 </script>
 
 <template>
@@ -25,7 +35,7 @@ const onHover = ref(false);
             v-model="slide"
             navigation
             arrows
-            :autoplay="onHover ? 0 : data.raw.time"
+            :autoplay="carouselTimer(data.raw)"
             infinite
           >
             <q-carousel-slide
@@ -78,7 +88,7 @@ const onHover = ref(false);
             </div>
           </div>
 
-          <div v-if="data.raw.hasOwnProperty('videoId')" class="w-full">
+          <div v-if="data.raw !== null" class="w-full">
             <iframe
               width="951"
               height="535"
