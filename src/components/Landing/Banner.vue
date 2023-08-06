@@ -42,7 +42,7 @@ const onHover = ref(false);
 
         <div
           v-else-if="data.type === 'text_with_side_images'"
-          class="grid md:grid-cols-2 gap-4 mx-4 my-5"
+          class="grid md:grid-cols-2 gap-4 mx-4 my-5 w-full"
         >
           <div
             :class="
