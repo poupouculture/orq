@@ -53,7 +53,7 @@ const onHover = ref(false);
             <q-img
               class="rounded-borders"
               :src="data.image"
-              style="height: 280px"
+              style="min-height: 280px"
             />
           </div>
 
