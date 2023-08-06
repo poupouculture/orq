@@ -77,6 +77,19 @@ const onHover = ref(false);
               <div class="content" v-html="data.content"></div>
             </div>
           </div>
+
+          <div v-if="data.raw.hasOwnProperty('videoId')" class="w-full">
+            <iframe
+              width="951"
+              height="535"
+              :src="`https://www.youtube.com/embed/${data.raw.videoId}${
+                data.raw.autoplay ? '?autoplay=1&mute=1' : ''
+              }`"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
         </div>
       </div>
     </div>
