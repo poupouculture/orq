@@ -20,9 +20,10 @@
           <q-item-section class="px-4 pt-3">
             <q-input
               v-model="queryAddUser"
-              :rules="[(val) => required(val)]"
               outlined
+              autofocus
               :debounce="400"
+              :loading="searchLoading"
               @update:model-value="searchUser('add-user')"
               lazy-rules
               dense
@@ -47,8 +48,7 @@
                   </q-avatar>
                   <div class="q-ml-md">
                     <div class="text-weight-bold break-all">
-                      {{ user.first_name }}
-                      {{ user.last_name }}
+                      {{ user.first_name }} {{ user.last_name }}
                     </div>
                     <div class="text-weight-light">
                       {{ user.role_name }}
@@ -82,9 +82,10 @@
           <q-item-section class="px-4 pt-3">
             <q-input
               v-model="query"
-              :rules="[(val) => required(val)]"
               outlined
+              autofocus
               :debounce="400"
+              :loading="searchLoading"
               @update:model-value="searchUser"
               lazy-rules
               dense
@@ -134,29 +135,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import useMessagingStore from "src/stores/modules/messaging";
 import useUserInfoStore from "src/stores/modules/userInfo";
-import { getChatUsers, assignUser as assignUserAPI } from "src/api/user";
+import { assignUser as assignUserAPI } from "src/api/user";
 import { closeChat } from "src/api/messaging";
 import { Dialog, Loading, Notify } from "quasar";
 // import { ChatGroup, IChat } from "src/types/MessagingTypes";
 // import { ChatTypes } from "src/constants/ChatKeyword";
-import { required } from "src/utils/validation-rules";
-
-const enum Role {
-  CS = "CS",
-  CS_MANAGER = "CS-Manager",
-}
-
-interface User {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  role_name: string;
-}
+// import { required } from "src/utils/validation-rules";
+import { Role } from "src/constants/Role";
+import { User } from "src/types/MessagingTypes";
 
 const messagingStore = useMessagingStore();
 const userInfo = useUserInfoStore();
@@ -167,20 +158,29 @@ const userRole: Ref<string> = ref("");
 const usersData: Ref<Array<User>> = ref([]);
 const users: Ref<Array<User>> = ref([]);
 const usersAdd: Ref<Array<User>> = ref([]);
-const { getSelectedChat } = storeToRefs(messagingStore);
+const searchLoading: Ref<boolean> = ref(false);
+const { getSelectedChat, allUsers, getUsers } = storeToRefs(messagingStore);
 
-const searchUser = (type?: string) => {
-  if (type !== "add-user") {
-    users.value = usersData.value.filter((obj) => {
-      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
-      return name.some((val) => val.includes(query.value));
-    });
-  } else {
-    usersAdd.value = usersData.value.filter((obj) => {
-      const name = `${obj.first_name} ${obj.last_name}`.split(" ");
-      return name.some((val) => val.includes(queryAddUser.value));
-    });
-  }
+const searchUser = (type?: string | number | null) => {
+  searchLoading.value = true;
+  setTimeout(() => {
+    if (type !== "add-user") {
+      users.value = usersData.value.filter((obj) => {
+        const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+        return name.some((val) =>
+          val.toLowerCase().includes(query.value.toLowerCase())
+        );
+      });
+    } else {
+      usersAdd.value = usersData.value.filter((obj) => {
+        const name = `${obj.first_name} ${obj.last_name}`.split(" ");
+        return name.some((val) =>
+          val.toLowerCase().includes(queryAddUser.value.toLowerCase())
+        );
+      });
+    }
+    searchLoading.value = false;
+  }, 300);
 };
 
 // const getDirectionComponent = () => {
@@ -189,25 +189,30 @@ const searchUser = (type?: string) => {
 //   }
 //   return "";
 // };
-const sortData = (data: any) => {
-  data.forEach((data: any) => {
+const sortData = (data: User[]) => {
+  data.forEach((data: User) => {
     data.full_name = data.first_name + data.last_name;
   });
-  return data.sort((a: any, b: any) => {
-    return a.full_name.localeCompare(b.full_name);
-  });
+  return data
+    .filter((item: User) => item.role_name !== Role.CS_MANAGER)
+    .sort((a: User, b: User) => {
+      return a.full_name.localeCompare(b.full_name);
+    });
 };
-
-onMounted(async () => {
-  Loading.show();
-  let { data } = await getChatUsers();
-  data = sortData(data);
+watch(allUsers, (val) => {
+  const data = sortData(val);
   users.value = data;
   usersData.value = data;
   usersAdd.value = data;
+  console.log("val", val);
+});
 
+onMounted(async () => {
+  const data = sortData(allUsers.value);
+  users.value = data;
+  usersData.value = data;
+  usersAdd.value = data;
   userRole.value = userInfo.getUserRoleName;
-  Loading.hide();
 });
 
 const assignUser = async (user: User, addMember: boolean = false) => {
@@ -215,9 +220,9 @@ const assignUser = async (user: User, addMember: boolean = false) => {
   const userId = user.user_id;
 
   try {
-    const currentMembers = JSON.parse(getSelectedChat.value.members);
-    console.log("current members:", currentMembers);
-    const checkCurrentMember = currentMembers.find(
+    // const currentMembers = JSON.parse(getSelectedChat.value.members);
+    // console.log(currentMembers);
+    const checkCurrentMember = getUsers.value.find(
       (member: any) => member.id === userId
     );
     if (checkCurrentMember) {
@@ -234,18 +239,14 @@ const assignUser = async (user: User, addMember: boolean = false) => {
 
   try {
     Loading.show();
-    const { data } = await assignUserAPI(chatId, userId, addMember);
-    const members = data.map((item: any) => ({
-      id: item.id,
-      name: `${item.first_name} ${item.last_name}`,
-    }));
+    await assignUserAPI(chatId, userId, addMember);
     // update message members
-    messagingStore.setMessageMembers(JSON.stringify(members));
+    messagingStore.setMessageMembers(user);
     Notify.create({
       message: `Successful assigned to ${user.first_name} ${user.last_name}`,
       position: "top",
       type: "positive",
-      color: "blue-9",
+      color: "primary",
     });
     Loading.hide();
   } catch (err: any) {

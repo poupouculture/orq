@@ -223,7 +223,7 @@ const chatToggleLabel: ChatToggleType = reactive({
 const messagingStore = useMessagingStore();
 const contactStore = useContactStore();
 
-const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, users } =
+const { chatsList, selectedTab, getSelectedChatId, getSelectedChat, allUsers } =
   storeToRefs(messagingStore);
 const showCustomerDialog = ref(false);
 const customerStore = useCustomerStore();
@@ -320,16 +320,6 @@ watch(tabsTip, (newVal, oldVal) => {
   }
 });
 
-const socketUrl = process.env.SOCKETS_URL as string;
-console.log(socketUrl);
-socket.value = io(socketUrl, {
-  reconnectionDelayMax: 30000,
-  extraHeaders: {
-    authorization: `${userInfo.value.access_token}`,
-  },
-  // transports: ["websocket"],
-});
-
 const fetchContacts = async () => {
   showCustomerDialog.value =
     chatToggleLabel.state.icon === ChatToggleLabel.SHOW.icon;
@@ -350,6 +340,7 @@ const chooseCustomer = async (customer: any) => {
     const chatlist = chatsList.value.find((list) => list.id === chat.id);
     if (chatlist) {
       chat.admin = chatlist.admin;
+      chat.admin_data = chatlist.admin_data;
     }
     chat.last_message = JSON.parse(chat.last_message);
     messagingStore.updateChatsList(chat); // if chat is NOT on screen
@@ -397,299 +388,308 @@ const showMoreChats = async () => {
   isShowingButtonLoadMore.value[selectedTab.value] = chats.length >= 15;
   isChatsDecreased.value[selectedTab.value] = false;
 };
-
 const initSocket = () => {
-  try {
-    socket.value.on("connect", () => {
-      console.log("SOCKET: connect -------");
-      errSocket.value = false;
-      console.log(
-        "SOCKET: join_chat by user_id -------",
-        userProfile.value?.id
-      );
-      socket.value.emit("join_chat", userProfile?.value?.id);
-      // console.log("userProfile", userProfile.value);
-      chatsList.value.forEach((chat) => {
-        console.log("SOCKET: join_chat by chat_id.........");
-        // ??? 0707
-        console.log(chat.id);
-        console.log(typeof chat.id);
-        // console.log(typeof chat.id.toString());
-        console.log(`join_chat.........${chat.id}`);
-        socket.value.emit("join_chat", chat.id); // original
-        socket.value.emit("join_chat", chat.id.toString()); // 0719 backward
-        // socket.value.emit("join_chat", chat.id.toString()); //??? 0707
-        // socket.value.emit("join_chat", parseInt(chat.id));
-      });
+  socket.value.on("connect", () => {
+    console.log("SOCKET:CONNECT -------");
+    errSocket.value = false;
+    console.log("SOCKET:join_chat by user_id -------", userProfile.value?.id);
+    socket.value.emit("join_chat", userProfile?.value?.id);
+    // console.log("userProfile", userProfile.value);
+    // console.log("CHATLIST", chatsList.value);
+    // debugger;
+    chatsList.value.forEach((chat) => {
+      console.log(`SOCKET:join_chat: ${chat.id}`, typeof chat.id);
+      // ??? 0707
+      // console.log(chat.id);
+      // console.log(typeof chat.id);
+      // console.log(typeof chat.id.toString());
+      // socket.value.emit("join_chat", chat.id); // original
+      socket.value.emit("join_chat", chat.id.toString()); // 0719 backward
+      // socket.value.emit("join_chat", chat.id.toString()); //??? 0707
+      // socket.value.emit("join_chat", parseInt(chat.id));
     });
-    socket.value.io.on("error", (err: any) => {
-      console.log("socket error", err);
-      errSocket.value = true;
-      Notify.create({
-        message: "Refresh Your Page to connect to Chats",
-        position: "top",
-        type: "negative",
-      });
-    });
-    socket.value.on("chat_updated", (data: SocketChatUpdated) => {
-      console.log("SOCKET: chat_updated", data);
-      const targetChatId = data.document?.id;
+  });
 
-      const chat = chatsList.value.find(
-        (chat: IChat) => chat.id === targetChatId
-      );
-      if (chat) {
-        if (data?.update_fields?.conversation_type) {
-          messagingStore.changeConversationType(
-            chat?.id,
-            data?.update_fields?.conversation_type
-          );
-        }
-        if (data?.update_fields?.admin) {
-          messagingStore.changeAdminChatListById(
-            chat?.id,
-            data?.update_fields?.admin
-          );
-        }
-        if (data?.update_fields?.status) {
-          messagingStore.updateChatsList(chat, data.document.status);
-          console.log("  SOCKET:status change");
-          console.log(getSelectedChat.value);
-          if (
-            getSelectedChat?.value &&
-            getSelectedChat?.value.id === data.document.id
-          ) {
-            messagingStore.updateChatTabSelected(data.update_fields.status);
-            // messagingStore.setSelectedTab(data.update_fields.status);
-          }
-          let message;
-          if (data.update_fields.status !== "waiting") {
-            switch (data.update_fields.status) {
-              case "ongoing":
-                // message = `Chat has been taken by ${
-                //   userProfile.value?.first_name
-                // } ${userProfile.value?.last_name || ""}`;
-                message = `Chat ${data.document?.name} has been taken. Check ONGOING state`;
-                break;
-              case "closed":
-                message = `${data.document?.name} chat has been closed`;
-                break;
-            }
-            Notify.create({
-              message,
-              type: "positive",
-              color: "primary",
-              position: "top",
-            });
-          }
-        }
-        if (data.update_fields.expiration_timestamp) {
-          messagingStore.changeExpiry(
-            chat?.id,
-            data?.update_fields?.expiration_timestamp
-          );
-        }
+  // socket.value.io.on("connect_error", (err: any) => {
+  //   console.log("SOCKET: connect_error", err);
+  // });
 
-        if (data?.update_fields?.mode) {
-          messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
-          if (
-            getSelectedChat?.value &&
-            getSelectedChat.value.id === data.document.id
-          ) {
-            // console.log(data);
-            // console.log(data.document.id);
-            getSelectedChat.value.mode = data.update_fields.mode;
-          }
-          if (data.update_fields.mode === "CS-Agent") {
-            Notify.create({
-              message: `The ${data.document.name} Bot has been ended`,
-              type: "positive",
-              color: "primary",
-              position: "top",
-            });
-          }
-        }
-        messagingStore.sortChatsList();
-      }
+  // socket.value.io.on("reconnect", (err: any) => {
+  //   console.log("SOCKET: reconnect", err);
+  // });
+
+  // socket.value.io.on("reconnect_attempt", (err: any) => {
+  //   console.log("SOCKET: reconnect_attempt", err);
+  // });
+
+  socket.value.io.on("error", (err: any) => {
+    console.log("socket error", err);
+    errSocket.value = true;
+    Notify.create({
+      message: "Refresh Your Page to connect to Chats",
+      position: "top",
+      type: "negative",
     });
-    socket.value.on("message_created", async (data: SocketMessage) => {
-      console.log("message_created", data);
-      const { document } = data;
-      if (document) {
-        messagingStore.setChatsLastMessage(
-          document.chat_id as string,
-          document
+  });
+  socket.value.on("chat_updated", (data: SocketChatUpdated) => {
+    console.log("SOCKET: chat_updated", data);
+    const targetChatId = data.document?.id;
+
+    const chat = chatsList.value.find(
+      (chat: IChat) => chat.id === targetChatId
+    );
+    if (chat) {
+      if (data?.update_fields?.conversation_type) {
+        messagingStore.changeConversationType(
+          chat?.id,
+          data?.update_fields?.conversation_type
         );
       }
-      messagingStore.sortChatsList();
-    });
-    socket.value.on("contact_created", async (data: any) => {
-      console.log("SOCKET: contact_created", data);
-      // const response = await getCustomer(data.customers_id);
-      // const customer = respose?.data?.data;
-      const customer = await customerStore.fetchCustomer(data.customers_id);
-      console.log(customer);
-
-      const chatFound = chatsList.value.find(
-        (chat: IChat) => chat.contacts_id === data.contacts_id
-      );
-      let contact = null;
-      // if (customer?.contacts.length === 1) {
-      //   contact = customer?.contacts[0].contacts_id;
-      // } else {
-      //   const resContact = await getContact(data.contacts_id);
-      //   contact = resContact?.data?.data[0];
-      // }
-
-      if (chatFound !== undefined) {
-        const resContact = await getContact(data.contacts_id);
-        contact = resContact?.data?.data[0];
+      if (data?.update_fields?.admin) {
+        messagingStore.changeAdminChatListById(
+          chat?.id,
+          data?.update_fields?.admin
+        );
+      }
+      if (data?.update_fields?.status) {
+        messagingStore.updateChatsList(chat, data.document.status);
+        console.log("  SOCKET:status change");
+        console.log(getSelectedChat.value);
         if (
           getSelectedChat?.value &&
-          getSelectedChat.value.id === chatFound.id
+          getSelectedChat?.value.id === data.document.id
         ) {
-          console.log("current chat found");
-          contactStore.setCurrentCustomerId(customer.id);
-          contactStore.setContact(contact);
-          customerStore.setCustomer(customer);
+          messagingStore.updateChatTabSelected(data.update_fields.status);
+          // messagingStore.setSelectedTab(data.update_fields.status);
         }
-        chatFound.customers_id = data.customers_id;
-        chatFound.customer_company_name_en = customer.customer_company_name_en;
-        chatFound.contact_first_name = contact.first_name;
-        chatFound.contact_last_name = contact.last_name;
-        // socket.value.emit("join_chat", data.id);
-        // useContactStore().setFirstname(contact.first_name);
+        let message;
+        if (data.update_fields.status !== "waiting") {
+          switch (data.update_fields.status) {
+            case "ongoing":
+              // message = `Chat has been taken by ${
+              //   userProfile.value?.first_name
+              // } ${userProfile.value?.last_name || ""}`;
+              message = `Chat ${data.document?.name} has been taken. Check ONGOING state`;
+              break;
+            case "closed":
+              message = `${data.document?.name} chat has been closed`;
+              break;
+          }
+          Notify.create({
+            message,
+            type: "positive",
+            color: "primary",
+            position: "top",
+          });
+        }
       }
-      // no need to explictly call getContact. comment out for now.
-      // const contact = await getContact(data.document.contact_id);
-      // getSelectedChat.value.contact_first_name =
-      //   contact.data.data[0].first_name;
-      // useContactStore().setFirstname(contact.data.data[0].first_name);
-    });
-    socket.value.on("user_added", async (data: any) => {
-      console.log("SOCKET_EVENT: user_added", data);
-      // console.log(chatsList.value);
-      // const findChat = chatsList.value.find(
-      //   (chat) => chat.chat_id === data.chat_id
-      // );
-      // console.log("findChat");
-      // console.log(findChat);
-      // if (!findChat) {
-      //   chatsList.value.unshift({ members: "[]", ...data });
-      // }
-      // const chatObj = await getChatByID(data.chat_id);
-      // const chatIndex = chatsList.value.findIndex(
-      //   (chat) => chat.chat_id === chatObj.chat_id
-      // );
-
-      // if (chatIndex > -1) {
-      //   chatsList.value[chatIndex] = chatObj;
-      // }
-
-      // socket.value.emit("join_chat", data.chat_id);
-      // Notify.create({
-      //   message: `You have been added to chat`,
-      //   color: "blue-9",
-      //   position: "top",
-      //   type: "positive",
-      // });
-    });
-    socket.value.on("chat_created", async (data: SocketChat) => {
-      Notify.create({
-        message: `You have been added to chat ${data.name}`,
-        color: "blue-9",
-        position: "top",
-        type: "positive",
-      });
-      console.log("SOCKET chat_created:", data);
-      const findChat = chatsList.value.find((chat) => chat.id === data.id); // ??? 0707
-      console.log(" CHAT_FOUND:", findChat);
-      if (!findChat) {
-        const chat = await getChatByID(data.id);
-        // chat.id = chat.id.toString(); // ??? 0707
-        console.log(" CHAT_CREATE:", chat);
-        chat.last_message = JSON.parse(chat.last_message);
-        chat.admin_data = users.value.find(
-          (user) => user.user_id === chat.admin
+      if (data.update_fields.expiration_timestamp) {
+        messagingStore.changeExpiry(
+          chat?.id,
+          data?.update_fields?.expiration_timestamp
         );
-        if (chat?.status === ChatTypes.PENDING) {
-          chatsList.value.push(chat);
-        } else {
-          chatsList.value.unshift(chat);
+      }
+
+      if (data?.update_fields?.mode) {
+        messagingStore.changeModeChatListById(chat?.id, data.document?.mode);
+        if (
+          getSelectedChat?.value &&
+          getSelectedChat.value.id === data.document.id
+        ) {
+          // console.log(data);
+          // console.log(data.document.id);
+          getSelectedChat.value.mode = data.update_fields.mode;
         }
-        socket.value.emit("join_chat", data.id.toString());
+        if (data.update_fields.mode === "CS-Agent") {
+          Notify.create({
+            message: `The ${data.document.name} Bot has been ended`,
+            type: "positive",
+            color: "primary",
+            position: "top",
+          });
+        }
       }
       messagingStore.sortChatsList();
+    }
+  });
+  socket.value.on("message_created", async (data: SocketMessage) => {
+    console.log("message_created", data);
+    const { document } = data;
+    if (document) {
+      messagingStore.setChatsLastMessage(document.chat_id as string, document);
+    }
+    messagingStore.sortChatsList();
+  });
+  socket.value.on("contact_created", async (data: any) => {
+    console.log("SOCKET: contact_created", data);
+    // const response = await getCustomer(data.customers_id);
+    // const customer = respose?.data?.data;
+    const customer = await customerStore.fetchCustomer(data.customers_id);
+    console.log(customer);
+
+    const chatFound = chatsList.value.find(
+      (chat: IChat) => chat.contacts_id === data.contacts_id
+    );
+    let contact = null;
+    // if (customer?.contacts.length === 1) {
+    //   contact = customer?.contacts[0].contacts_id;
+    // } else {
+    //   const resContact = await getContact(data.contacts_id);
+    //   contact = resContact?.data?.data[0];
+    // }
+
+    if (chatFound !== undefined) {
+      const resContact = await getContact(data.contacts_id);
+      contact = resContact?.data?.data[0];
+      if (getSelectedChat?.value && getSelectedChat.value.id === chatFound.id) {
+        console.log("current chat found");
+        contactStore.setCurrentCustomerId(customer.id);
+        contactStore.setContact(contact);
+        customerStore.setCustomer(customer);
+      }
+      chatFound.customers_id = data.customers_id;
+      chatFound.customer_company_name_en = customer.customer_company_name_en;
+      chatFound.contact_first_name = contact.first_name;
+      chatFound.contact_last_name = contact.last_name;
+      // socket.value.emit("join_chat", data.id);
+      // useContactStore().setFirstname(contact.first_name);
+    }
+    // no need to explictly call getContact. comment out for now.
+    // const contact = await getContact(data.document.contact_id);
+    // getSelectedChat.value.contact_first_name =
+    //   contact.data.data[0].first_name;
+    // useContactStore().setFirstname(contact.data.data[0].first_name);
+  });
+  socket.value.on("user_added", async (data: any) => {
+    console.log("SOCKET_EVENT: user_added", data);
+    // console.log(chatsList.value);
+    // const findChat = chatsList.value.find(
+    //   (chat) => chat.chat_id === data.chat_id
+    // );
+    // console.log("findChat");
+    // console.log(findChat);
+    // if (!findChat) {
+    //   chatsList.value.unshift({ members: "[]", ...data });
+    // }
+    // const chatObj = await getChatByID(data.chat_id);
+    // const chatIndex = chatsList.value.findIndex(
+    //   (chat) => chat.chat_id === chatObj.chat_id
+    // );
+
+    // if (chatIndex > -1) {
+    //   chatsList.value[chatIndex] = chatObj;
+    // }
+
+    // socket.value.emit("join_chat", data.chat_id);
+    // Notify.create({
+    //   message: `You have been added to chat`,
+    //   color: "blue-9",
+    //   position: "top",
+    //   type: "positive",
+    // });
+  });
+  socket.value.on("chat_created", async (data: SocketChat) => {
+    Notify.create({
+      message: `You have been added to chat ${data.name}`,
+      color: "blue-9",
+      position: "top",
+      type: "positive",
     });
-    // the event is removed
-    // Should be refactoring
-    socket.value.on("botsession_created", async (data: any) => {
-      console.log("botsession_created", data);
-      const { document } = data;
-      const { isConfirmed } = await Swal.fire({
-        icon: "info",
-        title: "Incoming Profile",
-        html:
-          "Customer Name: " +
-          document?.summary?.customer_name +
-          "</br>" +
-          "Customer Code: " +
-          document?.summary?.customer_code +
-          "</br>" +
-          "Location Code: " +
-          document?.summary?.location_code +
-          "</br>" +
-          "Preferred Language: " +
-          document?.summary?.preferred_language,
-        showCloseButton: true,
-        showCancelButton: true,
-        focusConfirm: false,
-        confirmButtonText: "Load Profile",
-      });
-
-      const name = data.document.name.split(" ")[0];
-
-      Notify.create({
-        message: `Chat ${name} has been finished`,
-        color: "blue-9",
-        position: "top",
-        type: "positive",
-      });
-
-      const chat = chatsList.value.find(
-        (chat) => chat.id === document.session_id
+    console.log("SOCKET chat_created:", data);
+    const findChat = chatsList.value.find((chat) => chat.id === data.id); // ??? 0707
+    console.log(" CHAT_FOUND:", findChat);
+    if (!findChat) {
+      const chat = await getChatByID(data.id);
+      // chat.id = chat.id.toString(); // ??? 0707
+      console.log(" CHAT_CREATE:", chat);
+      chat.last_message = JSON.parse(chat.last_message);
+      chat.admin_data = allUsers.value.find(
+        (user) => user.user_id === chat.admin
       );
-      if (isConfirmed) {
-        const customer = (await onSearchCustomers(
-          document?.summary?.customer_code,
-          document?.summary?.location_code
-        )) as any;
-        if (chat) {
-          if (customer?.id) {
-            messagingStore.onSelectChat(chat?.id);
-            await customerStore.fetchCustomer(customer.id);
-            rightDrawerOpen.value = true;
-          } else {
-            await closeBot(chat?.id);
-            messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
-            Notify.create({
-              message: "The Bot has been ended",
-              color: "primary",
-              position: "top",
-              type: "positive",
-            });
-          }
+      if (chat?.status === ChatTypes.PENDING) {
+        chatsList.value.push(chat);
+      } else {
+        chatsList.value.unshift(chat);
+      }
+      socket.value.emit("join_chat", data.id.toString());
+    }
+    messagingStore.sortChatsList();
+  });
+  // the event is removed
+  // Should be refactoring
+  socket.value.on("botsession_created", async (data: any) => {
+    console.log("botsession_created", data);
+    const { document } = data;
+    const { isConfirmed } = await Swal.fire({
+      icon: "info",
+      title: "Incoming Profile",
+      html:
+        "Customer Name: " +
+        document?.summary?.customer_name +
+        "</br>" +
+        "Customer Code: " +
+        document?.summary?.customer_code +
+        "</br>" +
+        "Location Code: " +
+        document?.summary?.location_code +
+        "</br>" +
+        "Preferred Language: " +
+        document?.summary?.preferred_language,
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      confirmButtonText: "Load Profile",
+    });
+
+    const name = data.document.name.split(" ")[0];
+
+    Notify.create({
+      message: `Chat ${name} has been finished`,
+      color: "blue-9",
+      position: "top",
+      type: "positive",
+    });
+
+    const chat = chatsList.value.find(
+      (chat) => chat.id === document.session_id
+    );
+    if (isConfirmed) {
+      const customer = (await onSearchCustomers(
+        document?.summary?.customer_code,
+        document?.summary?.location_code
+      )) as any;
+      if (chat) {
+        if (customer?.id) {
+          messagingStore.onSelectChat(chat?.id);
+          await customerStore.fetchCustomer(customer.id);
+          rightDrawerOpen.value = true;
+        } else {
+          await closeBot(chat?.id);
+          messagingStore.changeModeChatListById(chat?.id, "CS-Agent");
+          Notify.create({
+            message: "The Bot has been ended",
+            color: "primary",
+            position: "top",
+            type: "positive",
+          });
         }
       }
-    });
-  } catch (error) {
-    console.log(error);
-  }
+    }
+  });
 };
 
 onMounted(async () => {
   await messagingStore.getWabaUsers();
   await messagingStore.fetchChats();
+  const socketUrl = process.env.SOCKETS_URL as string;
+  console.log(socketUrl);
+  socket.value = io(socketUrl, {
+    reconnectionDelayMax: 30000,
+    extraHeaders: {
+      authorization: `${userInfo.value.access_token}`,
+    },
+    // transports: ["websocket"],
+  });
   initSocket();
   // messagingStore.initSocket();
 });
