@@ -39,8 +39,8 @@
               {{ chatNumber }} {{ contactNameGet ? `(${contactNameGet})` : "" }}
             </p>
             <p class="text-gray-500 text-[0.8rem]">
-              Admin: {{ getUserBySelectedChat?.first_name }}
-              {{ getUserBySelectedChat?.last_name }}
+              Admin: {{ getSelectedChat.admin_data?.first_name }}
+              {{ getSelectedChat.admin_data?.last_name }}
             </p>
             <!-- <p class="text-gray-500">{{ wabaChannelIdentity }}</p> -->
             <!-- <p class="text-gray-500">{{ metaPhoneNumberId }}</p> -->
@@ -130,7 +130,7 @@
     <ChatMembersBar
       v-else
       v-model:show-chat-option="showChatOption"
-      :members="members"
+      :members="users"
       :is-mobile="isMobile"
       :selected-chat="getSelectedChat"
     />
@@ -446,7 +446,6 @@ import {
   Direction,
   Product,
   MessageType,
-  Member,
   Message,
   MessageStatus,
   SendMessageStatus,
@@ -556,7 +555,7 @@ const {
   botList,
   getSelectedChatPending,
   getSelectedChatExpired,
-  getUserBySelectedChat,
+  users,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
@@ -700,10 +699,6 @@ const inputEvent = computed(() => {
   return Screen.lt.md ? "keyup" : "keydown";
 });
 
-const members = computed<Member[]>(
-  () => JSON.parse(getSelectedChat.value.members) || []
-);
-
 const chaqMode = computed<boolean>(
   () => getSelectedChat.value?.meta_phone_number_id === "ChaQ"
 );
@@ -833,12 +828,12 @@ const showCustomerInfo = async () => {
       getSelectedChat.value.customers_id
     );
     contactStore.setCurrentCustomerId(customer.id);
-    if (customer?.contacts.length === 1) {
-      // a customer can be related to MANY contacts
-      contact = customer?.contacts[0].contacts_id;
-      contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
-      useContactStore().setContact(contact);
-    }
+    // if (customer?.contacts.length === 1) {
+    //   // a customer can be related to MANY contacts
+    //   contact = customer?.contacts[0].contacts_id;
+    //   contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
+    //   useContactStore().setContact(contact);
+    // }
   } else {
     // } else if (!getSelectedChat.value.customers_id) {
     customerStore.setCustomer(null);
@@ -846,8 +841,12 @@ const showCustomerInfo = async () => {
 
   if (!contact) {
     // the invariant is that there is always a contact
-    contact = await contactStore.getContactById(getSelectedChat.value);
+    contact = await contactStore.getContactByChat(getSelectedChat.value);
     console.log("  GET contact:....", contact);
+    if (getSelectedChat.value.customers_id) {
+      contactStore.setCurrentCustomerId(getSelectedChat.value.customers_id);
+    }
+    contactStore.setContact(contact);
   }
   // this.setContactNumber(contact.number);
 };
@@ -1330,7 +1329,7 @@ const onPaste = (e: ClipboardEvent) => {
 };
 
 onMounted(async () => {
-  messagingStore.officeHours_get_set();
+  messagingStore.config_get_set();
 
   console.log("PLATFORM:", Platform.is);
   // Swal.fire({
@@ -1338,11 +1337,10 @@ onMounted(async () => {
   //   title: "Mobile...",
   //   text: `I'm only rendered on mobile: ${Platform.is.mobile}`,
   // });
-
   if (window.innerWidth < 1024) {
     isMobile.value = true;
   }
-
+  await messagingStore.setBotList();
   await messagingStore.setBotList();
   console.log("botlist:", botList.value);
 });

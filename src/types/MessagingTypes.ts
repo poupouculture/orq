@@ -83,8 +83,10 @@ export interface IChat {
   contacts_id: string;
   admin: string;
   admin_data: {
+    user_id: string;
     first_name: string;
     last_name: string;
+    role_name: string;
   };
   customers_id: string | null;
   contact_first_name: string;
@@ -112,15 +114,18 @@ export interface ChatSnapshotMessage {
   [key: string]: () => void;
 }
 
+export interface User {
+  user_id: string;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  role_name: string;
+}
 export interface IState {
   chatsList: IChat[];
-  users: Array<{
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    role_name: string;
-  }>;
-  selectedChatId: string;
+  users: Array<User>;
+  allUsers: Array<User>;
+  selectedChatId: string | number;
   leftDrawerOpen: boolean;
   rightDrawerOpen: boolean;
   showCustomerInfoMobile: boolean;
@@ -133,6 +138,7 @@ export interface IState {
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
   isOfficeHours: boolean;
+  autoBotName: boolean;
 }
 
 export interface SendTextMessage {

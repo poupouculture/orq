@@ -62,25 +62,25 @@ export const getChatByID = async (id: string) => {
   return data.data.length > 0 ? data.data[0] : null;
 };
 
-export const getContactByChatId = async (id: string) => {
-  console.log("DELETE THIS USELESS FUNCTION: getContactByChatId....");
-  const params = {
-    limit: 1,
-    page: 1,
-    fields: "id, contacts.*",
-    meta: "*",
-  };
+// export const getContactByChatId = async (id: string) => {
+//   console.log("DELETE THIS USELESS FUNCTION: getContactByChatId....");
+//   const params = {
+//     limit: 1,
+//     page: 1,
+//     fields: "id, contacts.*",
+//     meta: "*",
+//   };
 
-  const response = await api.get(`/items/chats/${id}`, {
-    params,
-  });
+//   const response = await api.get(`/items/chats/${id}`, {
+//     params,
+//   });
 
-  const data = response.data.data;
+//   const data = response.data.data;
 
-  if (!data.contacts) return "";
+//   if (!data.contacts) return "";
 
-  return data.contacts[0];
-};
+//   return data.contacts[0];
+// };
 
 export const getChatMessagesByChatId = async (
   id: string,

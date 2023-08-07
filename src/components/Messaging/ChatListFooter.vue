@@ -111,11 +111,8 @@
         </div>
       </div>
       <div class="mt-6">
-        <div class="text-sm text-gray-500">Current Bot Status</div>
-        <div
-          class="text-lg text-gray-700"
-          v-text="!isOnline ? 'Profile bot' : 'Office hours bot'"
-        />
+        <div class="text-sm text-gray-500">Current Bot</div>
+        <div class="text-lg text-gray-700" v-text="autoBotName" />
       </div>
       <div class="mt-6">
         <div class="text-sm text-gray-500">Office</div>
@@ -143,7 +140,7 @@ const userStore = useUserInfoStore();
 const messagingStore = useMessagingStore();
 const showInfo = ref(false);
 const { getUserProfile } = storeToRefs(userStore);
-const { isOfficeHours } = storeToRefs(messagingStore);
+const { isOfficeHours, autoBotName } = storeToRefs(messagingStore);
 
 const toggleInfo = () => {
   showInfo.value = !showInfo.value;
