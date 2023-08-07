@@ -116,7 +116,7 @@ const useUserInfoStore = defineStore("userInfo", {
       pagesWithActions.forEach((page) => {
         // console.log(page);
         page?.pages_id?.page_actions.forEach((action) => {
-          console.log(action);
+          // console.log(action);
           if (action.status === "published") {
             const pageId = page?.pages_id?.id;
             if (!this.pageActions[pageId]) {
