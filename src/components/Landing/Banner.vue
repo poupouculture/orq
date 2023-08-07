@@ -25,7 +25,7 @@ const carouselTimer = (dataRaw) => {
   <div class="" v-if="props.content">
     <div class="flex flex-col gap-4">
       <div
-        class="row"
+        class="row relative"
         v-for="(data, index) in props.content.content"
         :key="index"
       >
@@ -101,9 +101,75 @@ const carouselTimer = (dataRaw) => {
             ></iframe>
           </div>
         </div>
+
+        <div
+          v-else-if="data.type === 'icon'"
+          class="w-full flex justify-center"
+        >
+          <article class="prose">
+            <h1 class="text-center">{{ data.name }}</h1>
+
+            <div
+              class="grid p-4 gap-10 w-full grid-cols-2 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              <div
+                v-for="(children, index) in data.children"
+                :key="index"
+                class="flex flex-col"
+              >
+                <q-img
+                  class="rounded-borders"
+                  :src="children.icon"
+                  style="max-width: 150px"
+                />
+
+                <div
+                  class="flex flex-col capitalize mt-3 text-center justify-center"
+                >
+                  <span>{{ children.name }}</span>
+
+                  <div>
+                    <q-btn flat round color="primary" icon="expand_more">
+                      <q-menu>
+                        <article v-html="children.content" class="prose" />
+                      </q-menu>
+                    </q-btn>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div
+          v-else-if="data.type === 'carousel_icon'"
+          class="w-full h-32 relative flex items-center"
+        >
+          <div
+            class="relative w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[40px] py-2"
+          >
+            <q-img
+              v-for="(image, index) in data.children"
+              :key="index"
+              class="rounded-borders clientsItem"
+              :src="image.icon"
+              style="max-width: 100px"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@keyframes moveAcross {
+  100% {
+    transform: translateX(1800px);
+  }
+}
+
+.clientsItem {
+  animation: moveAcross 10s linear infinite;
+}
+</style>

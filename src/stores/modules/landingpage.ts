@@ -32,9 +32,13 @@ const useNavigationStore = defineStore("navigationStore", {
             position: "top",
           });
         } else {
-          this.items = data.data[0].pages.sort((a: any, b: any) => {
+          const sorting = data.data[0].pages.sort((a: any, b: any) => {
             return a.sort - b.sort;
           });
+
+          this.items = sorting.filter(
+            (item: any) => item.status === "published"
+          );
         }
       } catch (error) {}
     },
@@ -80,6 +84,40 @@ const useNavigationStore = defineStore("navigationStore", {
 
             if (itemContent.page_component_id.image !== null) {
               itemObj.image = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.image}`;
+            }
+
+            if (itemContent.page_component_id.type === "icon") {
+              itemObj.children = itemContent.page_component_id.children.map(
+                (children: any) => {
+                  const childrenObject = {
+                    ...children,
+                    icon: null,
+                  };
+
+                  if (children.icon !== null) {
+                    childrenObject.icon = `${process.env.ORQ_API}/assets/${children.icon}`;
+                  }
+
+                  return childrenObject;
+                }
+              );
+            }
+
+            if (itemContent.page_component_id.type === "carousel_icon") {
+              itemObj.children = itemContent.page_component_id.children.map(
+                (children: any) => {
+                  const childrenObject = {
+                    ...children,
+                    icon: null,
+                  };
+
+                  if (children.icon !== null) {
+                    childrenObject.icon = `${process.env.ORQ_API}/assets/${children.icon}`;
+                  }
+
+                  return childrenObject;
+                }
+              );
             }
 
             if (itemContent.page_component_id.type === "carousel") {
