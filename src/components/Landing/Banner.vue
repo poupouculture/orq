@@ -71,7 +71,7 @@ const carouselTimer = (dataRaw) => {
             :class="data.alignment === 'left' ? 'order-1' : 'order-2'"
             class="col-span-1 flex flex-col"
           >
-            <div class="content" v-html="data.content"></div>
+            <article v-html="data.content" class="prose" />
           </div>
         </div>
 
@@ -84,7 +84,7 @@ const carouselTimer = (dataRaw) => {
             :style="{ backgroundImage: `url(${data.image})` }"
           >
             <div class="md:w-1/2 w-full">
-              <div class="content" v-html="data.content"></div>
+              <article v-html="data.content" class="prose" />
             </div>
           </div>
 
@@ -106,50 +106,4 @@ const carouselTimer = (dataRaw) => {
   </div>
 </template>
 
-<style scoped lang="scss">
-.content {
-  :deep(h1, h2, h3) {
-    font-weight: 700 !important;
-  }
-
-  :deep(h1) {
-    font-size: 36px !important;
-    line-height: 46px !important;
-  }
-
-  :deep(h2) {
-    font-size: 24px !important;
-    line-height: 34px !important;
-  }
-
-  :deep(h3) {
-    font-size: 19px !important;
-    line-height: 29px !important;
-  }
-
-  :deep(p) {
-    font-size: 15px;
-    line-height: 24px;
-    font-weight: 500;
-    margin: 1.5em 0;
-  }
-
-  :deep(ul) {
-    font-size: 15px;
-    line-height: 24px;
-    font-weight: 500;
-    margin: 1.5em 0;
-    padding-left: 20px;
-    list-style-type: disc;
-  }
-
-  :deep(ol) {
-    font-size: 15px;
-    line-height: 24px;
-    font-weight: 500;
-    margin: 1.5em 0;
-    padding-left: 20px;
-    list-style-type: decimal;
-  }
-}
-</style>
+<style scoped lang="scss"></style>
