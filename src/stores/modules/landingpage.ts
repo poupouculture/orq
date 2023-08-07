@@ -32,7 +32,9 @@ const useNavigationStore = defineStore("navigationStore", {
             position: "top",
           });
         } else {
-          this.items = data.data[0].pages;
+          this.items = data.data[0].pages.sort((a: any, b: any) => {
+            return a.sort - b.sort;
+          });
         }
       } catch (error) {}
     },
@@ -58,52 +60,51 @@ const useNavigationStore = defineStore("navigationStore", {
           const cover = data.data.component.find(
             (item: any) => item.page_component_id.type === "cover_photo"
           );
-          const carousel = data.data.component.find(
-            (item: any) => item.page_component_id.type === "carousel"
-          );
 
           const content = data.data.component.filter(
-            (item: any) =>
-              item.page_component_id.type !== "cover_photo" &&
-              item.page_component_id.type !== "carousel"
+            (item: any) => item.page_component_id.type !== "cover_photo"
           );
 
           if (cover) {
-            obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.icon}`;
+            obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.image}`;
             obj.heroText = cover.page_component_id.name;
-          }
-
-          if (carousel) {
-            obj.children = carousel.page_component_id.children.map(
-              (children: any) => {
-                const childrenObject = {
-                  ...children,
-                  image: null,
-                };
-
-                if (children.image !== null) {
-                  childrenObject.image = `${process.env.ORQ_API}/assets/${children.image}`;
-                }
-
-                return childrenObject;
-              }
-            );
-
-            obj.heroText = carousel.page_component_id.name;
           }
 
           // Proccess content here
           obj.content = content.map((itemContent: any) => {
             const itemObj = {
               ...itemContent.page_component_id,
-              icon: null,
+              image: null,
+              children: [],
             };
 
-            if (itemContent.page_component_id.icon !== null) {
-              itemObj.icon = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.icon}`;
+            if (itemContent.page_component_id.image !== null) {
+              itemObj.image = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.image}`;
+            }
+
+            if (itemContent.page_component_id.type === "carousel") {
+              itemObj.children = itemContent.page_component_id.children.map(
+                (children: any) => {
+                  const childrenObject = {
+                    ...children,
+                    image: null,
+                  };
+
+                  if (children.image !== null) {
+                    childrenObject.image = `${process.env.ORQ_API}/assets/${children.image}`;
+                  }
+
+                  return childrenObject;
+                }
+              );
             }
 
             return itemObj;
+          });
+
+          // Sorting content here
+          obj.content.sort((a: any, b: any) => {
+            return a.sort - b.sort;
           });
 
           this.component = obj;
