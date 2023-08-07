@@ -8,6 +8,11 @@ const landingPageStore = useLandingPage();
 const { getComponent } = storeToRefs(landingPageStore);
 
 const route = useRoute();
+
+const scrollDown = () => {
+  console.log(document.body.scrollHeight);
+  window.scrollTo(0, 500);
+};
 </script>
 
 <template>
@@ -39,7 +44,10 @@ const route = useRoute();
           <slot />
         </div>
         <div class="flex w-full mt-24 justify-center">
-          <button class="rounded-full p-2 border-dashed border-2">
+          <button
+            @click="scrollDown"
+            class="rounded-full p-2 border-dashed border-2"
+          >
             <q-icon class="text-white" name="arrow_downward" size="4rem" />
           </button>
         </div>
