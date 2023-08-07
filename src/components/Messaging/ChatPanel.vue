@@ -390,26 +390,38 @@ const showMoreChats = async () => {
 };
 const initSocket = () => {
   socket.value.on("connect", () => {
-    console.log("SOCKET: connect -------");
+    console.log("SOCKET:CONNECT -------");
     errSocket.value = false;
-    console.log("SOCKET: join_chat by user_id -------", userProfile.value?.id);
+    console.log("SOCKET:join_chat by user_id -------", userProfile.value?.id);
     socket.value.emit("join_chat", userProfile?.value?.id);
     // console.log("userProfile", userProfile.value);
-    console.log("CHATLISTTTTTTTTTTTTTTT", chatsList.value);
+    // console.log("CHATLIST", chatsList.value);
     // debugger;
     chatsList.value.forEach((chat) => {
-      console.log("SOCKET: join_chat by chat_id.........");
+      console.log(`SOCKET:join_chat: ${chat.id}`, typeof chat.id);
       // ??? 0707
-      console.log(chat.id);
-      console.log(typeof chat.id);
+      // console.log(chat.id);
+      // console.log(typeof chat.id);
       // console.log(typeof chat.id.toString());
-      console.log(`join_chat.........${chat.id}`);
-      socket.value.emit("join_chat", chat.id); // original
+      // socket.value.emit("join_chat", chat.id); // original
       socket.value.emit("join_chat", chat.id.toString()); // 0719 backward
       // socket.value.emit("join_chat", chat.id.toString()); //??? 0707
       // socket.value.emit("join_chat", parseInt(chat.id));
     });
   });
+
+  // socket.value.io.on("connect_error", (err: any) => {
+  //   console.log("SOCKET: connect_error", err);
+  // });
+
+  // socket.value.io.on("reconnect", (err: any) => {
+  //   console.log("SOCKET: reconnect", err);
+  // });
+
+  // socket.value.io.on("reconnect_attempt", (err: any) => {
+  //   console.log("SOCKET: reconnect_attempt", err);
+  // });
+
   socket.value.io.on("error", (err: any) => {
     console.log("socket error", err);
     errSocket.value = true;
