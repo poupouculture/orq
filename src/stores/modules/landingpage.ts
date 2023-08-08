@@ -24,48 +24,28 @@ const useNavigationStore = defineStore("navigationStore", {
   actions: {
     async getAll() {
       try {
-        const params = "top";
-        const { data, status } = await getAllNavigation(params);
+        const [topNav, bottomNav] = await Promise.all([
+          getAllNavigation("top"),
+          getAllNavigation("bottom"),
+        ]);
 
-        if (status !== 200) {
-          Notify.create({
-            message: "Something Wrong",
-            type: "negative",
-            position: "top",
-          });
-        } else {
-          const sorting = data.data[0].pages.sort((a: any, b: any) => {
+        const sortingTop = topNav.data.data[0].pages.sort((a: any, b: any) => {
+          return a.sort - b.sort;
+        });
+
+        const sortingBottom = bottomNav.data.data[0].pages.sort(
+          (a: any, b: any) => {
             return a.sort - b.sort;
-          });
+          }
+        );
 
-          this.items = sorting.filter(
-            (item: any) => item.status === "published"
-          );
-        }
-      } catch (error) {}
-    },
+        this.items = sortingTop.filter(
+          (item: any) => item.status === "published"
+        );
 
-    async getAllBottomNavigation() {
-      try {
-        const params = "bottom";
-        const { data, status } = await getAllNavigation(params);
-
-        if (status !== 200) {
-          Notify.create({
-            message: "Something Wrong",
-            type: "negative",
-            position: "top",
-          });
-        } else {
-          const sorting = data.data[0].pages.sort((a: any, b: any) => {
-            return a.sort - b.sort;
-          });
-          const navigationPublished = sorting.filter(
-            (item: any) => item.status === "published"
-          );
-
-          this.navigationBottom = navigationPublished;
-        }
+        this.navigationBottom = sortingBottom.filter(
+          (item: any) => item.status === "published"
+        );
       } catch (error) {}
     },
     async getComponentByid(id?: string) {

@@ -146,7 +146,7 @@ const carouselTimer = (dataRaw) => {
           class="w-full h-32 relative flex items-center"
         >
           <div
-            class="relative w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[400px] py-2"
+            class="relative w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[100px] py-2"
           >
             <q-img
               v-for="(image, index) in data.children"
@@ -170,6 +170,6 @@ const carouselTimer = (dataRaw) => {
 }
 
 .clientsItem {
-  animation: moveAcross 10s linear infinite;
+  animation: moveAcross 15s linear infinite;
 }
 </style>

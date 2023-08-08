@@ -68,7 +68,6 @@ const getPagesContent = async () => {
 };
 
 onMounted(async () => {
-  await useLandingPageStore.getAllBottomNavigation();
   await useLandingPageStore.getAll();
 
   await getPagesContent();
@@ -123,13 +122,14 @@ onMounted(async () => {
             class="flex order-1 lg:order-2 items-center w-48 sm:order-3 flex-col justify-center gap-5"
           >
             <div class="grid text-white w-full gap-10 grid-cols-2">
-              <router-link
+              <a
+                class="cursor-pointer"
                 v-for="(url, index) in bottomNavigation"
                 :key="index"
-                :to="url.url"
+                @click="getComponentById(url.id, url.url)"
               >
                 {{ url.name }}
-              </router-link>
+              </a>
 
               <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
                 <div class="rounded-full flex items-center p-1 bg-white">
