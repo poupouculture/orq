@@ -28,6 +28,10 @@ const navigation = computed(() => {
   return useLandingPageStore.allNavigation;
 });
 
+const bottomNavigation = computed(() => {
+  return useLandingPageStore.bottomNavigation;
+});
+
 watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
 });
@@ -64,6 +68,7 @@ const getPagesContent = async () => {
 };
 
 onMounted(async () => {
+  await useLandingPageStore.getAllBottomNavigation();
   await useLandingPageStore.getAll();
 
   await getPagesContent();
@@ -85,25 +90,55 @@ onMounted(async () => {
 
       <div class="w-full flex bg-[#4B44F6] justify-center">
         <div
-          class="container flex flex-col gap-4 sm:flex-row items-center sm:justify-between p-6 mx-6"
+          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
         >
-          <div class="flex justify-center items-center gap-3">
-            <img class="w-[40px]" :src="logo" alt="logo" />
-            <p class="font-[800] text-white text-2xl">ChaQ</p>
-          </div>
+          <div
+            class="flex flex-col order-2 mt-4 lg:order-1 gap-4 w-56 justify-between"
+          >
+            <div class="flex flex-col">
+              <div class="flex gap-3">
+                <div>
+                  <img class="w-[40px]" :src="logo" alt="logo" />
+                </div>
+                <div>
+                  <p class="font-[800] text-white text-2xl">ChaQ</p>
+                </div>
+              </div>
 
-          <span class="text-white order-3 sm:order-2">
-            Copyright
-            {{ new Date().getFullYear() }} Synque.io
-          </span>
-
-          <div class="flex text-[#4B44F6] sm:order-3 justify-center gap-5">
-            <div class="rounded-full flex items-center p-1 bg-white">
-              <q-icon size="20px" name="fa-brands fa-facebook-f" />
+              <div class="mt-3 text-white">
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolor
+                ullam veritatis consequatur aut quis numquam sed consectetur
+                illo, nemo aliquam eius nulla eveniet libero corporis quod,
+                reprehenderit perferendis quas ducimus!
+              </div>
             </div>
 
-            <div class="rounded-full flex items-center p-1 bg-white">
-              <q-icon size="20px" name="fa-brands fa-instagram" />
+            <span class="text-white order-3 sm:order-2">
+              Copyright
+              {{ new Date().getFullYear() }} Synque.io
+            </span>
+          </div>
+
+          <div
+            class="flex order-1 lg:order-2 items-center w-48 sm:order-3 flex-col justify-center gap-5"
+          >
+            <div class="grid text-white w-full gap-10 grid-cols-2">
+              <router-link
+                v-for="(url, index) in bottomNavigation"
+                :key="index"
+                :to="url.url"
+              >
+                {{ url.name }}
+              </router-link>
+
+              <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
+                <div class="rounded-full flex items-center p-1 bg-white">
+                  <q-icon size="20px" name="fa-brands fa-facebook-f" />
+                </div>
+                <div class="rounded-full flex items-center p-1 bg-white">
+                  <q-icon size="20px" name="fa-brands fa-instagram" />
+                </div>
+              </div>
             </div>
           </div>
         </div>

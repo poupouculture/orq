@@ -128,7 +128,7 @@ const carouselTimer = (dataRaw) => {
                 >
                   <span>{{ children.name }}</span>
 
-                  <div>
+                  <div v-if="children.status !== 'draft'">
                     <q-btn flat round color="primary" icon="expand_more">
                       <q-menu>
                         <article v-html="children.content" class="prose" />
@@ -146,14 +146,14 @@ const carouselTimer = (dataRaw) => {
           class="w-full h-32 relative flex items-center"
         >
           <div
-            class="relative w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[40px] py-2"
+            class="relative w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[400px] py-2"
           >
             <q-img
               v-for="(image, index) in data.children"
               :key="index"
               class="rounded-borders clientsItem"
               :src="image.icon"
-              style="max-width: 100px"
+              style="max-width: 150px"
             />
           </div>
         </div>

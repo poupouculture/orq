@@ -7,6 +7,7 @@ const useNavigationStore = defineStore("navigationStore", {
   state: () =>
     ({
       items: [],
+      navigationBottom: [],
       component: {
         content: [],
         iconCover: "",
@@ -17,6 +18,7 @@ const useNavigationStore = defineStore("navigationStore", {
 
   getters: {
     allNavigation: (state) => state.items,
+    bottomNavigation: (state) => state.navigationBottom,
     getComponent: (state) => state.component,
   },
   actions: {
@@ -43,6 +45,29 @@ const useNavigationStore = defineStore("navigationStore", {
       } catch (error) {}
     },
 
+    async getAllBottomNavigation() {
+      try {
+        const params = "bottom";
+        const { data, status } = await getAllNavigation(params);
+
+        if (status !== 200) {
+          Notify.create({
+            message: "Something Wrong",
+            type: "negative",
+            position: "top",
+          });
+        } else {
+          const sorting = data.data[0].pages.sort((a: any, b: any) => {
+            return a.sort - b.sort;
+          });
+          const navigationPublished = sorting.filter(
+            (item: any) => item.status === "published"
+          );
+
+          this.navigationBottom = navigationPublished;
+        }
+      } catch (error) {}
+    },
     async getComponentByid(id?: string) {
       try {
         const { data, status } = await getNavigationById(id);
