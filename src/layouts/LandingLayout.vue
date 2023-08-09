@@ -125,12 +125,7 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <div class="mt-3 text-white">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolor
-                ullam veritatis consequatur aut quis numquam sed consectetur
-                illo, nemo aliquam eius nulla eveniet libero corporis quod,
-                reprehenderit perferendis quas ducimus!
-              </div>
+              <div class="mt-3 text-white"></div>
             </div>
 
             <span class="text-white order-3 sm:order-2">
