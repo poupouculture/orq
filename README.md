@@ -10,6 +10,8 @@ yarn
 ## Environment
 https://quasar.dev/quasar-cli-vite/handling-process-env#adding-to-process-env
 
+## SOCKET:
+https://socket.io/docs/v4/client-api/#event-reconnect_failed
 ## PWA:
 https://web.dev/pwa-checklist/
 
