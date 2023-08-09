@@ -589,28 +589,52 @@ const initSocket = () => {
     // });
   });
   socket.value.on("chat_created", async (data: SocketChat) => {
-    Notify.create({
-      message: `You have been added to chat ${data.name}`,
-      color: "blue-9",
-      position: "top",
-      type: "positive",
-    });
     console.log("SOCKET chat_created:", data);
-    const findChat = chatsList.value.find((chat) => chat.id === data.id); // ??? 0707
-    console.log(" CHAT_FOUND:", findChat);
-    if (!findChat) {
-      const chat = await getChatByID(data.id);
-      // chat.id = chat.id.toString(); // ??? 0707
-      console.log(" CHAT_CREATE:", chat);
-      chat.last_message = JSON.parse(chat.last_message);
-      chat.admin_data = allUsers.value.find(
-        (user) => user.user_id === chat.admin
-      );
-      if (chat?.status === ChatTypes.PENDING) {
-        chatsList.value.push(chat);
-      } else {
-        chatsList.value.unshift(chat);
-      }
+    const chatIndex = chatsList.value.findIndex((chat) => chat.id === data.id);
+    if (chatIndex < 0) {
+      Notify.create({
+        message: `You have been added to chat ${data.name}`,
+        color: "primary",
+        position: "top",
+        type: "positive",
+      });
+      try {
+        if (data?.status === ChatTypes.PENDING) {
+          chatsList.value.push(data as IChat);
+        } else {
+          chatsList.value.unshift(data as IChat);
+        }
+        const chat = await getChatByID(data.id);
+        chat.last_message = JSON.parse(chat.last_message);
+        chat.admin_data = allUsers.value.find(
+          (user) => user.user_id === chat.admin
+        );
+        const index = chatsList.value.findIndex((chat) => chat.id === data.id);
+        chatsList.value[index] = chat;
+      } catch (error) {}
+      // Notify.create({
+      //   message: `You have been added to chat ${data.name}`,
+      //   color: "blue-9",
+      //   position: "top",
+      //   type: "positive",
+      // });
+      // const findChat = chatsList.value.find((chat) => chat.id === data.id); // ??? 0707
+      // console.log(" CHAT_FOUND:", findChat);
+      // if (!findChat) {
+      //   const chat = await getChatByID(data.id);
+      //   // chat.id = chat.id.toString(); // ??? 0707
+      //   console.log(" CHAT_CREATE:", chat);
+      //   chat.last_message = JSON.parse(chat.last_message);
+      //   chat.admin_data = allUsers.value.find(
+      //     (user) => user.user_id === chat.admin
+      //   );
+      //   if (chat?.status === ChatTypes.PENDING) {
+      //     chatsList.value.push(chat);
+      //   } else {
+      //     chatsList.value.unshift(chat);
+      //   }
+      //   socket.value.emit("join_chat", data.id.toString());
+      // }
       socket.value.emit("join_chat", data.id.toString());
     }
     messagingStore.sortChatsList();
