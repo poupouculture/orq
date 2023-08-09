@@ -29,7 +29,8 @@ const scrollDown = () => {
         ? ''
         : { backgroundImage: `url(${getComponent.iconCover})` }
     "
-    class="bg-center bg-cover flex flex-col items-center w-full p-5 lg:p-10"
+    class="bg-center flex flex-col items-center w-full p-5 lg:p-10"
+    style="background-position: center; background-size: cover"
   >
     <div class="container mt-6">
       <div

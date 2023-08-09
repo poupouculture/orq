@@ -32,6 +32,10 @@ const bottomNavigation = computed(() => {
   return useLandingPageStore.bottomNavigation[0];
 });
 
+const mobileNavigation = computed(() => {
+  return useLandingPageStore.topNavigation[0];
+});
+
 watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
 });
@@ -65,19 +69,20 @@ const getPagesContent = async () => {
       await useLandingPageStore.getComponentByid(component.id);
     }
   }
-
   const parent = await navigation.value.find((item) => {
     return item.pages.find((children) => {
       return children.url === currentRoutename;
     });
   });
 
-  const component = parent.pages.find((children) => {
-    return children.url === currentRoutename;
-  });
+  if (parent) {
+    const component = parent.pages.find((children) => {
+      return children.url === currentRoutename;
+    });
 
-  if (component) {
-    await useLandingPageStore.getComponentByid(component.id);
+    if (component) {
+      await useLandingPageStore.getComponentByid(component.id);
+    }
   } else {
     useLandingPageStore.component = {};
   }
@@ -176,7 +181,7 @@ onMounted(async () => {
           clickable
           v-ripple
           @click="getComponentById(navigate.id, navigate.url)"
-          v-for="(navigate, index) in navigation"
+          v-for="(navigate, index) in mobileNavigation?.pages"
           :key="index"
         >
           <q-item-section> {{ navigate.name }} </q-item-section>

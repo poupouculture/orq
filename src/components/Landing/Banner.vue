@@ -16,7 +16,7 @@ const props = defineProps({
 <template>
   <div v-if="props.content" class="flex flex-col gap-4">
     <div
-      class="row relative min-h-[280px]"
+      class="row relative min-h-[500px]"
       v-for="(data, index) in props.content.content"
       :key="index"
     >
