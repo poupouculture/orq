@@ -6,7 +6,7 @@ import Icon from "./Icon.vue";
 import CarouselIcon from "./CarouselIcon.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
 
-defineProps({
+const props = defineProps({
   content: {
     type: Object,
   },
@@ -14,39 +14,34 @@ defineProps({
 </script>
 
 <template>
-  <div class="" v-if="props.content">
-    <div class="flex flex-col gap-4">
-      <div
-        class="row relative"
-        v-for="(data, index) in props.content.content"
-        :key="index"
-      >
-        <div v-if="data.type === 'carousel'" class="w-full mb-3 mx-7">
-          <Carousel :content="data" />
-        </div>
-
-        <TextWithSideImage
-          v-else-if="data.type === 'text_with_side_images'"
-          :content="data"
-        />
-
-        <TextWithBackground
-          v-else-if="data.type === 'text_with_background'"
-          :content="data"
-        />
-
-        <Icon v-else-if="data.type === 'icon'" :content="data" />
-
-        <CarouselIcon
-          v-else-if="data.type === 'carousel_icon'"
-          :content="data"
-        />
-
-        <TextWithImageAbove
-          v-else-if="data.type === 'text_above_image'"
-          :content="data"
-        />
+  <div v-if="props.content" class="flex flex-col gap-4">
+    <div
+      class="row relative min-h-[280px]"
+      v-for="(data, index) in props.content.content"
+      :key="index"
+    >
+      <div v-if="data.type === 'carousel'" class="w-full mb-3 mx-7">
+        <Carousel :content="data" />
       </div>
+
+      <TextWithSideImage
+        v-else-if="data.type === 'text_with_side_images'"
+        :content="data"
+      />
+
+      <TextWithBackground
+        v-else-if="data.type === 'text_with_background'"
+        :content="data"
+      />
+
+      <Icon v-else-if="data.type === 'icon'" :content="data" />
+
+      <CarouselIcon v-else-if="data.type === 'carousel_icon'" :content="data" />
+
+      <TextWithImageAbove
+        v-else-if="data.type === 'text_above_image'"
+        :content="data"
+      />
     </div>
   </div>
 </template>

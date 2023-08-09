@@ -18,34 +18,42 @@ const useNavigationStore = defineStore("navigationStore", {
 
   getters: {
     allNavigation: (state) => state.items,
-    bottomNavigation: (state) => state.navigationBottom,
+    bottomNavigation: (state) =>
+      state.items.filter((item: any) => item.name === "bottom"),
     getComponent: (state) => state.component,
+    topNavigation: (state) =>
+      state.items.filter((item: any) => item.name === "top"),
   },
   actions: {
     async getAll() {
       try {
-        const [topNav, bottomNav] = await Promise.all([
-          getAllNavigation("top"),
-          getAllNavigation("bottom"),
-        ]);
+        const { data, status } = await getAllNavigation();
 
-        const sortingTop = topNav.data.data[0].pages.sort((a: any, b: any) => {
-          return a.sort - b.sort;
-        });
+        if (status !== 200) {
+          Notify.create({
+            message: "Something Wrong",
+            type: "negative",
+            position: "top",
+          });
+        } else {
+          const sorting = data.data.map((navigation: any) => {
+            const obj = {
+              ...navigation,
+              pages: navigation.pages.sort((a: any, b: any) => a.sort - b.sort),
+            };
 
-        const sortingBottom = bottomNav.data.data[0].pages.sort(
-          (a: any, b: any) => {
-            return a.sort - b.sort;
-          }
-        );
+            return obj;
+          });
 
-        this.items = sortingTop.filter(
-          (item: any) => item.status === "published"
-        );
+          this.items = sorting;
+          // const sorting = data.data[0].pages.sort((a: any, b: any) => {
+          //   return a.sort - b.sort;
+          // });
 
-        this.navigationBottom = sortingBottom.filter(
-          (item: any) => item.status === "published"
-        );
+          // this.items = sorting.filter(
+          //   (item: any) => item.status === "published"
+          // );
+        }
       } catch (error) {}
     },
     async getComponentByid(id?: string) {

@@ -29,7 +29,7 @@ const navigation = computed(() => {
 });
 
 const bottomNavigation = computed(() => {
-  return useLandingPageStore.bottomNavigation;
+  return useLandingPageStore.bottomNavigation[0];
 });
 
 watch(drawer, (value) => {
@@ -56,9 +56,25 @@ const getPagesContent = async () => {
     currentRoutename = route.path;
   }
 
-  const component = navigation.value.find(
-    (item) => item.url === currentRoutename
-  );
+  for (const item of navigation.value) {
+    const component = item.pages.find(
+      (children) => children.url === currentRoutename
+    );
+
+    if (component) {
+      await useLandingPageStore.getComponentByid(component.id);
+    }
+  }
+
+  const parent = await navigation.value.find((item) => {
+    return item.pages.find((children) => {
+      return children.url === currentRoutename;
+    });
+  });
+
+  const component = parent.pages.find((children) => {
+    return children.url === currentRoutename;
+  });
 
   if (component) {
     await useLandingPageStore.getComponentByid(component.id);
@@ -121,10 +137,13 @@ onMounted(async () => {
           <div
             class="flex order-1 lg:order-2 items-center w-48 sm:order-3 flex-col justify-center gap-5"
           >
-            <div class="grid text-white w-full gap-10 grid-cols-2">
+            <div
+              v-if="bottomNavigation"
+              class="grid text-white w-full gap-10 grid-cols-2"
+            >
               <a
                 class="cursor-pointer"
-                v-for="(url, index) in bottomNavigation"
+                v-for="(url, index) in bottomNavigation?.pages"
                 :key="index"
                 @click="getComponentById(url.id, url.url)"
               >
