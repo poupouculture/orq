@@ -74,13 +74,38 @@ const useNavigationStore = defineStore("navigationStore", {
             heroText: "",
           };
 
-          const cover = data.data.component.find(
-            (item: any) => item.page_component_id.type === "cover_photo"
-          );
+          // const cover = data.data.component.find( function ( item: any ) {
+          //   let dataItem = ''
+          //   if ( item.page_component_id !== null ) {
+          //     if ( item.page_component_id.type === "cover_photo" ) {
 
-          const content = data.data.component.filter(
-            (item: any) => item.page_component_id.type !== "cover_photo"
-          );
+          //       dataItem = item
+          //     }
+          //   }
+
+          //   return dataItem
+          // } )
+
+          const cover = data.data.component.find((item: any) => {
+            let dataItem = "";
+            if (item.page_component_id !== null) {
+              if (item.page_component_id.type === "cover_photo") {
+                dataItem = item;
+              }
+            }
+
+            return dataItem;
+          });
+
+          const content = data.data.component.filter(function (item: any) {
+            let dataItem = "";
+            if (item.page_component_id !== null) {
+              if (item.page_component_id.type !== "cover_photo") {
+                dataItem = item;
+              }
+            }
+            return dataItem;
+          });
 
           if (cover) {
             obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.image}`;
@@ -157,6 +182,8 @@ const useNavigationStore = defineStore("navigationStore", {
           obj.content.sort((a: any, b: any) => {
             return a.sort - b.sort;
           });
+
+          console.log(obj);
 
           this.component = obj;
         }
