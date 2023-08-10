@@ -121,6 +121,14 @@ export interface User {
   last_name: string;
   role_name: string;
 }
+export interface ISelectedSearchResultPagination {
+  total_records: number;
+  page_size: number;
+  total_pages: number;
+  record_no: 17;
+  page_no: 2;
+}
+
 export interface IState {
   chatsList: IChat[];
   users: Array<User>;
@@ -137,6 +145,10 @@ export interface IState {
   botList: Bot[];
   selectedChatPending: boolean;
   selectedChatExpired: boolean;
+  searchResults: IChat[];
+  selectedSearchResult: IChat | null;
+  selectedSearchResultPagination: ISelectedSearchResultPagination | null;
+  officeHours: boolean;
   isOfficeHours: boolean;
   autoBotName: boolean;
 }

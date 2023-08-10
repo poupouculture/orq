@@ -146,7 +146,7 @@
           :key="getSelectedChatId"
           ref="infiniteScrollRef"
           @load="loadMore"
-          :initial-index="0"
+          :initial-index="initialIndex"
           reverse
           :offset="300"
           :scroll-target="scrollAreaRef"
@@ -155,6 +155,8 @@
             v-for="item in messages"
             :key="item.id"
             :message="item"
+            :highlighted="item.id === highlightedMessageId"
+            ref="messagesComponentRefs"
           />
           <template #loading>
             <div class="row justify-center q-my-md">
@@ -527,6 +529,7 @@ const showBot = ref(false);
 const isMobile = ref(false);
 const showChatOption = ref(false);
 const isLoadMore = ref(false);
+const highlightedMessageId = ref<number | null>(null);
 
 // filetypes reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 const supportedFiletypes: Ref<any> = ref({
@@ -556,6 +559,8 @@ const {
   getSelectedChatPending,
   getSelectedChatExpired,
   users,
+  selectedSearchResultPagination,
+  selectedSearchResult,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
@@ -601,6 +606,28 @@ const getSeparator = (index: number) => {
   }
   return "";
 };
+
+// const selectedSearchResultPagination = computed(
+//   () => messagingStore.selectedSearchResultPagination
+// );
+
+watch(selectedSearchResult, (value: any) => {
+  highlightedMessageId.value = value.id;
+  scrollToMessageId(messagesComponentRefs.value);
+});
+watch(selectedSearchResultPagination, (value) => {
+  // cachedChatMessages.value[getSelectedChatId.value] = [];
+  hasMoreMessage[getSelectedChatId.value] = true;
+  if (value == null) {
+    highlightedMessageId.value = null;
+    infiniteScrollRef.value?.reset(true);
+    infiniteScrollRef.value?.trigger();
+  } else {
+    const targetPage = value.page_no;
+    infiniteScrollRef.value?.setIndex(targetPage - 1);
+    infiniteScrollRef.value?.trigger();
+  }
+});
 
 // const toogleChatOption = () => {
 //   showChatOption.value = !showChatOption.value;
@@ -723,10 +750,37 @@ const messages = computed<Message[]>(() => {
   });
 });
 
+const messagesComponentRefs = ref([]);
+
+watch(messagesComponentRefs.value, async (value) => {
+  scrollToMessageId(value);
+});
+const scrollToMessageId = async (value: any) => {
+  if (
+    value.length > 0 &&
+    messagingStore.selectedSearchResult &&
+    scrollAreaRef.value
+  ) {
+    await nextTick();
+    const targetId = messagingStore.selectedSearchResult.id;
+    const target = value.find((r) => r.props.message.id === targetId);
+    if (target) {
+      console.log("[messages] Target", target.root);
+      console.log("[messages] Target offsetTop", target.root.offsetTop);
+      window.setTimeout(() => {
+        highlightedMessageId.value = target.props.message.id;
+        scrollAreaRef.value.scrollTop = target.root.offsetTop;
+      }, 500);
+    } else {
+      highlightedMessageId.value = null;
+    }
+  }
+};
+
 const isBot = computed<boolean>(() => getSelectedChat?.value?.mode === "Bot");
 
 const loadMore = async (index: number, done: (stop?: boolean) => void) => {
-  console.log("loadMore:----------------");
+  console.log("[messages] Loading messages from index:", index);
   isLoadMore.value = true;
   if (hasMoreMessage?.[getSelectedChatId.value] === false) {
     infiniteScrollRef.value?.stop();
@@ -743,6 +797,9 @@ const loadMore = async (index: number, done: (stop?: boolean) => void) => {
 watch(getSelectedChatId, () => {
   messagingStore.setReplayMessage();
   message.value = "";
+  messagingStore.resetSearchResults();
+  messagingStore.resetSelectedSearchResult();
+  messagingStore.resetSelectedSearchResultPagination();
 });
 
 watch(
@@ -1182,6 +1239,8 @@ const upload = async (fileList: readonly File[], caption: string) => {
   const { data } = await uploadMedia(getSelectedChatId.value, bodyFormData);
   messageCallback(data, newMessage);
 };
+
+const initialIndex = ref<number>(0);
 
 const uploadFile = async (payload: {
   files: readonly File[];
