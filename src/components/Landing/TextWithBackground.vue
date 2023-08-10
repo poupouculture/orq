@@ -22,7 +22,7 @@ defineProps({
       <iframe
         width="100%"
         height="735"
-        :src="`https://www.youtube.com/embed/${content.raw.videoId}?autoplay=1&mute=1&loop=1&playlist=bgqGdIoa52s`"
+        :src="`https://www.youtube.com/embed/${content.raw.videoId}?autoplay=1&mute=1&loop=1&playlist=${content.raw.videoId}`"
         title="Marvel&#39;s Spider-Man 2 - Story Trailer | PS5 Games"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

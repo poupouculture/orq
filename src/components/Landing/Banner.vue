@@ -4,6 +4,7 @@ import TextWithSideImage from "./TextWithSideImage.vue";
 import TextWithBackground from "./TextWithBackground.vue";
 import Icon from "./Icon.vue";
 import CarouselIcon from "./CarouselIcon.vue";
+import Form from "./Form.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
 
 const props = defineProps({
@@ -42,6 +43,8 @@ const props = defineProps({
         v-else-if="data.type === 'text_above_image'"
         :content="data"
       />
+
+      <Form v-else-if="data.type === 'form'" :content="data" />
     </div>
   </div>
 </template>
