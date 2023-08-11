@@ -8,6 +8,18 @@ defineProps({
 });
 
 const unmute = ref(false);
+
+// Methods
+
+const textAligment = (alignment) => {
+  if (alignment === "center") {
+    return "justify-center items-center";
+  } else if (alignment === "left") {
+    return "justify-start items-start";
+  } else if (alignment === "right") {
+    return "justify-end items-end";
+  }
+};
 </script>
 
 <template>
@@ -43,22 +55,32 @@ const unmute = ref(false);
           }"
           class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full"
         >
-          <!-- <article v-html="content.content" class="prose" /> -->
-
           <div
-            class="w-full relative flex flex-col items-center gap-4 justify-center"
+            :class="textAligment(content.alignment)"
+            class="w-full relative flex flex-col mx-5 gap-4"
           >
-            <h1 class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold">
+            <h1
+              :style="{ color: content.raw.color }"
+              class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold"
+            >
               {{ content.raw.content }}
             </h1>
 
-            <span class="text-xl">
+            <span :style="{ color: content.raw.color }" class="text-xl">
               {{ content.raw.subtitleContent }}
             </span>
 
-            <div class="absolute right-10 -bottom-72">
-              <!-- <q-btn fab icon="add" color="accent" /> -->
+            <q-btn
+              tag="a"
+              target="_blank"
+              :href="`https://www.youtube.com/embed/${content.raw.videoId}`"
+              unelevated
+              rounded
+              color="primary"
+              label="See Video"
+            />
 
+            <div class="absolute right-10 -bottom-72">
               <q-toggle
                 v-model="unmute"
                 unchecked-icon="volume_off"

@@ -50,7 +50,7 @@ defineProps({
       </div>
 
       <div class="flex justify-end">
-        <q-btn color="primary" label="Submit" />
+        <q-btn color="primary" :label="content.raw.button" />
       </div>
     </div>
   </div>
