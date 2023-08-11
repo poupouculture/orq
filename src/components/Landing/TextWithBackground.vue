@@ -1,9 +1,13 @@
 <script setup>
+import { ref } from "vue";
+
 defineProps({
   content: {
     type: Object,
   },
 });
+
+const unmute = ref(false);
 </script>
 
 <template>
@@ -22,8 +26,11 @@ defineProps({
       <iframe
         width="100%"
         height="735"
-        :src="`https://www.youtube.com/embed/${content.raw.videoId}?autoplay=1&mute=1&loop=1&playlist=${content.raw.videoId}`"
-        title="Marvel&#39;s Spider-Man 2 - Story Trailer | PS5 Games"
+        :src="`https://www.youtube.com/embed/${
+          content.raw.videoId
+        }?autoplay=1&mute=${unmute ? '0' : '1'}&loop=1&playlist=${
+          content.raw.videoId
+        }`"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
@@ -31,21 +38,38 @@ defineProps({
 
       <div class="w-full">
         <div
-          class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full secondscreen"
+          :style="{
+            background: `linear-gradient(${content.raw.overlayColor})`,
+          }"
+          class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full"
         >
-          <article v-html="content.content" class="prose" />
+          <!-- <article v-html="content.content" class="prose" /> -->
+
+          <div
+            class="w-full relative flex flex-col items-center gap-4 justify-center"
+          >
+            <h1 class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold">
+              {{ content.raw.content }}
+            </h1>
+
+            <span class="text-xl">
+              {{ content.raw.subtitleContent }}
+            </span>
+
+            <div class="absolute right-10 -bottom-72">
+              <!-- <q-btn fab icon="add" color="accent" /> -->
+
+              <q-toggle
+                v-model="unmute"
+                unchecked-icon="volume_off"
+                checked-icon="volume_up"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-.secondscreen {
-  background: linear-gradient(
-    10deg,
-    rgb(58, 68, 79) 0%,
-    rgba(113, 20, 20, 0) 100%
-  );
-}
-</style>
+<style scoped lang="scss"></style>
