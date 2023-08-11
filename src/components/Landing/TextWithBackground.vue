@@ -80,11 +80,12 @@ const textAligment = (alignment) => {
               label="See Video"
             />
 
-            <div class="absolute right-10 -bottom-72">
-              <q-toggle
-                v-model="unmute"
-                unchecked-icon="volume_off"
-                checked-icon="volume_up"
+            <div class="absolute right-10 -bottom-64">
+              <q-icon
+                @click="unmute = !unmute"
+                class="cursor-pointer"
+                size="sm"
+                :name="unmute ? 'volume_up' : 'volume_off'"
               />
             </div>
           </div>

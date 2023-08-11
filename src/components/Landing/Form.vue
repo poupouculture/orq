@@ -22,7 +22,10 @@ defineProps({
       :class="content.alignment === 'right' ? 'order-2' : 'order-1'"
       class="flex bg-white p-6 rounded-lg gap-5 col-span-1 flex-col w-full"
     >
-      <p class="text-center mb-4 font-bold text-xl">
+      <p
+        class="text-center mb-4 font-bold text-xl"
+        :style="{ color: content.raw.color }"
+      >
         {{ content.name }}
       </p>
 

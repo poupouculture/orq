@@ -7,15 +7,16 @@ defineProps({
 </script>
 
 <template>
-  <div class="w-full h-32 relative flex items-center">
+  <div class="w-full h-32 relative justify-center flex items-center">
     <div
-      class="relative w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[100px] py-2"
+      class="relative w-[90%] overflow-x-hidden top-0 no-wrap left-0 flex gap-[100px] py-2"
     >
       <q-img
         v-for="(image, index) in content.children"
         :key="index"
         class="rounded-borders clientsItem"
         :src="image.icon"
+        no-spinner
         style="max-width: 150px"
       />
     </div>
