@@ -43,7 +43,12 @@ const useNavigationStore = defineStore("navigationStore", {
                 pages: navigation.pages.sort(
                   (a: any, b: any) => a.sort - b.sort
                 ),
+                icon: "",
               };
+
+              if (navigation.icon !== null) {
+                obj.icon = `${process.env.ORQ_API}/assets/${navigation.icon}`;
+              }
 
               return obj;
             });
