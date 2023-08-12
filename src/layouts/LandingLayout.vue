@@ -28,6 +28,14 @@ const navigation = computed(() => {
   return useLandingPageStore.allNavigation;
 });
 
+const bottomNavigation = computed(() => {
+  return useLandingPageStore.bottomNavigation[0];
+});
+
+const mobileNavigation = computed(() => {
+  return useLandingPageStore.topNavigation[0];
+});
+
 watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
 });
@@ -52,12 +60,29 @@ const getPagesContent = async () => {
     currentRoutename = route.path;
   }
 
-  const component = navigation.value.find(
-    (item) => item.url === currentRoutename
-  );
+  for (const item of navigation.value) {
+    const component = item.pages.find(
+      (children) => children.url === currentRoutename
+    );
 
-  if (component) {
-    await useLandingPageStore.getComponentByid(component.id);
+    if (component) {
+      await useLandingPageStore.getComponentByid(component.id);
+    }
+  }
+  const parent = await navigation.value.find((item) => {
+    return item.pages.find((children) => {
+      return children.url === currentRoutename;
+    });
+  });
+
+  if (parent) {
+    const component = parent.pages.find((children) => {
+      return children.url === currentRoutename;
+    });
+
+    if (component) {
+      await useLandingPageStore.getComponentByid(component.id);
+    }
   } else {
     useLandingPageStore.component = {};
   }
@@ -85,25 +110,54 @@ onMounted(async () => {
 
       <div class="w-full flex bg-[#4B44F6] justify-center">
         <div
-          class="container flex flex-col gap-4 sm:flex-row items-center sm:justify-between p-6 mx-6"
+          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
         >
-          <div class="flex justify-center items-center gap-3">
-            <img class="w-[40px]" :src="logo" alt="logo" />
-            <p class="font-[800] text-white text-2xl">ChaQ</p>
-          </div>
+          <div
+            class="flex flex-col order-2 mt-4 lg:order-1 gap-4 w-56 justify-between"
+          >
+            <div class="flex flex-col">
+              <div class="flex gap-3">
+                <div>
+                  <img class="w-[40px]" :src="logo" alt="logo" />
+                </div>
+                <div>
+                  <p class="font-[800] text-white text-2xl">ChaQ</p>
+                </div>
+              </div>
 
-          <span class="text-white order-3 sm:order-2">
-            Copyright
-            {{ new Date().getFullYear() }} Synque.io
-          </span>
-
-          <div class="flex text-[#4B44F6] sm:order-3 justify-center gap-5">
-            <div class="rounded-full flex items-center p-1 bg-white">
-              <q-icon size="20px" name="fa-brands fa-facebook-f" />
+              <div class="mt-3 text-white"></div>
             </div>
 
-            <div class="rounded-full flex items-center p-1 bg-white">
-              <q-icon size="20px" name="fa-brands fa-instagram" />
+            <span class="text-white order-3 sm:order-2">
+              Copyright
+              {{ new Date().getFullYear() }} Synque.io
+            </span>
+          </div>
+
+          <div
+            class="flex order-1 lg:order-2 items-center w-48 sm:order-3 flex-col justify-center gap-5"
+          >
+            <div
+              v-if="bottomNavigation"
+              class="grid text-white w-full gap-10 grid-cols-2"
+            >
+              <a
+                class="cursor-pointer"
+                v-for="(url, index) in bottomNavigation?.pages"
+                :key="index"
+                @click="getComponentById(url.id, url.url)"
+              >
+                {{ url.name }}
+              </a>
+
+              <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
+                <div class="rounded-full flex items-center p-1 bg-white">
+                  <q-icon size="20px" name="fa-brands fa-facebook-f" />
+                </div>
+                <div class="rounded-full flex items-center p-1 bg-white">
+                  <q-icon size="20px" name="fa-brands fa-instagram" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -122,7 +176,7 @@ onMounted(async () => {
           clickable
           v-ripple
           @click="getComponentById(navigate.id, navigate.url)"
-          v-for="(navigate, index) in navigation"
+          v-for="(navigate, index) in mobileNavigation?.pages"
           :key="index"
         >
           <q-item-section> {{ navigate.name }} </q-item-section>

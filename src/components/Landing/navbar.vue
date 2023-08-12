@@ -10,7 +10,7 @@ const router = useRouter();
 
 // Computed
 const navigation = computed(() => {
-  return useLandingPageStore.allNavigation;
+  return useLandingPageStore.topNavigation[0];
 });
 
 // Methods
@@ -29,10 +29,10 @@ const getComponentById = async (id: string, url: string) => {
       <img class="w-[50px]" :src="logo" alt="logo" />
       <p class="font-[800] text-white text-2xl">ChaQ</p>
     </router-link>
-    <div class="flex items-center gap-5">
+    <div v-if="navigation" class="flex items-center gap-5">
       <button
         @click="getComponentById(navigate.id, navigate.url)"
-        v-for="(navigate, index) in navigation"
+        v-for="(navigate, index) in navigation?.pages"
         :key="index"
         class="text-white text-lg font-bold"
         :class="{ hidden: $q.screen.lt.lg }"
