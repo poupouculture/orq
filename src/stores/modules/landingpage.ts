@@ -7,6 +7,7 @@ const useNavigationStore = defineStore("navigationStore", {
   state: () =>
     ({
       items: [],
+      navigationBottom: [],
       component: {
         content: [],
         iconCover: "",
@@ -17,13 +18,16 @@ const useNavigationStore = defineStore("navigationStore", {
 
   getters: {
     allNavigation: (state) => state.items,
+    bottomNavigation: (state) =>
+      state.items.filter((item: any) => item.name === "bottom"),
     getComponent: (state) => state.component,
+    topNavigation: (state) =>
+      state.items.filter((item: any) => item.name === "top"),
   },
   actions: {
     async getAll() {
       try {
-        const params = "top";
-        const { data, status } = await getAllNavigation(params);
+        const { data, status } = await getAllNavigation();
 
         if (status !== 200) {
           Notify.create({
@@ -32,13 +36,29 @@ const useNavigationStore = defineStore("navigationStore", {
             position: "top",
           });
         } else {
-          this.items = data.data[0].pages.sort((a: any, b: any) => {
-            return a.sort - b.sort;
-          });
+          const sorting =
+            data.data?.map((navigation: any) => {
+              const obj = {
+                ...navigation,
+                pages: navigation.pages.sort(
+                  (a: any, b: any) => a.sort - b.sort
+                ),
+              };
+
+              return obj;
+            }) || [];
+
+          this.items = sorting;
+          // const sorting = data.data[0].pages.sort((a: any, b: any) => {
+          //   return a.sort - b.sort;
+          // });
+
+          // this.items = sorting.filter(
+          //   (item: any) => item.status === "published"
+          // );
         }
       } catch (error) {}
     },
-
     async getComponentByid(id?: string) {
       try {
         const { data, status } = await getNavigationById(id);
@@ -57,13 +77,38 @@ const useNavigationStore = defineStore("navigationStore", {
             heroText: "",
           };
 
-          const cover = data.data.component.find(
-            (item: any) => item.page_component_id.type === "cover_photo"
-          );
+          // const cover = data.data.component.find( function ( item: any ) {
+          //   let dataItem = ''
+          //   if ( item.page_component_id !== null ) {
+          //     if ( item.page_component_id.type === "cover_photo" ) {
 
-          const content = data.data.component.filter(
-            (item: any) => item.page_component_id.type !== "cover_photo"
-          );
+          //       dataItem = item
+          //     }
+          //   }
+
+          //   return dataItem
+          // } )
+
+          const cover = data.data.component.find((item: any) => {
+            let dataItem = "";
+            if (item.page_component_id !== null) {
+              if (item.page_component_id.type === "cover_photo") {
+                dataItem = item;
+              }
+            }
+
+            return dataItem;
+          });
+
+          const content = data.data.component.filter(function (item: any) {
+            let dataItem = "";
+            if (item.page_component_id !== null) {
+              if (item.page_component_id.type !== "cover_photo") {
+                dataItem = item;
+              }
+            }
+            return dataItem;
+          });
 
           if (cover) {
             obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.image}`;
@@ -80,6 +125,40 @@ const useNavigationStore = defineStore("navigationStore", {
 
             if (itemContent.page_component_id.image !== null) {
               itemObj.image = `${process.env.ORQ_API}/assets/${itemContent.page_component_id.image}`;
+            }
+
+            if (itemContent.page_component_id.type === "icon") {
+              itemObj.children = itemContent.page_component_id.children.map(
+                (children: any) => {
+                  const childrenObject = {
+                    ...children,
+                    icon: null,
+                  };
+
+                  if (children.icon !== null) {
+                    childrenObject.icon = `${process.env.ORQ_API}/assets/${children.icon}`;
+                  }
+
+                  return childrenObject;
+                }
+              );
+            }
+
+            if (itemContent.page_component_id.type === "carousel_icon") {
+              itemObj.children = itemContent.page_component_id.children.map(
+                (children: any) => {
+                  const childrenObject = {
+                    ...children,
+                    icon: null,
+                  };
+
+                  if (children.icon !== null) {
+                    childrenObject.icon = `${process.env.ORQ_API}/assets/${children.icon}`;
+                  }
+
+                  return childrenObject;
+                }
+              );
             }
 
             if (itemContent.page_component_id.type === "carousel") {
@@ -106,7 +185,6 @@ const useNavigationStore = defineStore("navigationStore", {
           obj.content.sort((a: any, b: any) => {
             return a.sort - b.sort;
           });
-
           this.component = obj;
         }
       } catch (error) {}

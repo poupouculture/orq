@@ -136,9 +136,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { dateFormatter } from "src/helpers";
 import BaseTable from "src/components/BaseTable.vue";
+import useUserInfoStore from "src/stores/modules/userInfo";
 
 const propsTable = defineProps({
   applicationPrograms: {
@@ -170,6 +171,11 @@ const propsTable = defineProps({
 
 const emit = defineEmits(["changePage", "useTemplate", "previewTemplate"]);
 
+const userInfoStore = useUserInfoStore();
+
+const displayMeta = computed(() => {
+  return userInfoStore.getPageActionsByPageId("F07-02", "Meta");
+});
 const headerColumns = ref([
   {
     name: "name",
@@ -203,13 +209,17 @@ const headerColumns = ref([
     sortable: true,
     classes: "text-black",
   },
-  {
-    name: "is_meta",
-    align: "center",
-    label: "Meta",
-    sortable: true,
-    classes: "text-black",
-  },
+  ...(displayMeta.value
+    ? [
+        {
+          name: "is_meta",
+          align: "center",
+          label: "Meta",
+          sortable: true,
+          classes: "text-black",
+        },
+      ]
+    : []),
   {
     name: "is_email_template",
     align: "center",

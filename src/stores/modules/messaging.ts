@@ -9,6 +9,7 @@ import {
   Message,
   SendTextMessage,
   MessageStatus,
+  ISelectedSearchResultPagination,
 } from "src/types/MessagingTypes";
 import { ChatTypes } from "src/constants/ChatKeyword";
 import { getContact } from "src/api/contact";
@@ -20,6 +21,7 @@ import {
   getChatsByType,
   getMessagesById,
   chatbots,
+  getChatSearchResultById,
   setOfficeHours,
   configGet,
 } from "src/api/messaging";
@@ -55,6 +57,10 @@ const useMessagingStore = defineStore("messaging", {
       replayMessage: {},
       socket,
       botList: [],
+      searchResults: [],
+      selectedSearchResult: null,
+      selectedSearchResultPagination: null,
+      officeHours: false,
       isOfficeHours: false,
       autoBotName: "",
     } as unknown as IState),
@@ -86,6 +92,18 @@ const useMessagingStore = defineStore("messaging", {
     getSelectedChatExpired: (state) => state.selectedChatExpired,
   },
   actions: {
+    setSelectedSearchResult(value: IChat) {
+      this.selectedSearchResult = value;
+    },
+    setSelectedSearchResultPagination(value: ISelectedSearchResultPagination) {
+      this.selectedSearchResultPagination = value;
+    },
+    resetSelectedSearchResultPagination() {
+      this.selectedSearchResultPagination = null;
+    },
+    resetSearchResults() {
+      this.searchResults = [];
+    },
     async getWabaUsers(chatId?: number | string) {
       try {
         let response;
@@ -167,6 +185,9 @@ const useMessagingStore = defineStore("messaging", {
     setConversationType(chat: IChat, conversationType: string) {
       // console.log("fnc-setConversationType");
       chat.conversation_type = conversationType;
+    },
+    resetCachedChatMessages() {
+      this.cachedChatMessages = {};
     },
     /**
      * parse last message and determines the conversation_type
@@ -335,6 +356,19 @@ const useMessagingStore = defineStore("messaging", {
       });
       this.sortChatsList();
     },
+
+    async fetchChatSearchResultPagination(messageId: string) {
+      const { data } = await getChatSearchResultById(messageId);
+      console.log("[fetch-chat-search-result]", data);
+      this.selectedSearchResultPagination = data;
+    },
+
+    resetSelectedSearchResult() {
+      this.selectedSearchResult = null;
+      this.selectedSearchResultPagination =
+        {} as ISelectedSearchResultPagination;
+    },
+
     async socketConnect(userInfo: any) {
       console.log(socketUrl);
       socket.value = io(socketUrl, {
@@ -399,7 +433,7 @@ const useMessagingStore = defineStore("messaging", {
         const { data } = await getChatMessagesByChatId(chatId, page, limit);
         this.cachedChatMessages[chatId] = this.cachedChatMessages[chatId] ?? [];
         const showAssociatedMessage = false;
-        let messages = null;
+        let messages: any = null;
         // console.log("fetchChatMessagesById");
         if (showAssociatedMessage) {
           messages = await Promise.all(
@@ -455,14 +489,24 @@ const useMessagingStore = defineStore("messaging", {
             conversation_id: item.conversation_id,
           }));
         }
-
+        let availableMessages: any[] = [];
+        messages.forEach((message: any) => {
+          this.cachedChatMessages[chatId].length
+            ? (availableMessages = messages.filter(
+                (message: any) =>
+                  !this.cachedChatMessages[chatId]
+                    .map((item) => item.id)
+                    .includes(message.id)
+              ))
+            : availableMessages.push(message);
+        });
         this.cachedChatMessages[chatId] = [
-          ...messages,
+          ...availableMessages,
           ...this.cachedChatMessages[chatId],
         ];
         const hasmore =
           this.cachedChatMessages[chatId].length < data.total_count &&
-          messages.length >= (limit ?? 15);
+          data.messages.length >= (limit ?? 15);
         return hasmore;
       } catch (e) {
         console.log(e);
