@@ -1,4 +1,4 @@
-import { api } from "boot/axios";
+import { api, socketApi } from "boot/axios";
 import { ChatKeywords, ChatTypes } from "../constants/ChatKeyword";
 import {
   SendTextMessage,
@@ -81,6 +81,11 @@ export const getChatByID = async (id: string) => {
 
 //   return data.contacts[0];
 // };
+
+export const getChatSearchResultById = async (id: string) => {
+  const { data } = await api.get(`/chat/searched_messages_pages/${id}`);
+  return data;
+};
 
 export const getChatMessagesByChatId = async (
   id: string,
@@ -334,5 +339,15 @@ export const initiateBot = async (
 
 export const closeBot = async (chatId: string) => {
   const { data } = await api.get(`/dialogflow/close-bot/${chatId}`);
+  return data;
+};
+
+export const searchMessages = async ({ chatId, keyword }) => {
+  const encodedKeyword = encodeURIComponent(keyword);
+  const result = await socketApi.get(
+    `/search/messages/${chatId}/${encodedKeyword}`
+  );
+
+  const { data } = result;
   return data;
 };
