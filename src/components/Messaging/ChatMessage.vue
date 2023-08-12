@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" :class="{ highlight: highlighted }">
+  <div ref="root">
     <div
       v-if="message.label && !isReply"
       class="table py-6 whitespace-nowrap before:table-cell before:content-[''] before:w-1/2 before:border-t before:translate-y-2/4 after:table-cell after:content-[''] after:w-1/2 after:border-t after:translate-y-2/4"
@@ -19,7 +19,13 @@
     <div
       v-else
       class="flex"
-      :class="{ 'flex-row-reverse': isSend && !isReply, 'pb-8': !isReply }"
+      :class="[
+        highlighted ? (isSend ? 'highlight' : 'highlight-sender') : '',
+        {
+          'flex-row-reverse': isSend && !isReply,
+          'my-4 chat-container': !isReply,
+        },
+      ]"
     >
       <div
         class="relative rounded px-3 py-2"
@@ -28,6 +34,11 @@
             ? 'text-white rounded-br-none bg-primary'
             : 'text-[#2E2E3A] rounded-tl-none bg-[#E8E7FB]',
           isReply ? 'w-full !rounded-lg' : 'max-w-[60%]',
+          highlighted
+            ? isSend
+              ? 'highlight-container'
+              : 'highlight-container-sender'
+            : '',
         ]"
       >
         <template v-if="!isReply">
@@ -331,6 +342,12 @@ defineExpose({ root, props });
 
 <style lang="scss" scoped>
 div.highlight {
-  background-color: rgba(110, 100, 255, 0.1);
+  @apply bg-gradient-to-l from-yellow-200/70 to-transparent;
+}
+div.highlight-sender {
+  @apply bg-gradient-to-r from-yellow-200/70 to-transparent;
+}
+div.highlight-sender .highlight-container-sender {
+  @apply bg-gray-200;
 }
 </style>
