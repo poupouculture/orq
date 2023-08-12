@@ -36,14 +36,17 @@ const useNavigationStore = defineStore("navigationStore", {
             position: "top",
           });
         } else {
-          const sorting = data.data.map((navigation: any) => {
-            const obj = {
-              ...navigation,
-              pages: navigation.pages.sort((a: any, b: any) => a.sort - b.sort),
-            };
+          const sorting =
+            data.data?.map((navigation: any) => {
+              const obj = {
+                ...navigation,
+                pages: navigation.pages.sort(
+                  (a: any, b: any) => a.sort - b.sort
+                ),
+              };
 
-            return obj;
-          });
+              return obj;
+            }) || [];
 
           this.items = sorting;
           // const sorting = data.data[0].pages.sort((a: any, b: any) => {
@@ -182,9 +185,6 @@ const useNavigationStore = defineStore("navigationStore", {
           obj.content.sort((a: any, b: any) => {
             return a.sort - b.sort;
           });
-
-          console.log(obj);
-
           this.component = obj;
         }
       } catch (error) {}
