@@ -34,13 +34,13 @@ const textAligment = (alignment) => {
               no-spinner
               class="rounded-borders"
               :src="children.icon"
-              style="max-width: 150px"
+              :style="children.raw"
             />
           </div>
 
           <div class="mx-2">
             <p
-              class="mb-0 text-center text-[#403F3F] flex gap-3 items-center uppercase text-[27px]"
+              class="mb-0 text-center text-[#403F3F] flex gap-3 items-center uppercase text-[24px]"
             >
               {{ children.name }}
             </p>

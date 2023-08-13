@@ -43,6 +43,10 @@ const navbarStyle = computed(() => {
   return useLandingPageStore.topNavigation[0]?.raw;
 });
 
+const currentComponent = computed(() => {
+  return useLandingPageStore.getComponent.heroText;
+});
+
 watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
 });
@@ -105,7 +109,11 @@ onMounted(async () => {
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
-      <div :style="navbarStyle" class="w-full p-5 absolute flex justify-center">
+      <div
+        :style="navbarStyle"
+        :class="{ absolute: currentComponent }"
+        class="w-full p-5 flex justify-center"
+      >
         <div class="container">
           <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
         </div>
