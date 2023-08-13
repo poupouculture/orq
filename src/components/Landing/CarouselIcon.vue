@@ -7,9 +7,9 @@ defineProps({
 </script>
 
 <template>
-  <div class="w-full h-32 relative justify-center flex items-center">
+  <div class="w-full h-32 relative items-center">
     <div
-      class="relative w-[90%] overflow-x-hidden top-0 no-wrap left-0 flex gap-[100px] py-2"
+      class="relative h-32 w-full overflow-x-hidden top-0 no-wrap left-0 flex gap-[100px] py-2"
     >
       <q-img
         v-for="(image, index) in content.children"

@@ -104,13 +104,12 @@ onMounted(async () => {
 
 <template>
   <q-layout view="hHh lpR fFf">
-    <div :style="navbarStyle" class="w-full p-5 absolute flex justify-center">
-      <div class="container">
-        <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
-      </div>
-    </div>
-
     <q-page-container>
+      <div :style="navbarStyle" class="w-full p-5 absolute flex justify-center">
+        <div class="container">
+          <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
+        </div>
+      </div>
       <div class="bg-white font-['Red_Hat_Display']">
         <router-view></router-view>
       </div>

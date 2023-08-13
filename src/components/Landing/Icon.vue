@@ -4,6 +4,18 @@ defineProps({
     type: Object,
   },
 });
+
+// Methods
+
+const textAligment = (alignment) => {
+  if (alignment === "center") {
+    return "text-center";
+  } else if (alignment === "left") {
+    return "text-start";
+  } else if (alignment === "right") {
+    return "text-end";
+  }
+};
 </script>
 
 <template>
@@ -19,20 +31,24 @@ defineProps({
         >
           <div class="w-full flex justify-center">
             <q-img
+              no-spinner
               class="rounded-borders"
               :src="children.icon"
               style="max-width: 150px"
             />
           </div>
 
-          <p
-            class="mb-0 text-center text-[#403F3F] flex gap-3 items-center uppercase text-[32px]"
-          >
-            {{ children.name }}
-          </p>
+          <div class="mx-2">
+            <p
+              class="mb-0 text-center text-[#403F3F] flex gap-3 items-center uppercase text-[27px]"
+            >
+              {{ children.name }}
+            </p>
+          </div>
 
           <span
-            class="font-normal w-[350px] capitalize text-[#5C5A8F] text-center leading-10 text-lg"
+            :class="textAligment(children.alignment)"
+            class="font-normal w-[350px] capitalize text-[#5C5A8F] text-start leading-10 text-lg"
           >
             <article v-html="children.content" class="prose" />
           </span>

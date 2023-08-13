@@ -13,6 +13,7 @@ defineProps({
       class="col-span-1"
     >
       <q-img
+        no-spinner
         class="rounded-borders"
         :src="content.image"
         style="min-height: 280px"
