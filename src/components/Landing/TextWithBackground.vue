@@ -25,6 +25,7 @@ const textAligment = (alignment) => {
 <template>
   <div class="w-full mx-5">
     <div
+      v-if="content.content"
       :class="content.alignment === 'right' ? 'justify-end' : 'justify-start'"
       class="min-h-[500px] p-6 bg-center flex bg-cover"
       :style="{ backgroundImage: `url(${content.image})` }"
