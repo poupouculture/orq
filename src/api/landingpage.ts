@@ -21,3 +21,7 @@ export const getNavigationById = async (id?: string) => {
     `/items/pages/${id}?fields=id,name,slug,url,group_by&sort=sort&fields=component.page_component_id.*,component.page_component_id.children.*`
   );
 };
+
+export const contactUs = async (args: any) => {
+  return orqApi.post("/items/post", { ...args });
+};

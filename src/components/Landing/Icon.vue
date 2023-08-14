@@ -50,7 +50,7 @@ const textAligment = (alignment) => {
             :class="textAligment(children.alignment)"
             class="font-normal w-[350px] capitalize text-[#5C5A8F] text-start leading-10 text-lg"
           >
-            <article v-html="children.content" class="prose" />
+            <article v-html="children.content" class="prose max-w-none px-4" />
           </span>
         </div>
       </div>

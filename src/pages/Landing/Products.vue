@@ -43,7 +43,7 @@ onMounted(() => {
 
   <div class="w-full flex justify-center flex-col min-h-screen items-center">
     <div class="w-full container my-5">
-      <Banner :content="getComponent" />
+      <Banner v-if="getComponent.content.length > 0" :content="getComponent" />
     </div>
     <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <button

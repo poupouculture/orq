@@ -46,6 +46,42 @@ const products = computed(() => {
   return categoriesStore.getProducts;
 });
 
+const checkoutColumns = [
+  {
+    name: "name",
+    required: true,
+    label: "Name",
+    align: "left",
+    field: (row) => row.name,
+    format: (val) => `${val}`,
+    sortable: true,
+  },
+  {
+    name: "description",
+    align: "center",
+    label: "Specification",
+    field: "description",
+    sortable: true,
+  },
+  {
+    name: "brand",
+    align: "center",
+    label: "Brand",
+    field: "brand",
+    sortable: true,
+  },
+  {
+    name: "country",
+    align: "center",
+    label: "Country of Origin",
+    field: "country",
+    sortable: true,
+  },
+  { name: "cat2", align: "center", label: "Category", field: "cat2" },
+
+  { name: "qty", align: "center", label: "Qty", field: "qty" },
+];
+
 const columns = [
   {
     name: "name",
@@ -132,6 +168,24 @@ const submit = () => {
   console.log("Submit");
 };
 
+const addQty = (product) => {
+  const getProduct = selectedTables.value.findIndex(
+    (item) => item.id === product.row.id
+  );
+
+  const newValue = selectedTables.value[getProduct].qty + 1;
+  selectedTables.value[getProduct].qty = newValue;
+};
+
+const minsQty = (product) => {
+  const getProduct = selectedTables.value.findIndex(
+    (item) => item.id === product.row.id
+  );
+
+  const newValue = selectedTables.value[getProduct].qty - 1;
+  selectedTables.value[getProduct].qty = newValue;
+};
+
 const resetSearch = () => {
   query.value = "";
 };
@@ -207,7 +261,7 @@ onMounted(async () => {
             @click="dialog = !dialog"
             push
             color="primary"
-            label="Preview"
+            icon="shopping_cart"
           >
             <q-badge color="orange" floating>
               {{ selectedTables.length }}
@@ -221,7 +275,8 @@ onMounted(async () => {
           :columns="columns"
           @selectRow="getProductDetails"
           v-model:selected="selectedTables"
-        />
+        >
+        </BaseTable>
       </div>
     </div>
 
@@ -231,13 +286,40 @@ onMounted(async () => {
       @decline="dialog = false"
       @update:modelValue="dialog = false"
       decline-text="Cancel"
-      accept-text="Download"
+      accept-text="Checkout"
     >
       <template #head>
-        <div class="text-h6">Pdf Product</div>
+        <div class="text-h6">Cart</div>
       </template>
 
-      <BaseTable :rows="selectedTables" :loading="false" :columns="columns" />
+      <BaseTable
+        :rows="selectedTables"
+        :loading="false"
+        :columns="checkoutColumns"
+      >
+        <template #body-cell-qty="props">
+          <q-td>
+            <div class="flex justify-center gap-4 w-[100px]">
+              <q-btn
+                @click="minsQty(props)"
+                :disable="props.row.qty === 0"
+                round
+                size="xs"
+                color="primary"
+                icon="remove"
+              />
+              <span>{{ props.row.qty }}</span>
+              <q-btn
+                @click="addQty(props)"
+                round
+                size="xs"
+                color="primary"
+                icon="add"
+              />
+            </div>
+          </q-td>
+        </template>
+      </BaseTable>
     </Modal>
 
     <Modal
