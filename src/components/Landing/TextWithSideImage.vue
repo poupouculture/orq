@@ -16,7 +16,7 @@ defineProps({
         no-spinner
         class="rounded-borders"
         :src="content.image"
-        style="min-height: 280px"
+        style="height: 380px"
       />
     </div>
 
