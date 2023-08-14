@@ -190,7 +190,6 @@ const useNavigationStore = defineStore("navigationStore", {
           obj.content.sort((a: any, b: any) => {
             return a.sort - b.sort;
           });
-
           this.component = obj;
         }
       } catch (error) {}
