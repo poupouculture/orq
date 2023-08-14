@@ -111,7 +111,7 @@ onMounted(async () => {
     <q-page-container>
       <div
         :style="navbarStyle"
-        :class="{ absolute: currentComponent }"
+        :class="{ 'absolute z-10': currentComponent }"
         class="w-full p-5 flex justify-center"
       >
         <div class="container">

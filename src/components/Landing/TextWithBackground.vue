@@ -26,12 +26,12 @@ const textAligment = (alignment) => {
   <div class="w-full mx-5">
     <div
       v-if="content.content"
-      :class="content.alignment === 'right' ? 'justify-end' : 'justify-start'"
+      :class="textAligment(content.alignment)"
       class="min-h-[500px] p-6 bg-center flex bg-cover"
       :style="{ backgroundImage: `url(${content.image})` }"
     >
       <div class="md:w-1/2 w-full">
-        <article v-html="content.content" class="prose" />
+        <article v-html="content.content" class="prose max-w-none" />
       </div>
     </div>
 
