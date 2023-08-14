@@ -1,5 +1,6 @@
 <script setup>
 import { Notify } from "quasar";
+import { contactUs } from "src/api/landingpage";
 const props = defineProps({
   content: {
     type: Object,
@@ -10,9 +11,9 @@ const validateEmail = (email) => {
   return /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email);
 };
 
-const submit = () => {
+const submit = async () => {
   const allForm = {};
-  props.content.raw.form.forEach((form) => {
+  await props.content.raw.form.forEach((form) => {
     if (form.value && form.required) {
       if (form.label === "Email") {
         if (!validateEmail(form.value)) {
@@ -22,11 +23,11 @@ const submit = () => {
             type: "negative",
           });
         } else {
-          allForm[form.type] = form.value;
+          allForm[form.field] = form.value;
           console.log("Else email proccess here");
         }
       } else {
-        allForm[form.type] = form.value;
+        allForm[form.field] = form.value;
       }
     } else if (!form.value && form.required) {
       Notify.create({
@@ -37,7 +38,7 @@ const submit = () => {
     }
   });
 
-  console.log(allForm);
+  await contactUs(allForm);
 };
 </script>
 
