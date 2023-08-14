@@ -603,11 +603,11 @@ const getSeparator = (index: number) => {
   return "";
 };
 
-const selectedSearchResult = computed(
-  () => messagingStore.selectedSearchResult
+const selectedSearchResultPagination = computed(
+  () => messagingStore.selectedSearchResultPagination
 );
 
-watch(selectedSearchResult, (value) => {
+watch(selectedSearchResultPagination, (value) => {
   console.log("[messages] Search result selected", value);
   hasMoreMessage[getSelectedChatId.value] = true;
   if (value == null) {
