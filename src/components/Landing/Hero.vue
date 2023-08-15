@@ -18,7 +18,7 @@ const scrollDown = () => {
   <div
     :class="
       Object.keys(getComponent).length === 0 && route.name == 'landingpage'
-        ? 'min-h-screen homeHero'
+        ? 'homeHero'
         : route.name !== 'landingpage'
         ? 'lg:h-[70vh] homeHero'
         : 'lg:h-[70vh]'
@@ -28,7 +28,7 @@ const scrollDown = () => {
         ? ''
         : { backgroundImage: `url(${getComponent.iconCover})` }
     "
-    class="bg-center flex flex-col items-center w-full p-5 lg:p-10"
+    class="bg-center min-h-screen flex flex-col items-center w-full p-5 lg:p-10"
     style="background-position: center; background-size: cover"
   >
     <div class="container mt-6">

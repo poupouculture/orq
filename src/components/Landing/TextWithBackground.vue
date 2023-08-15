@@ -33,7 +33,7 @@ const contentTextAlignment = (alignment) => {
 </script>
 
 <template>
-  <div class="w-full mx-5">
+  <div class="w-full" :style="content.raw !== null ? content.raw.style : ''">
     <div
       v-if="content.content"
       :class="textAligment(content.alignment)"
