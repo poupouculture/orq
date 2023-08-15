@@ -29,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Hero class="justify-center">
+  <Hero v-if="getComponent.heroText" class="justify-center">
     <div class="w-full">
       <div
         class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"

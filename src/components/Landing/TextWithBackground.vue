@@ -20,6 +20,16 @@ const textAligment = (alignment) => {
     return "justify-end items-end";
   }
 };
+
+const contentTextAlignment = (alignment) => {
+  if (alignment === "center") {
+    return "text-center";
+  } else if (alignment === "left") {
+    return "text-start";
+  } else if (alignment === "right") {
+    return "text-end";
+  }
+};
 </script>
 
 <template>
@@ -31,7 +41,11 @@ const textAligment = (alignment) => {
       :style="{ backgroundImage: `url(${content.image})` }"
     >
       <div class="md:w-1/2 w-full">
-        <article v-html="content.content" class="prose max-w-none" />
+        <article
+          v-html="content.content"
+          :class="contentTextAlignment(content.alignment)"
+          class="prose max-w-none"
+        />
       </div>
     </div>
 
