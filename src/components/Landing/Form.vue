@@ -1,19 +1,16 @@
 <script setup>
 import { Notify } from "quasar";
 import { contactUs } from "src/api/landingpage";
+import { required, validateEmail } from "src/utils/validation-rules";
 const props = defineProps({
   content: {
     type: Object,
   },
 });
 
-const validateEmail = (email) => {
-  return /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email);
-};
-
 const submit = async () => {
-  const allForm={
-    app: props.content.app
+  const allForm = {
+    app: props.content.app,
   };
 
   await props.content.raw.form.forEach((form) => {
@@ -91,14 +88,20 @@ const submit = async () => {
               lazy-rules
               dense
               :rules="[
-                (val) => !!val || 'Field is required',
+                (val) => required(val),
                 (val) => validateEmail(val) || 'Must be a valid email.',
               ]"
             />
 
             <template v-else-if="form.type === 'checkbox'">
-              <q-checkbox v-for="checkbox , index in form.options" :val="checkbox.label" :key="index"
-                :label="checkbox.label" v-model="form.value" color="primary" />
+              <q-checkbox
+                v-for="(checkbox, index) in form.options"
+                :val="checkbox.label"
+                :key="index"
+                :label="checkbox.label"
+                v-model="form.value"
+                color="primary"
+              />
             </template>
 
             <q-input

@@ -32,7 +32,7 @@ const useCategoriesStore = defineStore("categoriesStore", {
   getters: {
     allCategories: (state) => state.items,
     getProducts: (state) =>
-      state.products.map((item: any) => {
+      state.products?.map((item: any) => {
         const obj = {
           ...item,
           qty: 1,
