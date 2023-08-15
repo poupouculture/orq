@@ -75,4 +75,4 @@ export default boot(({ app, store, router }) => {
   app.config.globalProperties.$orqApi = orqApi;
 });
 
-export { api, axiosInstance, orqApi, socketApi };
+export { api, socketApi, axiosInstance, orqApi };

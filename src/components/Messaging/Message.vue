@@ -559,6 +559,8 @@ const {
   getSelectedChatPending,
   getSelectedChatExpired,
   users,
+  selectedSearchResultPagination,
+  selectedSearchResult,
 } = storeToRefs(messagingStore);
 
 const isPending = computed({
@@ -605,22 +607,26 @@ const getSeparator = (index: number) => {
   return "";
 };
 
-const selectedSearchResultPagination = computed(
-  () => messagingStore.selectedSearchResultPagination
-);
+// const selectedSearchResultPagination = computed(
+//   () => messagingStore.selectedSearchResultPagination
+// );
 
+watch(selectedSearchResult, (value: any) => {
+  highlightedMessageId.value = value.id;
+  scrollToMessageId(messagesComponentRefs.value);
+});
 watch(selectedSearchResultPagination, (value) => {
-  console.log("[messages] Search result selected", value);
+  // cachedChatMessages.value[getSelectedChatId.value] = [];
   hasMoreMessage[getSelectedChatId.value] = true;
-  cachedChatMessages.value[getSelectedChatId.value] = [];
   if (value == null) {
-    infiniteScrollRef.value?.setIndex(0);
     highlightedMessageId.value = null;
+    infiniteScrollRef.value?.reset(true);
+    infiniteScrollRef.value?.trigger();
   } else {
     const targetPage = value.page_no;
     infiniteScrollRef.value?.setIndex(targetPage - 1);
+    infiniteScrollRef.value?.trigger();
   }
-  infiniteScrollRef.value?.resume();
 });
 
 // const toogleChatOption = () => {
@@ -747,7 +753,9 @@ const messages = computed<Message[]>(() => {
 const messagesComponentRefs = ref([]);
 
 watch(messagesComponentRefs.value, async (value) => {
-  console.log("[messages] messagesComponentRefs changed", value);
+  scrollToMessageId(value);
+});
+const scrollToMessageId = async (value: any) => {
   if (
     value.length > 0 &&
     messagingStore.selectedSearchResult &&
@@ -767,7 +775,7 @@ watch(messagesComponentRefs.value, async (value) => {
       highlightedMessageId.value = null;
     }
   }
-});
+};
 
 const isBot = computed<boolean>(() => getSelectedChat?.value?.mode === "Bot");
 
