@@ -12,7 +12,10 @@ const validateEmail = (email) => {
 };
 
 const submit = async () => {
-  const allForm = {};
+  const allForm={
+    app: props.content.app
+  };
+
   await props.content.raw.form.forEach((form) => {
     if (form.value && form.required) {
       if (form.label === "Email") {
@@ -92,6 +95,11 @@ const submit = async () => {
                 (val) => validateEmail(val) || 'Must be a valid email.',
               ]"
             />
+
+            <template v-else-if="form.type === 'checkbox'">
+              <q-checkbox v-for="checkbox , index in form.options" :val="checkbox.label" :key="index"
+                :label="checkbox.label" v-model="form.value" color="primary" />
+            </template>
 
             <q-input
               v-else
