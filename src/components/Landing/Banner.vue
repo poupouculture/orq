@@ -5,7 +5,6 @@ import TextWithBackground from "./TextWithBackground.vue";
 import Icon from "./Icon.vue";
 import CarouselIcon from "./CarouselIcon.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
-import WhatsAppOverlay from "src/components/Partials/WhatsAppOverlay.vue";
 
 const props = defineProps({
   content: {
@@ -42,7 +41,6 @@ const props = defineProps({
         v-else-if="data.type === 'text_above_image'"
         :content="data"
       />
-      <WhatsAppOverlay v-if="data.type === 'whatsapp'" :data="data" />
     </div>
   </div>
 </template>
