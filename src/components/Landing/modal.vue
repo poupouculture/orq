@@ -28,7 +28,7 @@ const value = computed({
 
 <template>
   <q-dialog v-model="value">
-    <q-card style="width: 600px; max-width: 80vw">
+    <q-card style="width: 1800px; max-width: 80vw">
       <q-card-section>
         <slot name="head" />
       </q-card-section>

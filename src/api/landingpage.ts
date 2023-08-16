@@ -2,7 +2,8 @@ import { orqApi } from "boot/axios";
 
 export const getAllNavigation = async (param?: string) => {
   const params = {
-    fields: "name,pages.name,pages.name,pages.url,pages.id,pages.sort",
+    fields:
+      "name,raw,icon,logo,pages.name,pages.name,pages.url,pages.id,pages.sort",
     "filter[name][_eq]": param,
   } as any;
   if (process.env.APP) {
@@ -21,4 +22,8 @@ export const getNavigationById = async (id?: string) => {
   return orqApi.get(
     `/items/pages/${id}?fields=id,name,slug,url,group_by&sort=sort&fields=component.page_component_id.*,component.page_component_id.children.*`
   );
+};
+
+export const contactUs = async (args: any) => {
+  return orqApi.post("/items/form", args);
 };

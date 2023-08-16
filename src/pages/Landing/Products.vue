@@ -29,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Hero class="justify-center">
+  <Hero v-if="getComponent.heroText" class="justify-center">
     <div class="w-full">
       <div
         class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[55px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
@@ -43,7 +43,7 @@ onMounted(() => {
 
   <div class="w-full flex justify-center flex-col min-h-screen items-center">
     <div class="w-full container my-5">
-      <Banner :content="getComponent" />
+      <Banner v-if="getComponent.content.length > 0" :content="getComponent" />
     </div>
     <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <button

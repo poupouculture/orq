@@ -31,7 +31,15 @@ const useCategoriesStore = defineStore("categoriesStore", {
 
   getters: {
     allCategories: (state) => state.items,
-    getProducts: (state) => state.products,
+    getProducts: (state) =>
+      state.products?.map((item: any) => {
+        const obj = {
+          ...item,
+          qty: 1,
+        };
+
+        return obj;
+      }),
   },
   actions: {
     async getAll() {
