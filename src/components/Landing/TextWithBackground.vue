@@ -49,64 +49,66 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div>
 
-    <div v-if="content.raw !== null" class="w-full relative">
-      <iframe
-        width="100%"
-        height="735"
-        :src="`https://www.youtube.com/embed/${
-          content.raw.videoId
-        }?autoplay=1&mute=${unmute ? '0' : '1'}&loop=1&playlist=${
-          content.raw.videoId
-        }`"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
+    <template v-if="content.raw !== null">
+      <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
+        <iframe
+          width="100%"
+          height="735"
+          :src="`https://www.youtube.com/embed/${
+            content.raw.videoId
+          }?autoplay=1&mute=${unmute ? '0' : '1'}&loop=1&playlist=${
+            content.raw.videoId
+          }`"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
 
-      <div class="w-full">
-        <div
-          :style="{
-            background: `linear-gradient(${content.raw.overlayColor})`,
-          }"
-          class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full"
-        >
+        <div class="w-full">
           <div
-            :class="textAligment(content.alignment)"
-            class="w-full relative flex flex-col mx-5 gap-4"
+            :style="{
+              background: `linear-gradient(${content.raw.overlayColor})`,
+            }"
+            class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full"
           >
-            <h1
-              :style="{ color: content.raw.color }"
-              class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold"
+            <div
+              :class="textAligment(content.alignment)"
+              class="w-full relative flex flex-col mx-5 gap-4"
             >
-              {{ content.raw.content }}
-            </h1>
+              <h1
+                :style="{ color: content.raw.color }"
+                class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold"
+              >
+                {{ content.raw.content }}
+              </h1>
 
-            <span :style="{ color: content.raw.color }" class="text-xl">
-              {{ content.raw.subtitleContent }}
-            </span>
+              <span :style="{ color: content.raw.color }" class="text-xl">
+                {{ content.raw.subtitleContent }}
+              </span>
 
-            <q-btn
-              tag="a"
-              target="_blank"
-              :href="`https://www.youtube.com/embed/${content.raw.videoId}`"
-              unelevated
-              rounded
-              color="primary"
-              label="See Video"
-            />
-
-            <div class="absolute right-10 -bottom-64">
-              <q-icon
-                @click="unmute = !unmute"
-                class="cursor-pointer"
-                size="sm"
-                :name="unmute ? 'volume_up' : 'volume_off'"
+              <q-btn
+                tag="a"
+                target="_blank"
+                :href="`https://www.youtube.com/embed/${content.raw.videoId}`"
+                unelevated
+                rounded
+                color="primary"
+                label="See Video"
               />
+
+              <div class="absolute right-10 -bottom-64">
+                <q-icon
+                  @click="unmute = !unmute"
+                  class="cursor-pointer"
+                  size="sm"
+                  :name="unmute ? 'volume_up' : 'volume_off'"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 

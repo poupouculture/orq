@@ -1,7 +1,7 @@
 <script setup>
-import { Notify } from "quasar";
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
+
 const props = defineProps({
   content: {
     type: Object,
@@ -17,24 +17,19 @@ const submit = async () => {
     if (form.value && form.required) {
       if (form.label === "Email") {
         if (!validateEmail(form.value)) {
-          Notify.create({
-            message: `The ${form.label} Must be a valid email.`,
-            position: "top",
-            type: "negative",
-          });
+          form.error = true;
+          form.errorMessage = `The ${form.label} Must be a valid email.`;
         } else {
           allForm[form.field] = form.value;
-          console.log("Else email proccess here");
         }
       } else {
         allForm[form.field] = form.value;
       }
     } else if (!form.value && form.required) {
-      Notify.create({
-        message: `The ${form.label} is required`,
-        position: "top",
-        type: "negative",
-      });
+      form.error = true;
+      form.errorMessage = `The ${form.label} is required`;
+    } else {
+      allForm[form.field] = form.value;
     }
   });
 
@@ -83,10 +78,12 @@ const submit = async () => {
           <div class="col-span-6 lg:col-span-4">
             <q-input
               v-if="form.type === 'email'"
-              v-model="form.value"
+              :model-value="form.value"
               :type="form.type"
               outlined
               :ref="form.type"
+              :error="form.error"
+              :error-message="form.errorMessage"
               lazy-rules
               dense
               :rules="[
@@ -108,10 +105,12 @@ const submit = async () => {
 
             <q-input
               v-else-if="!form.required"
-              v-model="form.value"
+              :model-value="form.value"
               :type="form.type"
               :ref="form.type"
               outlined
+              :error="form.error"
+              :error-message="form.errorMessage"
               lazy-rules
               class="mb-4"
               dense
@@ -123,6 +122,8 @@ const submit = async () => {
               :type="form.type"
               :ref="form.type"
               outlined
+              :error="form.error"
+              :error-message="form.errorMessage"
               lazy-rules
               dense
               :rules="[(val) => required(val)]"
