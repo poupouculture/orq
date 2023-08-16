@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import logo from "assets/images/logo.svg";
 import menuIcon from "assets/images/menu.png";
 import { useRouter } from "vue-router";
 import useLandingPage from "src/stores/modules/landingpage";
@@ -26,8 +25,10 @@ const getComponentById = async (id: string, url: string) => {
       :to="{ name: 'landingpage' }"
       class="flex justify-center items-center gap-3"
     >
-      <img class="w-[50px]" :src="logo" alt="logo" />
-      <p class="font-[800] text-white text-2xl">ChaQ</p>
+      <img class="w-[50px]" :src="navigation?.icon" />
+      <p class="font-[800] text-white text-2xl">
+        {{ navigation?.logo }}
+      </p>
     </router-link>
     <div v-if="navigation" class="flex items-center gap-5">
       <button

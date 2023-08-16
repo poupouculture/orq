@@ -4,6 +4,7 @@ import TextWithSideImage from "./TextWithSideImage.vue";
 import TextWithBackground from "./TextWithBackground.vue";
 import Icon from "./Icon.vue";
 import CarouselIcon from "./CarouselIcon.vue";
+import Form from "./Form.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
 
 const props = defineProps({
@@ -14,9 +15,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <div v-if="props.content" class="flex flex-col gap-4">
+  <div v-if="props.content" class="flex pb-14 flex-col gap-4">
     <div
-      class="row relative min-h-[500px]"
+      class="row relative w-full"
       v-for="(data, index) in props.content.content"
       :key="index"
     >
@@ -42,6 +43,8 @@ const props = defineProps({
         v-else-if="data.type === 'text_above_image'"
         :content="data"
       />
+
+      <Form v-else-if="data.type === 'form'" :content="data" />
     </div>
   </div>
 </template>

@@ -3,7 +3,6 @@ import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
 import { Screen } from "quasar";
-import logo from "assets/images/logo.svg";
 import useLandingPage from "src/stores/modules/landingpage";
 
 const useLandingPageStore = useLandingPage();
@@ -34,6 +33,18 @@ const bottomNavigation = computed(() => {
 
 const mobileNavigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
+});
+
+const topNavbar = computed(() => {
+  return useLandingPageStore.topNavigation[0];
+});
+
+const navbarStyle = computed(() => {
+  return useLandingPageStore.topNavigation[0]?.raw;
+});
+
+const currentComponent = computed(() => {
+  return useLandingPageStore.getComponent.heroText;
 });
 
 watch(drawer, (value) => {
@@ -97,13 +108,16 @@ onMounted(async () => {
 
 <template>
   <q-layout view="hHh lpR fFf">
-    <div class="w-full p-5 absolute flex justify-center">
-      <div class="container">
-        <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
-      </div>
-    </div>
-
     <q-page-container>
+      <div
+        :style="navbarStyle"
+        :class="{ 'absolute z-10': currentComponent }"
+        class="w-full p-5 flex justify-center"
+      >
+        <div class="container">
+          <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
+        </div>
+      </div>
       <div class="bg-white font-['Red_Hat_Display']">
         <router-view></router-view>
       </div>
@@ -116,12 +130,14 @@ onMounted(async () => {
             class="flex flex-col order-2 mt-4 lg:order-1 gap-4 w-56 justify-between"
           >
             <div class="flex flex-col">
-              <div class="flex gap-3">
+              <div class="flex items-center gap-3">
                 <div>
-                  <img class="w-[40px]" :src="logo" alt="logo" />
+                  <img class="w-[40px]" :src="topNavbar?.icon" alt="logo" />
                 </div>
                 <div>
-                  <p class="font-[800] text-white text-2xl">ChaQ</p>
+                  <p class="font-[800] text-white text-2xl">
+                    {{ topNavbar?.logo }}
+                  </p>
                 </div>
               </div>
 

@@ -71,7 +71,6 @@ const isMobile = computed(() => Platform.is.mobile);
 const internalValue = ref(null);
 
 watch(internalValue, (v) => {
-  console.log("v", v);
   if (v) {
     messagingStore.selectedSearchResult = v;
     messagingStore.fetchChatSearchResultPagination(v.id);

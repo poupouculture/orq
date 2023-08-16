@@ -13,9 +13,10 @@ defineProps({
       class="col-span-1"
     >
       <q-img
+        no-spinner
         class="rounded-borders"
         :src="content.image"
-        style="min-height: 280px"
+        style="height: 380px"
       />
     </div>
 
@@ -23,7 +24,7 @@ defineProps({
       :class="content.alignment === 'left' ? 'order-1' : 'order-2'"
       class="col-span-1 flex flex-col"
     >
-      <article v-html="content.content" class="prose" />
+      <article v-html="content.content" class="prose max-w-none" />
     </div>
   </div>
 </template>

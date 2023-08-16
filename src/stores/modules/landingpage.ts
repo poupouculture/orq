@@ -36,26 +36,31 @@ const useNavigationStore = defineStore("navigationStore", {
             position: "top",
           });
         } else {
-          const sorting =
-            data.data?.map((navigation: any) => {
+          if (data.data.length > 0) {
+            const sorting = data.data.map((navigation: any) => {
               const obj = {
                 ...navigation,
                 pages: navigation.pages.sort(
                   (a: any, b: any) => a.sort - b.sort
                 ),
+                icon: "",
               };
 
+              if (navigation.icon !== null) {
+                obj.icon = `${process.env.ORQ_API}/assets/${navigation.icon}`;
+              }
+
               return obj;
-            }) || [];
+            });
 
-          this.items = sorting;
-          // const sorting = data.data[0].pages.sort((a: any, b: any) => {
-          //   return a.sort - b.sort;
-          // });
-
-          // this.items = sorting.filter(
-          //   (item: any) => item.status === "published"
-          // );
+            this.items = sorting;
+          } else {
+            Notify.create({
+              message: "Data is Empty",
+              type: "negative",
+              position: "top",
+            });
+          }
         }
       } catch (error) {}
     },
