@@ -15,7 +15,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div v-if="props.content" class="flex pb-14 flex-col gap-4">
+  <div v-if="props.content" class="flex pb-14 flex-col">
     <div
       class="row relative w-full"
       v-for="(data, index) in props.content.content"
