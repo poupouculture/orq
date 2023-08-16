@@ -23,6 +23,10 @@ const textAligment = (alignment) => {
     <article class="prose max-w-none">
       <h1 class="text-center">{{ content.name }}</h1>
 
+      <div class="flex justify-center mx-3">
+        <article v-html="content.content" class="prose" />
+      </div>
+
       <div class="grid p-4 gap-10 w-full sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(children, index) in content.children"
