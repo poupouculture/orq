@@ -4,8 +4,10 @@ export const getAllNavigation = async (param?: string) => {
   const params = {
     fields: "name,pages.name,pages.name,pages.url,pages.id,pages.sort",
     "filter[name][_eq]": param,
-  };
-
+  } as any;
+  if (process.env.APP) {
+    params["filter[app][_eq]"] = process.env.APP;
+  }
   if (param === "") {
     delete params["filter[name][_eq]"];
   }
