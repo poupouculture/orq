@@ -77,6 +77,7 @@ const submit = async () => {
 
           <div class="col-span-6 lg:col-span-4">
             <q-input
+              class="formInput"
               v-if="form.type === 'email'"
               :model-value="form.value"
               :type="form.type"
@@ -112,7 +113,7 @@ const submit = async () => {
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
-              class="mb-4"
+              class="mb-4 formInput"
               dense
             />
 
