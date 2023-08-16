@@ -113,7 +113,7 @@ const submit = async () => {
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
-              class="mb-4"
+              class="mb-4 formInput"
               dense
             />
 
