@@ -105,6 +105,16 @@ const submit = async () => {
             </template>
 
             <q-input
+              v-else-if="!form.required"
+              v-model="form.value"
+              :type="form.type"
+              :ref="form.type"
+              outlined
+              lazy-rules
+              dense
+            />
+
+            <q-input
               v-else
               v-model="form.value"
               :type="form.type"
@@ -112,7 +122,7 @@ const submit = async () => {
               outlined
               lazy-rules
               dense
-              :rules="[(val) => !!val || 'Field is required']"
+              :rules="[(val) => required(val)]"
             />
           </div>
         </div>
