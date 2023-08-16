@@ -38,7 +38,9 @@ const submit = async () => {
     }
   });
 
-  await contactUs(allForm);
+  try {
+    await contactUs(allForm);
+  } catch (error) {}
 };
 </script>
 
@@ -111,6 +113,7 @@ const submit = async () => {
               :ref="form.type"
               outlined
               lazy-rules
+              class="mb-4"
               dense
             />
 
