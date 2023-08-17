@@ -24,7 +24,6 @@ const props = defineProps({
       <div v-if="data.type === 'carousel'" class="w-full mb-3 mx-7">
         <Carousel :content="data" />
       </div>
-
       <TextWithSideImage
         v-else-if="data.type === 'text_with_side_images'"
         :content="data"
