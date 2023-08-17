@@ -9,15 +9,22 @@ defineProps({
 </script>
 
 <template>
-  <Vue3Marquee direction="reverse" :duration="5">
-    <img
+  <Vue3Marquee
+    direction="reverse"
+    :duration="parseInt(content?.raw?.duration) || 10"
+    :clone="true"
+  >
+    <div
       v-for="(img, i) in content.children"
       :key="i"
-      :src="img.icon"
-      width="150"
-      height="150"
-      class="object-cover mx-6"
-    />
+      :style="{ margin: content?.raw?.margin || '0 1.5rem' }"
+    >
+      <img
+        :src="img.icon"
+        class="object-cover w-full rounded-lg"
+        :style="{ maxHeight: content?.raw?.maxHeight || '8rem' }"
+      />
+    </div>
   </Vue3Marquee>
   <div class=""></div>
 </template>
