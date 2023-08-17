@@ -37,6 +37,12 @@ const submit = async () => {
     await contactUs(allForm);
   } catch (error) {}
 };
+
+const check = (form) => {
+  if (form.error) {
+    form.error = false;
+  }
+};
 </script>
 
 <template>
@@ -79,10 +85,10 @@ const submit = async () => {
             <q-input
               class="formInput"
               v-if="form.type === 'email'"
-              :model-value="form.value"
+              v-model="form.value"
+              @update:model-value="check(form)"
               :type="form.type"
               outlined
-              :ref="form.type"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
@@ -106,12 +112,9 @@ const submit = async () => {
 
             <q-input
               v-else-if="!form.required"
-              :model-value="form.value"
+              v-model="form.value"
               :type="form.type"
-              :ref="form.type"
               outlined
-              :error="form.error"
-              :error-message="form.errorMessage"
               lazy-rules
               class="mb-4 formInput"
               dense
@@ -121,8 +124,8 @@ const submit = async () => {
               v-else
               v-model="form.value"
               :type="form.type"
-              :ref="form.type"
               outlined
+              @update:model-value="check(form)"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
