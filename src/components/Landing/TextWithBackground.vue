@@ -37,7 +37,7 @@ const contentTextAlignment = (alignment) => {
     <div
       v-if="content.content"
       :class="textAligment(content.alignment)"
-      class="min-h-[500px] p-6 bg-center flex bg-cover"
+      class="min-h-[700px] p-6 bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})` }"
     >
       <div class="md:w-1/2 w-full">
