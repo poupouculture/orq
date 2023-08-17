@@ -25,7 +25,7 @@ const getComponentById = async (id: string, url: string) => {
       :to="{ name: 'landingpage' }"
       class="flex justify-center items-center gap-3"
     >
-      <img class="w-[50px]" :src="navigation?.icon" />
+      <img v-bind="navigation.raw.iconSize" :src="navigation?.icon" />
       <p class="font-[800] text-white text-2xl">
         {{ navigation?.logo }}
       </p>
