@@ -35,7 +35,7 @@ const contentTextAlignment = (alignment) => {
 <template>
   <div class="w-full" :style="content.raw !== null ? content.raw.style : ''">
     <div
-      v-if="content.content"
+      v-if="content.raw == null"
       :class="textAligment(content.alignment)"
       class="min-h-[500px] p-6 bg-center flex bg-cover"
       :style="{ backgroundImage: `url(${content.image})` }"
@@ -49,7 +49,7 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div>
 
-    <template v-if="content.raw !== null">
+    <template v-else>
       <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
         <iframe
           width="100%"
@@ -75,7 +75,12 @@ const contentTextAlignment = (alignment) => {
               :class="textAligment(content.alignment)"
               class="w-full relative flex flex-col mx-5 gap-4"
             >
-              <h1
+              <article
+                v-html="content.content"
+                :class="contentTextAlignment(content.alignment)"
+                class="prose max-w-none"
+              />
+              <!-- <h1
                 :style="{ color: content.raw.color }"
                 class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold"
               >
@@ -84,7 +89,7 @@ const contentTextAlignment = (alignment) => {
 
               <span :style="{ color: content.raw.color }" class="text-xl">
                 {{ content.raw.subtitleContent }}
-              </span>
+              </span> -->
 
               <div class="absolute right-10 -bottom-64">
                 <q-icon
