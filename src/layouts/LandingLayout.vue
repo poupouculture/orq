@@ -132,7 +132,11 @@ onMounted(async () => {
             <div class="flex flex-col">
               <div class="flex items-center gap-3">
                 <div>
-                  <img class="w-[40px]" :src="topNavbar?.icon" alt="logo" />
+                  <img
+                    v-bind="topNavbar?.raw.iconSize"
+                    :src="topNavbar?.icon"
+                    alt="logo"
+                  />
                 </div>
                 <div>
                   <p class="font-[800] text-white text-2xl">
