@@ -8,6 +8,24 @@ defineProps({
 });
 
 const route = useRoute();
+
+const conditionalStyle = (content) => {
+  let obj = {};
+  if (Object.keys(content).length === 0) {
+    return "";
+  } else {
+    obj.backgroundImage = `url(${content.image})`;
+  }
+
+  if (content.raw !== null) {
+    obj = {
+      ...obj,
+      ...content.raw.style,
+    };
+  }
+
+  return obj;
+};
 </script>
 
 <template>
@@ -19,13 +37,9 @@ const route = useRoute();
         ? 'lg:h-[70vh] homeHero'
         : 'lg:h-[70vh]'
     "
-    :style="
-      Object.keys(content).length === 0
-        ? ''
-        : { backgroundImage: `url(${content.image})` }
-    "
     class="bg-center min-h-screen flex flex-col items-center w-full p-5 lg:p-10"
     style="background-position: center; background-size: cover"
+    :style="conditionalStyle(content)"
   >
     <div class="container mt-6">
       <div
