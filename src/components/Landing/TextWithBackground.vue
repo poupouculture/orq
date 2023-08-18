@@ -86,16 +86,6 @@ const contentTextAlignment = (alignment) => {
                 {{ content.raw.subtitleContent }}
               </span>
 
-              <q-btn
-                tag="a"
-                target="_blank"
-                :href="`https://www.youtube.com/embed/${content.raw.videoId}`"
-                unelevated
-                rounded
-                color="primary"
-                label="See Video"
-              />
-
               <div class="absolute right-10 -bottom-64">
                 <q-icon
                   @click="unmute = !unmute"
