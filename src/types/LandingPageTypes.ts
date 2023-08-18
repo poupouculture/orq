@@ -8,3 +8,14 @@ export interface Navigation {
     heroText: string;
   };
 }
+
+export interface IRaw {
+  time: number;
+  icon: any; // for icon container style
+  overlay?: any; // for overlay container style
+}
+export interface IContent {
+  raw: IRaw;
+  children: any[];
+  alignment: string;
+}
