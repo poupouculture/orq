@@ -158,6 +158,27 @@ const useNavigationStore = defineStore("navigationStore", {
                 }
               );
             }
+            const PCType = [
+              "carousel_background_overlay",
+              "icon_with_background",
+            ];
+            if (PCType.includes(itemContent.page_component_id.type)) {
+              itemObj.children = itemContent.page_component_id.children
+                .map((children: any) => {
+                  const childrenObject = {
+                    ...children,
+                    image: null,
+                  };
+
+                  if (children.image !== null) {
+                    childrenObject.image = `${process.env.ORQ_API}/assets/${children.image}`;
+                  }
+                  return childrenObject;
+                })
+                .sort((a: any, b: any) => {
+                  return a.sort - b.sort;
+                });
+            }
 
             if (itemContent.page_component_id.type === "carousel") {
               itemObj.children = itemContent.page_component_id.children.map(

@@ -7,6 +7,7 @@ import Cover from "./Cover.vue";
 import CarouselIcon from "./CarouselIcon.vue";
 import Form from "./Form.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
+import BackgroundWithIcon from "./Carousel/BackgroundWithIcon.vue";
 
 const props = defineProps({
   content: {
@@ -60,6 +61,12 @@ const props = defineProps({
         v-else-if="data.type === 'text_above_image'"
         :content="data"
       />
+      <div
+        v-else-if="data.type === 'carousel_background_overlay'"
+        class="w-full"
+      >
+        <BackgroundWithIcon :content="data" />
+      </div>
 
       <Form v-else-if="data.type === 'form'" :content="data" />
     </div>
