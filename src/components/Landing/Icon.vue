@@ -31,7 +31,7 @@ const textAligment = (alignment) => {
         <div
           v-for="(children, index) in content.children"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[320px] lg:w-[320px] xl:w-[380px] py-10 gap-10 items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[320px] lg:w-[320px] xl:w-[380px] py-10 items-center flex-col"
         >
           <div class="w-full flex justify-center">
             <q-img
