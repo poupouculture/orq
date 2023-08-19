@@ -8,7 +8,6 @@ export const iconAlignment = (alignment: string) => {
     return "md:justify-around md:items-center";
   } else if (alignment === "right") {
     return "md:justify-end md:items-end";
-  } else {
-    return "md:justify-evenly md:items-center";
   }
+  return "md:justify-evenly md:items-center";
 };

@@ -54,7 +54,11 @@ const carouselTimer = (dataRaw: IRawBackgroundWithIcon) => {
         ></div>
         <div
           class="flex absolute inset-0 w-full h-full flex-col justify-center items-center md:flex-row gap-y-3"
-          :class="iconAlignment(content.raw.icon.alignment)"
+          :class="[
+            content.raw?.icon?.alignment
+              ? iconAlignment(content.raw.icon.alignment)
+              : 'md:justify-evenly',
+          ]"
         >
           <div
             v-for="(icon, i) in content.children.filter((item: any) => item.type === 'icon_with_background')"
