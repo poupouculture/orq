@@ -7,6 +7,7 @@ import Cover from "./Cover.vue";
 import CarouselIcon from "./CarouselIcon.vue";
 import Form from "./Form.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
+import WhatsAppOverlay from "src/components/Partials/WhatsAppOverlay.vue";
 
 const props = defineProps({
   content: {
