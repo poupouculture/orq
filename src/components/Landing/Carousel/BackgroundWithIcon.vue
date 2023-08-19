@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { IContent, IRaw } from "src/types/LandingPageTypes";
+import { IContent, IRawBackgroundWithIcon } from "src/types/LandingPageTypes";
+import { iconAlignment } from "src/helpers/LandingPageHelper";
 
 defineProps<{
   content: IContent;
@@ -12,26 +13,13 @@ const isMobile = computed(() => {
   return window.innerWidth < 1024;
 });
 
-const carouselTimer = (dataRaw: IRaw) => {
+const carouselTimer = (dataRaw: IRawBackgroundWithIcon) => {
   if (onHover.value) {
     return 0;
   } else if (dataRaw !== null) {
-    return dataRaw.time;
+    return dataRaw.autoplay || false;
   } else {
     return 0;
-  }
-};
-const iconAlignment = (alignment: string) => {
-  if (alignment === "center") {
-    return "md:justify-center md:items-center";
-  } else if (alignment === "left") {
-    return "md:justify-start md:items-start";
-  } else if (alignment === "around") {
-    return "md:justify-around md:items-center";
-  } else if (alignment === "right") {
-    return "md:justify-end md:items-end";
-  } else {
-    return "md:justify-evenly md:items-center";
   }
 };
 </script>
@@ -66,7 +54,7 @@ const iconAlignment = (alignment: string) => {
         ></div>
         <div
           class="flex absolute inset-0 w-full h-full flex-col justify-center items-center md:flex-row gap-y-3"
-          :class="iconAlignment(content.raw.icon)"
+          :class="iconAlignment(content.raw.icon.alignment)"
         >
           <div
             v-for="(icon, i) in content.children.filter((item: any) => item.type === 'icon_with_background')"
