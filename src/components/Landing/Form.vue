@@ -1,6 +1,8 @@
 <script setup>
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
+import { ref } from "vue";
+import { Notify } from "quasar";
 
 const props = defineProps({
   content: {
@@ -8,39 +10,58 @@ const props = defineProps({
   },
 });
 
-const submit = async () => {
-  const allForm = {
-    app: props.content.app,
-  };
+const form = ref();
 
-  await props.content.raw.form.forEach((form) => {
-    if (form.value && form.required) {
-      if (form.label === "Email") {
-        if (!validateEmail(form.value)) {
-          form.error = true;
-          form.errorMessage = `The ${form.label} Must be a valid email.`;
+const submit = async () => {
+  const valid = await form.value.validate();
+
+  if (valid) {
+    const allForm = {
+      app: props.content.app,
+    };
+
+    await props.content.raw.form.forEach((form) => {
+      if (form.value && form.required) {
+        if (form.label === "Email") {
+          if (!validateEmail(form.value)) {
+            form.error = true;
+            form.errorMessage = `The ${form.label} Must be a valid email.`;
+          } else {
+            allForm[form.field] = form.value;
+          }
         } else {
           allForm[form.field] = form.value;
         }
+      } else if (!form.value && form.required) {
+        form.error = true;
+        form.errorMessage = `The ${form.label} is required`;
       } else {
         allForm[form.field] = form.value;
       }
-    } else if (!form.value && form.required) {
-      form.error = true;
-      form.errorMessage = `The ${form.label} is required`;
-    } else {
-      allForm[form.field] = form.value;
-    }
-  });
+    });
 
-  try {
-    await contactUs(allForm);
-  } catch (error) {}
-};
+    try {
+      await contactUs(allForm).then(() => {
+        props.content.raw.form.forEach((item) => {
+          if (item.type === "checkbox") {
+            item.value = [];
+            item.error = false;
+          } else {
+            item.value = null;
+            item.error = false;
+          }
+        });
 
-const check = (form) => {
-  if (form.error) {
-    form.error = false;
+        form.value.resetValidation();
+
+        Notify.create({
+          message: "Form successfully submitted",
+          position: "top",
+          type: "positive",
+          color: "primary",
+        });
+      });
+    } catch (error) {}
   }
 };
 </script>
@@ -68,7 +89,7 @@ const check = (form) => {
         {{ content.name }}
       </p>
 
-      <form @submit.prevent.stop="submit">
+      <q-form ref="form" @submit.prevent.stop="submit">
         <div
           v-for="(form, index) in content.raw.form"
           :key="index"
@@ -86,7 +107,7 @@ const check = (form) => {
               class="formInput"
               v-if="form.type === 'email'"
               v-model="form.value"
-              @update:model-value="check(form)"
+              @update:model-value="form.error = false"
               :type="form.type"
               outlined
               :error="form.error"
@@ -125,7 +146,7 @@ const check = (form) => {
               v-model="form.value"
               :type="form.type"
               outlined
-              @update:model-value="check(form)"
+              @update:model-value="form.error = false"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
@@ -138,7 +159,7 @@ const check = (form) => {
         <div class="flex justify-end">
           <q-btn @click="submit" color="primary" :label="content.raw.button" />
         </div>
-      </form>
+      </q-form>
     </div>
   </div>
 </template>
