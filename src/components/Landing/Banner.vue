@@ -62,7 +62,6 @@ const props = defineProps({
       />
 
       <Form v-else-if="data.type === 'form'" :content="data" />
-      <WhatsAppOverlay v-if="data.type === 'whatsapp'" :data="data" />
     </div>
   </div>
 </template>
