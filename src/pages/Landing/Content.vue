@@ -2,7 +2,6 @@
 import Hero from "src/components/Landing/Hero.vue";
 import Banner from "src/components/Landing/Banner.vue";
 import { storeToRefs } from "pinia";
-
 import useLandingPage from "src/stores/modules/landingpage";
 
 const landingPageStore = useLandingPage();
