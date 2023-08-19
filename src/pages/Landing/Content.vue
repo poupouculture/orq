@@ -29,6 +29,7 @@ const { getComponent } = storeToRefs(landingPageStore);
     </div>
     <WhatsAppOverlay />
   </div>
+  <WhatsAppOverlay />
 </template>
 
 <style scoped></style>
