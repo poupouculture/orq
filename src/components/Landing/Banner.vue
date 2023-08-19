@@ -6,6 +6,7 @@ import Icon from "./Icon.vue";
 import CarouselIcon from "./CarouselIcon.vue";
 import Form from "./Form.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
+import WhatsAppOverlay from "src/components/Partials/WhatsAppOverlay.vue";
 
 const props = defineProps({
   content: {
@@ -24,7 +25,6 @@ const props = defineProps({
       <div v-if="data.type === 'carousel'" class="w-full mb-3 mx-7">
         <Carousel :content="data" />
       </div>
-
       <TextWithSideImage
         v-else-if="data.type === 'text_with_side_images'"
         :content="data"
@@ -45,6 +45,7 @@ const props = defineProps({
       />
 
       <Form v-else-if="data.type === 'form'" :content="data" />
+      <WhatsAppOverlay v-if="data.type === 'whatsapp'" :data="data" />
     </div>
   </div>
 </template>
