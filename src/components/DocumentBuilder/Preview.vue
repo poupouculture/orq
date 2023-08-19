@@ -1,51 +1,4 @@
 <template>
-  <q-dialog :modelValue="modelValue" @hide="hideModal">
-    <q-card style="min-width: 35%" class="q-pa-lg flex justify-between py-5">
-      <div class="w-full flex justify-end">
-        <q-icon name="close" class="cursor-pointer" @click="hideModal" />
-      </div>
-      <div class="w-full flex flex-col gap-3">
-        <div class="w-full flex flex-col">
-          <span>Component Type</span>
-          <div class="w-1/2">
-            <InputSelect
-              :options="componentTypes"
-              :default="componentType"
-              :value="componentType"
-              @input="updateComponentType"
-              class="bg-white mt-2"
-            />
-          </div>
-        </div>
-        <div class="w-full flex flex-col gap-1">
-          <span>Component Name (should be unique)</span>
-          <input
-            type="text"
-            v-model="componentName"
-            class="py-2 px-4 border rounded-md"
-            placeholder="Input unique component name"
-          />
-        </div>
-        <div class="w-full flex flex-col gap-1">
-          <span>Component Text</span>
-          <input
-            type="text"
-            v-model="componentText"
-            class="py-2 px-4 border rounded-md"
-            placeholder="Input component text"
-          />
-        </div>
-        <div>
-          <button
-            class="w-full bg-primary text-white rounded-md py-2"
-            @click="addComponent"
-          >
-            Submit Component
-          </button>
-        </div>
-      </div>
-    </q-card>
-  </q-dialog>
   <div class="w-full flex" style="height: 1200px">
     <div class="w-9/12 bg-white">
       <Vue3DraggableResizable
@@ -56,8 +9,8 @@
         v-model:w="logo.w"
         v-model:h="logo.h"
         v-model:active="logo.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -85,8 +38,8 @@
         v-model:w="TitleAndRef.w"
         v-model:h="TitleAndRef.h"
         v-model:active="TitleAndRef.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -113,8 +66,8 @@
         v-model:w="BillTo.w"
         v-model:h="BillTo.h"
         v-model:active="BillTo.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -142,8 +95,8 @@
         v-model:w="SynqueTitle.w"
         v-model:h="SynqueTitle.h"
         v-model:active="SynqueTitle.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -165,8 +118,8 @@
         v-model:w="TotalAmount.w"
         v-model:h="TotalAmount.h"
         v-model:active="TotalAmount.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -189,8 +142,8 @@
         v-model:w="InvoiceNo.w"
         v-model:h="InvoiceNo.h"
         v-model:active="InvoiceNo.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -221,8 +174,8 @@
         v-model:w="IssuedDate.w"
         v-model:h="IssuedDate.h"
         v-model:active="IssuedDate.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -253,8 +206,8 @@
         v-model:w="DueDate.w"
         v-model:h="DueDate.h"
         v-model:active="DueDate.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -285,8 +238,8 @@
         v-model:w="Items.w"
         v-model:h="Items.h"
         v-model:active="Items.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -360,8 +313,8 @@
         v-model:w="Stamp.w"
         v-model:h="Stamp.h"
         v-model:active="Stamp.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -388,8 +341,8 @@
         v-model:w="PaymentInstructions.w"
         v-model:h="PaymentInstructions.h"
         v-model:active="PaymentInstructions.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -423,8 +376,8 @@
         v-model:w="Notes.w"
         v-model:h="Notes.h"
         v-model:active="Notes.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -458,8 +411,8 @@
         v-model:w="AmountDue.w"
         v-model:h="AmountDue.h"
         v-model:active="AmountDue.active"
-        :draggable="true"
-        :resizable="true"
+        :draggable="false"
+        :resizable="false"
         @activated="print('activated')"
         @deactivated="print('deactivated')"
         @drag-start="print('drag-start')"
@@ -527,87 +480,13 @@
       <div class="w-full flex justify-end gap-2 mb-2">
         <button
           class="px-6 py-2 bg-gray-300 font-semibold rounded-md"
-          @click="submit"
+          @click="goBack"
         >
-          Save
+          Back
         </button>
         <button class="px-6 py-2 bg-primary text-white rounded-md">
           Download
         </button>
-      </div>
-      <input
-        type="text"
-        placeholder="Document Name"
-        class="w-full border rounded-lg mt-2 h-10 p-4"
-        v-model="name"
-      />
-      <!-- <InputSelect
-        :options="documentTypesLabel"
-        :default="documentType"
-        :value="documentType"
-        @input="updateDocumentType"
-        class="bg-white mt-2"
-      /> -->
-      <!-- <h4 class="font-semibold">Customise Invoice</h4> -->
-      <!-- <span class="mt-4 font-semibold">Invoice currency</span>
-      <span class="text-xs">
-        Select the currency for this invoice. Overrides your
-        <b>default invoice currency</b> setting.
-      </span>
-      <InputSelect
-        :options="currencies"
-        :default="currency"
-        :value="currency"
-        @input="updateCurrency"
-        class="bg-white mt-2"
-      /> -->
-      <div class="flex flex-col" v-if="documentType === 'invoice'">
-        <span class="mt-4 font-semibold">Accepted Payment Method</span>
-        <div class="w-full flex gap-2">
-          <div class="hover: cursor-pointer" @click="toggleAcceptMethod">
-            <q-icon name="fa-solid fa-toggle-on" v-if="acceptedMethod" />
-            <q-icon name="fa-solid fa-toggle-off" v-else />
-          </div>
-          <div>Credit Card</div>
-        </div>
-        <div>
-          <div class="w-16 rounded-xl text-center py-1 border text-xs">
-            Pending
-          </div>
-        </div>
-        <span class="mt-4 font-semibold"> Who pays the transcation fee? </span>
-        <span class="text-xs"> For credit card payment only. </span>
-        <span class="mt-4 font-semibold">Other setting</span>
-        <div class="w-full flex justify-between items-center mt-2">
-          <div class="flex flex items-center gap-2">
-            <div>
-              <q-icon name="fa-solid fa-briefcase" />
-            </div>
-            <span class="">Update business info</span>
-          </div>
-          <div>
-            <q-icon name="fa-solid fa-chevron-right " />
-          </div>
-        </div>
-        <div class="w-full flex justify-between items-center mt-2">
-          <div class="flex flex items-center gap-2">
-            <div>
-              <q-icon name="edit" />
-            </div>
-            <span class="">Invoice customisation</span>
-          </div>
-          <div>
-            <q-icon name="fa-solid fa-chevron-right " />
-          </div>
-        </div>
-        <div class="w-full">
-          <button
-            class="w-full py-2 mt-4 bg-primary text-white rounded-md"
-            @click="showModal"
-          >
-            <q-icon name="fa-solid fa-plus" /> Add Component
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -616,13 +495,9 @@
 <script>
 import { defineComponent } from "vue";
 import Vue3DraggableResizable from "vue3-draggable-resizable";
-import InputSelect from "src/components/InputSelect.vue";
-import {
-  components as comp,
-  componentsObject as CObj,
-  ISSUED_TO as it,
-} from "src/constants/documentTemplate.js";
+import { components as comp } from "src/constants/documentTemplate.js";
 import { getComponentsByType } from "src/api/documentTemplate";
+import { useRouter } from "vue-router";
 import {
   DocumentLabelsCollection,
   DocumentTypes,
@@ -630,19 +505,16 @@ import {
 } from "src/types/DocumentBuilder";
 
 export default defineComponent({
-  components: { Vue3DraggableResizable, InputSelect },
+  components: { Vue3DraggableResizable },
   props: {
     documentTemplate: {
       type: Object,
       default: null,
     },
-    currentType: {
-      type: String,
-      default: "invoice",
-    },
   },
   data() {
     return {
+      router: useRouter(),
       componentDatas: [],
       logo: {
         x: 50,
@@ -755,11 +627,6 @@ export default defineComponent({
       documentTypeValues: DocumentTypesCollection,
       documentType: DocumentTypes.INVOICE,
       acceptedMethod: false,
-      modelValue: false,
-      componentTypes: ["label", "input"],
-      componentType: "label",
-      componentName: "",
-      componentText: "",
       additionalComponents: [],
     };
   },
@@ -771,13 +638,9 @@ export default defineComponent({
         (data) => data.key === comp.ADDITIONAL_COMPONENT
       );
 
-      // this.updateDocumentType(
-      //   this.documentTypesLabel[this.documentTypeValues.indexOf(tempData.type)]
-      // );
-
-      this.updateDocumentType = tempData.type;
-
-      this.name = tempData.name;
+      this.updateDocumentType(
+        this.documentTypesLabel[this.documentTypeValues.indexOf(tempData.type)]
+      );
 
       const logoComponent = tempData?.components?.find(
         (c) => c.key === comp.LOGO
@@ -841,8 +704,7 @@ export default defineComponent({
         tempData.payment_methods === null || tempData.payment_methods === []
       );
     } else {
-      this.updateDocumentType(this.currentType);
-      const result = await getComponentsByType(this.currentType);
+      const result = await getComponentsByType(this.documentType);
       this.componentDatas = result.data.data[0].components;
     }
   },
@@ -864,68 +726,9 @@ export default defineComponent({
         ? this.documentTemplate.components.find((c) => c.key === componentName)
         : this.componentDatas.find((c) => c.key === componentName);
     },
-    submit() {
-      const tempComponents = [
-        {
-          key: comp.TITLE,
-          type: "string",
-          ...this.TitleAndRef,
-        },
-      ];
-
-      const componentKeys = Object.keys(comp);
-      for (let index = 0; index < componentKeys.length; index++) {
-        if (this.isComponentExist(componentKeys[index])) {
-          tempComponents.push({
-            key: componentKeys[index],
-            ...this[CObj[componentKeys[index]]],
-          });
-        }
-      }
-
-      for (let index = 0; index < this.additionalComponents.length; index++) {
-        const additionalComponent = this.additionalComponents[index];
-        tempComponents.push(additionalComponent);
-      }
-
-      this.$emit("submit", {
-        name: this.name,
-        invoice_currency: this.currency,
-        type: this.documentType,
-        payment_methods: this.acceptedMethod ? { type: "Credit Card" } : null,
-        fee_issued_to: it.CUSTOMER,
-        components: tempComponents,
-      });
-    },
-    showModal() {
-      this.modelValue = true;
-    },
-    hideModal() {
-      this.modelValue = false;
-    },
-    updateComponentType(val) {
-      this.componentType = val;
-    },
-    addComponent() {
-      this.additionalComponents.push({
-        x: 50,
-        y: 100,
-        w: 300,
-        h: 200,
-        active: false,
-        key: comp.ADDITIONAL_COMPONENT,
-        name: this.componentName,
-        type: this.componentType,
-        text: this.componentText,
-      });
-
-      this.componentType = "";
-      this.componentName = "";
-      this.componentText = "";
-
-      this.hideModal();
+    goBack() {
+      this.router.back();
     },
   },
-  emits: ["submit"],
 });
 </script>

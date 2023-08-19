@@ -12,6 +12,7 @@ export const components = {
   PAYMENT_INSTRUCTIONS: "PAYMENT_INSTRUCTIONS",
   NOTES: "NOTES",
   AMOUNT_DUE: "AMOUNT_DUE",
+  ADDITIONAL_COMPONENT: "ADDITIONAL_COMPONENT",
 };
 
 export const componentsObject = {

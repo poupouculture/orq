@@ -1,29 +1,28 @@
 <template>
-  <BaseForm @submit="submit" />
+  <BaseForm :currentType="currentType" @submit="submit" v-if="!loading" />
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import BaseForm from "../../components/DocumentBuilder/BaseForm.vue";
-import { addDocumentTemplate } from "../../api/documentTemplate.js";
-import { Notify } from "quasar";
+import useDocumentTemplateStore from "src/stores/modules/documentTemplate";
 
+const documentTemplateStore = useDocumentTemplateStore();
 const router = useRouter();
 const loading = ref(true);
 
+const currentType = ref("");
+
 onMounted(() => {
+  currentType.value = router.currentRoute.value.params.type;
   loading.value = false;
 });
 
 const submit = async (payload) => {
-  const result = await addDocumentTemplate(payload);
-  if (result.data?.errors) {
-    Notify.create({
-      message: "Error: " + result.data.errors[0].message,
-      type: "negative",
-    });
-  }
-  router.push("/document-builders");
+  console.log("submit", payload);
+  await documentTemplateStore.addDocumentTemplate(payload);
+  await router.push("/document-builders/list/" + payload.type);
+  location.reload();
 };
 </script>
