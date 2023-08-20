@@ -1,26 +1,34 @@
 <script setup>
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { Notify } from "quasar";
 
 const props = defineProps({
   content: {
     type: Object,
   },
-  form: Object,
 });
+const emits = defineEmits(["submit"]);
 const dialog = ref();
 
 const form = ref();
+const childrenExists = computed(
+  () =>
+    props.content.children.length > 0 &&
+    typeof props.content.children[0] !== "number"
+);
 
-const submit = async () => {
+const submit = async (fromEmit) => {
   const valid = await form.value.validate();
   if (valid) {
-    if (props.content.children.length) {
-      dialog.value = true;
-      return;
+    if (fromEmit === false) {
+      if (childrenExists.value) {
+        dialog.value = true;
+        return;
+      }
     }
+    emits("submit");
     const allForm = {
       app: props.content.app,
     };
@@ -65,6 +73,7 @@ const submit = async () => {
           type: "positive",
           color: "primary",
         });
+        dialog.value = false;
       });
     } catch (error) {}
   }
@@ -94,7 +103,7 @@ const submit = async () => {
         {{ content.name }}
       </p>
 
-      <q-form ref="form" @submit.prevent.stop="submit">
+      <q-form ref="form" @submit.prevent.stop="submit(false)">
         <div
           v-for="(form, index) in content.raw.form"
           :key="index"
@@ -162,13 +171,21 @@ const submit = async () => {
         </div>
 
         <div class="flex justify-end">
-          <q-btn @click="submit" color="primary" :label="content.raw.button" />
+          <q-btn
+            @click="submit(false)"
+            color="primary"
+            :label="content.raw.button"
+          />
         </div>
       </q-form>
     </div>
-    <q-dialog v-if="content.children.length" v-model="dialog">
+    <q-dialog v-if="childrenExists" v-model="dialog">
       <q-card style="max-width: 90vw">
-        <Form :content="content" class="mx-0 my-0" />
+        <Form
+          :content="content.children[0]"
+          class="mx-0 my-0"
+          @submit="submit(true)"
+        />
       </q-card>
     </q-dialog>
   </div>

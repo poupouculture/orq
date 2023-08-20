@@ -168,6 +168,7 @@ const useNavigationStore = defineStore("navigationStore", {
             const PCType = [
               "carousel_background_overlay",
               "icon_with_background",
+              "form",
             ];
             if (PCType.includes(itemContent.page_component_id.type)) {
               itemObj.children = itemContent.page_component_id.children
