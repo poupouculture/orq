@@ -16,7 +16,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div v-if="props.content" class="flex flex-col">
+  <div v-if="props.content" class="flex pb-14 flex-col">
     <div
       v-for="(data, index) in props.content.content"
       class="row relative w-full"
@@ -62,7 +62,6 @@ const props = defineProps({
       />
 
       <Form v-else-if="data.type === 'form'" :content="data" />
-      <WhatsAppOverlay v-if="data.type === 'whatsapp'" :data="data" />
     </div>
   </div>
 </template>
