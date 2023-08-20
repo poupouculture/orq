@@ -49,7 +49,7 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div>
 
-    <template v-else>
+    <template v-if="content.raw !== null">
       <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
         <iframe
           width="100%"
@@ -90,16 +90,6 @@ const contentTextAlignment = (alignment) => {
               <span :style="{ color: content.raw.color }" class="text-xl">
                 {{ content.raw.subtitleContent }}
               </span> -->
-
-              <q-btn
-                tag="a"
-                target="_blank"
-                :href="`https://www.youtube.com/embed/${content.raw.videoId}`"
-                unelevated
-                rounded
-                color="primary"
-                label="See Video"
-              />
 
               <div class="absolute right-10 -bottom-64">
                 <q-icon
