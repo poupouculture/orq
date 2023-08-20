@@ -132,7 +132,11 @@ onMounted(async () => {
             <div class="flex flex-col">
               <div class="flex items-center gap-3">
                 <div>
-                  <img class="w-[40px]" :src="topNavbar?.icon" alt="logo" />
+                  <img
+                    v-bind="bottomNavigation?.raw.iconSize"
+                    :src="bottomNavigation?.icon"
+                    alt="logo"
+                  />
                 </div>
                 <div>
                   <p class="font-[800] text-white text-2xl">
@@ -141,7 +145,17 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <div class="mt-3 text-white"></div>
+              <div
+                v-if="bottomNavigation?.raw.socialMediaItems !== null"
+                class="mt-3 text-white flex gap-3"
+              >
+                <q-btn
+                  v-for="data in bottomNavigation?.raw.socialMediaItems"
+                  :key="data"
+                  target="_blank"
+                  v-bind="{ ...data, ...bottomNavigation.raw.socialMediaBtn }"
+                />
+              </div>
             </div>
 
             <span class="text-white order-3 sm:order-2">
