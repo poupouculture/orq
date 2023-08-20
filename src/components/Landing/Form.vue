@@ -1,14 +1,21 @@
 <script setup>
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
+import { ref } from "vue";
 
 const props = defineProps({
   content: {
     type: Object,
   },
+  form: Object,
 });
 
+const dialog = ref();
 const submit = async () => {
+  if (props.content) {
+    dialog.value = true;
+    return;
+  }
   const allForm = {
     app: props.content.app,
   };
@@ -137,6 +144,11 @@ const submit = async () => {
         </div>
       </form>
     </div>
+    <q-dialog v-if="content.children.length" v-model="dialog">
+      <q-card style="max-width: 90vw">
+        <Form :content="content" class="mx-0 my-0" />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
