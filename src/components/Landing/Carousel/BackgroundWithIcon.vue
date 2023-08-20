@@ -8,15 +8,12 @@ defineProps<{
 }>();
 
 const slide = ref(1);
-const onHover = ref(false);
 const isMobile = computed(() => {
   return window.innerWidth < 1024;
 });
 
 const carouselTimer = (dataRaw: IRawBackgroundWithIcon) => {
-  if (onHover.value) {
-    return 0;
-  } else if (dataRaw !== null) {
+  if (dataRaw !== null) {
     return dataRaw.autoplay || false;
   } else {
     return 0;
@@ -39,7 +36,6 @@ const carouselTimer = (dataRaw: IRawBackgroundWithIcon) => {
       :key="childrenIndex"
       :name="childrenIndex + 1"
       class="cursor-pointer"
-      @mouseover="onHover = !onHover"
     >
       <div class="h-full">
         <q-img
@@ -53,7 +49,7 @@ const carouselTimer = (dataRaw: IRawBackgroundWithIcon) => {
           :style="{ ...content?.raw.overlay }"
         ></div>
         <div
-          class="flex absolute inset-0 w-full h-full flex-col justify-center items-center md:flex-row gap-y-3"
+          class="flex absolute inset-0 w-full h-full flex-col justify-center items-center md:flex-row gap-y-5"
           :class="[
             content.raw?.icon?.alignment
               ? iconAlignment(content.raw.icon.alignment)
@@ -66,10 +62,10 @@ const carouselTimer = (dataRaw: IRawBackgroundWithIcon) => {
             class="flex text-white flex-col items-center font-bold"
             :style="[isMobile ? icon.raw.styleMobile : icon.raw.style]"
           >
-            <p class="text-lg lg:text-2xl">
+            <p class="text lg:text-2xl">
               {{ icon.raw?.content?.title || "" }}
             </p>
-            <p class="text-xl lg:text-3xl uppercase">
+            <p class="text lg:text-3xl uppercase">
               {{ icon.raw?.content?.description || "" }}
             </p>
             <img
