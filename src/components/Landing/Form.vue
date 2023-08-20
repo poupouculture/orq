@@ -2,6 +2,7 @@
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
 import { ref } from "vue";
+import { Notify } from "quasar";
 
 const props = defineProps({
   content: {
@@ -9,40 +10,64 @@ const props = defineProps({
   },
   form: Object,
 });
-
 const dialog = ref();
-const submit = async () => {
-  if (props.content) {
-    dialog.value = true;
-    return;
-  }
-  const allForm = {
-    app: props.content.app,
-  };
 
-  await props.content.raw.form.forEach((form) => {
-    if (form.value && form.required) {
-      if (form.label === "Email") {
-        if (!validateEmail(form.value)) {
-          form.error = true;
-          form.errorMessage = `The ${form.label} Must be a valid email.`;
+const form = ref();
+
+const submit = async () => {
+  const valid = await form.value.validate();
+  if (valid) {
+    if (props.content.children.length) {
+      dialog.value = true;
+      return;
+    }
+    const allForm = {
+      app: props.content.app,
+    };
+
+    await props.content.raw.form.forEach((form) => {
+      if (form.value && form.required) {
+        if (form.label === "Email") {
+          if (!validateEmail(form.value)) {
+            form.error = true;
+            form.errorMessage = `The ${form.label} Must be a valid email.`;
+          } else {
+            allForm[form.field] = form.value;
+          }
         } else {
           allForm[form.field] = form.value;
         }
+      } else if (!form.value && form.required) {
+        form.error = true;
+        form.errorMessage = `The ${form.label} is required`;
       } else {
         allForm[form.field] = form.value;
       }
-    } else if (!form.value && form.required) {
-      form.error = true;
-      form.errorMessage = `The ${form.label} is required`;
-    } else {
-      allForm[form.field] = form.value;
-    }
-  });
+    });
 
-  try {
-    await contactUs(allForm);
-  } catch (error) {}
+    try {
+      await contactUs(allForm).then(() => {
+        props.content.raw.form.forEach((item) => {
+          if (item.type === "checkbox") {
+            item.value = [];
+            item.error = false;
+          } else {
+            item.value = null;
+            item.error = false;
+          }
+        });
+
+        form.value.resetValidation();
+
+        Notify.create({
+          message: "Form successfully submitted",
+          position: "top",
+          type: "positive",
+          color: "primary",
+        });
+      });
+    } catch (error) {}
+  }
 };
 </script>
 
@@ -69,7 +94,7 @@ const submit = async () => {
         {{ content.name }}
       </p>
 
-      <form @submit.prevent.stop="submit">
+      <q-form ref="form" @submit.prevent.stop="submit">
         <div
           v-for="(form, index) in content.raw.form"
           :key="index"
@@ -86,10 +111,10 @@ const submit = async () => {
             <q-input
               class="formInput"
               v-if="form.type === 'email'"
-              :model-value="form.value"
+              v-model="form.value"
+              @update:model-value="form.error = false"
               :type="form.type"
               outlined
-              :ref="form.type"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
@@ -113,12 +138,9 @@ const submit = async () => {
 
             <q-input
               v-else-if="!form.required"
-              :model-value="form.value"
+              v-model="form.value"
               :type="form.type"
-              :ref="form.type"
               outlined
-              :error="form.error"
-              :error-message="form.errorMessage"
               lazy-rules
               class="mb-4 formInput"
               dense
@@ -128,8 +150,8 @@ const submit = async () => {
               v-else
               v-model="form.value"
               :type="form.type"
-              :ref="form.type"
               outlined
+              @update:model-value="form.error = false"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
@@ -142,7 +164,7 @@ const submit = async () => {
         <div class="flex justify-end">
           <q-btn @click="submit" color="primary" :label="content.raw.button" />
         </div>
-      </form>
+      </q-form>
     </div>
     <q-dialog v-if="content.children.length" v-model="dialog">
       <q-card style="max-width: 90vw">
