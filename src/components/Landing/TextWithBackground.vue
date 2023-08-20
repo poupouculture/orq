@@ -49,7 +49,7 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div>
 
-    <template v-if="content.raw !== null">
+    <template v-else>
       <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
         <iframe
           width="100%"
