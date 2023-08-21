@@ -22,7 +22,7 @@ const { getComponent } = storeToRefs(landingPageStore);
         </div>
       </div>
     </Hero>
-    <div class="w-full flex justify-center flex-col min-h-screen items-center">
+    <div class="w-full flex flex-col min-h-screen items-center">
       <div class="w-full">
         <Banner :content="getComponent" />
       </div>

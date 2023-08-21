@@ -122,7 +122,7 @@ onMounted(async () => {
         <router-view></router-view>
       </div>
 
-      <div class="w-full flex bg-[#4B44F6] justify-center">
+      <div class="w-full flex bg-[#4B44F6] justify-center mt-auto">
         <div
           class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
         >
