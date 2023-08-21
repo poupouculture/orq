@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import logo from "assets/images/logo.svg";
 import menuIcon from "assets/images/menu.png";
 import { useRouter } from "vue-router";
 import useLandingPage from "src/stores/modules/landingpage";
@@ -11,6 +10,14 @@ const router = useRouter();
 // Computed
 const navigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
+});
+
+const iconStyle = computed(() => {
+  return navigation.value?.raw.iconSize
+    ? navigation.value?.raw.iconSize
+    : {
+        width: 100,
+      };
 });
 
 // Methods
@@ -26,15 +33,17 @@ const getComponentById = async (id: string, url: string) => {
       :to="{ name: 'landingpage' }"
       class="flex justify-center items-center gap-3"
     >
-      <img class="w-[50px]" :src="logo" alt="logo" />
-      <p class="font-[800] text-white text-2xl">ChaQ</p>
+      <img v-bind="iconStyle" :src="navigation?.icon" />
+      <p class="font-[800] text-white text-2xl">
+        {{ navigation?.logo }}
+      </p>
     </router-link>
     <div v-if="navigation" class="flex items-center gap-5">
       <button
         @click="getComponentById(navigate.id, navigate.url)"
         v-for="(navigate, index) in navigation?.pages"
         :key="index"
-        class="text-white text-lg font-bold"
+        class="text-lg font-bold"
         :class="{ hidden: $q.screen.lt.lg }"
       >
         {{ navigate.name }}

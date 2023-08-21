@@ -1,35 +1,45 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { storeToRefs } from "pinia";
 
-import useLandingPage from "src/stores/modules/landingpage";
-
-const landingPageStore = useLandingPage();
-const { getComponent } = storeToRefs(landingPageStore);
+defineProps({
+  content: {
+    type: Object,
+  },
+});
 
 const route = useRoute();
 
-const scrollDown = () => {
-  window.scrollTo(0, 500);
+const conditionalStyle = (content) => {
+  let obj = {};
+  if (Object.keys(content).length === 0) {
+    return "";
+  } else {
+    obj.backgroundImage = `url(${content.image})`;
+  }
+
+  if (content.raw !== null) {
+    obj = {
+      ...obj,
+      ...content.raw.style,
+    };
+  }
+
+  return obj;
 };
 </script>
 
 <template>
   <div
     :class="
-      Object.keys(getComponent).length === 0 && route.name == 'landingpage'
+      Object.keys(content).length === 0 && route.name == 'landingpage'
         ? 'homeHero'
         : route.name !== 'landingpage'
         ? 'lg:h-[70vh] homeHero'
         : 'lg:h-[70vh]'
     "
-    :style="
-      Object.keys(getComponent).length === 0
-        ? ''
-        : { backgroundImage: `url(${getComponent.iconCover})` }
-    "
     class="bg-center min-h-screen flex flex-col items-center w-full p-5 lg:p-10"
     style="background-position: center; background-size: cover"
+    :style="conditionalStyle(content)"
   >
     <div class="container mt-6">
       <div
@@ -44,12 +54,12 @@ const scrollDown = () => {
           <slot />
         </div>
         <div class="flex w-full mt-24 justify-center">
-          <button
+          <!-- <button
             @click="scrollDown"
             class="rounded-full p-2 border-dashed border-2"
           >
             <q-icon class="text-white" name="arrow_downward" size="4rem" />
-          </button>
+          </button> -->
         </div>
       </div>
     </div>

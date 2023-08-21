@@ -3,13 +3,16 @@ import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
 import { Screen } from "quasar";
-import logo from "assets/images/logo.svg";
 import useLandingPage from "src/stores/modules/landingpage";
 
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
 const leftDrawerOpen = ref(false);
+const defaultStyle = ref({
+  backgroundColor: "#4b44f6",
+  color: "#FFFFFF",
+});
 
 const drawer = computed({
   get() {
@@ -34,6 +37,28 @@ const bottomNavigation = computed(() => {
 
 const mobileNavigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
+});
+
+const topNavbar = computed(() => {
+  return useLandingPageStore.topNavigation[0];
+});
+
+const navbarStyle = computed(() => {
+  return useLandingPageStore.topNavigation[0]?.raw
+    ? useLandingPageStore.topNavigation[0]?.raw
+    : defaultStyle.value;
+});
+
+const currentComponent = computed(() => {
+  return useLandingPageStore.getComponent.heroText;
+});
+
+const iconStyle = computed(() => {
+  return bottomNavigation.value?.raw.iconSize
+    ? bottomNavigation.value?.raw.iconSize
+    : {
+        width: 100,
+      };
 });
 
 watch(drawer, (value) => {
@@ -97,18 +122,21 @@ onMounted(async () => {
 
 <template>
   <q-layout view="hHh lpR fFf">
-    <div class="w-full p-5 absolute flex justify-center">
-      <div class="container">
-        <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
-      </div>
-    </div>
-
     <q-page-container>
+      <div
+        :style="navbarStyle"
+        :class="{ 'absolute z-10': currentComponent }"
+        class="w-full p-5 flex justify-center"
+      >
+        <div class="container">
+          <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
+        </div>
+      </div>
       <div class="bg-white font-['Red_Hat_Display']">
         <router-view></router-view>
       </div>
 
-      <div class="w-full flex bg-[#4B44F6] justify-center">
+      <div class="w-full flex bg-[#4B44F6] justify-center mt-auto">
         <div
           class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
         >
@@ -116,16 +144,32 @@ onMounted(async () => {
             class="flex flex-col order-2 mt-4 lg:order-1 gap-4 w-56 justify-between"
           >
             <div class="flex flex-col">
-              <div class="flex gap-3">
+              <div class="flex items-center gap-3">
                 <div>
-                  <img class="w-[40px]" :src="logo" alt="logo" />
+                  <img
+                    v-bind="iconStyle"
+                    :src="bottomNavigation?.icon"
+                    alt="logo"
+                  />
                 </div>
                 <div>
-                  <p class="font-[800] text-white text-2xl">ChaQ</p>
+                  <p class="font-[800] text-white text-2xl">
+                    {{ topNavbar?.logo }}
+                  </p>
                 </div>
               </div>
 
-              <div class="mt-3 text-white"></div>
+              <div
+                v-if="bottomNavigation?.raw.socialMediaItems !== null"
+                class="mt-3 text-white flex gap-3"
+              >
+                <q-btn
+                  v-for="data in bottomNavigation?.raw.socialMediaItems"
+                  :key="data"
+                  target="_blank"
+                  v-bind="{ ...data, ...bottomNavigation.raw.socialMediaBtn }"
+                />
+              </div>
             </div>
 
             <span class="text-white order-3 sm:order-2">

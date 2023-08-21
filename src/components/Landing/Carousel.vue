@@ -37,8 +37,9 @@ const carouselTimer = (dataRaw) => {
       :name="childrenIndex + 1"
       class="cursor-pointer"
       @mouseover="onHover = !onHover"
-      :img-src="carousel.image"
-    />
+    >
+      <q-img no-spinner style="height: 100%" :src="carousel.image" />
+    </q-carousel-slide>
   </q-carousel>
 </template>
 
