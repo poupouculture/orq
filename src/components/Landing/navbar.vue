@@ -12,6 +12,14 @@ const navigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
 });
 
+const navbarStyle = computed(() => {
+  return navigation.value?.raw.iconSize
+    ? navigation.value?.raw.iconSize
+    : {
+        width: 100,
+      };
+});
+
 // Methods
 const getComponentById = async (id: string, url: string) => {
   await useLandingPageStore.getComponentByid(id);
@@ -25,7 +33,7 @@ const getComponentById = async (id: string, url: string) => {
       :to="{ name: 'landingpage' }"
       class="flex justify-center items-center gap-3"
     >
-      <img v-bind="navigation?.raw.iconSize" :src="navigation?.icon" />
+      <img v-bind="navbarStyle" :src="navigation?.icon" />
       <p class="font-[800] text-white text-2xl">
         {{ navigation?.logo }}
       </p>
