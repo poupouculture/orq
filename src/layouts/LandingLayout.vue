@@ -9,6 +9,10 @@ const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
 const leftDrawerOpen = ref(false);
+const defaultStyle = ref({
+  backgroundColor: "#4b44f6",
+  color: "#FFFFFF",
+});
 
 const drawer = computed({
   get() {
@@ -40,11 +44,21 @@ const topNavbar = computed(() => {
 });
 
 const navbarStyle = computed(() => {
-  return useLandingPageStore.topNavigation[0]?.raw;
+  return useLandingPageStore.topNavigation[0]?.raw
+    ? useLandingPageStore.topNavigation[0]?.raw
+    : defaultStyle.value;
 });
 
 const currentComponent = computed(() => {
   return useLandingPageStore.getComponent.heroText;
+});
+
+const iconStyle = computed(() => {
+  return bottomNavigation.value?.raw.iconSize
+    ? bottomNavigation.value?.raw.iconSize
+    : {
+        width: 100,
+      };
 });
 
 watch(drawer, (value) => {
@@ -133,7 +147,7 @@ onMounted(async () => {
               <div class="flex items-center gap-3">
                 <div>
                   <img
-                    v-bind="bottomNavigation?.raw.iconSize"
+                    v-bind="iconStyle"
                     :src="bottomNavigation?.icon"
                     alt="logo"
                   />
