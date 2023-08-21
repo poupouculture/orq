@@ -26,13 +26,13 @@ const tabs = computed(() => {
       label: "Customer",
       component: CustomerInformation,
       value: "customerInformation",
-      disable: true,
+      disable: false,
     },
     {
       label: "Invoice",
       component: InvoiceInformation,
       value: "invoiceInformation",
-      disable: true,
+      disable: false,
     },
   ];
 

@@ -144,12 +144,24 @@ const routes = [
         component: () => import("pages/DocumentBuilder/index.vue"),
       },
       {
+        path: "document-builders/list/:type",
+        component: () => import("pages/DocumentBuilder/list.vue"),
+      },
+      {
         path: "document-builders/create",
+        component: () => import("pages/DocumentBuilder/create.vue"),
+      },
+      {
+        path: "document-builders/:type/create",
         component: () => import("pages/DocumentBuilder/create.vue"),
       },
       {
         path: "document-builders/:id",
         component: () => import("pages/DocumentBuilder/edit.vue"),
+      },
+      {
+        path: "document-builders/:id/preview",
+        component: () => import("pages/DocumentBuilder/preview.vue"),
       },
       {
         path: "document-components",
