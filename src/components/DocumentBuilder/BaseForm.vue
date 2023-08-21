@@ -841,8 +841,8 @@ export default defineComponent({
         tempData.payment_methods === null || tempData.payment_methods === []
       );
     } else {
-      this.updateDocumentType(this.currentType);
-      const result = await getComponentsByType(this.currentType);
+      this.updateDocumentType(this.currentType ?? "invoice");
+      const result = await getComponentsByType(this.currentType ?? "invoice");
       this.componentDatas = result.data.data[0].components;
     }
   },
