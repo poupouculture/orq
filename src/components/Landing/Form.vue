@@ -1,41 +1,82 @@
 <script setup>
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
+import { computed, ref } from "vue";
+import { Notify } from "quasar";
 
 const props = defineProps({
   content: {
     type: Object,
   },
 });
+const emits = defineEmits(["submit"]);
+const dialog = ref();
 
-const submit = async () => {
-  const allForm = {
-    app: props.content.app,
-  };
+const form = ref();
+const childrenExists = computed(
+  () =>
+    props.content.children.length > 0 &&
+    typeof props.content.children[0] !== "number"
+);
 
-  await props.content.raw.form.forEach((form) => {
-    if (form.value && form.required) {
-      if (form.label === "Email") {
-        if (!validateEmail(form.value)) {
-          form.error = true;
-          form.errorMessage = `The ${form.label} Must be a valid email.`;
+const submit = async (fromEmit) => {
+  const valid = await form.value.validate();
+  if (valid) {
+    if (fromEmit === false) {
+      if (childrenExists.value) {
+        dialog.value = true;
+        return;
+      }
+    }
+    emits("submit");
+    const allForm = {
+      app: props.content.app,
+    };
+
+    await props.content.raw.form.forEach((form) => {
+      if (form.value && form.required) {
+        if (form.label === "Email") {
+          if (!validateEmail(form.value)) {
+            form.error = true;
+            form.errorMessage = `The ${form.label} Must be a valid email.`;
+          } else {
+            allForm[form.field] = form.value;
+          }
         } else {
           allForm[form.field] = form.value;
         }
+      } else if (!form.value && form.required) {
+        form.error = true;
+        form.errorMessage = `The ${form.label} is required`;
       } else {
         allForm[form.field] = form.value;
       }
-    } else if (!form.value && form.required) {
-      form.error = true;
-      form.errorMessage = `The ${form.label} is required`;
-    } else {
-      allForm[form.field] = form.value;
-    }
-  });
+    });
 
-  try {
-    await contactUs(allForm);
-  } catch (error) {}
+    try {
+      await contactUs(allForm).then(() => {
+        props.content.raw.form.forEach((item) => {
+          if (item.type === "checkbox") {
+            item.value = [];
+            item.error = false;
+          } else {
+            item.value = null;
+            item.error = false;
+          }
+        });
+
+        form.value.resetValidation();
+
+        Notify.create({
+          message: "Form successfully submitted",
+          position: "top",
+          type: "positive",
+          color: "primary",
+        });
+        dialog.value = false;
+      });
+    } catch (error) {}
+  }
 };
 </script>
 
@@ -62,7 +103,7 @@ const submit = async () => {
         {{ content.name }}
       </p>
 
-      <form @submit.prevent.stop="submit">
+      <q-form ref="form" @submit.prevent.stop="submit(false)">
         <div
           v-for="(form, index) in content.raw.form"
           :key="index"
@@ -79,10 +120,10 @@ const submit = async () => {
             <q-input
               class="formInput"
               v-if="form.type === 'email'"
-              :model-value="form.value"
+              v-model="form.value"
+              @update:model-value="form.error = false"
               :type="form.type"
               outlined
-              :ref="form.type"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
@@ -106,12 +147,9 @@ const submit = async () => {
 
             <q-input
               v-else-if="!form.required"
-              :model-value="form.value"
+              v-model="form.value"
               :type="form.type"
-              :ref="form.type"
               outlined
-              :error="form.error"
-              :error-message="form.errorMessage"
               lazy-rules
               class="mb-4 formInput"
               dense
@@ -121,8 +159,8 @@ const submit = async () => {
               v-else
               v-model="form.value"
               :type="form.type"
-              :ref="form.type"
               outlined
+              @update:model-value="form.error = false"
               :error="form.error"
               :error-message="form.errorMessage"
               lazy-rules
@@ -133,10 +171,23 @@ const submit = async () => {
         </div>
 
         <div class="flex justify-end">
-          <q-btn @click="submit" color="primary" :label="content.raw.button" />
+          <q-btn
+            @click="submit(false)"
+            color="primary"
+            :label="content.raw.button"
+          />
         </div>
-      </form>
+      </q-form>
     </div>
+    <q-dialog v-if="childrenExists" v-model="dialog">
+      <q-card style="max-width: 90vw">
+        <Form
+          :content="content.children[0]"
+          class="mx-0 my-0"
+          @submit="submit(true)"
+        />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
