@@ -94,31 +94,24 @@ const useNavigationStore = defineStore("navigationStore", {
           //   return dataItem
           // } )
 
-          const cover = data.data.component.find((item: any) => {
-            let dataItem = "";
-            if (item.page_component_id !== null) {
-              if (item.page_component_id.type === "cover_photo") {
-                dataItem = item;
-              }
-            }
+          // const cover = data.data.component.find((item: any) => {
+          //   let dataItem = "";
+          //   if (item.page_component_id !== null) {
+          //     if (item.page_component_id.type === "cover_photo") {
+          //       dataItem = item;
+          //     }
+          //   }
 
-            return dataItem;
-          });
+          //   return dataItem;
+          // });
 
           const content = data.data.component.filter(function (item: any) {
             let dataItem = "";
             if (item.page_component_id !== null) {
-              if (item.page_component_id.type !== "cover_photo") {
-                dataItem = item;
-              }
+              dataItem = item;
             }
             return dataItem;
           });
-
-          if (cover) {
-            obj.iconCover = `${process.env.ORQ_API}/assets/${cover.page_component_id.image}`;
-            obj.heroText = cover.page_component_id.name;
-          }
 
           // Proccess content here
           obj.content = content.map((itemContent: any) => {

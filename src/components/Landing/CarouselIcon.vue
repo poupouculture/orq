@@ -19,7 +19,7 @@ const flexDirection = (alignment) => {
 </script>
 
 <template>
-  <div class="w-full py-6">
+  <div class="w-full py-8">
     <div class="w-full flex justify-center">
       <article v-html="content.content" class="prose"></article>
     </div>
@@ -51,6 +51,10 @@ const flexDirection = (alignment) => {
       <Vue3Marquee
         v-if="content?.raw.style === 'carousel'"
         v-bind="content?.raw.props"
+        :duration="
+          content?.raw.props.duration ? content?.raw.props.duration : 5
+        "
+        direction="reverse"
       >
         <img
           v-for="(img, i) in content.children"
