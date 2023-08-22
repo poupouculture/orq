@@ -186,6 +186,7 @@ const displayedContent = computed(() => {
                 :key="index"
                 :label="checkbox.label"
                 v-model="form.value"
+                :rules="[(val) => required(val)]"
                 color="primary"
               />
             </template>
