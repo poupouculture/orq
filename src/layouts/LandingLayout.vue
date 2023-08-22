@@ -54,7 +54,7 @@ const currentComponent = computed(() => {
 });
 
 const iconStyle = computed(() => {
-  return bottomNavigation.value?.raw.iconSize
+  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.iconSize
     ? bottomNavigation.value?.raw.iconSize
     : {
         width: 100,
@@ -62,7 +62,7 @@ const iconStyle = computed(() => {
 });
 
 const bottomStyle = computed(() => {
-  return bottomNavigation.value?.raw.style
+  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.style
     ? bottomNavigation.value?.raw.style
     : defaultStyle.value;
 });
@@ -146,7 +146,12 @@ onMounted(async () => {
         <div
           class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
         >
-          <template v-if="bottomNavigation?.raw.footerStyle === 'flex'">
+          <template
+            v-if="
+              bottomNavigation?.raw &&
+              bottomNavigation?.raw.footerStyle === 'flex'
+            "
+          >
             <div class="grid md:grid-cols-3 gap-4 w-full">
               <div class="col-span-1 order-1">
                 <div>
@@ -204,7 +209,10 @@ onMounted(async () => {
                 </div>
 
                 <div
-                  v-if="bottomNavigation?.raw.socialMediaItems !== null"
+                  v-if="
+                    bottomNavigation?.raw &&
+                    bottomNavigation?.raw.socialMediaItems !== null
+                  "
                   class="mt-3 text-white flex gap-3"
                 >
                   <q-btn
