@@ -196,7 +196,7 @@ const displayedContent = computed(() => {
                     :key="index"
                     :label="checkbox.label"
                     v-model="form.value"
-                    color="green"
+                    color="primary"
                   >
                   </q-checkbox>
                 </template>
