@@ -65,7 +65,7 @@ const submit = async (fromEmit) => {
     }
     emits("submit");
     const allForm = {
-      app: props.content.app,
+      app: process.env.APP || props.content.app,
     };
 
     await props.content.raw.form.forEach((form) => {
@@ -180,15 +180,27 @@ const displayedContent = computed(() => {
             />
 
             <template v-else-if="form.type === 'checkbox'">
-              <q-checkbox
-                v-for="(checkbox, index) in form.options"
-                :val="checkbox.label"
-                :key="index"
-                :label="checkbox.label"
-                v-model="form.value"
+              <q-field
+                :value="form.value"
+                borderless
+                @update:model-value="form.error = false"
+                dense
                 :rules="[(val) => required(val)]"
-                color="primary"
-              />
+                :error="form.error"
+                :error-message="form.errorMessage"
+              >
+                <template v-slot:control>
+                  <q-checkbox
+                    v-for="(checkbox, index) in form.options"
+                    :val="checkbox.label"
+                    :key="index"
+                    :label="checkbox.label"
+                    v-model="form.value"
+                    color="green"
+                  >
+                  </q-checkbox>
+                </template>
+              </q-field>
             </template>
 
             <q-input
