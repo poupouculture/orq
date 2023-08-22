@@ -151,7 +151,7 @@ onMounted(async () => {
               <div class="col-span-1 order-1">
                 <div>
                   <img
-                    v-bind="bottomNavigation?.raw.iconSize"
+                    v-bind="iconStyle"
                     :src="bottomNavigation?.icon"
                     alt="logo"
                   />
