@@ -1,7 +1,8 @@
 <script setup>
+import { computed } from "vue";
 import { Vue3Marquee } from "vue3-marquee";
 
-defineProps({
+const props = defineProps({
   content: {
     type: Object,
   },
@@ -16,11 +17,31 @@ const flexDirection = (alignment) => {
     return "justify-end";
   }
 };
+
+const contentStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.contentStyle
+    ? props.content.raw.contentStyle
+    : {
+        padding: "10px",
+      };
+});
+
+const wrapperStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.wrapperStyle
+    ? props.content.raw.wrapperStyle
+    : {
+        padding: "10px",
+      };
+});
 </script>
 
 <template>
-  <div class="w-full py-8">
-    <div class="w-full flex justify-center">
+  <div class="w-full" :style="wrapperStyle">
+    <div
+      class="w-full flex"
+      :class="flexDirection(content.alignment)"
+      :style="contentStyle"
+    >
       <article v-html="content.content" class="prose"></article>
     </div>
 
