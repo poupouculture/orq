@@ -19,6 +19,14 @@ const childrenExists = computed(
     typeof props.content.children[0] !== "number"
 );
 
+const containerStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
+    : {
+        margin: "20px",
+      };
+});
+
 const submit = async (fromEmit) => {
   const valid = await form.value.validate();
   if (valid) {
@@ -82,8 +90,8 @@ const submit = async (fromEmit) => {
 
 <template>
   <div
-    class="w-full mx-7 my-5 grid gap-5 lg:grid-cols-2 bg-center bg-cover p-2 lg:p-6"
-    :style="{ backgroundImage: `url(${content.image})` }"
+    class="w-full grid gap-5 lg:grid-cols-2 bg-center bg-cover lg:p-6"
+    :style="{ backgroundImage: `url(${content.image})`, ...containerStyle }"
   >
     <div
       :class="content.alignment === 'left' ? 'order-1' : 'order-2'"
