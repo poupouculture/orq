@@ -13,6 +13,15 @@ const defaultStyle = ref({
   backgroundColor: "#4b44f6",
   color: "#FFFFFF",
 });
+const mediaSocialStyle = ref({
+  push: true,
+  size: "sm",
+  round: true,
+  style: {
+    background: "#ffffff",
+  },
+  textColor: "primary",
+});
 
 const drawer = computed({
   get() {
@@ -47,6 +56,13 @@ const navbarStyle = computed(() => {
   return useLandingPageStore.topNavigation[0]?.raw
     ? useLandingPageStore.topNavigation[0]?.raw
     : defaultStyle.value;
+});
+
+const socialMediabBtn = computed(() => {
+  return bottomNavigation.value?.raw &&
+    bottomNavigation.value.raw.socialMediaBtn
+    ? bottomNavigation.value.raw.socialMediaBtn
+    : mediaSocialStyle.value;
 });
 
 const currentComponent = computed(() => {
@@ -174,14 +190,17 @@ onMounted(async () => {
 
               <div class="col-span-1 order-2 lg:order-3 flex lg:justify-end">
                 <div
-                  v-if="bottomNavigation?.raw.socialMediaItems !== null"
+                  v-if="
+                    bottomNavigation?.raw &&
+                    bottomNavigation?.raw.socialMediaItems !== null
+                  "
                   class="mt-3 text-white flex gap-3"
                 >
                   <q-btn
                     v-for="data in bottomNavigation?.raw.socialMediaItems"
                     :key="data"
                     target="_blank"
-                    v-bind="{ ...data, ...bottomNavigation.raw.socialMediaBtn }"
+                    v-bind="{ ...data, ...socialMediabBtn }"
                   />
                 </div>
               </div>
