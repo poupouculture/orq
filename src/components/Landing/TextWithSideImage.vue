@@ -1,13 +1,24 @@
 <script setup>
-defineProps({
+import { ref, computed } from "vue";
+const props = defineProps({
   content: {
     type: Object,
   },
 });
+
+const defaultStyle = ref({
+  margin: "10px",
+});
+
+const containerStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
+    : defaultStyle.value;
+});
 </script>
 
 <template>
-  <div class="grid md:grid-cols-2 gap-4 mx-7 my-5 w-full">
+  <div class="grid md:grid-cols-2 gap-4 w-full" :style="containerStyle">
     <div
       :class="content.alignment === 'left' ? 'order-1 lg:order-2' : 'order-1'"
       class="col-span-1"
