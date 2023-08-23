@@ -117,10 +117,12 @@ const useContactStore = defineStore("useContact", {
       Loading.show();
       const result = await dissociateContactApi(payload);
 
-      if (result.data.errors) {
+      if (!result || result.status !== 200) {
         Notify.create({
-          message: "Failed: " + result.data.errors[0].message,
-          type: "error",
+          message:
+            "Failed: " + result?.data?.errors[0]?.message || "something error",
+          type: "negative",
+          position: "top",
         });
       } else {
         Notify.create({
