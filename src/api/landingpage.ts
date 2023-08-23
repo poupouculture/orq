@@ -25,5 +25,8 @@ export const getNavigationById = async (id?: string) => {
 };
 
 export const contactUs = async (args: any) => {
-  return orqApi.post("/items/form", args);
+  return orqApi.post("/items/form", {
+    app: args.app,
+    raw: args,
+  });
 };
