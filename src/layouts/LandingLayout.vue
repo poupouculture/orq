@@ -190,11 +190,25 @@ onMounted(async () => {
 
               <div class="col-span-1 order-2 lg:order-3 flex lg:justify-end">
                 <div
+                  v-if="bottomNavigation"
+                  class="w-50 text-end flex flex-wrap lg:justify-end gap-3"
+                >
+                  <a
+                    class="cursor-pointer"
+                    v-for="(url, index) in bottomNavigation?.pages"
+                    :key="index"
+                    @click="getComponentById(url.id, url.url)"
+                  >
+                    {{ url.name }}
+                  </a>
+                </div>
+
+                <div
                   v-if="
                     bottomNavigation?.raw &&
                     bottomNavigation?.raw.socialMediaItems !== null
                   "
-                  class="mt-3 text-white flex gap-3"
+                  class="mt-3 text-white flex gap-3 w-full lg:justify-end"
                 >
                   <q-btn
                     v-for="data in bottomNavigation?.raw.socialMediaItems"
@@ -265,14 +279,14 @@ onMounted(async () => {
                   {{ url.name }}
                 </a>
 
-                <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
+                <!-- <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
                   <div class="rounded-full flex items-center p-1 bg-white">
                     <q-icon size="20px" name="fa-brands fa-facebook-f" />
                   </div>
                   <div class="rounded-full flex items-center p-1 bg-white">
                     <q-icon size="20px" name="fa-brands fa-instagram" />
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </template>
