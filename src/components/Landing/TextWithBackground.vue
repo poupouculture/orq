@@ -47,7 +47,7 @@ const contentTextAlignment = (alignment) => {
     :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
   >
     <div
-      v-if="!content.raw.hasOwnProperty('videoId')"
+      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
       :class="textAligment(content.alignment)"
       class="bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
@@ -62,7 +62,10 @@ const contentTextAlignment = (alignment) => {
     </div>
 
     <template v-else>
-      <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
+      <div
+        v-if="content.raw && content.raw.hasOwnProperty('videoId')"
+        class="w-full relative"
+      >
         <iframe
           width="100%"
           height="735"
