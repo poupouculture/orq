@@ -47,9 +47,11 @@ const contentTextAlignment = (alignment) => {
     :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
   >
     <div
-      v-if="!content.raw.hasOwnProperty('videoId')"
+      v-if="
+        !content.raw.hasOwnProperty('videoId') && content.alignment !== 'row'
+      "
       :class="textAligment(content.alignment)"
-      class="bg-center min-h-[700px] flex bg-no-repeat bg-cover"
+      class="bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
     >
       <div class="md:w-1/2 w-full">
@@ -60,6 +62,8 @@ const contentTextAlignment = (alignment) => {
         />
       </div>
     </div>
+
+    <div v-else-if="content?.alignment === 'row'">hello</div>
 
     <template v-else>
       <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
