@@ -94,14 +94,14 @@ const submit = async (fromEmit) => {
     :style="{ backgroundImage: `url(${content.image})`, ...containerStyle }"
   >
     <div
-      :class="content.alignment === 'left' ? 'order-1' : 'order-2'"
+      :class="content.alignment === 'left' ? 'order-1' : ''"
       class="col-span-1 text-white"
     >
       <article v-html="content.content" class="prose text-white" />
     </div>
 
     <div
-      :class="content.alignment === 'right' ? 'order-2' : 'order-1'"
+      :class="content.alignment === 'right' ? 'order-2' : ''"
       class="flex bg-white p-6 rounded-lg gap-5 col-span-1 flex-col w-full"
     >
       <p
