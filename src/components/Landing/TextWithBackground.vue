@@ -49,7 +49,7 @@ const contentTextAlignment = (alignment) => {
     <div
       v-if="!content.raw.hasOwnProperty('videoId')"
       :class="textAligment(content.alignment)"
-      class="bg-center min-h-[700px] flex bg-no-repeat bg-cover"
+      class="bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
     >
       <div class="md:w-1/2 w-full">
