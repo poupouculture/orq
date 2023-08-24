@@ -112,7 +112,20 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div> -->
 
-    <div v-else-if="content?.alignment === 'row'">hello</div>
+    <div
+      v-else-if="content?.alignment === 'row'"
+      class="bg-center flex bg-no-repeat bg-cover"
+      :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
+    >
+      <div
+        v-for="(children, index) in content.children"
+        :key="index"
+        :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
+        class="md:w-1/2 w-full"
+      >
+        <Wysiwyg :content="children" />
+      </div>
+    </div>
 
     <template v-else>
       <div
