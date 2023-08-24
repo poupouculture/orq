@@ -33,6 +33,12 @@ const wrapperStyle = computed(() => {
         padding: "10px",
       };
 });
+
+const iconAligment = computed(() => {
+  return props.content.raw && props.content?.raw.iconAligment
+    ? props.content?.raw.iconAligment
+    : props.content?.alignment;
+});
 </script>
 
 <template>
@@ -49,7 +55,7 @@ const wrapperStyle = computed(() => {
       <div
         v-if="content?.raw.style === 'grid'"
         class="w-full flex"
-        :class="flexDirection(content.alignment)"
+        :class="flexDirection(iconAligment)"
       >
         <div class="flex justify-center">
           <div class="flex flex-wrap justify-center">
@@ -71,9 +77,10 @@ const wrapperStyle = computed(() => {
 
       <Vue3Marquee
         v-if="content?.raw.style === 'carousel'"
-        v-bind="content?.raw.props"
         :duration="
-          content?.raw.props.duration ? content?.raw.props.duration : 5
+          content?.raw && content?.raw.props.duration
+            ? content?.raw.props.duration
+            : 5
         "
         direction="reverse"
       >
@@ -87,6 +94,25 @@ const wrapperStyle = computed(() => {
         />
       </Vue3Marquee>
     </template>
+
+    <Vue3Marquee
+      v-else
+      :duration="
+        content?.raw && content?.raw.props.duration
+          ? content?.raw.props.duration
+          : 5
+      "
+      direction="reverse"
+    >
+      <img
+        v-for="(img, i) in content.children"
+        :key="i"
+        :src="img.icon"
+        width="150"
+        height="150"
+        class="object-cover mx-6"
+      />
+    </Vue3Marquee>
   </div>
 </template>
 
