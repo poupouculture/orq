@@ -1,13 +1,22 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
-defineProps({
+const props = defineProps({
   content: {
     type: Object,
   },
 });
 
 const unmute = ref(false);
+
+// Computed
+const imageStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.backgroundImageStyle
+    ? props.content?.raw.backgroundImageStyle
+    : {
+        minHeight: "700px",
+      };
+});
 
 // Methods
 
@@ -33,12 +42,15 @@ const contentTextAlignment = (alignment) => {
 </script>
 
 <template>
-  <div class="w-full" :style="content.raw !== null ? content.raw.style : ''">
+  <div
+    class="w-full"
+    :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
+  >
     <div
-      v-if="content.raw == null"
+      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
       :class="textAligment(content.alignment)"
-      class="min-h-[700px] p-6 bg-center flex bg-no-repeat bg-cover"
-      :style="{ backgroundImage: `url(${content.image})` }"
+      class="bg-center flex bg-no-repeat bg-cover"
+      :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
     >
       <div class="md:w-1/2 w-full">
         <article
@@ -50,7 +62,10 @@ const contentTextAlignment = (alignment) => {
     </div>
 
     <template v-else>
-      <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
+      <div
+        v-if="content.raw && content.raw.hasOwnProperty('videoId')"
+        class="w-full relative"
+      >
         <iframe
           width="100%"
           height="735"
@@ -80,16 +95,6 @@ const contentTextAlignment = (alignment) => {
                 :class="contentTextAlignment(content.alignment)"
                 class="prose max-w-none"
               />
-              <!-- <h1
-                :style="{ color: content.raw.color }"
-                class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold"
-              >
-                {{ content.raw.content }}
-              </h1>
-
-              <span :style="{ color: content.raw.color }" class="text-xl">
-                {{ content.raw.subtitleContent }}
-              </span> -->
 
               <div class="absolute right-10 -bottom-64">
                 <q-icon
