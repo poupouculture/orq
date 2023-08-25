@@ -48,9 +48,7 @@ const contentTextAlignment = (alignment) => {
     :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
   >
     <div
-      v-if="
-        !content.raw.hasOwnProperty('videoId') && content.alignment !== 'row'
-      "
+      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
       :class="textAligment(content.alignment)"
       class="bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
