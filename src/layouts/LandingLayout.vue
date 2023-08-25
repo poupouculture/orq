@@ -180,7 +180,7 @@ onMounted(async () => {
               </div>
 
               <div
-                class="col-span-1 order-3 lg:order-2 items-center flex lg:justify-center"
+                class="col-span-1 order-3 md:order-2 items-center flex md:justify-center"
               >
                 <span class="order-3 sm:order-2">
                   Copyright
@@ -188,10 +188,10 @@ onMounted(async () => {
                 </span>
               </div>
 
-              <div class="col-span-1 order-2 lg:order-3 flex lg:justify-end">
+              <div class="col-span-1 order-2 md:order-3 flex md:justify-end">
                 <div
                   v-if="bottomNavigation"
-                  class="w-50 text-end flex flex-wrap lg:justify-end gap-3"
+                  class="w-50 text-end flex flex-wrap md:justify-end gap-3"
                 >
                   <a
                     class="cursor-pointer"
@@ -208,7 +208,7 @@ onMounted(async () => {
                     bottomNavigation?.raw &&
                     bottomNavigation?.raw.socialMediaItems !== null
                   "
-                  class="mt-3 items-center flex gap-3 w-full lg:justify-end"
+                  class="mt-3 items-center flex gap-3 w-full md:justify-end"
                 >
                   <div
                     v-for="data in bottomNavigation?.raw.socialMediaItems"
@@ -284,15 +284,6 @@ onMounted(async () => {
                 >
                   {{ url.name }}
                 </a>
-
-                <!-- <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
-                  <div class="rounded-full flex items-center p-1 bg-white">
-                    <q-icon size="20px" name="fa-brands fa-facebook-f" />
-                  </div>
-                  <div class="rounded-full flex items-center p-1 bg-white">
-                    <q-icon size="20px" name="fa-brands fa-instagram" />
-                  </div>
-                </div> -->
               </div>
             </div>
           </template>
