@@ -19,6 +19,12 @@ const imageStyle = computed(() => {
       };
 });
 
+const overlay = computed(() => {
+  return props.content?.raw && props.content?.raw.overlayColor
+    ? { background: `linear-gradient(${props.content?.raw.overlayColor})` }
+    : {};
+});
+
 // Methods
 
 const textAligment = (alignment) => {
@@ -92,9 +98,7 @@ const contentTextAlignment = (alignment) => {
 
         <div class="w-full">
           <div
-            :style="{
-              background: `linear-gradient(${content.raw.overlayColor})`,
-            }"
+            :style="overlay"
             class="flex justify-center items-center absolute top-0 bottom-0 w-full"
           >
             <div
