@@ -34,6 +34,15 @@ const wrapperStyle = computed(() => {
       };
 });
 
+const iconSize = computed(() => {
+  return props.content?.raw && props.content?.raw.iconSize
+    ? props.content?.raw.iconSize
+    : {
+        width: "150",
+        height: "150",
+      };
+});
+
 const iconAligment = computed(() => {
   return props.content.raw && props.content?.raw.iconAligment
     ? props.content?.raw.iconAligment
@@ -66,8 +75,7 @@ const iconAligment = computed(() => {
             >
               <img
                 :src="img.icon"
-                width="150"
-                height="150"
+                v-bind="iconSize"
                 class="object-cover mx-6"
               />
             </div>
@@ -88,8 +96,7 @@ const iconAligment = computed(() => {
           v-for="(img, i) in content.children"
           :key="i"
           :src="img.icon"
-          width="150"
-          height="150"
+          v-bind="iconSize"
           class="object-cover mx-6"
         />
       </Vue3Marquee>
@@ -108,8 +115,7 @@ const iconAligment = computed(() => {
         v-for="(img, i) in content.children"
         :key="i"
         :src="img.icon"
-        width="150"
-        height="150"
+        v-bind="iconSize"
         class="object-cover mx-6"
       />
     </Vue3Marquee>
