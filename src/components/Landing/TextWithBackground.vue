@@ -53,27 +53,22 @@ const contentTextAlignment = (alignment) => {
       class="bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
     >
-      <div class="md:w-1/2 w-full">
+      <template v-if="content?.alignment === 'row'">
+        <div
+          v-for="(children, index) in content.children"
+          :key="index"
+          :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
+          class="md:w-1/2 w-full"
+        >
+          <Wysiwyg :content="children" />
+        </div>
+      </template>
+      <div v-else class="md:w-1/2 w-full">
         <article
           v-html="content.content"
           :class="contentTextAlignment(content.alignment)"
           class="prose max-w-none"
         />
-      </div>
-    </div>
-
-    <div
-      v-else-if="content?.alignment === 'row'"
-      class="bg-center flex bg-no-repeat bg-cover"
-      :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
-    >
-      <div
-        v-for="(children, index) in content.children"
-        :key="index"
-        :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
-        class="md:w-1/2 w-full"
-      >
-        <Wysiwyg :content="children" />
       </div>
     </div>
 
@@ -100,7 +95,7 @@ const contentTextAlignment = (alignment) => {
             :style="{
               background: `linear-gradient(${content.raw.overlayColor})`,
             }"
-            class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full"
+            class="flex justify-center items-center absolute top-0 bottom-0 w-full"
           >
             <div
               :class="textAligment(content.alignment)"
