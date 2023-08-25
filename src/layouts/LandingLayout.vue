@@ -208,14 +208,17 @@ onMounted(async () => {
                     bottomNavigation?.raw &&
                     bottomNavigation?.raw.socialMediaItems !== null
                   "
-                  class="mt-3 text-white flex gap-3 w-full lg:justify-end"
+                  class="mt-3 items-center flex gap-3 w-full lg:justify-end"
                 >
-                  <q-btn
+                  <div
                     v-for="data in bottomNavigation?.raw.socialMediaItems"
                     :key="data"
-                    target="_blank"
-                    v-bind="{ ...data, ...socialMediabBtn }"
-                  />
+                  >
+                    <q-btn
+                      target="_blank"
+                      v-bind="{ ...data, ...socialMediabBtn }"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,14 +249,17 @@ onMounted(async () => {
                     bottomNavigation?.raw &&
                     bottomNavigation?.raw.socialMediaItems !== null
                   "
-                  class="mt-3 text-white flex gap-3"
+                  class="mt-3 flex gap-3"
                 >
-                  <q-btn
+                  <div
                     v-for="data in bottomNavigation?.raw.socialMediaItems"
                     :key="data"
-                    target="_blank"
-                    v-bind="{ ...data, ...bottomNavigation.raw.socialMediaBtn }"
-                  />
+                  >
+                    <q-btn
+                      target="_blank"
+                      v-bind="{ ...data, ...socialMediabBtn }"
+                    />
+                  </div>
                 </div>
               </div>
 
