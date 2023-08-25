@@ -112,6 +112,8 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div> -->
 
+    <div v-else-if="content?.alignment === 'row'">hello</div>
+
     <template v-else>
       <div
         v-if="content.raw && content.raw.hasOwnProperty('videoId')"
