@@ -72,13 +72,6 @@ const props = defineProps({
       <Form v-else-if="data.type === 'form'" :content="data" />
 
       <Wysiwyg v-else-if="data.type === 'wysiwyg'" :content="data" />
-
-      <!-- <div v-else-if="data.type === 'wysiwyg'" class="mx-3">
-        <article v-html="data"></article>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim ex modi quisquam nemo facilis magnam quibusdam voluptatibus aspernatur accusantium beatae perferendis debitis expedita quasi optio, esse id animi aliquid repudiandae.
-      </div>
-
-      {{ data.type }} -->
     </div>
   </div>
 </template>
