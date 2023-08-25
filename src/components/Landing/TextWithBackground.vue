@@ -21,7 +21,7 @@ const imageStyle = computed(() => {
 
 const overlay = computed(() => {
   return props.content?.raw && props.content?.raw.overlayColor
-    ? { background: `linear-gradient(${props.content?.raw.overlayColor})` }
+    ? { background: props.content?.raw.overlayColor }
     : {};
 });
 
@@ -54,6 +54,40 @@ const contentTextAlignment = (alignment) => {
     :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
   >
     <div
+      class="w-full relative"
+      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
+      :class="textAligment(content.alignment)"
+    >
+      <div
+        class="bg-center flex bg-no-repeat bg-cover"
+        :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
+      ></div>
+
+      <div
+        :style="{ ...overlay, ...imageStyle }"
+        class="items-center flex absolute top-0 bottom-0 w-full"
+      >
+        <template v-if="content?.alignment === 'row'">
+          <div
+            v-for="(children, index) in content.children"
+            :key="index"
+            :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
+            class="md:w-1/2 w-full"
+          >
+            <Wysiwyg :content="children" />
+          </div>
+        </template>
+        <div v-else class="md:w-1/2 w-full">
+          <article
+            v-html="content.content"
+            :class="contentTextAlignment(content.alignment)"
+            class="prose max-w-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- <div
       v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
       :class="textAligment(content.alignment)"
       class="bg-center flex bg-no-repeat bg-cover"
@@ -76,7 +110,7 @@ const contentTextAlignment = (alignment) => {
           class="prose max-w-none"
         />
       </div>
-    </div>
+    </div> -->
 
     <template v-else>
       <div
