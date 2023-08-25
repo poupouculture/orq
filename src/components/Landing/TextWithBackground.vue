@@ -80,7 +80,10 @@ const contentTextAlignment = (alignment) => {
     </div>
 
     <template v-else>
-      <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
+      <div
+        v-if="content.raw && content.raw.hasOwnProperty('videoId')"
+        class="w-full relative"
+      >
         <iframe
           width="100%"
           height="735"
