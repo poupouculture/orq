@@ -27,6 +27,31 @@ const containerStyle = computed(() => {
       };
 });
 
+const buttonStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.buttonStyle
+    ? props.content?.raw.buttonStyle
+    : {
+        color: "white",
+        backgroundColor: "#4b44f6",
+      };
+});
+
+const style = computed(() => {
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
+    : {
+        color: "black",
+        backgroundColor: "white",
+        padding: "15px",
+      };
+});
+
+const buttonText = computed(() => {
+  return props.content?.raw && props.content?.raw.button
+    ? props.content?.raw.button
+    : "Submit";
+});
+
 const submit = async (fromEmit) => {
   const valid = await form.value.validate();
   if (valid) {
@@ -102,7 +127,8 @@ const submit = async (fromEmit) => {
 
     <div
       :class="content.alignment === 'right' ? 'order-2' : ''"
-      class="flex bg-white p-6 rounded-lg gap-5 col-span-1 flex-col w-full"
+      class="flex rounded-lg gap-5 col-span-1 flex-col w-full"
+      :style="style"
     >
       <p
         class="text-center mb-4 font-bold text-xl"
@@ -181,8 +207,8 @@ const submit = async (fromEmit) => {
         <div class="flex justify-end">
           <q-btn
             @click="submit(false)"
-            color="primary"
-            :label="content.raw.button"
+            :style="buttonStyle"
+            :label="buttonText"
           />
         </div>
       </q-form>
