@@ -166,7 +166,7 @@ onMounted(async () => {
 
       <div class="w-full flex justify-center" :style="bottomStyle">
         <div
-          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
+          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6"
         >
           <template
             v-if="
