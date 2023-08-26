@@ -85,6 +85,12 @@ const bottomStyle = computed(() => {
     : defaultStyle.value;
 });
 
+const copyright = computed(() => {
+  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.copyright
+    ? bottomNavigation.value?.raw.copyright
+    : `Copyright ${new Date().getFullYear()} Synque.io`;
+});
+
 watch(drawer, (value) => {
   if (!value) leftDrawerOpen.value = false;
 });
@@ -270,8 +276,7 @@ onMounted(async () => {
               </div>
 
               <span class="order-3 sm:order-2">
-                Copyright
-                {{ new Date().getFullYear() }} Synque.io
+                {{ copyright }}
               </span>
             </div>
 
