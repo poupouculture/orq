@@ -20,7 +20,7 @@ const style = computed(() => {
 
 <template>
   <div :style="style">
-    <article v-html="props.content.content" class="prose max-w-none" />
+    <article v-html="props.content?.content" class="prose max-w-none" />
   </div>
 </template>
 

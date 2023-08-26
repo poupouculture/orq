@@ -77,7 +77,7 @@ const contentTextAlignment = (alignment) => {
             <Wysiwyg :content="children" />
           </div>
         </template>
-        <div v-else class="md:w-1/2 w-full">
+        <div v-else class="md:w-1/2 w-full" :style="content?.raw?.wrapperStyle">
           <article
             v-html="content.content"
             :class="contentTextAlignment(content.alignment)"
@@ -111,21 +111,6 @@ const contentTextAlignment = (alignment) => {
         />
       </div>
     </div> -->
-
-    <div
-      v-else-if="content?.alignment === 'row'"
-      class="bg-center flex bg-no-repeat bg-cover"
-      :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
-    >
-      <div
-        v-for="(children, index) in content.children"
-        :key="index"
-        :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
-        class="md:w-1/2 w-full"
-      >
-        <Wysiwyg :content="children" />
-      </div>
-    </div>
 
     <div
       v-else-if="content?.alignment === 'row'"
