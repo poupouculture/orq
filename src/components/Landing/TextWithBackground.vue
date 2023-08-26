@@ -160,4 +160,11 @@ const contentTextAlignment = (alignment) => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@media (max-width: $breakpoint-xs-max) {
+  :deep(article span#title) {
+    font-family: "Impact", sans-serif !important;
+    font-weight: 700 !important;
+  }
+}
+</style>
