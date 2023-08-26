@@ -15,7 +15,7 @@ const unmute = ref(false);
 
 const displayedContent = computed(() => {
   return $q.platform.is.mobile
-    ? props.content.content_mobile
+    ? props.content.content_mobile ?? props.content.content
     : props.content.content;
 });
 
