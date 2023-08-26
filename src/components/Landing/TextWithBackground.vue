@@ -77,7 +77,7 @@ const contentTextAlignment = (alignment) => {
             <Wysiwyg :content="children" />
           </div>
         </template>
-        <div v-else class="md:w-1/2 w-full">
+        <div v-else class="md:w-1/2 w-full" :style="content?.raw?.wrapperStyle">
           <article
             v-html="content.content"
             :class="contentTextAlignment(content.alignment)"
