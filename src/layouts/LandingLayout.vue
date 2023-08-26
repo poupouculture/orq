@@ -65,6 +65,15 @@ const socialMediabBtn = computed(() => {
     : mediaSocialStyle.value;
 });
 
+const styleGridContainer = computed(() => {
+  return bottomNavigation.value?.raw &&
+    bottomNavigation.value.raw.styleGridContainer
+    ? bottomNavigation.value.raw.styleGridContainer
+    : {
+        padding: "1.5rem",
+      };
+});
+
 const currentComponent = computed(() => {
   return useLandingPageStore.getComponent.heroText;
 });
@@ -166,7 +175,8 @@ onMounted(async () => {
 
       <div class="w-full flex justify-center" :style="bottomStyle">
         <div
-          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6"
+          class="w-full flex flex-col gap-4 sm:flex-row sm:justify-between"
+          :style="styleGridContainer"
         >
           <template
             v-if="
@@ -189,8 +199,7 @@ onMounted(async () => {
                 class="col-span-1 order-3 md:order-2 items-center flex md:justify-center"
               >
                 <span class="order-3 sm:order-2">
-                  Copyright
-                  {{ new Date().getFullYear() }} Synque.io
+                  {{ copyright }}
                 </span>
               </div>
 
