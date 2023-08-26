@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import Wysiwyg from "src/components/Landing/Wysiwyg.vue";
+import { useQuasar } from "quasar";
 
 const props = defineProps({
   content: {
@@ -8,7 +9,15 @@ const props = defineProps({
   },
 });
 
+const $q = useQuasar();
+
 const unmute = ref(false);
+
+const displayedContent = computed(() => {
+  return $q.platform.is.mobile
+    ? props.content.content_mobile
+    : props.content.content;
+});
 
 // Computed
 const imageStyle = computed(() => {
@@ -79,7 +88,7 @@ const contentTextAlignment = (alignment) => {
         </template>
         <div v-else class="md:w-1/2 w-full">
           <article
-            v-html="content.content"
+            v-html="displayedContent"
             :class="contentTextAlignment(content.alignment)"
             class="prose max-w-none"
           />
@@ -127,7 +136,8 @@ const contentTextAlignment = (alignment) => {
       </div>
     </div>
 
-    <div
+    <!-- This block never executes -->
+    <!-- <div
       v-else-if="content?.alignment === 'row'"
       class="bg-center flex bg-no-repeat bg-cover"
       :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
@@ -140,7 +150,7 @@ const contentTextAlignment = (alignment) => {
       >
         <Wysiwyg :content="children" />
       </div>
-    </div>
+    </div> -->
 
     <template v-else>
       <div
@@ -170,7 +180,7 @@ const contentTextAlignment = (alignment) => {
               class="w-full relative flex flex-col mx-5 gap-4"
             >
               <article
-                v-html="content.content"
+                v-html="displayedContent"
                 :class="contentTextAlignment(content.alignment)"
                 class="prose max-w-none"
               />
