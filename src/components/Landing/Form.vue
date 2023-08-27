@@ -2,7 +2,7 @@
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
 import { computed, ref } from "vue";
-import { Notify } from "quasar";
+import { Notify, useQuasar } from "quasar";
 
 const props = defineProps({
   content: {
@@ -11,6 +11,8 @@ const props = defineProps({
 });
 const emits = defineEmits(["submit"]);
 const dialog = ref();
+
+const $q = useQuasar();
 
 const form = ref();
 const childrenExists = computed(
@@ -111,6 +113,12 @@ const submit = async (fromEmit) => {
     } catch (error) {}
   }
 };
+
+const displayedContent = computed(() => {
+  return $q.platform.is.mobile
+    ? props.content.content_mobile ?? props.content.content
+    : props.content.content;
+});
 </script>
 
 <template>
@@ -123,7 +131,7 @@ const submit = async (fromEmit) => {
       :class="content.alignment === 'left' ? 'order-1' : ''"
       class="col-span-1 text-white"
     >
-      <article v-html="content.content" class="prose text-white" />
+      <article v-html="displayedContent" class="prose text-white" />
     </div>
     <!-- FORM -->
     <div
