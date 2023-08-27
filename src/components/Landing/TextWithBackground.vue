@@ -21,11 +21,15 @@ const displayedContent = computed(() => {
 
 // Computed
 const imageStyle = computed(() => {
-  return props.content?.raw && props.content?.raw.backgroundImageStyle
-    ? props.content?.raw.backgroundImageStyle
-    : {
-        minHeight: "700px",
-      };
+  return {
+    ...(props.content?.raw && props.content?.raw.backgroundImageStyle
+      ? props.content?.raw.backgroundImageStyle
+      : {
+          minHeight: "700px",
+        }),
+    paddingLeft: "1em",
+    paddingRight: "1em",
+  };
 });
 
 const overlay = computed(() => {
@@ -81,7 +85,7 @@ const contentTextAlignment = (alignment) => {
             v-for="(children, index) in content.children"
             :key="index"
             :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
-            class="md:w-1/2 w-full"
+            class="xs:w-full md:w-1/2 w-full"
           >
             <Wysiwyg :content="children" />
           </div>
@@ -90,7 +94,7 @@ const contentTextAlignment = (alignment) => {
           <article
             v-html="displayedContent"
             :class="contentTextAlignment(content.alignment)"
-            class="prose max-w-none"
+            class="max-w-none"
           />
         </div>
       </div>
