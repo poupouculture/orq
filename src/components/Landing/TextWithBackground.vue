@@ -161,7 +161,7 @@ const contentTextAlignment = (alignment) => {
           >
             <div
               :class="textAligment(content.alignment)"
-              class="w-full relative flex flex-col mx-5 gap-4"
+              class="w-full relative flex flex-col mx-5 md:gap-4 sm:gap-2"
             >
               <article
                 v-html="displayedContent"
