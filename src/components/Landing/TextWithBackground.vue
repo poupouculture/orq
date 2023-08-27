@@ -29,6 +29,8 @@ const imageStyle = computed(() => {
           minHeight: "700px",
         }
       : {}),
+    paddingLeft: "1em",
+    paddingRight: "1em",
   };
 });
 
