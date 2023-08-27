@@ -118,13 +118,14 @@ const submit = async (fromEmit) => {
     class="w-full grid gap-5 lg:grid-cols-2 bg-center bg-cover lg:p-6"
     :style="{ backgroundImage: `url(${content.image})`, ...containerStyle }"
   >
+    <!-- Content -->
     <div
       :class="content.alignment === 'left' ? 'order-1' : ''"
       class="col-span-1 text-white"
     >
       <article v-html="content.content" class="prose text-white" />
     </div>
-
+    <!-- FORM -->
     <div
       :class="content.alignment === 'right' ? 'order-2' : ''"
       class="flex rounded-lg gap-5 col-span-1 flex-col w-full"
@@ -224,5 +225,10 @@ const submit = async (fromEmit) => {
     </q-dialog>
   </div>
 </template>
-
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@media (max-width: $breakpoint-xs-max) {
+  :deep(article p#poupou_form_text) {
+    padding-left: 0 !important;
+  }
+}
+</style>
