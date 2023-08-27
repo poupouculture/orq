@@ -24,9 +24,11 @@ const imageStyle = computed(() => {
   return {
     ...(props.content?.raw && props.content?.raw.backgroundImageStyle
       ? props.content?.raw.backgroundImageStyle
-      : {
+      : !props.content.raw?.backgroundStyle
+      ? {
           minHeight: "700px",
-        }),
+        }
+      : {}),
     paddingLeft: "1em",
     paddingRight: "1em",
   };
@@ -69,16 +71,22 @@ const contentTextAlignment = (alignment) => {
     <div
       class="w-full relative"
       v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
-      :class="textAligment(content.alignment)"
+      :class="[
+        textAligment(content.alignment),
+        content.raw?.backgroundStyle ? 'md:px-16 !pb-10 md:pb-0' : '',
+      ]"
+      :style="content.raw?.backgroundStyle ? content.raw?.backgroundStyle : ''"
     >
       <div
+        v-if="!content.raw?.backgroundStyle"
         class="bg-center flex bg-no-repeat bg-cover"
         :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
       ></div>
 
       <div
         :style="{ ...overlay, ...imageStyle }"
-        class="items-center flex absolute top-0 bottom-0 w-full"
+        class="items-center flex top-0 bottom-0 w-full"
+        :class="{ absolute: !content.raw?.backgroundStyle }"
       >
         <template v-if="content?.alignment === 'row'">
           <div
