@@ -38,7 +38,14 @@ const getComponentById = async (id: string, url: string) => {
         {{ navigation?.logo }}
       </p>
     </router-link>
-    <div v-if="navigation" class="flex items-center gap-5">
+    <div
+      v-if="navigation"
+      :class="{
+        'gap-5': $q.platform.is.desktop,
+        'gap-1': $q.platform.is.mobile,
+      }"
+      class="flex items-center"
+    >
       <button
         @click="getComponentById(navigate.id, navigate.url)"
         v-for="(navigate, index) in navigation?.pages"
@@ -49,7 +56,13 @@ const getComponentById = async (id: string, url: string) => {
         {{ navigate.name }}
       </button>
 
-      <button class="px-4 py-2 rounded-full bg-white/60 text-white">
+      <button
+        :class="{
+          'px-2': $q.platform.is.mobile,
+          'px-4': $q.platform.is.desktop,
+        }"
+        class="py-2 rounded-full bg-white/60 text-white"
+      >
         Get started
       </button>
 
@@ -57,14 +70,26 @@ const getComponentById = async (id: string, url: string) => {
         v-if="$q.screen.lt.lg"
         @click="$emit('open')"
         class="text-black"
-        size="md"
+        :size="$q.platform.is.mobile ? 'sm' : 'md'"
         round
         color="white"
       >
-        <img class="w-[20px]" :src="menuIcon" />
+        <img class="menu-icon" :src="menuIcon" />
       </q-btn>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.menu-icon {
+  width: 20px;
+}
+@media screen and (max-width: $breakpoint-xs-max) {
+  :deep(.navbar) {
+    padding: 5px;
+  }
+  .menu-icon {
+    width: 15px;
+  }
+}
+</style>

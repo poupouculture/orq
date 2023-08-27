@@ -2,9 +2,10 @@
 import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
-import { Screen } from "quasar";
+import { Screen, useQuasar } from "quasar";
 import useLandingPage from "src/stores/modules/landingpage";
 
+const $q = useQuasar();
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
@@ -53,9 +54,10 @@ const topNavbar = computed(() => {
 });
 
 const navbarStyle = computed(() => {
-  return useLandingPageStore.topNavigation[0]?.raw
-    ? useLandingPageStore.topNavigation[0]?.raw
-    : defaultStyle.value;
+  return {
+    ...(useLandingPageStore.topNavigation[0]?.raw ?? defaultStyle.value),
+    padding: $q.platform.is.desktop ? "2rem" : "0.5rem",
+  };
 });
 
 const socialMediabBtn = computed(() => {
@@ -162,8 +164,12 @@ onMounted(async () => {
     <q-page-container>
       <div
         :style="navbarStyle"
-        :class="{ 'absolute z-10': currentComponent }"
-        class="w-full p-5 flex justify-center"
+        :class="{
+          'absolute z-10': currentComponent,
+          'p-5': $q.platform.is.desktop,
+          'p-0': $q.platform.is.mobile,
+        }"
+        class="w-full flex justify-center"
       >
         <div class="container">
           <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
