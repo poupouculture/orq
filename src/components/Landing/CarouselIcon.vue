@@ -73,11 +73,7 @@ const iconAligment = computed(() => {
               v-for="(img, i) in content.children"
               :key="i"
             >
-              <img
-                :src="img.icon"
-                v-bind="iconSize"
-                class="object-cover mx-6"
-              />
+              <img :src="img.icon" v-bind="iconSize" class="object-cover" />
             </div>
           </div>
         </div>
@@ -97,7 +93,7 @@ const iconAligment = computed(() => {
           :key="i"
           :src="img.icon"
           v-bind="iconSize"
-          class="object-cover mx-6"
+          class="object-cover"
         />
       </Vue3Marquee>
     </template>
