@@ -166,7 +166,7 @@ onMounted(async () => {
 
       <div class="w-full flex justify-center" :style="bottomStyle">
         <div
-          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
+          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-4 md:p-6 md:mx-6"
         >
           <template
             v-if="
@@ -174,7 +174,7 @@ onMounted(async () => {
               bottomNavigation?.raw.footerStyle === 'flex'
             "
           >
-            <div class="grid md:grid-cols-3 gap-4 w-full">
+            <div class="grid md:grid-cols-3 grid-cols-2 gap-4 w-full">
               <div class="col-span-1 order-1">
                 <div>
                   <img
@@ -186,7 +186,7 @@ onMounted(async () => {
               </div>
 
               <div
-                class="col-span-1 order-3 md:order-2 items-center flex md:justify-center"
+                class="col-span-2 md:col-span-1 order-3 md:order-2 items-center flex justify-center"
               >
                 <span class="order-3 sm:order-2">
                   Copyright
