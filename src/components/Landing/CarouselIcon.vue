@@ -89,6 +89,7 @@ const displayedContent = computed(() =>
       </div>
 
       <Vue3Marquee
+        :clone="true"
         v-if="content?.raw.style === 'carousel'"
         :duration="
           content?.raw && content?.raw.props.duration
@@ -109,6 +110,7 @@ const displayedContent = computed(() =>
 
     <Vue3Marquee
       v-else
+      :clone="true"
       :duration="
         content?.raw && content?.raw.props.duration
           ? content?.raw.props.duration
@@ -121,7 +123,7 @@ const displayedContent = computed(() =>
         :key="i"
         :src="img.icon"
         v-bind="iconSize"
-        class="object-cover mx-6"
+        class="object-cover"
       />
     </Vue3Marquee>
   </div>
