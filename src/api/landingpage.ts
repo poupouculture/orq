@@ -3,7 +3,7 @@ import { orqApi } from "boot/axios";
 export const getAllNavigation = async (param?: string) => {
   const params = {
     fields:
-      "name,raw,icon,logo,pages.name,pages.name,pages.url,pages.id,pages.sort",
+      "name,raw,icon,logo,header_position,pages.name,pages.name,pages.url,pages.id,pages.sort",
     "filter[name][_eq]": param,
   } as any;
   if (process.env.APP) {

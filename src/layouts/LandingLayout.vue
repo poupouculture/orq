@@ -154,9 +154,11 @@ const getPagesContent = async () => {
 };
 
 const onScroll = (event) => {
-  if (event === 0) {
-    scroll.value = false;
-  } else scroll.value = true;
+  if (topNavbar.value.header_position === "fixed") {
+    if (event === 0) {
+      scroll.value = false;
+    } else scroll.value = true;
+  }
 };
 
 onMounted(async () => {
