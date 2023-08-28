@@ -67,6 +67,15 @@ const socialMediabBtn = computed(() => {
     : mediaSocialStyle.value;
 });
 
+// const styleGridContainer = computed(() => {
+//   return bottomNavigation.value?.raw &&
+//     bottomNavigation.value.raw.styleGridContainer
+//     ? bottomNavigation.value.raw.styleGridContainer
+//     : {
+//         padding: "1.5rem",
+//       };
+// });
+
 const currentComponent = computed(() => {
   return useLandingPageStore.getComponent.heroText;
 });
@@ -195,8 +204,7 @@ onMounted(async () => {
                 class="col-span-2 md:col-span-1 order-3 md:order-2 items-center flex justify-center"
               >
                 <span class="order-3 sm:order-2">
-                  Copyright
-                  {{ new Date().getFullYear() }} Synque.io
+                  {{ copyright }}
                 </span>
               </div>
 
