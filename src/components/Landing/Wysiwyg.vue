@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuasar } from "quasar";
 import { computed, ref } from "vue";
 
 const props = defineProps({
@@ -6,6 +7,14 @@ const props = defineProps({
     type: Object,
   },
 });
+
+const $q = useQuasar();
+
+const displayedContent = computed(() =>
+  $q.platform.is.mobile
+    ? props.content?.content_mobile ?? props.content?.content_mobile
+    : props.content?.content
+);
 
 const defaultStyle = ref({
   padding: "20px",
@@ -20,7 +29,7 @@ const style = computed(() => {
 
 <template>
   <div :style="style" id="wrapper-wysiwyg">
-    <article v-html="props.content?.content" class="prose max-w-none" />
+    <article v-html="displayedContent" class="prose max-w-none" />
   </div>
 </template>
 
