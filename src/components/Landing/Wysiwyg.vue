@@ -19,9 +19,15 @@ const style = computed(() => {
 </script>
 
 <template>
-  <div :style="style">
+  <div :style="style" id="wrapper-wysiwyg">
     <article v-html="props.content?.content" class="prose max-w-none" />
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@media (max-width: $breakpoint-xs-max) {
+  #wrapper-wysiwyg {
+    padding: 0 !important;
+  }
+}
+</style>
