@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import Wysiwyg from "src/components/Landing/Wysiwyg.vue";
+import { useQuasar } from "quasar";
 
 const props = defineProps({
   content: {
@@ -8,7 +9,15 @@ const props = defineProps({
   },
 });
 
+const $q = useQuasar();
+
 const unmute = ref(false);
+
+const displayedContent = computed(() => {
+  return $q.platform.is.mobile
+    ? props.content.content_mobile
+    : props.content.content;
+});
 
 // Computed
 const imageStyle = computed(() => {
@@ -79,7 +88,7 @@ const contentTextAlignment = (alignment) => {
         </template>
         <div v-else class="md:w-1/2 w-full" :style="content?.raw?.wrapperStyle">
           <article
-            v-html="content.content"
+            v-html="displayedContent"
             :class="contentTextAlignment(content.alignment)"
             class="prose max-w-none"
           />
@@ -130,7 +139,7 @@ const contentTextAlignment = (alignment) => {
               class="w-full relative flex flex-col mx-5 gap-4"
             >
               <article
-                v-html="content.content"
+                v-html="displayedContent"
                 :class="contentTextAlignment(content.alignment)"
                 class="prose max-w-none"
               />
