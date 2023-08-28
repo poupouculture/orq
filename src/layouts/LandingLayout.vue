@@ -2,9 +2,10 @@
 import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
-import { Screen } from "quasar";
+import { Screen, useQuasar } from "quasar";
 import useLandingPage from "src/stores/modules/landingpage";
 
+const $q = useQuasar();
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
@@ -53,9 +54,10 @@ const topNavbar = computed(() => {
 });
 
 const navbarStyle = computed(() => {
-  return useLandingPageStore.topNavigation[0]?.raw
-    ? useLandingPageStore.topNavigation[0]?.raw
-    : defaultStyle.value;
+  return {
+    ...(useLandingPageStore.topNavigation[0]?.raw ?? defaultStyle.value),
+    padding: $q.platform.is.desktop ? "2rem" : "0.5rem",
+  };
 });
 
 const socialMediabBtn = computed(() => {
@@ -147,8 +149,12 @@ onMounted(async () => {
     <q-page-container>
       <div
         :style="navbarStyle"
-        :class="{ 'absolute z-10': currentComponent }"
-        class="w-full p-5 flex justify-center"
+        :class="{
+          'absolute z-10': currentComponent,
+          'p-5': $q.platform.is.desktop,
+          'p-0': $q.platform.is.mobile,
+        }"
+        class="w-full flex justify-center"
       >
         <div class="container">
           <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
@@ -160,7 +166,7 @@ onMounted(async () => {
 
       <div class="w-full flex justify-center" :style="bottomStyle">
         <div
-          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
+          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-4 md:p-6 md:mx-6"
         >
           <template
             v-if="
@@ -168,7 +174,7 @@ onMounted(async () => {
               bottomNavigation?.raw.footerStyle === 'flex'
             "
           >
-            <div class="grid md:grid-cols-3 gap-4 w-full">
+            <div class="grid md:grid-cols-3 grid-cols-2 gap-4 w-full">
               <div class="col-span-1 order-1">
                 <div>
                   <img
@@ -180,7 +186,7 @@ onMounted(async () => {
               </div>
 
               <div
-                class="col-span-1 order-3 md:order-2 items-center flex md:justify-center"
+                class="col-span-2 md:col-span-1 order-3 md:order-2 items-center flex justify-center"
               >
                 <span class="order-3 sm:order-2">
                   Copyright

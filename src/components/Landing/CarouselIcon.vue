@@ -1,6 +1,9 @@
 <script setup>
+import { useQuasar } from "quasar";
 import { computed } from "vue";
 import { Vue3Marquee } from "vue3-marquee";
+
+const $q = useQuasar();
 
 const props = defineProps({
   content: {
@@ -48,6 +51,12 @@ const iconAligment = computed(() => {
     ? props.content?.raw.iconAligment
     : props.content?.alignment;
 });
+
+const displayedContent = computed(() =>
+  $q.platform.is.mobile
+    ? props.content.content_mobile ?? props.content.content
+    : props.content.content
+);
 </script>
 
 <template>
@@ -57,7 +66,7 @@ const iconAligment = computed(() => {
       :class="flexDirection(content.alignment)"
       :style="contentStyle"
     >
-      <article v-html="content.content" class="prose"></article>
+      <article v-html="displayedContent" class="prose"></article>
     </div>
 
     <template v-if="content?.raw !== null">
