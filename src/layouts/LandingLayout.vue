@@ -9,6 +9,7 @@ const $q = useQuasar();
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
+const scroll = ref(false);
 const leftDrawerOpen = ref(false);
 const defaultStyle = ref({
   backgroundColor: "#4b44f6",
@@ -152,6 +153,12 @@ const getPagesContent = async () => {
   }
 };
 
+const onScroll = (event) => {
+  if (event === 0) {
+    scroll.value = false;
+  } else scroll.value = true;
+};
+
 onMounted(async () => {
   await useLandingPageStore.getAll();
 
@@ -160,7 +167,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fFf" v-scroll="onScroll">
     <q-page-container>
       <div
         :style="navbarStyle"
@@ -168,6 +175,7 @@ onMounted(async () => {
           'absolute z-10': currentComponent,
           'p-5': $q.platform.is.desktop,
           'p-0': $q.platform.is.mobile,
+          'fixed z-10': scroll,
         }"
         class="w-full flex justify-center"
       >
