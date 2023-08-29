@@ -78,7 +78,7 @@ const displayedContent = computed(() =>
         <div class="flex justify-center">
           <div class="flex flex-wrap justify-center">
             <div
-              class="flex items-center"
+              class="flex h-full w-full items-center"
               v-for="(img, i) in content.children"
               :key="i"
             >
@@ -103,7 +103,11 @@ const displayedContent = computed(() =>
           v-for="(img, i) in content.children"
           :key="i"
         >
-          <img :src="img.icon" v-bind="iconSize" class="h-auto w-auto" />
+          <img
+            :src="img.icon"
+            v-bind="iconSize"
+            class="h-auto w-auto object-cover"
+          />
         </div>
       </Vue3Marquee>
     </template>
@@ -118,13 +122,13 @@ const displayedContent = computed(() =>
       "
       direction="reverse"
     >
-      <img
+      <div
+        class="h-full w-full flex items-center"
         v-for="(img, i) in content.children"
         :key="i"
-        :src="img.icon"
-        v-bind="iconSize"
-        class="object-cover"
-      />
+      >
+        <img :src="img.icon" v-bind="iconSize" class="h-auto w-auto" />
+      </div>
     </Vue3Marquee>
   </div>
 </template>
