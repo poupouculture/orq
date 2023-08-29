@@ -128,7 +128,9 @@ const displayedContent = computed(() => {
   >
     <!-- Content -->
     <div
-      :class="content.alignment === 'left' ? 'order-1' : ''"
+      :class="
+        content.alignment === 'left' && !$q.platform.is.mobile ? 'order-1' : ''
+      "
       class="col-span-1 text-white"
     >
       <article v-html="displayedContent" class="prose text-white" />
