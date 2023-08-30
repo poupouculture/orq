@@ -128,7 +128,9 @@ const displayedContent = computed(() => {
   >
     <!-- Content -->
     <div
-      :class="content.alignment === 'left' ? 'order-1' : ''"
+      :class="
+        content.alignment === 'left' && !$q.platform.is.mobile ? 'order-1' : ''
+      "
       class="col-span-1 text-white"
     >
       <article v-html="displayedContent" class="prose text-white" />
@@ -222,7 +224,7 @@ const displayedContent = computed(() => {
         </div>
       </q-form>
     </div>
-    <q-dialog v-if="childrenExists" v-model="dialog">
+    <q-dialog v-if="childrenExists" v-model="dialog" full-height>
       <q-card style="max-width: 90vw">
         <Form
           :content="content.children[0]"
