@@ -123,7 +123,7 @@ const displayedContent = computed(() => {
 
 <template>
   <div
-    class="w-full grid gap-5 lg:grid-cols-2 bg-center bg-cover lg:p-6"
+    class="w-full grid gap-5 lg:grid-cols-2 bg-center bg-cover lg:p-6 formContainer"
     :style="{ backgroundImage: `url(${content.image})`, ...containerStyle }"
   >
     <!-- Content -->
@@ -136,7 +136,7 @@ const displayedContent = computed(() => {
     <!-- FORM -->
     <div
       :class="content.alignment === 'right' ? 'order-2' : ''"
-      class="flex rounded-lg gap-5 col-span-1 flex-col w-full"
+      class="flex rounded-lg gap-5 col-span-1 flex-col w-full formSecondLayer"
       :style="style"
     >
       <p
@@ -237,6 +237,20 @@ const displayedContent = computed(() => {
 @media (max-width: $breakpoint-xs-max) {
   :deep(article p#poupou_form_text) {
     padding-left: 0 !important;
+  }
+
+  .formContainer {
+    padding: 10px !important;
+
+    .formSecondLayer {
+      padding: 30px !important;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md-max) {
+  .formSecondLayer {
+    padding: 30px !important;
   }
 }
 </style>
