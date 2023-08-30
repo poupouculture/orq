@@ -9,7 +9,7 @@
 
 }
 .lp-btn-pill{
-  @apply py-4 px-4 border border-[#ff292c] rounded-3xl text-gray-700 hover:bg-[#ff292c] hover:text-white;
+  @apply py-4 px-4 border border-[#ff292c] rounded-3xl text-gray-700 hover:bg-[#ff292c] hover:!text-white tracking-wide !font-normal;
 }
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;

@@ -75,7 +75,7 @@ const contentTextAlignment = (alignment) => {
     :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
   >
     <div
-      class="w-full relative"
+      class="w-full relative bg-[#2E2E3A]"
       v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
       :class="[
         textAligment(content.alignment),
