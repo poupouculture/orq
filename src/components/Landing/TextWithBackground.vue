@@ -22,8 +22,14 @@ const displayedContent = computed(() => {
 // Computed
 const imageStyle = computed(() => {
   return {
+    // backgroundStyle is for replacing background image (absolute) to background relative size
     ...(props.content?.raw && props.content?.raw.backgroundImageStyle
-      ? props.content?.raw.backgroundImageStyle
+      ? // check if mobile screen and backgroundImageMobile exists, use it.
+        $q.platform.is.mobile
+        ? props.content?.raw.backgroundImageMobileStyle
+          ? props.content?.raw.backgroundImageMobileStyle
+          : props.content?.raw.backgroundImageStyle
+        : props.content?.raw.backgroundImageStyle
       : !props.content.raw?.backgroundStyle
       ? {
           minHeight: "700px",

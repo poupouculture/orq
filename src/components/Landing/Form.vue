@@ -224,7 +224,7 @@ const displayedContent = computed(() => {
         </div>
       </q-form>
     </div>
-    <q-dialog v-if="childrenExists" v-model="dialog">
+    <q-dialog v-if="childrenExists" v-model="dialog" full-height>
       <q-card style="max-width: 90vw">
         <Form
           :content="content.children[0]"
