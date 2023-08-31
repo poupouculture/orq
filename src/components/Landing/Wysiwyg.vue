@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuasar } from "quasar";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   content: {
@@ -10,17 +10,26 @@ const props = defineProps({
 
 const $q = useQuasar();
 
-const displayedContent = computed(
-  () =>
-    ($q.platform.is.mobile
-      ? props.content?.content_mobile ?? props.content?.content
-      : props.content?.content) ?? null
+const displayedContent = computed(() =>
+  $q.platform.is.mobile
+    ? props.content?.content_mobile ?? props.content?.content_mobile
+    : props.content?.content
 );
+
+const defaultStyle = ref({
+  padding: "20px",
+});
+
+const style = computed(() => {
+  return props.content?.raw !== null
+    ? props.content?.raw.style
+    : defaultStyle.value;
+});
 </script>
 
 <template>
-  <div>
-    <article v-html="displayedContent" class="prose max-w-none" />
+  <div :style="style" id="wrapper-wysiwyg">
+    <article v-html="displayedContent" class="prose max-w-none prose-img:m-0" />
   </div>
 </template>
 
