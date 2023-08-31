@@ -78,13 +78,13 @@ const submit = async (fromEmit) => {
             allForm[form.field] = form.value;
           }
         } else {
-          allForm[form.field] = form.value;
+          allForm.raw[form.field] = form.value;
         }
       } else if (!form.value && form.required) {
         form.error = true;
         form.errorMessage = `The ${form.label} is required`;
       } else {
-        allForm[form.field] = form.value;
+        allForm.raw[form.field] = form.value;
       }
     });
 
