@@ -65,7 +65,7 @@ const submit = async (fromEmit) => {
     }
     emits("submit");
     const allForm = {
-      app: props.content.app,
+      app: process.env.APP || props.content.app,
     };
 
     await props.content.raw.form.forEach((form) => {
@@ -78,13 +78,13 @@ const submit = async (fromEmit) => {
             allForm[form.field] = form.value;
           }
         } else {
-          allForm[form.field] = form.value;
+          allForm[form.label] = form.value;
         }
       } else if (!form.value && form.required) {
         form.error = true;
         form.errorMessage = `The ${form.label} is required`;
       } else {
-        allForm[form.field] = form.value;
+        allForm[form.label] = form.value;
       }
     });
 
@@ -180,14 +180,84 @@ const displayedContent = computed(() => {
             />
 
             <template v-else-if="form.type === 'checkbox'">
-              <q-checkbox
-                v-for="(checkbox, index) in form.options"
-                :val="checkbox.label"
-                :key="index"
-                :label="checkbox.label"
+              <q-field
                 v-model="form.value"
-                color="primary"
-              />
+                borderless
+                @update:model-value="form.error = false"
+                dense
+                :rules="[(val) => required(val)]"
+                :error="form.error"
+                :error-message="form.errorMessage"
+              >
+                <template v-slot:control>
+                  <q-checkbox
+                    v-for="(checkbox, index) in form.options"
+                    :val="checkbox.label"
+                    :key="index"
+                    :label="checkbox.label"
+                    v-model="form.value"
+                    color="primary"
+                  >
+                  </q-checkbox>
+                </template>
+              </q-field>
+            </template>
+
+            <template v-else-if="form.type === 'date'">
+              <q-input
+                v-if="!form.required"
+                dense
+                outlined
+                v-model="form.value"
+                mask="date"
+                :rules="['date']"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      v-model="form.openDateModal"
+                      cover
+                      :breakpoint="600"
+                    >
+                      <q-date
+                        :color="form.color !== null ? form.color : 'red-13'"
+                        minimal
+                        :options="form.dateRequired"
+                        @update:model-value="form.openDateModal = false"
+                        v-model="form.value"
+                      />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
+              <q-input
+                v-else
+                outlined
+                dense
+                lazy-rules
+                v-model="form.value"
+                mask="date"
+                :rules="['date', (val) => required(val)]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      v-model="form.openDateModal"
+                      cover
+                      :breakpoint="600"
+                    >
+                      <q-date
+                        :color="form.color !== null ? form.color : 'red-13'"
+                        :options="form.dateRequired"
+                        minimal
+                        @update:model-value="form.openDateModal = false"
+                        v-model="form.value"
+                      />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
             </template>
 
             <q-input
