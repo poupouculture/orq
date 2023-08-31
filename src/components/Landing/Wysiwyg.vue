@@ -29,7 +29,7 @@ const style = computed(() => {
 
 <template>
   <div :style="style" id="wrapper-wysiwyg">
-    <article v-html="displayedContent" class="prose max-w-none prose-img:m-0" />
+    <article v-html="displayedContent" class="prose max-w-none" />
   </div>
 </template>
 
