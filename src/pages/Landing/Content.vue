@@ -3,6 +3,7 @@ import Hero from "src/components/Landing/Hero.vue";
 import Banner from "src/components/Landing/Banner.vue";
 import { storeToRefs } from "pinia";
 import useLandingPage from "src/stores/modules/landingpage";
+import WhatsAppOverlay from "src/components/Partials/WhatsAppOverlay.vue";
 
 const landingPageStore = useLandingPage();
 const { getComponent } = storeToRefs(landingPageStore);

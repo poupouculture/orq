@@ -181,7 +181,7 @@ const displayedContent = computed(() => {
 
             <template v-else-if="form.type === 'checkbox'">
               <q-field
-                :value="form.value"
+                v-model="form.value"
                 borderless
                 @update:model-value="form.error = false"
                 dense
@@ -201,6 +201,43 @@ const displayedContent = computed(() => {
                   </q-checkbox>
                 </template>
               </q-field>
+            </template>
+
+            <template v-else-if="form.type === 'date'">
+              <q-input
+                v-if="!form.required"
+                dense
+                outlined
+                v-model="form.value"
+                mask="date"
+                :rules="['date', (val) => required(val)]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover :breakpoint="600">
+                      <q-date v-model="form.value" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
+              <q-input
+                v-else
+                outlined
+                dense
+                lazy-rules
+                v-model="form.value"
+                mask="date"
+                :rules="['date', (val) => required(val)]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover :breakpoint="600">
+                      <q-date v-model="form.value" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
             </template>
 
             <q-input
