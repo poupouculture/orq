@@ -210,12 +210,22 @@ const displayedContent = computed(() => {
                 outlined
                 v-model="form.value"
                 mask="date"
-                :rules="['date', (val) => required(val)]"
+                :rules="['date']"
               >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover :breakpoint="600">
-                      <q-date v-model="form.value" />
+                    <q-popup-proxy
+                      v-model="form.openDateModal"
+                      cover
+                      :breakpoint="600"
+                    >
+                      <q-date
+                        :color="form.color !== null ? form.color : 'red-13'"
+                        minimal
+                        :options="form.dateRequired"
+                        @update:model-value="form.openDateModal = false"
+                        v-model="form.value"
+                      />
                     </q-popup-proxy>
                   </q-icon>
                 </template>
@@ -232,8 +242,18 @@ const displayedContent = computed(() => {
               >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover :breakpoint="600">
-                      <q-date v-model="form.value" />
+                    <q-popup-proxy
+                      v-model="form.openDateModal"
+                      cover
+                      :breakpoint="600"
+                    >
+                      <q-date
+                        :color="form.color !== null ? form.color : 'red-13'"
+                        :options="form.dateRequired"
+                        minimal
+                        @update:model-value="form.openDateModal = false"
+                        v-model="form.value"
+                      />
                     </q-popup-proxy>
                   </q-icon>
                 </template>
