@@ -87,10 +87,11 @@
 
         <footer class="mt-5">
           <p class="mt-6 text-gray-400 text-sm">
-            By logging, in, you agree to SYNQUE's
-            <a href="https://synque.io/terms-condition.html" target="_blank">
+            By logging, in, you agree to {{ `${orq}'s` }}
+            <!-- <a href="https://synque.io/terms-condition.html" target="_blank">
               Terms of Use
-            </a>
+            </a> -->
+            <a :href="`${orqTerms}`" target="_blank"> Terms of Use </a>
           </p>
         </footer>
       </section>
@@ -110,6 +111,10 @@ const userInfo = useUserInfoStore();
 const login = ref({ email: "", password: "" });
 const loading = ref(false);
 const hidePassword = ref(true);
+const orq = process.env.ORQ ? process.env.ORQ : "Synque";
+const orqTerms = process.env.ORQ
+  ? "/terms"
+  : "https://synque.io/terms-condition.html";
 
 const submit = () => {
   if (login.value.email && login.value.password) {
