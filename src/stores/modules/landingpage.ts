@@ -118,7 +118,6 @@ const useNavigationStore = defineStore("navigationStore", {
             const itemObj = {
               ...itemContent.page_component_id,
               image: null,
-              children: [],
             };
 
             if (itemContent.page_component_id.image !== null) {

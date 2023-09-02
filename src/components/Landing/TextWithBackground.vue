@@ -1,13 +1,50 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import Wysiwyg from "src/components/Landing/Wysiwyg.vue";
+import { useQuasar } from "quasar";
 
-defineProps({
+const props = defineProps({
   content: {
     type: Object,
   },
 });
 
+const $q = useQuasar();
+
 const unmute = ref(false);
+
+const displayedContent = computed(() => {
+  return $q.platform.is.mobile
+    ? props.content.content_mobile ?? props.content.content
+    : props.content.content;
+});
+
+// Computed
+const imageStyle = computed(() => {
+  return {
+    // backgroundStyle is for replacing background image (absolute) to background relative size
+    ...(props.content?.raw && props.content?.raw.backgroundImageStyle
+      ? // check if mobile screen and backgroundImageMobile exists, use it.
+        $q.platform.is.mobile
+        ? props.content?.raw.backgroundImageMobileStyle
+          ? props.content?.raw.backgroundImageMobileStyle
+          : props.content?.raw.backgroundImageStyle
+        : props.content?.raw.backgroundImageStyle
+      : !props.content.raw?.backgroundStyle
+      ? {
+          minHeight: "700px",
+        }
+      : {}),
+    paddingLeft: "1em",
+    paddingRight: "1em",
+  };
+});
+
+const overlay = computed(() => {
+  return props.content?.raw && props.content?.raw.overlayColor
+    ? { background: props.content?.raw.overlayColor }
+    : {};
+});
 
 // Methods
 
@@ -33,24 +70,70 @@ const contentTextAlignment = (alignment) => {
 </script>
 
 <template>
-  <div class="w-full" :style="content.raw !== null ? content.raw.style : ''">
+  <div
+    class="w-full"
+    :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
+  >
     <div
-      v-if="content.raw == null"
-      :class="textAligment(content.alignment)"
-      class="min-h-[700px] p-6 bg-center flex bg-no-repeat bg-cover"
-      :style="{ backgroundImage: `url(${content.image})` }"
+      class="w-full relative bg-[#2E2E3A]"
+      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
+      :class="[
+        textAligment(content.alignment),
+        content.raw?.backgroundStyle ? 'md:px-16 !pb-10 md:pb-0' : '',
+      ]"
+      :style="content.raw?.backgroundStyle ? content.raw?.backgroundStyle : ''"
     >
-      <div class="md:w-1/2 w-full">
-        <article
-          v-html="content.content"
-          :class="contentTextAlignment(content.alignment)"
-          class="prose max-w-none"
-        />
+      <div
+        v-if="!content.raw?.backgroundStyle"
+        class="bg-center flex bg-no-repeat bg-cover"
+        :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
+      ></div>
+
+      <div
+        :style="{ ...overlay, ...imageStyle }"
+        class="items-center flex top-0 bottom-0 w-full"
+        :class="{ absolute: !content.raw?.backgroundStyle }"
+      >
+        <template v-if="content?.alignment === 'row'">
+          <div
+            v-for="(children, index) in content.children"
+            :key="index"
+            :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
+            class="md:w-1/2 w-full"
+          >
+            <Wysiwyg :content="children" />
+          </div>
+        </template>
+        <div v-else class="md:w-1/2 w-full" :style="content?.raw?.wrapperStyle">
+          <article
+            v-html="displayedContent"
+            :class="contentTextAlignment(content.alignment)"
+            class="prose max-w-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-else-if="content?.alignment === 'row'"
+      class="bg-center flex bg-no-repeat bg-cover"
+      :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
+    >
+      <div
+        v-for="(children, index) in content.children"
+        :key="index"
+        :class="children.alignment === 'left' ? 'order-1' : 'order-2'"
+        class="md:w-1/2 w-full"
+      >
+        <Wysiwyg :content="children" />
       </div>
     </div>
 
     <template v-else>
-      <div v-if="content.raw.hasOwnProperty('videoId')" class="w-full relative">
+      <div
+        v-if="content.raw && content.raw.hasOwnProperty('videoId')"
+        class="w-full relative"
+      >
         <iframe
           width="100%"
           height="735"
@@ -66,30 +149,18 @@ const contentTextAlignment = (alignment) => {
 
         <div class="w-full">
           <div
-            :style="{
-              background: `linear-gradient(${content.raw.overlayColor})`,
-            }"
-            class="text-white flex justify-center items-center absolute top-0 bottom-0 w-full"
+            :style="overlay"
+            class="flex justify-center items-center absolute top-0 bottom-0 w-full"
           >
             <div
               :class="textAligment(content.alignment)"
-              class="w-full relative flex flex-col mx-5 gap-4"
+              class="w-full relative flex flex-col mx-5 md:gap-4 sm:gap-2"
             >
               <article
-                v-html="content.content"
+                v-html="displayedContent"
                 :class="contentTextAlignment(content.alignment)"
                 class="prose max-w-none"
               />
-              <!-- <h1
-                :style="{ color: content.raw.color }"
-                class="mb-0 text-3xl lg:text-6xl text-capitalize font-bold"
-              >
-                {{ content.raw.content }}
-              </h1>
-
-              <span :style="{ color: content.raw.color }" class="text-xl">
-                {{ content.raw.subtitleContent }}
-              </span> -->
 
               <div class="absolute right-10 -bottom-64">
                 <q-icon
@@ -107,4 +178,11 @@ const contentTextAlignment = (alignment) => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@media (max-width: $breakpoint-xs-max) {
+  :deep(article span#title) {
+    font-family: "Impact", sans-serif !important;
+    font-weight: 700 !important;
+  }
+}
+</style>

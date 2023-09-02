@@ -2,7 +2,7 @@
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
 import { computed, ref } from "vue";
-import { Notify } from "quasar";
+import { Notify, useQuasar } from "quasar";
 
 const props = defineProps({
   content: {
@@ -12,12 +12,47 @@ const props = defineProps({
 const emits = defineEmits(["submit"]);
 const dialog = ref();
 
+const $q = useQuasar();
+
 const form = ref();
 const childrenExists = computed(
   () =>
     props.content.children.length > 0 &&
     typeof props.content.children[0] !== "number"
 );
+
+const containerStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
+    : {
+        margin: "20px",
+      };
+});
+
+const buttonStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.buttonStyle
+    ? props.content?.raw.buttonStyle
+    : {
+        color: "white",
+        backgroundColor: "#4b44f6",
+      };
+});
+
+const style = computed(() => {
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
+    : {
+        color: "black",
+        backgroundColor: "white",
+        padding: "15px",
+      };
+});
+
+const buttonText = computed(() => {
+  return props.content?.raw && props.content?.raw.button
+    ? props.content?.raw.button
+    : "Submit";
+});
 
 const submit = async (fromEmit) => {
   const valid = await form.value.validate();
@@ -30,7 +65,7 @@ const submit = async (fromEmit) => {
     }
     emits("submit");
     const allForm = {
-      app: props.content.app,
+      app: process.env.APP || props.content.app,
     };
 
     await props.content.raw.form.forEach((form) => {
@@ -43,13 +78,13 @@ const submit = async (fromEmit) => {
             allForm[form.field] = form.value;
           }
         } else {
-          allForm[form.field] = form.value;
+          allForm[form.label] = form.value;
         }
       } else if (!form.value && form.required) {
         form.error = true;
         form.errorMessage = `The ${form.label} is required`;
       } else {
-        allForm[form.field] = form.value;
+        allForm[form.label] = form.value;
       }
     });
 
@@ -78,23 +113,33 @@ const submit = async (fromEmit) => {
     } catch (error) {}
   }
 };
+
+const displayedContent = computed(() => {
+  return $q.platform.is.mobile
+    ? props.content.content_mobile ?? props.content.content
+    : props.content.content;
+});
 </script>
 
 <template>
   <div
-    class="w-full mx-7 my-5 grid gap-5 lg:grid-cols-2 bg-center bg-cover p-2 lg:p-6"
-    :style="{ backgroundImage: `url(${content.image})` }"
+    class="w-full grid gap-5 lg:grid-cols-2 bg-center bg-cover lg:p-6 formContainer"
+    :style="{ backgroundImage: `url(${content.image})`, ...containerStyle }"
   >
+    <!-- Content -->
     <div
-      :class="content.alignment === 'left' ? 'order-1' : 'order-2'"
+      :class="
+        content.alignment === 'left' && !$q.platform.is.mobile ? 'order-1' : ''
+      "
       class="col-span-1 text-white"
     >
-      <article v-html="content.content" class="prose text-white" />
+      <article v-html="displayedContent" class="prose text-white" />
     </div>
-
+    <!-- FORM -->
     <div
-      :class="content.alignment === 'right' ? 'order-2' : 'order-1'"
-      class="flex bg-white p-6 rounded-lg gap-5 col-span-1 flex-col w-full"
+      :class="content.alignment === 'right' ? 'order-2' : ''"
+      class="flex rounded-lg gap-5 col-span-1 flex-col w-full formSecondLayer"
+      :style="style"
     >
       <p
         class="text-center mb-4 font-bold text-xl"
@@ -135,14 +180,84 @@ const submit = async (fromEmit) => {
             />
 
             <template v-else-if="form.type === 'checkbox'">
-              <q-checkbox
-                v-for="(checkbox, index) in form.options"
-                :val="checkbox.label"
-                :key="index"
-                :label="checkbox.label"
+              <q-field
                 v-model="form.value"
-                color="primary"
-              />
+                borderless
+                @update:model-value="form.error = false"
+                dense
+                :rules="[(val) => required(val)]"
+                :error="form.error"
+                :error-message="form.errorMessage"
+              >
+                <template v-slot:control>
+                  <q-checkbox
+                    v-for="(checkbox, index) in form.options"
+                    :val="checkbox.label"
+                    :key="index"
+                    :label="checkbox.label"
+                    v-model="form.value"
+                    color="primary"
+                  >
+                  </q-checkbox>
+                </template>
+              </q-field>
+            </template>
+
+            <template v-else-if="form.type === 'date'">
+              <q-input
+                v-if="!form.required"
+                dense
+                outlined
+                v-model="form.value"
+                mask="date"
+                :rules="['date']"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      v-model="form.openDateModal"
+                      cover
+                      :breakpoint="600"
+                    >
+                      <q-date
+                        :color="form.color !== null ? form.color : 'red-13'"
+                        minimal
+                        :options="form.dateRequired"
+                        @update:model-value="form.openDateModal = false"
+                        v-model="form.value"
+                      />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
+              <q-input
+                v-else
+                outlined
+                dense
+                lazy-rules
+                v-model="form.value"
+                mask="date"
+                :rules="['date', (val) => required(val)]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      v-model="form.openDateModal"
+                      cover
+                      :breakpoint="600"
+                    >
+                      <q-date
+                        :color="form.color !== null ? form.color : 'red-13'"
+                        :options="form.dateRequired"
+                        minimal
+                        @update:model-value="form.openDateModal = false"
+                        v-model="form.value"
+                      />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
             </template>
 
             <q-input
@@ -173,13 +288,13 @@ const submit = async (fromEmit) => {
         <div class="flex justify-end">
           <q-btn
             @click="submit(false)"
-            color="primary"
-            :label="content.raw.button"
+            :style="buttonStyle"
+            :label="buttonText"
           />
         </div>
       </q-form>
     </div>
-    <q-dialog v-if="childrenExists" v-model="dialog">
+    <q-dialog v-if="childrenExists" v-model="dialog" full-height>
       <q-card style="max-width: 90vw">
         <Form
           :content="content.children[0]"
@@ -190,5 +305,24 @@ const submit = async (fromEmit) => {
     </q-dialog>
   </div>
 </template>
+<style scoped lang="scss">
+@media (max-width: $breakpoint-xs-max) {
+  :deep(article p#poupou_form_text) {
+    padding-left: 0 !important;
+  }
 
-<style scoped lang="scss"></style>
+  .formContainer {
+    padding: 10px !important;
+
+    .formSecondLayer {
+      padding: 30px !important;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md-max) {
+  .formSecondLayer {
+    padding: 30px !important;
+  }
+}
+</style>

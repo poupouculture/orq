@@ -2,16 +2,27 @@
 import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
-import { Screen } from "quasar";
+import { Screen, useQuasar } from "quasar";
 import useLandingPage from "src/stores/modules/landingpage";
 
+const $q = useQuasar();
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
+const scroll = ref(false);
 const leftDrawerOpen = ref(false);
 const defaultStyle = ref({
   backgroundColor: "#4b44f6",
   color: "#FFFFFF",
+});
+const mediaSocialStyle = ref({
+  push: true,
+  size: "sm",
+  round: true,
+  style: {
+    background: "#ffffff",
+  },
+  textColor: "primary",
 });
 
 const drawer = computed({
@@ -44,9 +55,17 @@ const topNavbar = computed(() => {
 });
 
 const navbarStyle = computed(() => {
-  return useLandingPageStore.topNavigation[0]?.raw
-    ? useLandingPageStore.topNavigation[0]?.raw
-    : defaultStyle.value;
+  return {
+    ...(useLandingPageStore.topNavigation[0]?.raw ?? defaultStyle.value),
+    padding: $q.platform.is.desktop ? "2rem" : "0.5rem",
+  };
+});
+
+const socialMediabBtn = computed(() => {
+  return bottomNavigation.value?.raw &&
+    bottomNavigation.value.raw.socialMediaBtn
+    ? bottomNavigation.value.raw.socialMediaBtn
+    : mediaSocialStyle.value;
 });
 
 const currentComponent = computed(() => {
@@ -54,11 +73,17 @@ const currentComponent = computed(() => {
 });
 
 const iconStyle = computed(() => {
-  return bottomNavigation.value?.raw.iconSize
+  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.iconSize
     ? bottomNavigation.value?.raw.iconSize
     : {
         width: 100,
       };
+});
+
+const bottomStyle = computed(() => {
+  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.style
+    ? bottomNavigation.value?.raw.style
+    : defaultStyle.value;
 });
 
 watch(drawer, (value) => {
@@ -113,6 +138,14 @@ const getPagesContent = async () => {
   }
 };
 
+const onScroll = (event) => {
+  if (topNavbar.value.header_position === "fixed") {
+    if (event === 0) {
+      scroll.value = false;
+    } else scroll.value = true;
+  }
+};
+
 onMounted(async () => {
   await useLandingPageStore.getAll();
 
@@ -121,12 +154,17 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fFf" v-scroll="onScroll">
     <q-page-container>
       <div
         :style="navbarStyle"
-        :class="{ 'absolute z-10': currentComponent }"
-        class="w-full p-5 flex justify-center"
+        :class="{
+          'absolute z-10': currentComponent,
+          'p-5': $q.platform.is.desktop,
+          'p-0': $q.platform.is.mobile,
+          'fixed z-10': scroll,
+        }"
+        class="w-full flex justify-center"
       >
         <div class="container">
           <Navbar @open="leftDrawerOpen = !leftDrawerOpen" />
@@ -136,15 +174,18 @@ onMounted(async () => {
         <router-view></router-view>
       </div>
 
-      <div class="w-full flex bg-[#4B44F6] justify-center mt-auto">
+      <div class="w-full flex justify-center" :style="bottomStyle">
         <div
-          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-6 mx-6"
+          class="container flex flex-col gap-4 sm:flex-row sm:justify-between p-4 md:p-6 md:mx-6"
         >
-          <div
-            class="flex flex-col order-2 mt-4 lg:order-1 gap-4 w-56 justify-between"
+          <template
+            v-if="
+              bottomNavigation?.raw &&
+              bottomNavigation?.raw.footerStyle === 'flex'
+            "
           >
-            <div class="flex flex-col">
-              <div class="flex items-center gap-3">
+            <div class="grid md:grid-cols-3 grid-cols-2 gap-4 w-full">
+              <div class="col-span-1 order-1">
                 <div>
                   <img
                     v-bind="iconStyle"
@@ -152,58 +193,116 @@ onMounted(async () => {
                     alt="logo"
                   />
                 </div>
-                <div>
-                  <p class="font-[800] text-white text-2xl">
-                    {{ topNavbar?.logo }}
-                  </p>
-                </div>
               </div>
 
               <div
-                v-if="bottomNavigation?.raw.socialMediaItems !== null"
-                class="mt-3 text-white flex gap-3"
+                class="col-span-2 md:col-span-1 order-3 md:order-2 items-center flex justify-center"
               >
-                <q-btn
-                  v-for="data in bottomNavigation?.raw.socialMediaItems"
-                  :key="data"
-                  target="_blank"
-                  v-bind="{ ...data, ...bottomNavigation.raw.socialMediaBtn }"
-                />
+                <span class="order-3 sm:order-2">
+                  Copyright
+                  {{ new Date().getFullYear() }} Synque.io
+                </span>
+              </div>
+
+              <div class="col-span-1 order-2 md:order-3 flex md:justify-end">
+                <div
+                  v-if="bottomNavigation"
+                  class="w-50 text-end flex flex-wrap md:justify-end gap-3"
+                >
+                  <a
+                    class="cursor-pointer"
+                    v-for="(url, index) in bottomNavigation?.pages"
+                    :key="index"
+                    @click="getComponentById(url.id, url.url)"
+                  >
+                    {{ url.name }}
+                  </a>
+                </div>
+
+                <div
+                  v-if="
+                    bottomNavigation?.raw &&
+                    bottomNavigation?.raw.socialMediaItems !== null
+                  "
+                  class="mt-3 items-center flex gap-3 w-full md:justify-end"
+                >
+                  <div
+                    v-for="data in bottomNavigation?.raw.socialMediaItems"
+                    :key="data"
+                  >
+                    <q-btn
+                      target="_blank"
+                      v-bind="{ ...data, ...socialMediabBtn }"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+          </template>
 
-            <span class="text-white order-3 sm:order-2">
-              Copyright
-              {{ new Date().getFullYear() }} Synque.io
-            </span>
-          </div>
-
-          <div
-            class="flex order-1 lg:order-2 items-center w-48 sm:order-3 flex-col justify-center gap-5"
-          >
+          <template v-else>
             <div
-              v-if="bottomNavigation"
-              class="grid text-white w-full gap-10 grid-cols-2"
+              class="flex flex-col order-2 mt-4 lg:order-1 gap-4 w-56 justify-between"
             >
-              <a
-                class="cursor-pointer"
-                v-for="(url, index) in bottomNavigation?.pages"
-                :key="index"
-                @click="getComponentById(url.id, url.url)"
-              >
-                {{ url.name }}
-              </a>
-
-              <div class="col-span-2 text-[#4B44F6] gap-5 flex items-center">
-                <div class="rounded-full flex items-center p-1 bg-white">
-                  <q-icon size="20px" name="fa-brands fa-facebook-f" />
+              <div class="flex flex-col">
+                <div class="flex items-center gap-3">
+                  <div>
+                    <img
+                      v-bind="iconStyle"
+                      :src="bottomNavigation?.icon"
+                      alt="logo"
+                    />
+                  </div>
+                  <div>
+                    <p class="font-[800] text-white text-2xl">
+                      {{ topNavbar?.logo }}
+                    </p>
+                  </div>
                 </div>
-                <div class="rounded-full flex items-center p-1 bg-white">
-                  <q-icon size="20px" name="fa-brands fa-instagram" />
+
+                <div
+                  v-if="
+                    bottomNavigation?.raw &&
+                    bottomNavigation?.raw.socialMediaItems !== null
+                  "
+                  class="mt-3 flex gap-3"
+                >
+                  <div
+                    v-for="data in bottomNavigation?.raw.socialMediaItems"
+                    :key="data"
+                  >
+                    <q-btn
+                      target="_blank"
+                      v-bind="{ ...data, ...socialMediabBtn }"
+                    />
+                  </div>
                 </div>
               </div>
+
+              <span class="order-3 sm:order-2">
+                Copyright
+                {{ new Date().getFullYear() }} Synque.io
+              </span>
             </div>
-          </div>
+
+            <div
+              class="flex order-1 lg:order-2 items-center w-48 sm:order-3 flex-col justify-center gap-5"
+            >
+              <div
+                v-if="bottomNavigation"
+                class="grid w-full gap-10 grid-cols-2"
+              >
+                <a
+                  class="cursor-pointer"
+                  v-for="(url, index) in bottomNavigation?.pages"
+                  :key="index"
+                  @click="getComponentById(url.id, url.url)"
+                >
+                  {{ url.name }}
+                </a>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </q-page-container>
