@@ -103,9 +103,10 @@ const getComponentById = async (id, url) => {
 
 const getPagesContent = async () => {
   let currentRoutename = "";
+  console.log(route.path.substring(0, route.path.length - 1));
 
   if (route.path.substr(route.path.length - 1) === "/") {
-    currentRoutename = route.path.substring(0, route.path.length - 1);
+    currentRoutename = "/home";
   } else {
     currentRoutename = route.path;
   }
@@ -161,7 +162,7 @@ onMounted(async () => {
         :class="{
           'absolute z-10': currentComponent,
           'p-5': $q.platform.is.desktop,
-          'p-0': $q.platform.is.mobile,
+          'p-2': $q.platform.is.mobile,
           'fixed z-10': scroll,
         }"
         class="w-full flex justify-center"
