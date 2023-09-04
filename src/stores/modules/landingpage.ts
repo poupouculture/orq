@@ -23,6 +23,10 @@ const useNavigationStore = defineStore("navigationStore", {
     getComponent: (state) => state.component,
     topNavigation: (state) =>
       state.items.filter((item: any) => item.name === "top"),
+    menuNavigation: (state) =>
+      state.items.filter(
+        (item: any) => !["top", "middle", "bottom"].includes(item.name)
+      ),
   },
   actions: {
     async getAll() {
@@ -45,14 +49,11 @@ const useNavigationStore = defineStore("navigationStore", {
                 ),
                 icon: "",
               };
-
               if (navigation.icon !== null) {
                 obj.icon = `${process.env.ORQ_API}/assets/${navigation.icon}`;
               }
-
               return obj;
             });
-
             this.items = sorting;
           } else {
             Notify.create({
