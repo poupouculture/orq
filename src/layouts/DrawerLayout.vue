@@ -79,7 +79,10 @@ const menus = computed(() => {
 
         <q-list>
           <q-item>
-            <router-link to="/" style="text-decoration: none; color: inherit">
+            <router-link
+              to="/dashboard"
+              style="text-decoration: none; color: inherit"
+            >
               <div class="icon-text">
                 <q-icon
                   size="sm"

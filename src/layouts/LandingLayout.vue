@@ -4,6 +4,7 @@ import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
 import { Screen, useQuasar } from "quasar";
 import useLandingPage from "src/stores/modules/landingpage";
+import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
 
 const $q = useQuasar();
 const useLandingPageStore = useLandingPage();
@@ -48,6 +49,9 @@ const bottomNavigation = computed(() => {
 
 const mobileNavigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
+});
+const menuNavigation = computed(() => {
+  return useLandingPageStore.menuNavigation;
 });
 
 const topNavbar = computed(() => {
@@ -103,9 +107,10 @@ const getComponentById = async (id, url) => {
 
 const getPagesContent = async () => {
   let currentRoutename = "";
+  console.log(route.path.substring(0, route.path.length - 1));
 
   if (route.path.substr(route.path.length - 1) === "/") {
-    currentRoutename = route.path.substring(0, route.path.length - 1);
+    currentRoutename = "/home";
   } else {
     currentRoutename = route.path;
   }
@@ -161,7 +166,7 @@ onMounted(async () => {
         :class="{
           'absolute z-10': currentComponent,
           'p-5': $q.platform.is.desktop,
-          'p-0': $q.platform.is.mobile,
+          'p-2': $q.platform.is.mobile,
           'fixed z-10': scroll,
         }"
         class="w-full flex justify-center"
@@ -324,6 +329,18 @@ onMounted(async () => {
         >
           <q-item-section> {{ navigate.name }} </q-item-section>
         </q-item>
+        <template v-if="menuNavigation.length">
+          <q-item
+            clickable
+            v-ripple
+            v-for="(navigate, index) in menuNavigation"
+            :key="index"
+          >
+            <q-item-section>
+              <MenuNavigation :nav="navigate" />
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-drawer>
   </q-layout>

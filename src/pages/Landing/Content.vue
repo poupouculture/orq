@@ -2,15 +2,26 @@
 import Hero from "src/components/Landing/Hero.vue";
 import Banner from "src/components/Landing/Banner.vue";
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
 import useLandingPage from "src/stores/modules/landingpage";
 import WhatsAppOverlay from "src/components/Partials/WhatsAppOverlay.vue";
 
 const landingPageStore = useLandingPage();
-const { getComponent } = storeToRefs(landingPageStore);
+const { getComponent, topNavigation } = storeToRefs(landingPageStore);
+
+const scroll = ref(false);
+
+const onScroll = (event) => {
+  if (topNavigation.value[0].header_position === "fixed") {
+    if (event === 0) {
+      scroll.value = false;
+    } else scroll.value = true;
+  }
+};
 </script>
 
 <template>
-  <div>
+  <div v-scroll="onScroll">
     <Hero v-if="getComponent.heroText" class="justify-center">
       <div class="w-full">
         <div
@@ -22,7 +33,10 @@ const { getComponent } = storeToRefs(landingPageStore);
         </div>
       </div>
     </Hero>
-    <div class="w-full flex flex-col min-h-screen items-center">
+    <div
+      class="w-full flex flex-col items-center"
+      :class="scroll ? 'h-full' : 'min-h-screen'"
+    >
       <div class="w-full">
         <Banner :content="getComponent" />
       </div>
