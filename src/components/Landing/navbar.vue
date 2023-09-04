@@ -3,6 +3,7 @@ import { computed } from "vue";
 import menuIcon from "assets/images/menu.png";
 import { useRouter } from "vue-router";
 import useLandingPage from "src/stores/modules/landingpage";
+import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
 
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
@@ -10,6 +11,9 @@ const router = useRouter();
 // Computed
 const navigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
+});
+const menuNavigation = computed(() => {
+  return useLandingPageStore.menuNavigation;
 });
 
 const iconStyle = computed(() => {
@@ -55,6 +59,17 @@ const getComponentById = async (id: string, url: string) => {
       >
         {{ navigate.name }}
       </button>
+      <template v-if="menuNavigation.length">
+        <button
+          v-for="(nav, index) in menuNavigation"
+          :key="index"
+          class="text-lg font-bold"
+          :class="{ hidden: $q.screen.lt.lg }"
+          type="button"
+        >
+          <MenuNavigation :nav="nav" />
+        </button>
+      </template>
 
       <a
         :class="{

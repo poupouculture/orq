@@ -4,6 +4,7 @@ import { useRouter, useRoute } from "vue-router";
 import Navbar from "src/components/Landing/navbar.vue";
 import { Screen, useQuasar } from "quasar";
 import useLandingPage from "src/stores/modules/landingpage";
+import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
 
 const $q = useQuasar();
 const useLandingPageStore = useLandingPage();
@@ -48,6 +49,9 @@ const bottomNavigation = computed(() => {
 
 const mobileNavigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
+});
+const menuNavigation = computed(() => {
+  return useLandingPageStore.menuNavigation;
 });
 
 const topNavbar = computed(() => {
@@ -325,6 +329,18 @@ onMounted(async () => {
         >
           <q-item-section> {{ navigate.name }} </q-item-section>
         </q-item>
+        <template v-if="menuNavigation.length">
+          <q-item
+            clickable
+            v-ripple
+            v-for="(navigate, index) in menuNavigation"
+            :key="index"
+          >
+            <q-item-section>
+              <MenuNavigation :nav="navigate" />
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-drawer>
   </q-layout>
