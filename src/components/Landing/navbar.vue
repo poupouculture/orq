@@ -56,15 +56,17 @@ const getComponentById = async (id: string, url: string) => {
         {{ navigate.name }}
       </button>
 
-      <button
+      <a
         :class="{
           'px-2': $q.platform.is.mobile,
-          'px-4': $q.platform.is.desktop,
+          'px-5 py-2.5': $q.platform.is.desktop,
         }"
-        class="py-2 rounded-full bg-white/60 text-white"
+        href="https://wa.me/+85268050931"
+        target="_blank"
+        class="py-1 px-3 mr-1 text-white border border-white uppercase font-bold tracking-widest"
       >
-        Get started
-      </button>
+        Call Now
+      </a>
 
       <q-btn
         v-if="$q.screen.lt.lg"
