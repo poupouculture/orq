@@ -1,8 +1,30 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   content: {
     type: Object,
   },
+});
+
+// Computed
+
+const cardIconStyle = computed(() => {
+  return props.content?.raw && props.content?.cardIconStyle
+    ? props.content?.cardIconStyle
+    : {
+        background: "white",
+        color: "black",
+        padding: "0px 0px 20px 0px",
+      };
+});
+
+const style = computed(() => {
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
+    : {
+        padding: "0px",
+      };
 });
 
 // Methods
@@ -19,7 +41,7 @@ const textAligment = (alignment) => {
 </script>
 
 <template>
-  <div class="w-full flex justify-center">
+  <div class="w-full flex justify-center" :style="style">
     <article class="prose max-w-none">
       <h1 class="text-center">{{ content.name }}</h1>
 
@@ -31,7 +53,8 @@ const textAligment = (alignment) => {
         <div
           v-for="(children, index) in content.children"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl bg-white w-full md:w-[320px] lg:w-[320px] xl:w-[380px] py-10 items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl w-full md:w-[320px] lg:w-[320px] xl:w-[380px] items-center flex-col"
+          :style="cardIconStyle"
         >
           <div class="w-full flex justify-center">
             <q-img

@@ -3,7 +3,7 @@ import angliss from "src/assets/images/angliss.png";
 import tasteofasia from "src/assets/images/tasteofasia.png";
 import fitmax from "src/assets/images/fitmax.png";
 import paradise from "src/assets/images/paradise.jpeg";
-import ks from "src/assets/images/k.jpeg";
+import ks from "src/assets/images/KSLOGO.png";
 
 import { ref } from "vue";
 
@@ -30,7 +30,7 @@ const clients = ref([angliss, fitmax, tasteofasia, paradise, ks]);
         :key="index"
         class="flex justify-center"
       >
-        <img :src="client" class="w-32" alt="" style="object-fit: contain" />
+        <img :src="client" class="w-36" alt="" style="object-fit: contain" />
       </div>
     </div>
   </div>

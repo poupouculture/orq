@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import menuIcon from "assets/images/menu.png";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useLandingPage from "src/stores/modules/landingpage";
 import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
 
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
+const route = useRoute();
 
 // Computed
 const navigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
 });
+const navActive = (nav: any) => {
+  return route.path === nav.url || nav.url === "/";
+};
 const menuNavigation = computed(() => {
   return useLandingPageStore.menuNavigation;
 });
@@ -33,10 +37,7 @@ const getComponentById = async (id: string, url: string) => {
 
 <template>
   <div class="navbar flex justify-between">
-    <router-link
-      :to="{ name: 'landingpage' }"
-      class="flex justify-center items-center gap-3"
-    >
+    <router-link to="/home" class="flex justify-center items-center gap-3">
       <img v-bind="iconStyle" :src="navigation?.icon" />
       <p class="font-[800] text-white text-2xl">
         {{ navigation?.logo }}
@@ -54,17 +55,27 @@ const getComponentById = async (id: string, url: string) => {
         @click="getComponentById(navigate.id, navigate.url)"
         v-for="(navigate, index) in navigation?.pages"
         :key="index"
-        class="text-lg font-bold"
-        :class="{ hidden: $q.screen.lt.lg }"
+        class="text-lg font-bold relative"
+        :class="[
+          { hidden: $q.screen.lt.lg },
+          navActive(navigate) ? 'text-white' : 'text-white/80',
+        ]"
       >
         {{ navigate.name }}
+        <div
+          v-if="navActive(navigate)"
+          class="absolute -bottom-1.5 w-full inset-x-0 h-1 bg-white rounded-md"
+        ></div>
       </button>
       <template v-if="menuNavigation.length">
         <button
           v-for="(nav, index) in menuNavigation"
           :key="index"
-          class="text-lg font-bold"
-          :class="{ hidden: $q.screen.lt.lg }"
+          class="text-lg font-bold active:text-white hover:text-white"
+          :class="[
+            { hidden: $q.screen.lt.lg },
+            navActive(nav) ? 'text-white' : 'text-white/80',
+          ]"
           type="button"
         >
           <MenuNavigation :nav="nav" />
