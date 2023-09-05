@@ -1,13 +1,20 @@
 <script setup>
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 
-defineProps({
+const props = defineProps({
   content: {
     type: Object,
   },
 });
 
 const route = useRoute();
+
+const contentStyle = computed(() => {
+  return props.content?.raw && props.content?.raw.contentStyle
+    ? props.content?.raw.contentStyle
+    : {};
+});
 
 const conditionalStyle = (content) => {
   let obj = {};
@@ -37,20 +44,21 @@ const conditionalStyle = (content) => {
         ? 'lg:h-[70vh] homeHero'
         : 'lg:h-[70vh]'
     "
-    class="bg-center min-h-screen flex flex-col items-center w-full p-5 lg:p-10"
+    class="bg-center h-full flex flex-col items-center w-full p-5 lg:p-10"
     style="background-position: center; background-size: cover"
     :style="conditionalStyle(content)"
   >
-    <div class="container mt-6">
+    <div class="container h-full">
       <div
         :class="
           route.name == 'landingpage' && $q.screen.gt.md
             ? 'min-h-[90vh] '
-            : ' min-h-screen'
+            : 'h-full'
         "
-        class="w-full flex flex-col mt-7 lg:px-20 justify-center items-start"
+        class="w-full flex flex-col justify-center items-start"
+        :style="contentStyle"
       >
-        <div class="container mt-6">
+        <div class="container">
           <slot />
         </div>
       </div>

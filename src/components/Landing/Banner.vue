@@ -38,11 +38,7 @@ const flexDirection = (alignment) => {
         <Carousel :content="data" />
       </div>
 
-      <Cover
-        v-else-if="data.type === 'cover_photo'"
-        :content="data"
-        :style="data.raw !== null ? data.raw.style : ''"
-      >
+      <Cover v-else-if="data.type === 'cover_photo'" :content="data">
         <div class="w-full">
           <div
             class="flex capitalize gap-3 lg:gap-0"
