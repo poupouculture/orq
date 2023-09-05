@@ -53,14 +53,6 @@ const conditionalStyle = (content) => {
         <div class="container mt-6">
           <slot />
         </div>
-        <div class="flex w-full mt-24 justify-center">
-          <!-- <button
-            @click="scrollDown"
-            class="rounded-full p-2 border-dashed border-2"
-          >
-            <q-icon class="text-white" name="arrow_downward" size="4rem" />
-          </button> -->
-        </div>
       </div>
     </div>
   </div>
