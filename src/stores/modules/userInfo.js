@@ -68,7 +68,7 @@ const useUserInfoStore = defineStore("userInfo", {
         });
         // this.router.push("/");
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = "/dashboard";
         }, 1500);
       } catch (err) {
         console.log(err.response, err);
