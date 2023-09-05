@@ -20,8 +20,8 @@ const cardIconStyle = computed(() => {
 });
 
 const style = computed(() => {
-  return props.content?.raw && props.content?.style
-    ? props.content?.style
+  return props.content?.raw && props.content?.raw.style
+    ? props.content?.raw.style
     : {
         padding: "0px",
       };
