@@ -15,6 +15,16 @@ const props = defineProps({
     type: Object,
   },
 });
+
+const flexDirection = (alignment) => {
+  if (alignment === "center") {
+    return "justify-center";
+  } else if (alignment === "left") {
+    return "justify-start";
+  } else if (alignment === "right") {
+    return "justify-end";
+  }
+};
 </script>
 
 <template>
@@ -28,18 +38,21 @@ const props = defineProps({
         <Carousel :content="data" />
       </div>
 
-      <Cover
-        v-else-if="data.type === 'cover_photo'"
-        :content="data"
-        :style="data.raw !== null ? data.raw.style : ''"
-      >
+      <Cover v-else-if="data.type === 'cover_photo'" :content="data">
         <div class="w-full">
           <div
-            class="flex flex-col items-center justify-center font-['Inter'] capitalize text-[30px] gap-3 lg:gap-0 lg:text-[70px] font-black text-white"
+            class="flex capitalize gap-3 lg:gap-0"
+            :class="flexDirection(data.alignment)"
           >
-            <p class="text-center">
-              {{ data.name }}
-            </p>
+            <article
+              v-html="data.content_mobile"
+              class="prose !block md:!hidden"
+            ></article>
+
+            <article
+              v-html="data.content"
+              class="prose !hidden md:!block"
+            ></article>
           </div>
         </div>
       </Cover>
