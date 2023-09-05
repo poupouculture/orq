@@ -1,16 +1,16 @@
-<script setup>
+<script setup lang="ts">
+import { useQuasar } from "quasar";
 import { useRoute } from "vue-router";
 
-defineProps({
-  content: {
-    type: Object,
-  },
-});
+defineProps<{
+  content: any;
+}>();
 
 const route = useRoute();
+const $q = useQuasar();
 
-const conditionalStyle = (content) => {
-  let obj = {};
+const conditionalStyle = (content: any) => {
+  let obj = {} as any;
   if (Object.keys(content).length === 0) {
     return "";
   } else {
@@ -18,9 +18,12 @@ const conditionalStyle = (content) => {
   }
 
   if (content.raw !== null) {
+    const style = $q.platform.is.mobile
+      ? { ...content.raw.styleMobile }
+      : { ...content.raw.style };
     obj = {
       ...obj,
-      ...content.raw.style,
+      ...style,
     };
   }
 
