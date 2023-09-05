@@ -19,6 +19,14 @@ const cardIconStyle = computed(() => {
       };
 });
 
+const style = computed(() => {
+  return props.content?.raw && props.content?.style
+    ? props.content?.style
+    : {
+        padding: "0px",
+      };
+});
+
 // Methods
 
 const textAligment = (alignment) => {
@@ -33,7 +41,7 @@ const textAligment = (alignment) => {
 </script>
 
 <template>
-  <div class="w-full flex justify-center">
+  <div class="w-full flex justify-center" :style="style">
     <article class="prose max-w-none">
       <h1 class="text-center">{{ content.name }}</h1>
 
