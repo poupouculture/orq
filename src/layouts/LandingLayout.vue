@@ -65,6 +65,16 @@ const navbarStyle = computed(() => {
   };
 });
 
+const landingLayoutStyle = computed(() => {
+  return useLandingPageStore.topNavigation[0]?.raw !== null &&
+    useLandingPageStore.topNavigation[0]?.raw.drawerStyle !== null
+    ? useLandingPageStore.topNavigation[0]?.raw.drawerStyle
+    : {
+        background: "white",
+        color: "black",
+      };
+});
+
 const socialMediabBtn = computed(() => {
   return bottomNavigation.value?.raw &&
     bottomNavigation.value.raw.socialMediaBtn
@@ -77,15 +87,17 @@ const currentComponent = computed(() => {
 });
 
 const iconStyle = computed(() => {
-  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.iconSize
+  return bottomNavigation.value?.raw !== null &&
+    bottomNavigation.value?.raw.iconSize !== null
     ? bottomNavigation.value?.raw.iconSize
     : {
-        width: 100,
+        width: 80,
       };
 });
 
 const bottomStyle = computed(() => {
-  return bottomNavigation.value?.raw && bottomNavigation.value?.raw.style
+  return bottomNavigation.value?.raw !== null &&
+    bottomNavigation.value?.raw.style !== null
     ? bottomNavigation.value?.raw.style
     : defaultStyle.value;
 });
@@ -319,7 +331,7 @@ onMounted(async () => {
       side="left"
       bordered
     >
-      <q-list padding class="rounded-borders">
+      <q-list padding class="rounded-borders" :style="landingLayoutStyle">
         <q-item
           clickable
           v-ripple
