@@ -46,6 +46,12 @@ const overlay = computed(() => {
     : {};
 });
 
+const overlayActive = computed(() => {
+  return props.content?.raw && props.content?.raw.overlayActive
+    ? props.content?.raw.overlayActive
+    : false;
+});
+
 // Methods
 
 const textAligment = (alignment) => {
@@ -147,7 +153,7 @@ const contentTextAlignment = (alignment) => {
           allowfullscreen
         ></iframe>
 
-        <div class="w-full">
+        <div v-if="overlayActive" class="w-full">
           <div
             :style="overlay"
             class="flex justify-center items-center absolute top-0 bottom-0 w-full"
