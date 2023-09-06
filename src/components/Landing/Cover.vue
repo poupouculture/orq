@@ -24,7 +24,7 @@ const conditionalStyle = (content) => {
     obj.backgroundImage = `url(${content.image})`;
   }
 
-  if ((content.raw !== null) & content.raw.style) {
+  if (content.raw !== null && content.raw.style !== null) {
     obj = {
       ...obj,
       ...content.raw.style,
