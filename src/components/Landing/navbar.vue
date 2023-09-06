@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import menuIcon from "assets/images/menu.png";
+import menuIcon from "assets/icons/ham-icon.svg";
 import { useRoute, useRouter } from "vue-router";
 import useLandingPage from "src/stores/modules/landingpage";
 import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
@@ -100,7 +100,7 @@ const getComponentById = async (id: string, url: string) => {
         class="text-black"
         :size="$q.platform.is.mobile ? 'sm' : 'md'"
         round
-        color="white"
+        flat
       >
         <img class="menu-icon" :src="menuIcon" />
       </q-btn>
@@ -117,7 +117,7 @@ const getComponentById = async (id: string, url: string) => {
     padding: 5px;
   }
   .menu-icon {
-    width: 15px;
+    width: 35px;
   }
 }
 </style>
