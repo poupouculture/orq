@@ -27,3 +27,9 @@ export interface IContent {
   image: string;
   icon: string;
 }
+
+export interface VideoFrame {
+  raw?: {
+    videoId?: string;
+  };
+}
