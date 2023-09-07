@@ -46,6 +46,12 @@ const overlay = computed(() => {
     : {};
 });
 
+const volumeColorIcon = computed(() => {
+  return props.content?.raw && props.content?.raw.volumeStyle
+    ? props.content?.raw.volumeStyle
+    : { color: "white" };
+});
+
 // Methods
 
 const textAligment = (alignment) => {
@@ -168,6 +174,7 @@ const contentTextAlignment = (alignment) => {
                   class="cursor-pointer"
                   size="sm"
                   :name="unmute ? 'volume_up' : 'volume_off'"
+                  :style="volumeColorIcon"
                 />
               </div>
             </div>
