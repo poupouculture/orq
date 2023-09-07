@@ -1,6 +1,6 @@
 <script setup>
 import Hero from "src/components/Landing/Hero.vue";
-import Banner from "src/components/Landing/Banner.vue";
+import PageComponent from "src/components/Landing/PageComponent.vue";
 import { storeToRefs } from "pinia";
 
 import useLandingPage from "src/stores/modules/landingpage";
@@ -24,7 +24,7 @@ const { getComponent } = storeToRefs(landingPageStore);
 
   <div class="w-full flex justify-center flex-col min-h-screen items-center">
     <div class="w-full container my-5">
-      <Banner :content="getComponent" />
+      <PageComponent :content="getComponent" />
     </div>
     <!-- <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       About us
