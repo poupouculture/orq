@@ -1,9 +1,9 @@
 <script setup>
 import Hero from "src/components/Landing/Hero.vue";
-import Banner from "src/components/Landing/Banner.vue";
+import PageComponent from "src/components/Landing/PageComponent.vue";
 import { storeToRefs } from "pinia";
 import useLandingPage from "src/stores/modules/landingpage";
-import WhatsAppOverlay from "src/components/Partials/WhatsAppOverlay.vue";
+import WhatsAppOverlay from "src/components/Landing/Partials/WhatsAppOverlay.vue";
 
 const landingPageStore = useLandingPage();
 const { getComponent } = storeToRefs(landingPageStore);
@@ -24,7 +24,7 @@ const { getComponent } = storeToRefs(landingPageStore);
     </Hero>
     <div class="w-full flex flex-col items-center min-h-screen">
       <div class="w-full">
-        <Banner :content="getComponent" />
+        <PageComponent :content="getComponent" />
       </div>
     </div>
     <WhatsAppOverlay />

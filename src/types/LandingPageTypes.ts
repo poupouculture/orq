@@ -1,14 +1,4 @@
-export interface Navigation {
-  items: [] | any;
-  navigationBottom: [] | any;
-  component: {
-    content: [] | any;
-    iconCover: string;
-    children: [] | any;
-    heroText: string;
-  };
-}
-
+import type { CSSProperties } from "vue";
 // Component: BackgroundWithIcon.vue
 export interface IRawBackgroundWithIcon {
   autoplay: number; // autoplay time for carousel. default is 0
@@ -20,12 +10,31 @@ export interface IRawBackgroundWithIcon {
     background: string;
   }; // for overlay background container style
 }
+// Component: WhatsAppOverlay.vue
+export interface IRawWhatsAppOverlay {
+  number: string; // number
+  imageStyle?: CSSProperties; // image style
+  imageStyleMobile?: CSSProperties; // image mobile style
+  containerStyle?: CSSProperties; // for container on desktop style
+  containerMobileStyle?: CSSProperties; // for container on mobile style
+}
 export interface IContent {
-  raw: IRawBackgroundWithIcon;
+  raw: IRawBackgroundWithIcon & IRawWhatsAppOverlay;
   children: any[];
   alignment: string;
   image: string;
   icon: string;
+  type: string;
+}
+export interface Navigation {
+  items: [] | any;
+  navigationBottom: [] | any;
+  component: {
+    content: IContent | any;
+    iconCover: string;
+    children: [] | any;
+    heroText: string;
+  };
 }
 
 export interface VideoFrame {
