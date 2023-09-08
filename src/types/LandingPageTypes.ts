@@ -36,3 +36,9 @@ export interface Navigation {
     heroText: string;
   };
 }
+
+export interface VideoFrame {
+  raw?: {
+    videoId?: string;
+  };
+}
