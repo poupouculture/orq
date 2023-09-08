@@ -21,7 +21,7 @@
     "@sentry/tracing": "^7.29.0",
     "@sentry/vue": "^7.29.0",
     "@tailwindcss/typography": "^0.5.9",
-    "axios": "^1.5.0",
+    "axios": "^0.21.1",
     "date-fns": "^2.29.3",
     "echarts": "^5.4.1",
     "firebase": "^9.17.1",
