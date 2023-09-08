@@ -2,7 +2,7 @@
 import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import Hero from "src/components/LandingPage/Hero.vue";
-import Banner from "src/components/LandingPage/Banner.vue";
+import PageComponent from "src/components/LandingPage/PageComponent.vue";
 import useCategories from "src/stores/modules/categories";
 import { storeToRefs } from "pinia";
 
@@ -43,7 +43,7 @@ onMounted(() => {
 
   <div class="w-full flex justify-center flex-col min-h-screen items-center">
     <div class="w-full container my-5">
-      <Banner :content="getComponent" />
+      <PageComponent :content="getComponent" />
     </div>
     <div class="container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <button
