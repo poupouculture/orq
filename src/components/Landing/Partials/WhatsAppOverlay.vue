@@ -9,7 +9,7 @@ import type { CSSProperties } from "vue";
 const landingPageStore = useLandingPage();
 const { getComponent } = storeToRefs(landingPageStore);
 const whatsapp = computed<IContent>(() =>
-  getComponent.value.content.find((item: IContent) => item.type === "whatsapp")
+  getComponent.value?.content.find((item: IContent) => item.type === "whatsapp")
 );
 const defaultImageStyle: CSSProperties = { width: "4rem", height: "4rem" };
 const defaultImageStyleMobile: CSSProperties = {
@@ -25,8 +25,8 @@ const $q = useQuasar();
 const isMobile = computed(() => $q.platform.is.mobile);
 const containerStyle = computed(() => {
   return isMobile.value
-    ? whatsapp.value.raw?.containerMobileStyle || defaultContainerStyle
-    : whatsapp.value.raw?.containerStyle || defaultContainerStyle;
+    ? whatsapp.value?.raw?.containerMobileStyle || defaultContainerStyle
+    : whatsapp.value?.raw?.containerStyle || defaultContainerStyle;
 });
 </script>
 <template>
