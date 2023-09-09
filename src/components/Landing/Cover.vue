@@ -64,7 +64,7 @@ const conditionalStyle = (content: any) => {
         class="w-full flex flex-col justify-center items-start"
         :style="contentStyle"
       >
-        <div class="container">
+        <div class="container h-full">
           <slot />
         </div>
       </div>
