@@ -8,7 +8,7 @@ import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
 const useLandingPageStore = useLandingPage();
 const router = useRouter();
 const route = useRoute();
-
+const phoneNumber = ref("+85268050931");
 // Computed
 const navigation = computed(() => {
   return useLandingPageStore.topNavigation[0];
@@ -120,7 +120,7 @@ const getComponentById = async (id: string, url: string) => {
             'px-2': $q.platform.is.mobile,
             'px-5 py-2.5': $q.platform.is.desktop,
           }"
-          href="https://wa.me/+85268050931"
+          :href="`https://wa.me/${phoneNumber}`"
           target="_blank"
           class="py-1 px-3 mr-1 text-white border border-white uppercase font-bold tracking-widest"
         >
