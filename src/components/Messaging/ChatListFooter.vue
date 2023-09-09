@@ -8,7 +8,7 @@
         icon="home"
         size="md"
         class="px-2"
-        @click="router.push('/')"
+        @click="router.push('/dashboard')"
       />
       <!-- <q-btn round flat color="grey" icon="add_box" size="md" class="px-2" />
       <q-btn

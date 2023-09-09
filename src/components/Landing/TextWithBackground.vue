@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import Wysiwyg from "src/components/Landing/Wysiwyg.vue";
+import VideoIframe from "src/components/Landing/VideoIframe.vue";
 import { useQuasar } from "quasar";
 
 const props = defineProps({
@@ -44,6 +45,12 @@ const overlay = computed(() => {
   return props.content?.raw && props.content?.raw.overlayColor
     ? { background: props.content?.raw.overlayColor }
     : {};
+});
+
+const volumeColorIcon = computed(() => {
+  return props.content?.raw && props.content?.raw.volumeStyle
+    ? props.content?.raw.volumeStyle
+    : { color: "white" };
 });
 
 // Methods
@@ -134,18 +141,7 @@ const contentTextAlignment = (alignment) => {
         v-if="content.raw && content.raw.hasOwnProperty('videoId')"
         class="w-full relative"
       >
-        <iframe
-          width="100%"
-          height="735"
-          :src="`https://www.youtube.com/embed/${
-            content.raw.videoId
-          }?autoplay=1&mute=${unmute ? '0' : '1'}&loop=1&playlist=${
-            content.raw.videoId
-          }`"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen
-        ></iframe>
+        <VideoIframe :content="content" :unmute="unmute" />
 
         <div class="w-full">
           <div
@@ -168,6 +164,7 @@ const contentTextAlignment = (alignment) => {
                   class="cursor-pointer"
                   size="sm"
                   :name="unmute ? 'volume_up' : 'volume_off'"
+                  :style="volumeColorIcon"
                 />
               </div>
             </div>

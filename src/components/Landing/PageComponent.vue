@@ -7,6 +7,7 @@ import Icon from "./Icon.vue";
 import Cover from "./Cover.vue";
 import CarouselIcon from "./CarouselIcon.vue";
 import Form from "./Form.vue";
+import VideoIframe from "src/components/Landing/VideoIframe.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
 import BackgroundWithIcon from "./Carousel/BackgroundWithIcon.vue";
 import { useQuasar } from "quasar";
@@ -91,6 +92,8 @@ const flexDirection = (alignment) => {
       <Form v-else-if="data.type === 'form'" :content="data" />
 
       <Wysiwyg v-else-if="data.type === 'wysiwyg'" :content="data" />
+
+      <VideoIframe v-else-if="data.type === 'iframe_media'" :content="data" />
     </div>
   </div>
 </template>
