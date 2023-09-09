@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import menuIcon from "assets/images/menu.png";
+import { computed, ref } from "vue";
+import menuIcon from "assets/icons/ham-icon.svg";
 import { useRoute, useRouter } from "vue-router";
 import useLandingPage from "src/stores/modules/landingpage";
 import MenuNavigation from "src/components/Landing/Navbar/MenuNavigation.vue";
@@ -16,6 +16,24 @@ const navigation = computed(() => {
 const navActive = (nav: any) => {
   return route.path === nav.url || nav.url === "/";
 };
+const bottomNavigation = computed(() => {
+  return useLandingPageStore.bottomNavigation[0];
+});
+const mediaSocialStyle = ref({
+  push: true,
+  size: "sm",
+  round: true,
+  style: {
+    background: "#ffffff",
+  },
+  textColor: "primary",
+});
+const socialMediabBtn = computed(() => {
+  return bottomNavigation.value?.raw &&
+    bottomNavigation.value.raw.socialMediaBtn
+    ? bottomNavigation.value.raw.socialMediaBtn
+    : mediaSocialStyle.value;
+});
 const menuNavigation = computed(() => {
   return useLandingPageStore.menuNavigation;
 });
@@ -82,25 +100,40 @@ const getComponentById = async (id: string, url: string) => {
         </button>
       </template>
 
-      <a
-        :class="{
-          'px-2': $q.platform.is.mobile,
-          'px-5 py-2.5': $q.platform.is.desktop,
-        }"
-        href="https://wa.me/+85268050931"
-        target="_blank"
-        class="py-1 px-3 mr-1 text-white border border-white uppercase font-bold tracking-widest"
-      >
-        Call Now
-      </a>
-
+      <div class="flex items-center gap-x-3 md:gap-x-5">
+        <div
+          v-if="
+            bottomNavigation?.raw &&
+            bottomNavigation?.raw.socialMediaItems !== null
+          "
+          class="items-center flex gap-x-3 md:justify-end"
+        >
+          <div
+            v-for="data in bottomNavigation?.raw.socialMediaItems"
+            :key="data"
+          >
+            <q-btn target="_blank" v-bind="{ ...data, ...socialMediabBtn }" />
+          </div>
+        </div>
+        <a
+          :class="{
+            'px-2': $q.platform.is.mobile,
+            'px-5 py-2.5': $q.platform.is.desktop,
+          }"
+          href="https://wa.me/+85268050931"
+          target="_blank"
+          class="py-1 px-3 mr-1 text-white border border-white uppercase font-bold tracking-widest"
+        >
+          Call Now
+        </a>
+      </div>
       <q-btn
         v-if="$q.screen.lt.lg"
         @click="$emit('open')"
         class="text-black"
         :size="$q.platform.is.mobile ? 'sm' : 'md'"
         round
-        color="white"
+        flat
       >
         <img class="menu-icon" :src="menuIcon" />
       </q-btn>
@@ -117,7 +150,7 @@ const getComponentById = async (id: string, url: string) => {
     padding: 5px;
   }
   .menu-icon {
-    width: 15px;
+    width: 35px;
   }
 }
 </style>

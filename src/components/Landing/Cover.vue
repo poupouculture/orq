@@ -22,13 +22,18 @@ const conditionalStyle = (content: any) => {
     obj.backgroundImage = `url(${content.image})`;
   }
 
-  if (content.raw !== null) {
+  if (content.raw !== null && content.raw.style !== null) {
     const style = $q.platform.is.mobile
       ? { ...content.raw.styleMobile }
       : { ...content.raw.style };
     obj = {
       ...obj,
       ...style,
+    };
+  } else {
+    obj = {
+      ...obj,
+      minHeight: "100vh",
     };
   }
 
@@ -45,7 +50,7 @@ const conditionalStyle = (content: any) => {
         ? 'lg:h-[70vh] homeHero'
         : 'lg:h-[70vh]'
     "
-    class="bg-center h-full flex flex-col items-center w-full p-5 lg:p-10"
+    class="bg-center flex flex-col items-center w-full p-5 lg:p-10"
     style="background-position: center; background-size: cover"
     :style="conditionalStyle(content)"
   >
