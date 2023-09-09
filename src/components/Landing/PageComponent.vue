@@ -28,7 +28,7 @@ const displayedContent = (data) => {
 
 const flexDirection = (alignment) => {
   if (alignment === "center") {
-    return "justify-center";
+    return "justify-center items-center";
   } else if (alignment === "left") {
     return "justify-start";
   } else if (alignment === "right") {
