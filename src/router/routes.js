@@ -137,6 +137,11 @@ const routes = [
         component: () => import("src/pages/Order/ServiceRecord/Detail.vue"),
       },
       {
+        path: "/qr",
+        name: "qr",
+        component: () => import("pages/QrPage.vue"),
+      },
+      {
         path: "/work-order",
         component: () => import("pages/WorkOrder.vue"),
       },

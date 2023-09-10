@@ -31,4 +31,8 @@ export const pageCodes = [
     id: "F10",
     icon: "today",
   },
+  {
+    id: "F21",
+    icon: "today",
+  },
 ];
