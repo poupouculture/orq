@@ -1,11 +1,10 @@
-<script setup>
+<script setup lang="ts">
+import { Icon, Alignment } from "src/types/LandingPageTypes";
 import { computed } from "vue";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: any | Icon;
+}>();
 
 // Computed
 
@@ -29,12 +28,12 @@ const style = computed(() => {
 
 // Methods
 
-const textAligment = (alignment) => {
-  if (alignment === "center") {
+const textAligment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "text-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "text-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "text-end";
   }
 };

@@ -1,14 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import Wysiwyg from "src/components/Landing/Wysiwyg.vue";
 import VideoIframe from "src/components/Landing/VideoIframe.vue";
+import { IcontentBackground, Alignment } from "src/types/LandingPageTypes";
 import { useQuasar } from "quasar";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: any | IcontentBackground;
+}>();
 
 const $q = useQuasar();
 
@@ -55,22 +54,22 @@ const volumeColorIcon = computed(() => {
 
 // Methods
 
-const textAligment = (alignment) => {
-  if (alignment === "center") {
+const textAligment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "justify-center items-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "justify-start items-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "justify-end items-end";
   }
 };
 
-const contentTextAlignment = (alignment) => {
-  if (alignment === "center") {
+const contentTextAlignment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "text-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "text-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "text-end";
   }
 };

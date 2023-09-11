@@ -18,6 +18,7 @@ export interface IRawWhatsAppOverlay {
   containerStyle?: CSSProperties; // for container on desktop style
   containerMobileStyle?: CSSProperties; // for container on mobile style
 }
+
 export interface IContent {
   raw: IRawBackgroundWithIcon & IRawWhatsAppOverlay;
   children: any[];
@@ -25,8 +26,55 @@ export interface IContent {
   image: string;
   icon: string;
   type: string;
-  content_mobile: string;
   content: string;
+  content_mobile: string;
+}
+
+export interface IcontentBackground {
+  children: any[];
+  alignment: string;
+  image: string;
+  icon: string;
+  type: string;
+  content: string;
+  content_mobile: string;
+  raw: {
+    backgroundImageStyle: CSSProperties;
+    backgroundStyle: CSSProperties;
+    overlayColor: string;
+    volumeStyle: CSSProperties;
+  };
+}
+
+export interface MainType {
+  children: any[];
+  alignment: string;
+  image: string;
+  name: string;
+  icon: string;
+  type: string;
+  content: string;
+  content_mobile: string;
+}
+
+export interface Wyiswyg extends MainType {
+  raw: {
+    style: CSSProperties;
+  };
+}
+
+export interface Icon extends MainType {
+  raw: {
+    cardIconStyle: CSSProperties;
+    style: CSSProperties;
+  };
+}
+
+export interface Cover extends MainType {
+  raw: {
+    contentStyle: CSSProperties;
+    style: CSSProperties;
+  };
 }
 
 export interface Carousel {
@@ -59,4 +107,5 @@ export enum Alignment {
   CENTER = "center",
   LEFT = "left",
   RIGHT = "right",
+  TOP = "top",
 }

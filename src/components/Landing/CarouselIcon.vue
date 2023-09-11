@@ -1,22 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { useQuasar } from "quasar";
 import { computed } from "vue";
 import { Vue3Marquee } from "vue3-marquee";
+import { Carousel, Alignment } from "src/types/LandingPageTypes";
 
 const $q = useQuasar();
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: any | Carousel;
+}>();
 
-const flexDirection = (alignment) => {
-  if (alignment === "center") {
+const flexDirection = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "justify-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "justify-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "justify-end";
   }
 };
