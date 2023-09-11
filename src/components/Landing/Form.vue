@@ -1,25 +1,24 @@
-<script setup lang="ts">
+<script setup>
 import { contactUs } from "src/api/landingpage";
 import { required, validateEmail } from "src/utils/validation-rules";
 import { computed, ref } from "vue";
 import { Notify, useQuasar } from "quasar";
-import { Form, FormFields } from "src/types/LandingPageTypes";
 
-const props = defineProps<{
-  content?: Form;
-}>();
-
+const props = defineProps({
+  content: {
+    type: Object,
+  },
+});
 const emits = defineEmits(["submit"]);
 const dialog = ref();
 
 const $q = useQuasar();
 
 const form = ref();
-// props.content?.children.length
 const childrenExists = computed(
   () =>
-    props.content?.children.length > 0 &&
-    typeof props.content?.children[0] !== "number"
+    props.content.children.length > 0 &&
+    typeof props.content.children[0] !== "number"
 );
 
 const containerStyle = computed(() => {
@@ -55,7 +54,7 @@ const buttonText = computed(() => {
     : "Submit";
 });
 
-const submit = async (fromEmit: boolean) => {
+const submit = async (fromEmit) => {
   const valid = await form.value.validate();
   if (valid) {
     if (fromEmit === false) {
@@ -65,11 +64,11 @@ const submit = async (fromEmit: boolean) => {
       }
     }
     emits("submit");
-    const allForm: FormFields = {
-      app: process.env.APP || props.content?.app,
+    const allForm = {
+      app: process.env.APP || props.content.app,
     };
 
-    await props.content?.raw?.form.forEach((form) => {
+    await props.content.raw.form.forEach((form) => {
       if (form.value && form.required) {
         if (form.label === "Email") {
           if (!validateEmail(form.value)) {
@@ -91,7 +90,7 @@ const submit = async (fromEmit: boolean) => {
 
     try {
       await contactUs(allForm).then(() => {
-        props.content?.raw?.form.forEach((item) => {
+        props.content.raw.form.forEach((item) => {
           if (item.type === "checkbox") {
             item.value = [];
             item.error = false;
@@ -117,20 +116,20 @@ const submit = async (fromEmit: boolean) => {
 
 const displayedContent = computed(() => {
   return $q.platform.is.mobile
-    ? props.content?.content_mobile ?? props.content?.content
-    : props.content?.content;
+    ? props.content.content_mobile ?? props.content.content
+    : props.content.content;
 });
 </script>
 
 <template>
   <div
     class="w-full grid gap-5 lg:grid-cols-2 bg-center bg-cover lg:p-6 formContainer"
-    :style="{ backgroundImage: `url(${content?.image})`, ...containerStyle }"
+    :style="{ backgroundImage: `url(${content.image})`, ...containerStyle }"
   >
     <!-- Content -->
     <div
       :class="
-        content?.alignment === 'left' && !$q.platform.is.mobile ? 'order-1' : ''
+        content.alignment === 'left' && !$q.platform.is.mobile ? 'order-1' : ''
       "
       class="col-span-1 text-white"
     >
@@ -144,14 +143,14 @@ const displayedContent = computed(() => {
     >
       <p
         class="text-center mb-4 font-bold text-xl"
-        :style="{ color: content?.raw?.color }"
+        :style="{ color: content.raw.color }"
       >
-        {{ content?.name }}
+        {{ content.name }}
       </p>
 
       <q-form ref="form" @submit.prevent.stop="submit(false)">
         <div
-          v-for="(form, index) in content?.raw?.form"
+          v-for="(form, index) in content.raw.form"
           :key="index"
           class="grid grid-cols-6"
         >
@@ -193,9 +192,9 @@ const displayedContent = computed(() => {
                 <template v-slot:control>
                   <q-checkbox
                     v-for="(checkbox, index) in form.options"
-                    :val="checkbox?.label"
+                    :val="checkbox.label"
                     :key="index"
-                    :label="checkbox?.label"
+                    :label="checkbox.label"
                     v-model="form.value"
                     color="primary"
                   >
@@ -249,7 +248,7 @@ const displayedContent = computed(() => {
                       :breakpoint="600"
                     >
                       <q-date
-                        :color="form?.color !== null ? form?.color : 'red-13'"
+                        :color="form.color !== null ? form.color : 'red-13'"
                         :options="form.dateRequired"
                         minimal
                         @update:model-value="form.openDateModal = false"
@@ -298,7 +297,7 @@ const displayedContent = computed(() => {
     <q-dialog v-if="childrenExists" v-model="dialog" full-height>
       <q-card style="max-width: 90vw">
         <Form
-          :content="content?.children[0]"
+          :content="content.children[0]"
           class="mx-0 my-0"
           @submit="submit(true)"
         />
