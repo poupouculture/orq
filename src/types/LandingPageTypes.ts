@@ -25,6 +25,19 @@ export interface IContent {
   image: string;
   icon: string;
   type: string;
+  content_mobile: string;
+  content: string;
+}
+
+export interface Carousel {
+  raw: {
+    time: number;
+  };
+  children: any[];
+  alignment: string;
+  image: string;
+  icon: string;
+  type: string;
 }
 export interface Navigation {
   items: [] | any;
@@ -41,4 +54,9 @@ export interface VideoFrame {
   raw?: {
     videoId?: string;
   };
+}
+export enum Alignment {
+  CENTER = "center",
+  LEFT = "left",
+  RIGHT = "right",
 }

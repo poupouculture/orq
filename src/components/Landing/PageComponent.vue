@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import { IContent, Alignment } from "src/types/LandingPageTypes";
 import Carousel from "./Carousel.vue";
 import TextWithSideImage from "./TextWithSideImage.vue";
 import TextWithBackground from "./TextWithBackground.vue";
@@ -12,26 +13,24 @@ import TextWithImageAbove from "./TextWithImageAbove.vue";
 import BackgroundWithIcon from "./Carousel/BackgroundWithIcon.vue";
 import { useQuasar } from "quasar";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: any | IContent;
+}>();
 
 const $q = useQuasar();
 
-const displayedContent = (data) => {
+const displayedContent = (data: IContent) => {
   return $q.platform.is.mobile
     ? data?.content_mobile ?? data?.content_mobile
     : data?.content;
 };
 
-const flexDirection = (alignment) => {
-  if (alignment === "center") {
-    return "justify-center items-center";
-  } else if (alignment === "left") {
+const flexDirection = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
+    return "justify-center";
+  } else if (alignment === Alignment.LEFT) {
     return "justify-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "justify-end";
   } else if (alignment === "above") {
     return "justify-start items-start";

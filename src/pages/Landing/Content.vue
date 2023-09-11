@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import Hero from "src/components/Landing/Hero.vue";
 import PageComponent from "src/components/Landing/PageComponent.vue";
 import { storeToRefs } from "pinia";
