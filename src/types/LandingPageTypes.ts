@@ -6,9 +6,11 @@ export enum Alignment {
   RIGHT = "right",
   TOP = "top",
   ABOVE = "above",
+  BELOW = "below",
 }
 // Component: BackgroundWithIcon.vue
 export interface IRawBackgroundWithIcon {
+  style: CSSProperties;
   autoplay: number; // autoplay time for carousel. default is 0
   icon: {
     alignment: string; // icon container alignment. ref: LandingPageHelper.ts default: evenly
