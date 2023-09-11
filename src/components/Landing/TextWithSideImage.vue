@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IContent } from "src/types/LandingPageTypes";
+import { IContent, Alignment } from "src/types/LandingPageTypes";
 import { ref, computed } from "vue";
 
 const props = defineProps<{
@@ -15,10 +15,16 @@ const containerStyle = computed(() => {
     ? props.content?.raw.style
     : defaultStyle.value;
 });
+
+const aligment = computed(() => {
+  if (props.content?.alignment === Alignment.ABOVE) {
+    return "md:grid-row-2";
+  } else return "md:grid-cols-2";
+});
 </script>
 
 <template>
-  <div class="grid md:grid-cols-2 gap-4 w-full" :style="containerStyle">
+  <div :class="aligment" class="grid gap-4 w-full" :style="containerStyle">
     <div
       :class="content?.alignment === 'left' ? 'order-1 lg:order-2' : 'order-1'"
       class="col-span-1"
