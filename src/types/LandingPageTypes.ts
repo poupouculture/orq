@@ -74,6 +74,7 @@ export interface Cover extends MainType {
   raw: {
     contentStyle: CSSProperties;
     style: CSSProperties;
+    styleMobile: CSSProperties;
   };
 }
 
