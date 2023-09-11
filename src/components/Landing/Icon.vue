@@ -48,11 +48,11 @@ const textAligment = (alignment: Alignment) => {
         <article v-html="content?.content" class="prose" />
       </div>
 
-      <div class="grid p-4 gap-10 w-full sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(children, index) in content?.children"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl w-full md:w-[320px] lg:w-[320px] xl:w-[380px] items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl w-full md:w-full lg:w-full xl:w-[380px] items-center flex-col"
           :style="cardIconStyle"
         >
           <div class="w-full flex justify-center">
