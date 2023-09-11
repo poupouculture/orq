@@ -22,7 +22,7 @@ const { getComponent } = storeToRefs(landingPageStore);
         </div>
       </div>
     </Hero>
-    <div class="w-full flex flex-col items-center min-h-screen">
+    <div class="w-full flex flex-col items-center">
       <div class="w-full">
         <PageComponent :content="getComponent" />
       </div>
