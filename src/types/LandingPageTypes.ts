@@ -1,4 +1,12 @@
 import type { CSSProperties } from "vue";
+
+export enum Alignment {
+  CENTER = "center",
+  LEFT = "left",
+  RIGHT = "right",
+  TOP = "top",
+  ABOVE = "above",
+}
 // Component: BackgroundWithIcon.vue
 export interface IRawBackgroundWithIcon {
   autoplay: number; // autoplay time for carousel. default is 0
@@ -32,17 +40,21 @@ export interface IContent {
 
 export interface IcontentBackground {
   children: any[];
-  alignment: string;
+  alignment: Alignment;
   image: string;
   icon: string;
   type: string;
   content: string;
   content_mobile: string;
   raw: {
+    style: CSSProperties;
     backgroundImageStyle: CSSProperties;
     backgroundStyle: CSSProperties;
     overlayColor: string;
+    wrapperStyle: CSSProperties;
+    videoId: string;
     volumeStyle: CSSProperties;
+    backgroundImageMobileStyle: CSSProperties;
   };
 }
 
@@ -55,11 +67,44 @@ export interface MainType {
   type: string;
   content: string;
   content_mobile: string;
+  app: string;
 }
 
 export interface Wyiswyg extends MainType {
   raw: {
     style: CSSProperties;
+  };
+}
+
+export interface FormFields {
+  app?: string | undefined;
+  type: string;
+  label: string;
+  field: string;
+  error: boolean;
+  errorMessage: string;
+  value: string | [] | null;
+  required: boolean;
+  dateRequired: string[];
+  openDateModal?: boolean;
+  color?: string;
+  options: {
+    label: string;
+    field: string;
+    error: boolean;
+    errorMessage: string;
+    value: string | [] | null;
+  }[];
+}
+
+export interface Form extends MainType {
+  color: string | null;
+  raw?: {
+    style: CSSProperties;
+    buttonStyle: CSSProperties;
+    button: string;
+    form: FormFields[];
+    color: string;
   };
 }
 
@@ -81,12 +126,25 @@ export interface Cover extends MainType {
 export interface Carousel {
   raw: {
     time: number;
+    contentStyle: CSSProperties;
+    wrapperStyle: CSSProperties;
+    iconSize: {
+      width: string | number;
+      height: string | number;
+    };
+    iconAligment: Alignment;
+    style: string;
+    props: {
+      duration: number;
+    };
   };
   children: any[];
-  alignment: string;
+  alignment: Alignment;
   image: string;
   icon: string;
   type: string;
+  content_mobile: string;
+  content: string;
 }
 export interface Navigation {
   items: [] | any;
@@ -103,10 +161,4 @@ export interface VideoFrame {
   raw?: {
     videoId?: string;
   };
-}
-export enum Alignment {
-  CENTER = "center",
-  LEFT = "left",
-  RIGHT = "right",
-  TOP = "top",
 }

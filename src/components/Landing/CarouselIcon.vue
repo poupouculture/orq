@@ -7,10 +7,10 @@ import { Carousel, Alignment } from "src/types/LandingPageTypes";
 const $q = useQuasar();
 
 const props = defineProps<{
-  content?: any | Carousel;
+  content?: Carousel;
 }>();
 
-const flexDirection = (alignment: Alignment) => {
+const flexDirection = (alignment?: Alignment) => {
   if (alignment === Alignment.CENTER) {
     return "justify-center";
   } else if (alignment === Alignment.LEFT) {
@@ -36,6 +36,12 @@ const wrapperStyle = computed(() => {
       };
 });
 
+const duraton = computed(() => {
+  return props.content?.raw && props.content?.raw.props.duration
+    ? props.content?.raw.props.duration
+    : 5;
+});
+
 const iconSize = computed(() => {
   return props.content?.raw && props.content?.raw.iconSize
     ? props.content?.raw.iconSize
@@ -46,15 +52,15 @@ const iconSize = computed(() => {
 });
 
 const iconAligment = computed(() => {
-  return props.content.raw && props.content?.raw.iconAligment
+  return props.content?.raw && props.content?.raw.iconAligment
     ? props.content?.raw.iconAligment
     : props.content?.alignment;
 });
 
 const displayedContent = computed(() =>
   $q.platform.is.mobile
-    ? props.content.content_mobile ?? props.content.content
-    : props.content.content
+    ? props.content?.content_mobile ?? props.content?.content
+    : props.content?.content
 );
 </script>
 
@@ -62,7 +68,7 @@ const displayedContent = computed(() =>
   <div class="w-full" :style="wrapperStyle">
     <div
       class="w-full flex"
-      :class="flexDirection(content.alignment)"
+      :class="flexDirection(content?.alignment)"
       :style="contentStyle"
     >
       <article v-html="displayedContent" class="prose"></article>
@@ -90,11 +96,7 @@ const displayedContent = computed(() =>
       <Vue3Marquee
         :clone="true"
         v-if="content?.raw.style === 'carousel'"
-        :duration="
-          content?.raw && content?.raw.props.duration
-            ? content?.raw.props.duration
-            : 5
-        "
+        :duration="duraton"
         direction="reverse"
       >
         <div
@@ -111,16 +113,7 @@ const displayedContent = computed(() =>
       </Vue3Marquee>
     </template>
 
-    <Vue3Marquee
-      v-else
-      :clone="true"
-      :duration="
-        content?.raw && content?.raw.props.duration
-          ? content?.raw.props.duration
-          : 5
-      "
-      direction="reverse"
-    >
+    <Vue3Marquee v-else :clone="true" :duration="duraton" direction="reverse">
       <div
         class="h-full w-full flex items-center"
         v-for="(img, i) in content.children"

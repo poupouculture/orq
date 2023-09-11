@@ -6,7 +6,7 @@ import type { CSSProperties } from "vue";
 import { Cover } from "src/types/LandingPageTypes";
 
 const props = defineProps<{
-  content?: any | Cover;
+  content?: Cover;
 }>();
 
 const route = useRoute();

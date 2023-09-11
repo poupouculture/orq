@@ -31,7 +31,7 @@ const carouselTimer = (dataRaw: Carousel["raw"]) => {
   >
     <q-carousel-slide
       draggable
-      v-for="(carousel, childrenIndex) in content.children"
+      v-for="(carousel, childrenIndex) in content?.children"
       :key="childrenIndex"
       :name="childrenIndex + 1"
       class="cursor-pointer"

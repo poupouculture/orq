@@ -6,7 +6,7 @@ import { IcontentBackground, Alignment } from "src/types/LandingPageTypes";
 import { useQuasar } from "quasar";
 
 const props = defineProps<{
-  content?: any | IcontentBackground;
+  content?: IcontentBackground;
 }>();
 
 const $q = useQuasar();
@@ -15,8 +15,8 @@ const unmute = ref(false);
 
 const displayedContent = computed(() => {
   return $q.platform.is.mobile
-    ? props.content.content_mobile ?? props.content.content
-    : props.content.content;
+    ? props.content?.content_mobile ?? props.content?.content
+    : props.content?.content;
 });
 
 // Computed
@@ -30,7 +30,7 @@ const imageStyle = computed(() => {
           ? props.content?.raw.backgroundImageMobileStyle
           : props.content?.raw.backgroundImageStyle
         : props.content?.raw.backgroundImageStyle
-      : !props.content.raw?.backgroundStyle
+      : !props.content?.raw?.backgroundStyle
       ? {
           minHeight: "700px",
         }
@@ -78,11 +78,13 @@ const contentTextAlignment = (alignment: Alignment) => {
 <template>
   <div
     class="w-full"
-    :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
+    :style="
+      content?.raw !== null && content?.raw.style ? content.raw.style : ''
+    "
   >
     <div
       class="w-full relative bg-[#2E2E3A]"
-      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
+      v-if="content?.raw && !content?.raw.hasOwnProperty('videoId')"
       :class="[
         textAligment(content.alignment),
         content.raw?.backgroundStyle ? 'md:px-16 !pb-10 md:pb-0' : '',
@@ -137,7 +139,7 @@ const contentTextAlignment = (alignment: Alignment) => {
 
     <template v-else>
       <div
-        v-if="content.raw && content.raw.hasOwnProperty('videoId')"
+        v-if="content?.raw && content?.raw.hasOwnProperty('videoId')"
         class="w-full relative"
       >
         <VideoIframe :content="content" :unmute="unmute" />

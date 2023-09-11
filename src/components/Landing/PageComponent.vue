@@ -32,7 +32,7 @@ const flexDirection = (alignment: Alignment) => {
     return "justify-start";
   } else if (alignment === Alignment.RIGHT) {
     return "justify-end";
-  } else if (alignment === "above") {
+  } else if (alignment === Alignment.ABOVE) {
     return "justify-start items-start";
   }
 };
