@@ -83,7 +83,7 @@ const contentTextAlignment = (alignment: Alignment) => {
     "
   >
     <div
-      class="w-full relative bg-[#2E2E3A]"
+      class="w-full relative"
       v-if="content?.raw && !content?.raw.hasOwnProperty('videoId')"
       :class="[
         textAligment(content.alignment),
@@ -137,11 +137,10 @@ const contentTextAlignment = (alignment: Alignment) => {
       </div>
     </div>
 
-    <template v-else>
-      <div
-        v-if="content?.raw && content?.raw.hasOwnProperty('videoId')"
-        class="w-full relative"
-      >
+    <template
+      v-else-if="content?.raw && content?.raw.hasOwnProperty('videoId')"
+    >
+      <div class="w-full relative">
         <VideoIframe :content="content" :unmute="unmute" />
 
         <div class="w-full">
@@ -173,6 +172,28 @@ const contentTextAlignment = (alignment: Alignment) => {
         </div>
       </div>
     </template>
+
+    <div v-else class="w-full relative">
+      <div
+        class="bg-center flex bg-no-repeat bg-cover"
+        :style="{ backgroundImage: `url(${content?.image})`, ...imageStyle }"
+      ></div>
+
+      <div
+        :style="{ ...overlay, ...imageStyle }"
+        class="items-center absolute flex top-0 bottom-0 w-full"
+      >
+        <div v-if="content" class="md:w-1/2 w-full">
+          <article
+            v-html="displayedContent"
+            :class="contentTextAlignment(content.alignment)"
+            class="prose max-w-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- {{ content.image }} -->
   </div>
 </template>
 
