@@ -22,7 +22,7 @@ const style = computed(() => {
   return props.content?.raw && props.content?.raw.style
     ? props.content?.raw.style
     : {
-        padding: "0px",
+        padding: "40px 0px",
       };
 });
 
