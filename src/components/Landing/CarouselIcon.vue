@@ -36,7 +36,7 @@ const wrapperStyle = computed(() => {
       };
 });
 
-const duraton = computed(() => {
+const duration = computed(() => {
   return props.content?.raw && props.content?.raw.props.duration
     ? props.content?.raw.props.duration
     : 5;
@@ -96,7 +96,7 @@ const displayedContent = computed(() =>
       <Vue3Marquee
         :clone="true"
         v-if="content?.raw.style === 'carousel'"
-        :duration="duraton"
+        :duration="duration"
         direction="reverse"
       >
         <div
@@ -113,7 +113,7 @@ const displayedContent = computed(() =>
       </Vue3Marquee>
     </template>
 
-    <Vue3Marquee v-else :clone="true" :duration="duraton" direction="reverse">
+    <Vue3Marquee v-else :clone="true" :duration="duration" direction="reverse">
       <div
         class="h-full w-full flex items-center"
         v-for="(img, i) in content.children"
