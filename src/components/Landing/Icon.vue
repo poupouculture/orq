@@ -48,7 +48,7 @@ const textAligment = (alignment: Alignment) => {
         <article v-html="content?.content" class="prose" />
       </div>
 
-      <div class="grid p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
+      <div class="grid lg:p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(children, index) in content?.children"
           :key="index"
