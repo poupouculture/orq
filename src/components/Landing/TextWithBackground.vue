@@ -192,8 +192,6 @@ const contentTextAlignment = (alignment: Alignment) => {
         </div>
       </div>
     </div>
-
-    <!-- {{ content.image }} -->
   </div>
 </template>
 
