@@ -40,26 +40,6 @@ export interface IContent {
   content_mobile: string;
 }
 
-export interface IcontentBackground {
-  children: any[];
-  alignment: Alignment;
-  image: string;
-  icon: string;
-  type: string;
-  content: string;
-  content_mobile: string;
-  raw: {
-    style: CSSProperties;
-    backgroundImageStyle: CSSProperties;
-    backgroundStyle: CSSProperties;
-    overlayColor: string;
-    wrapperStyle: CSSProperties;
-    videoId: string;
-    volumeStyle: CSSProperties;
-    backgroundImageMobileStyle: CSSProperties;
-  };
-}
-
 export interface MainType {
   children: any[];
   alignment: string;
@@ -75,6 +55,19 @@ export interface MainType {
 export interface Wyiswyg extends MainType {
   raw: {
     style: CSSProperties;
+  };
+}
+
+export interface IcontentBackground extends MainType {
+  raw: {
+    style: CSSProperties;
+    backgroundImageStyle: CSSProperties;
+    backgroundStyle: CSSProperties;
+    overlayColor: string;
+    wrapperStyle: CSSProperties;
+    videoId: string;
+    volumeStyle: CSSProperties;
+    backgroundImageMobileStyle: CSSProperties;
   };
 }
 
