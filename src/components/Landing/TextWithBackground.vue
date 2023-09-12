@@ -137,6 +137,20 @@ const contentTextAlignment = (alignment: Alignment) => {
       </div>
     </div>
 
+    <div
+      v-else-if="content?.alignment === 'center'"
+      class="bg-center flex bg-no-repeat bg-cover"
+      :style="{ backgroundImage: `url(${content.image})`, ...imageStyle }"
+    >
+      <div
+        v-for="(children, index) in content.children"
+        :key="index"
+        class="w-full flex justify-center items-center"
+      >
+        <Wysiwyg :content="children" />
+      </div>
+    </div>
+
     <template
       v-else-if="content?.raw && content?.raw.hasOwnProperty('videoId')"
     >
