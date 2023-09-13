@@ -7,6 +7,7 @@ export enum Alignment {
   TOP = "top",
   ABOVE = "above",
   BELOW = "below",
+  ROW = "row",
 }
 // Component: BackgroundWithIcon.vue
 export interface IRawBackgroundWithIcon {
