@@ -156,5 +156,6 @@ export interface Navigation {
 export interface VideoFrame {
   raw?: {
     videoId?: string;
+    style?: CSSProperties;
   };
 }
