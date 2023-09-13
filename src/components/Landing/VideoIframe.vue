@@ -16,6 +16,11 @@ const videoId = computed(() => {
     ? props.content?.raw?.videoId
     : "";
 });
+const style = computed(() => {
+  return props.content?.raw !== null && props.content?.raw?.style !== null
+    ? props.content?.raw?.style
+    : "";
+});
 
 const iframeVideoSize = computed(() => {
   let frameSize = "";
@@ -37,6 +42,7 @@ const iframeVideoSize = computed(() => {
     :src="`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${
       unmute ? '0' : '1'
     }&loop=1&playlist=${videoId}`"
+    :style="style"
     frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowfullscreen
