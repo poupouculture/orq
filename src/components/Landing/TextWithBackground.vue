@@ -1,14 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import Wysiwyg from "src/components/Landing/Wysiwyg.vue";
 import VideoIframe from "src/components/Landing/VideoIframe.vue";
+import { IcontentBackground, Alignment } from "src/types/LandingPageTypes";
 import { useQuasar } from "quasar";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: IcontentBackground;
+}>();
 
 const $q = useQuasar();
 
@@ -16,8 +15,8 @@ const unmute = ref(false);
 
 const displayedContent = computed(() => {
   return $q.platform.is.mobile
-    ? props.content.content_mobile ?? props.content.content
-    : props.content.content;
+    ? props.content?.content_mobile ?? props.content?.content
+    : props.content?.content;
 });
 
 // Computed
@@ -31,7 +30,7 @@ const imageStyle = computed(() => {
           ? props.content?.raw.backgroundImageMobileStyle
           : props.content?.raw.backgroundImageStyle
         : props.content?.raw.backgroundImageStyle
-      : !props.content.raw?.backgroundStyle
+      : !props.content?.raw?.backgroundStyle
       ? {
           minHeight: "700px",
         }
@@ -55,22 +54,22 @@ const volumeColorIcon = computed(() => {
 
 // Methods
 
-const textAligment = (alignment) => {
-  if (alignment === "center") {
+const textAligment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "justify-center items-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "justify-start items-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "justify-end items-end";
   }
 };
 
-const contentTextAlignment = (alignment) => {
-  if (alignment === "center") {
+const contentTextAlignment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "text-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "text-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "text-end";
   }
 };
@@ -79,11 +78,13 @@ const contentTextAlignment = (alignment) => {
 <template>
   <div
     class="w-full"
-    :style="content.raw !== null && content.raw.style ? content.raw.style : ''"
+    :style="
+      content?.raw !== null && content?.raw.style ? content.raw.style : ''
+    "
   >
     <div
       class="w-full relative bg-[#2E2E3A]"
-      v-if="content.raw && !content.raw.hasOwnProperty('videoId')"
+      v-if="content?.raw && !content?.raw.hasOwnProperty('videoId')"
       :class="[
         textAligment(content.alignment),
         content.raw?.backgroundStyle ? 'md:px-16 !pb-10 md:pb-0' : '',
@@ -138,7 +139,7 @@ const contentTextAlignment = (alignment) => {
 
     <template v-else>
       <div
-        v-if="content.raw && content.raw.hasOwnProperty('videoId')"
+        v-if="content?.raw && content?.raw.hasOwnProperty('videoId')"
         class="w-full relative"
       >
         <VideoIframe :content="content" :unmute="unmute" />

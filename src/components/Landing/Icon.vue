@@ -1,17 +1,16 @@
-<script setup>
+<script setup lang="ts">
+import { Icon, Alignment } from "src/types/LandingPageTypes";
 import { computed } from "vue";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: Icon;
+}>();
 
 // Computed
 
 const cardIconStyle = computed(() => {
-  return props.content?.raw && props.content?.cardIconStyle
-    ? props.content?.cardIconStyle
+  return props.content?.raw && props.content?.raw.cardIconStyle
+    ? props.content?.raw.cardIconStyle
     : {
         background: "white",
         color: "black",
@@ -29,12 +28,12 @@ const style = computed(() => {
 
 // Methods
 
-const textAligment = (alignment) => {
-  if (alignment === "center") {
+const textAligment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "text-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "text-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "text-end";
   }
 };
@@ -43,17 +42,17 @@ const textAligment = (alignment) => {
 <template>
   <div class="w-full flex justify-center" :style="style">
     <article class="prose max-w-none">
-      <h1 class="text-center">{{ content.name }}</h1>
+      <h1 class="text-center">{{ content?.name }}</h1>
 
       <div class="flex justify-center mx-3">
-        <article v-html="content.content" class="prose" />
+        <article v-html="content?.content" class="prose" />
       </div>
 
-      <div class="grid p-4 gap-10 w-full sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
         <div
-          v-for="(children, index) in content.children"
+          v-for="(children, index) in content?.children"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl w-full md:w-[320px] lg:w-[320px] xl:w-[380px] items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl w-full md:w-full lg:w-full xl:w-[380px] items-center flex-col"
           :style="cardIconStyle"
         >
           <div class="w-full flex justify-center">

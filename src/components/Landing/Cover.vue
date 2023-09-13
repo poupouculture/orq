@@ -2,9 +2,11 @@
 import { useQuasar } from "quasar";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import type { CSSProperties } from "vue";
+import { Cover } from "src/types/LandingPageTypes";
 
 const props = defineProps<{
-  content: any;
+  content?: Cover;
 }>();
 
 const route = useRoute();
@@ -14,8 +16,9 @@ const contentStyle = computed(() => {
     ? props.content?.raw.contentStyle
     : {};
 });
-const conditionalStyle = (content: any) => {
-  let obj = {} as any;
+
+const conditionalStyle = (content: Cover) => {
+  let obj: CSSProperties = {};
   if (Object.keys(content).length === 0) {
     return "";
   } else {
