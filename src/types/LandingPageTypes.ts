@@ -6,9 +6,11 @@ export enum Alignment {
   RIGHT = "right",
   TOP = "top",
   ABOVE = "above",
+  BELOW = "below",
 }
 // Component: BackgroundWithIcon.vue
 export interface IRawBackgroundWithIcon {
+  style: CSSProperties;
   autoplay: number; // autoplay time for carousel. default is 0
   icon: {
     alignment: string; // icon container alignment. ref: LandingPageHelper.ts default: evenly
@@ -38,26 +40,6 @@ export interface IContent {
   content_mobile: string;
 }
 
-export interface IcontentBackground {
-  children: any[];
-  alignment: Alignment;
-  image: string;
-  icon: string;
-  type: string;
-  content: string;
-  content_mobile: string;
-  raw: {
-    style: CSSProperties;
-    backgroundImageStyle: CSSProperties;
-    backgroundStyle: CSSProperties;
-    overlayColor: string;
-    wrapperStyle: CSSProperties;
-    videoId: string;
-    volumeStyle: CSSProperties;
-    backgroundImageMobileStyle: CSSProperties;
-  };
-}
-
 export interface MainType {
   children: any[];
   alignment: string;
@@ -73,6 +55,19 @@ export interface MainType {
 export interface Wyiswyg extends MainType {
   raw: {
     style: CSSProperties;
+  };
+}
+
+export interface IcontentBackground extends MainType {
+  raw: {
+    style: CSSProperties;
+    backgroundImageStyle: CSSProperties;
+    backgroundStyle: CSSProperties;
+    overlayColor: string;
+    wrapperStyle: CSSProperties;
+    videoId: string;
+    volumeStyle: CSSProperties;
+    backgroundImageMobileStyle: CSSProperties;
   };
 }
 
