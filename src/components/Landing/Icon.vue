@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { Icon, Alignment } from "src/types/LandingPageTypes";
+import { Icon, Alignment, IContent } from "src/types/LandingPageTypes";
+import { useQuasar } from "quasar";
 import { computed } from "vue";
 
 const props = defineProps<{
   content?: Icon;
 }>();
 
+const $q = useQuasar();
+
 // Computed
+
+const displayedContent = (data: IContent) => {
+  return $q.platform.is.mobile
+    ? data?.content_mobile ?? data?.content_mobile
+    : data?.content;
+};
 
 const cardIconStyle = computed(() => {
   return props.content?.raw && props.content?.raw.cardIconStyle
@@ -22,7 +31,7 @@ const style = computed(() => {
   return props.content?.raw && props.content?.raw.style
     ? props.content?.raw.style
     : {
-        padding: "0px",
+        padding: "40px 0px",
       };
 });
 
@@ -45,10 +54,10 @@ const textAligment = (alignment: Alignment) => {
       <h1 class="text-center">{{ content?.name }}</h1>
 
       <div class="flex justify-center mx-3">
-        <article v-html="content?.content" class="prose" />
+        <article v-html="displayedContent(content)" class="prose" />
       </div>
 
-      <div class="grid p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
+      <div class="grid lg:p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(children, index) in content?.children"
           :key="index"
@@ -76,7 +85,10 @@ const textAligment = (alignment: Alignment) => {
             :class="textAligment(children.alignment)"
             class="font-normal w-[350px] capitalize text-[#5C5A8F] text-start leading-10 text-lg"
           >
-            <article v-html="children.content" class="prose max-w-none px-4" />
+            <article
+              v-html="displayedContent(children)"
+              class="prose max-w-none px-4"
+            />
           </span>
         </div>
       </div>
