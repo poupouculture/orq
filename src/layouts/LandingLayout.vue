@@ -479,11 +479,7 @@ onMounted(async () => {
       side="left"
       bordered
     >
-      <q-list
-        padding
-        class="rounded-borders h-full"
-        :style="landingLayoutStyle"
-      >
+      <q-list padding class="rounded-borders" :style="landingLayoutStyle">
         <q-item
           clickable
           v-ripple
