@@ -478,8 +478,9 @@ onMounted(async () => {
       v-model="drawer"
       side="left"
       bordered
+      :style="landingLayoutStyle"
     >
-      <q-list padding class="rounded-borders" :style="landingLayoutStyle">
+      <q-list padding class="rounded-borders">
         <q-item
           clickable
           v-ripple

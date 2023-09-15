@@ -1,16 +1,15 @@
-<script setup>
+<script setup lang="ts">
+import { Carousel } from "src/types/LandingPageTypes";
 import { ref } from "vue";
 
-defineProps({
-  content: {
-    type: Object,
-  },
-});
+defineProps<{
+  content?: Carousel;
+}>();
 
 const slide = ref(1);
 const onHover = ref(false);
 
-const carouselTimer = (dataRaw) => {
+const carouselTimer = (dataRaw: Carousel["raw"]) => {
   if (onHover.value) {
     return 0;
   } else if (dataRaw !== null) {
@@ -32,7 +31,7 @@ const carouselTimer = (dataRaw) => {
   >
     <q-carousel-slide
       draggable
-      v-for="(carousel, childrenIndex) in content.children"
+      v-for="(carousel, childrenIndex) in content?.children"
       :key="childrenIndex"
       :name="childrenIndex + 1"
       class="cursor-pointer"

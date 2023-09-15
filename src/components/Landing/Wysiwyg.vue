@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import { Wyiswyg } from "src/types/LandingPageTypes";
 import { useQuasar } from "quasar";
 import { computed, ref } from "vue";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: any | Wyiswyg;
+}>();
 
 const $q = useQuasar();
 

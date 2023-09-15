@@ -1,17 +1,25 @@
-<script setup>
+<script setup lang="ts">
+import { Icon, Alignment, IContent } from "src/types/LandingPageTypes";
+import { useQuasar } from "quasar";
 import { computed } from "vue";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: Icon;
+}>();
+
+const $q = useQuasar();
 
 // Computed
 
+const displayedContent = (data: IContent) => {
+  return $q.platform.is.mobile
+    ? data?.content_mobile ?? data?.content_mobile
+    : data?.content;
+};
+
 const cardIconStyle = computed(() => {
-  return props.content?.raw && props.content?.cardIconStyle
-    ? props.content?.cardIconStyle
+  return props.content?.raw && props.content?.raw.cardIconStyle
+    ? props.content?.raw.cardIconStyle
     : {
         background: "white",
         color: "black",
@@ -23,37 +31,51 @@ const style = computed(() => {
   return props.content?.raw && props.content?.raw.style
     ? props.content?.raw.style
     : {
-        padding: "0px",
+        padding: "40px 0px",
       };
 });
 
+const image = computed(() =>
+  props.content
+    ? $q.platform.is.mobile
+      ? props.content?.image_mobile || props.content?.image
+      : props.content.image
+    : ""
+);
+
 // Methods
 
-const textAligment = (alignment) => {
-  if (alignment === "center") {
+const textAligment = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "text-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "text-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "text-end";
   }
 };
 </script>
 
 <template>
-  <div class="w-full flex justify-center" :style="style">
+  <div
+    class="w-full flex justify-center bg-center bg-cover"
+    :style="{
+      ...style,
+      backgroundImage: `url(${image})`,
+    }"
+  >
     <article class="prose max-w-none">
-      <h1 class="text-center">{{ content.name }}</h1>
+      <h1 class="text-center">{{ content?.name }}</h1>
 
       <div class="flex justify-center mx-3">
-        <article v-html="content.content" class="prose" />
+        <article v-html="displayedContent(content)" class="prose" />
       </div>
 
-      <div class="grid p-4 gap-10 w-full sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid lg:p-4 gap-10 w-full md:grid-cols-2 lg:grid-cols-3">
         <div
-          v-for="(children, index) in content.children"
+          v-for="(children, index) in content?.children"
           :key="index"
-          class="flex rounded-lg drop-shadow-2xl w-full md:w-[320px] lg:w-[320px] xl:w-[380px] items-center flex-col"
+          class="flex rounded-lg drop-shadow-2xl w-full md:w-full lg:w-full xl:w-[380px] items-center flex-col"
           :style="cardIconStyle"
         >
           <div class="w-full flex justify-center">
@@ -77,7 +99,10 @@ const textAligment = (alignment) => {
             :class="textAligment(children.alignment)"
             class="font-normal w-[350px] capitalize text-[#5C5A8F] text-start leading-10 text-lg"
           >
-            <article v-html="children.content" class="prose max-w-none px-4" />
+            <article
+              v-html="displayedContent(children)"
+              class="prose max-w-none px-4"
+            />
           </span>
         </div>
       </div>

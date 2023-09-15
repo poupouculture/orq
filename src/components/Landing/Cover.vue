@@ -1,23 +1,24 @@
-<script setup>
+<script setup lang="ts">
+import { useQuasar } from "quasar";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import type { CSSProperties } from "vue";
+import { Cover } from "src/types/LandingPageTypes";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: Cover;
+}>();
 
 const route = useRoute();
-
+const $q = useQuasar();
 const contentStyle = computed(() => {
   return props.content?.raw && props.content?.raw.contentStyle
     ? props.content?.raw.contentStyle
     : {};
 });
 
-const conditionalStyle = (content) => {
-  let obj = {};
+const conditionalStyle = (content: Cover) => {
+  let obj: CSSProperties = {};
   if (Object.keys(content).length === 0) {
     return "";
   } else {
@@ -25,9 +26,12 @@ const conditionalStyle = (content) => {
   }
 
   if (content.raw !== null && content.raw.style !== null) {
+    const style = $q.platform.is.mobile
+      ? { ...content.raw.styleMobile }
+      : { ...content.raw.style };
     obj = {
       ...obj,
-      ...content.raw.style,
+      ...style,
     };
   } else {
     obj = {
@@ -63,7 +67,7 @@ const conditionalStyle = (content) => {
         class="w-full flex flex-col justify-center items-start"
         :style="contentStyle"
       >
-        <div class="container">
+        <div class="container h-full">
           <slot />
         </div>
       </div>

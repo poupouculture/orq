@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import { IContent, Alignment } from "src/types/LandingPageTypes";
 import Carousel from "./Carousel.vue";
 import TextWithSideImage from "./TextWithSideImage.vue";
 import TextWithBackground from "./TextWithBackground.vue";
@@ -10,20 +11,29 @@ import Form from "./Form.vue";
 import VideoIframe from "src/components/Landing/VideoIframe.vue";
 import TextWithImageAbove from "./TextWithImageAbove.vue";
 import BackgroundWithIcon from "./Carousel/BackgroundWithIcon.vue";
+import { useQuasar } from "quasar";
 
-const props = defineProps({
-  content: {
-    type: Object,
-  },
-});
+const props = defineProps<{
+  content?: any | IContent;
+}>();
 
-const flexDirection = (alignment) => {
-  if (alignment === "center") {
+const $q = useQuasar();
+
+const displayedContent = (data: IContent) => {
+  return $q.platform.is.mobile
+    ? data?.content_mobile ?? data?.content_mobile
+    : data?.content;
+};
+
+const flexDirection = (alignment: Alignment) => {
+  if (alignment === Alignment.CENTER) {
     return "justify-center";
-  } else if (alignment === "left") {
+  } else if (alignment === Alignment.LEFT) {
     return "justify-start";
-  } else if (alignment === "right") {
+  } else if (alignment === Alignment.RIGHT) {
     return "justify-end";
+  } else if (alignment === Alignment.ABOVE) {
+    return "justify-start items-start";
   }
 };
 </script>
@@ -40,20 +50,15 @@ const flexDirection = (alignment) => {
       </div>
 
       <Cover v-else-if="data.type === 'cover_photo'" :content="data">
-        <div class="w-full">
+        <div class="w-full h-full">
           <div
-            class="flex capitalize gap-3 lg:gap-0"
+            class="flex capitalize gap-3 lg:gap-0 h-full w-full"
             :class="flexDirection(data.alignment)"
           >
             <article
-              v-html="data.content_mobile"
-              class="prose !block md:!hidden"
-            ></article>
-
-            <article
-              v-html="data.content"
-              class="prose !hidden md:!block"
-            ></article>
+              v-html="displayedContent(data)"
+              class="prose max-w-none prose-img:m-0"
+            />
           </div>
         </div>
       </Cover>
