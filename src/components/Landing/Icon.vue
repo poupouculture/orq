@@ -35,9 +35,13 @@ const style = computed(() => {
       };
 });
 
-const image = computed(() => {
-  return props.content?.image !== null ? props.content.image : "";
-});
+const image = computed(() =>
+  props.content
+    ? $q.platform.is.mobile
+      ? props.content?.image_mobile || props.content?.image
+      : props.content.image
+    : ""
+);
 
 // Methods
 
