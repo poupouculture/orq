@@ -35,6 +35,14 @@ const style = computed(() => {
       };
 });
 
+const image = computed(() =>
+  props.content
+    ? $q.platform.is.mobile
+      ? props.content?.image_mobile || props.content?.image
+      : props.content.image
+    : ""
+);
+
 // Methods
 
 const textAligment = (alignment: Alignment) => {
@@ -49,7 +57,13 @@ const textAligment = (alignment: Alignment) => {
 </script>
 
 <template>
-  <div class="w-full flex justify-center" :style="style">
+  <div
+    class="w-full flex justify-center bg-center bg-cover"
+    :style="{
+      ...style,
+      backgroundImage: `url(${image})`,
+    }"
+  >
     <article class="prose max-w-none">
       <h1 class="text-center">{{ content?.name }}</h1>
 

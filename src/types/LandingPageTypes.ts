@@ -51,6 +51,7 @@ export interface MainType {
   content: string;
   content_mobile: string;
   app: string;
+  image_mobile: string;
 }
 
 export interface Wyiswyg extends MainType {
