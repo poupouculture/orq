@@ -19,13 +19,13 @@ const defaultImageStyleMobile: CSSProperties = {
 const defaultContainerStyle: CSSProperties = {
   bottom: "1.25rem",
   right: "1.75rem",
-  zIndex: 999,
+  zIndex: 9999,
 };
 const $q = useQuasar();
 const isMobile = computed(() => $q.platform.is.mobile);
 const containerStyle = computed(() => {
   return isMobile.value
-    ? whatsapp.value?.raw?.containerMobileStyle || defaultContainerStyle
+    ? whatsapp.value?.raw?.containerStyleMobile || defaultContainerStyle
     : whatsapp.value?.raw?.containerStyle || defaultContainerStyle;
 });
 </script>

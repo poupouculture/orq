@@ -27,7 +27,7 @@ export interface IRawWhatsAppOverlay {
   imageStyle?: CSSProperties; // image style
   imageStyleMobile?: CSSProperties; // image mobile style
   containerStyle?: CSSProperties; // for container on desktop style
-  containerMobileStyle?: CSSProperties; // for container on mobile style
+  containerStyleMobile?: CSSProperties; // for container on mobile style
 }
 
 export interface IContent {
